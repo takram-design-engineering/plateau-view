@@ -4,7 +4,7 @@ This repository hosts a prototype of PLATEAU VIEW 3.0, a part of [the 2023 PLATE
 
 The prototype under development is available at [plateau.takram.com](https://plateau.takram.com). However, please be aware that it is still in development and is not intended to be a complete service.
 
-![image](https://github.com/takram-design-engineering/plateau-view/assets/8651513/212e0ef7-3969-4d76-86e7-4eb4a39d3ce4)
+![image](https://github.com/takram-design-engineering/plateau-view/assets/8651513/43b6270d-cedc-4fea-86c4-d53cfe959af5)
 
 ## Background and Goal
 
