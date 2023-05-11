@@ -10,7 +10,6 @@ import {
 } from '@cesium/engine'
 import Cesium3DTilePass from '@cesium/engine/Source/Scene/Cesium3DTilePass'
 import Cesium3DTilePassState from '@cesium/engine/Source/Scene/Cesium3DTilePassState'
-import { uniq } from 'lodash'
 import invariant from 'tiny-invariant'
 
 import { getPixelRatio } from '@plateau/cesium-helpers'
@@ -123,7 +122,7 @@ function pickFramebufferEnd(
 
   // I don't know why Cesium doesn't provide this functionality but reads pixels
   // in spiral to find only a single object. Precision issue maybe?
-  const objects: object[] = []
+  const objects = new Set<object>()
   for (let index = 0; index < pixels.length; index += 4) {
     colorScratch.red = Color.byteToFloat(pixels[index])
     colorScratch.green = Color.byteToFloat(pixels[index + 1])
@@ -131,10 +130,10 @@ function pickFramebufferEnd(
     colorScratch.alpha = Color.byteToFloat(pixels[index + 3])
     const object = context.getObjectByPickColor(colorScratch)
     if (object != null) {
-      objects.push(object)
+      objects.add(object)
     }
   }
-  return uniq(objects)
+  return Array.from(objects.values())
 }
 
 const pickingFrustumScratch = new PerspectiveOffCenterFrustum()
