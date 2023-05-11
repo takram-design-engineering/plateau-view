@@ -1,13 +1,15 @@
 import { Divider, Stack } from '@mui/material'
 import { useAtomValue } from 'jotai'
 import { useResetAtom } from 'jotai/utils'
-import { type FC } from 'react'
+import { useContext, type FC } from 'react'
 
+import { ScreenSpaceSelectionContext } from '@plateau/screen-space-selection'
 import {
   DeveloperPanel,
   ParameterList,
   SelectParameterItem,
-  SwitchParameterItem
+  SwitchParameterItem,
+  ValueParameterItem
 } from '@plateau/ui-components'
 
 import {
@@ -16,6 +18,7 @@ import {
   environmentTypeAtom,
   plateauDataSourceAtom,
   showMunicipalityEntitiesAtom,
+  showSelectionBoundingSphereAtom,
   terrainTypeAtom
 } from '../states/app'
 import { atomWithResettableAtoms } from '../states/atomWithResettableAtoms'
@@ -24,13 +27,16 @@ const resetAtom = atomWithResettableAtoms([
   colorModeAtom,
   debugSphericalHarmonicsAtom,
   environmentTypeAtom,
-  showMunicipalityEntitiesAtom,
   plateauDataSourceAtom,
+  showMunicipalityEntitiesAtom,
+  showSelectionBoundingSphereAtom,
   terrainTypeAtom
 ])
 
 export const AppPanel: FC = () => {
   const environmentType = useAtomValue(environmentTypeAtom)
+  const { selectionAtom } = useContext(ScreenSpaceSelectionContext)
+  const selection = useAtomValue(selectionAtom)
 
   const handleReset = useResetAtom(resetAtom)
 
@@ -82,6 +88,17 @@ export const AppPanel: FC = () => {
           <SwitchParameterItem
             label='Show Municipality Entities'
             atom={showMunicipalityEntitiesAtom}
+          />
+        </ParameterList>
+        <Divider />
+        <ParameterList>
+          <ValueParameterItem
+            label='Selection Count'
+            value={selection.length.toLocaleString()}
+          />
+          <SwitchParameterItem
+            label='Show Selection Bounding Sphere'
+            atom={showSelectionBoundingSphereAtom}
           />
         </ParameterList>
       </Stack>

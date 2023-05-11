@@ -19,7 +19,10 @@ import {
 import { SuspendUntilTilesLoaded } from '@plateau/cesium-helpers'
 import { PlateauDatasetsContext } from '@plateau/datasets'
 import { useWindowEvent } from '@plateau/react-helpers'
-import { ScreenSpaceSelectionContext } from '@plateau/screen-space-selection'
+import {
+  ScreenSpaceSelectionBoundingSphere,
+  ScreenSpaceSelectionContext
+} from '@plateau/screen-space-selection'
 import { AppLayout } from '@plateau/ui-components'
 
 import { Canvas } from './containers/Canvas'
@@ -36,7 +39,11 @@ import { MainPanel } from './panels/MainPanel'
 import { SelectionPanel } from './panels/SelectionPanel'
 import { Toolbar } from './panels/Toolbar'
 import { addressAtom } from './states/address'
-import { colorModeAtom, readyAtom } from './states/app'
+import {
+  colorModeAtom,
+  readyAtom,
+  showSelectionBoundingSphereAtom
+} from './states/app'
 import { toolAtom, toolMachineAtom } from './states/tool'
 
 const initialView = Cartesian3.fromDegrees(139.765, 35.68, 8000)
@@ -196,6 +203,12 @@ const SyncColorMode: FC = () => {
   return null
 }
 
+// TODO: Settle into appropriate component.
+const SelectionBoundingSphere: FC = () => {
+  const show = useAtomValue(showSelectionBoundingSphereAtom)
+  return show ? <ScreenSpaceSelectionBoundingSphere /> : null
+}
+
 export interface PlateauViewProps {}
 
 export const PlateauView: FC<PlateauViewProps> = () => {
@@ -231,6 +244,7 @@ export const PlateauView: FC<PlateauViewProps> = () => {
         <CanvasPointer />
         <KeyBindings />
         <ReverseGeocoder />
+        <SelectionBoundingSphere />
       </Canvas>
       <ScreenSpaceSelection />
       <SyncColorMode />
