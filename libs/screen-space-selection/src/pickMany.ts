@@ -189,6 +189,27 @@ function getPickCullingVolume(
   )
 }
 
+function getIntersection(
+  a: BoundingRectangle,
+  b: BoundingRectangle,
+  result = new BoundingRectangle()
+): BoundingRectangle | undefined {
+  invariant(a.width >= 0 && a.height >= 0)
+  invariant(b.width >= 0 && b.height >= 0)
+  const x1 = Math.max(a.x, b.x)
+  const x2 = Math.min(a.x + a.width, b.x + b.width)
+  const y1 = Math.max(a.y, b.y)
+  const y2 = Math.min(a.y + a.height, b.y + b.height)
+  if (x1 >= x2 || y1 >= y2) {
+    return undefined
+  }
+  result.x = x1
+  result.y = y1
+  result.width = x2 - x1
+  result.height = y2 - y1
+  return result
+}
+
 const pickTilesetPassState = new Cesium3DTilePassState({
   pass: Cesium3DTilePass.PICK
 })
@@ -204,6 +225,7 @@ export function pickMany(
   windowWidth: number,
   windowHeight: number
 ): object[] {
+  invariant(windowWidth > 0 && windowHeight > 0)
   invariant(((scene): scene is PrivateScene => true)(scene))
   const context = scene.context
   const view = scene.defaultView
@@ -219,23 +241,23 @@ export function pickMany(
     view.passState.viewport
   )
 
-  const drawingBufferPosition = SceneTransforms.transformWindowToDrawingBuffer(
-    scene,
-    windowPosition,
-    positionScratch
-  )
   scene.jobScheduler.disableThisFrame()
   scene.updateFrameState()
 
   // Drawing buffer coordinates are scaled by pixel ratio, so do we scale width
   // and height which are supposed to be window coordinates.
+  const position = SceneTransforms.transformWindowToDrawingBuffer(
+    scene,
+    windowPosition,
+    positionScratch
+  )
   const pixelRatio = getPixelRatio(scene)
   const width = windowWidth * pixelRatio
   const height = windowHeight * pixelRatio
   const frameState = scene.frameState
   frameState.cullingVolume = getPickCullingVolume(
     scene,
-    drawingBufferPosition,
+    position,
     width,
     height,
     viewport
@@ -248,12 +270,17 @@ export function pickMany(
 
   // In the original code, width and height are offset by one. I don't know why
   // because they are not normalized coordinates.
-  rectangleScratch.x = drawingBufferPosition.x - width / 2
-  rectangleScratch.y =
-    scene.drawingBufferHeight - drawingBufferPosition.y - height / 2
-  rectangleScratch.width = width
+  rectangleScratch.x = position.x - width / 2
+  rectangleScratch.y = scene.drawingBufferHeight - position.y - height / 2
   rectangleScratch.height = height
-  const passState = view.pickFramebuffer.begin(rectangleScratch, view.viewport)
+  rectangleScratch.width = width
+  const intersection = getIntersection(
+    rectangleScratch,
+    view.viewport,
+    rectangleScratch
+  )
+  invariant(intersection != null)
+  const passState = view.pickFramebuffer.begin(intersection, view.viewport)
 
   scene.updateAndExecuteCommands(passState, zeroColor)
   scene.resolveFramebuffers(passState)
