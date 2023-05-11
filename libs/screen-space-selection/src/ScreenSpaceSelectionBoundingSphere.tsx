@@ -11,7 +11,7 @@ export const ScreenSpaceSelectionBoundingSphere: FC = () => {
   const boundingSphere = useAtomValue(boundingSphereAtom)
 
   const options = useMemo(
-    (): EntityProps =>
+    (): EntityProps | undefined =>
       boundingSphere != null
         ? {
             position: boundingSphere.center,
@@ -26,7 +26,7 @@ export const ScreenSpaceSelectionBoundingSphere: FC = () => {
               outlineColor: Color.GREY
             }
           }
-        : {},
+        : undefined,
     [boundingSphere]
   )
 
