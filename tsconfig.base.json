@@ -1,0 +1,41 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "es2017",
+    "module": "esnext",
+    "lib": ["es2017", "dom"],
+    "strict": true,
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@plateau/cesium": ["libs/cesium/src/index.ts"],
+      "@plateau/cesium-hbao": ["libs/cesium-hbao/src/index.ts"],
+      "@plateau/cesium-helpers": ["libs/cesium-helpers/src/index.ts"],
+      "@plateau/cesium-vector-imagery": [
+        "libs/cesium-vector-imagery/src/index.ts"
+      ],
+      "@plateau/data-sources": ["libs/data-sources/src/index.ts"],
+      "@plateau/datasets": ["libs/datasets/src/index.ts"],
+      "@plateau/gsi-geocoder": ["libs/gsi-geocoder/src/index.ts"],
+      "@plateau/nest-cesium": ["libs/nest-cesium/src/index.ts"],
+      "@plateau/nest-vector-tile": ["libs/nest-vector-tile/src/index.ts"],
+      "@plateau/react-helpers": ["libs/react-helpers/src/index.ts"],
+      "@plateau/screen-space-selection": [
+        "libs/screen-space-selection/src/index.ts"
+      ],
+      "@plateau/sketch": ["libs/sketch/src/index.ts"],
+      "@plateau/type-helpers": ["libs/type-helpers/src/index.ts"],
+      "@plateau/ui-components": ["libs/ui-components/src/index.ts"],
+      "@plateau/view": ["libs/view/src/index.ts"]
+    }
+  },
+  "exclude": ["node_modules", "tmp"]
+}

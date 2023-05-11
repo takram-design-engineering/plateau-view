@@ -1,0 +1,72 @@
+{
+  "root": true,
+  "ignorePatterns": ["**/*"],
+  "plugins": ["@nx", "prettier"],
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "rules": {
+        "@nx/enforce-module-boundaries": [
+          "error",
+          {
+            "enforceBuildableLibDependency": true,
+            "allow": [],
+            "depConstraints": [
+              {
+                "sourceTag": "*",
+                "onlyDependOnLibsWithTags": ["*"]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["*.ts", "*.tsx"],
+      "parserOptions": {
+        "project": ["./tsconfig.*?.json"]
+      },
+      "extends": [
+        "plugin:@nx/typescript",
+        "plugin:react-hooks/recommended",
+        "plugin:storybook/recommended",
+        "standard-with-typescript",
+        "prettier"
+      ],
+      "rules": {
+        "react-hooks/exhaustive-deps": [
+          "warn",
+          { "additionalHooks": "use.+Effect" }
+        ],
+
+        // Expressions are required in TypeScript.
+        "react/jsx-no-useless-fragment": ["warn", { "allowExpressions": true }],
+
+        // It's not harmful.
+        "@typescript-eslint/no-empty-interface": "off",
+        "@typescript-eslint/no-empty-function": "off",
+
+        // It's not so harmful to coarse values to strings, especially inside
+        // template strings from which we often construct messages.
+        "@typescript-eslint/restrict-template-expressions": "off",
+
+        // Triple slash reference has a different purpose.
+        "@typescript-eslint/triple-slash-reference": "off"
+
+        // TODO: Add a11y rules.
+      }
+    },
+    {
+      "files": ["*.js", "*.jsx"],
+      "extends": [
+        "plugin:@nx/javascript",
+        "plugin:react-hooks/recommended",
+        "standard",
+        "standard-jsx",
+        "standard-react",
+        "prettier"
+      ],
+      "rules": {}
+    }
+  ]
+}

@@ -1,1 +1,1 @@
-# plateau-view
+# plateau-view-prototype
