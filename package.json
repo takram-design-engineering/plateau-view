@@ -3,12 +3,13 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build": "nx run-many --target build --projects app,api,tiles --configuration production --verbose",
+    "build": "nx run-many --targets build,build-storybook --projects app,api,tiles,ui-components --configuration production --verbose",
     "deploy:api": "gcloud builds submit --project t-plateau --config infrastructure/cloudbuild.yaml --substitutions _TARGET=api,COMMIT_SHA=latest",
     "deploy:app": "gcloud builds submit --project t-plateau --config infrastructure/cloudbuild.yaml --substitutions _TARGET=app,COMMIT_SHA=latest",
     "dev": "nx run-many --target serve --projects app,api,tiles",
     "lint": "nx run-many --target lint",
     "start": "nx run-many --target serve --projects app,api,tiles --configuration production --verbose",
+    "storybook": "nx storybook --target ui-components",
     "terraform": "cd infrastructure/terraform/staging; terraform apply -var-file variables.tfvars",
     "terraform:plan": "cd infrastructure/terraform/staging; terraform plan -var-file variables.tfvars"
   },
