@@ -1,4 +1,5 @@
 export * from './ScreenSpaceSelection'
+export * from './ScreenSpaceSelectionBoundingSphere'
 export * from './ScreenSpaceSelectionContext'
 export * from './ScreenSpaceSelectionEvent'
 export * from './ScreenSpaceSelectionHandler'
