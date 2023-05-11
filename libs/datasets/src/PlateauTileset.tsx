@@ -1,8 +1,10 @@
 import {
   BoundingSphere,
+  Cartographic,
   Cesium3DTileFeature,
   Cesium3DTileStyle,
   Cesium3DTileset,
+  Math as CesiumMath,
   Color,
   CustomShader,
   CustomShaderMode,
@@ -41,6 +43,8 @@ type PrimitiveOptions = {
     ? Cesium3DTileset.ConstructorOptions[K]
     : never
 }
+
+const cartographicScratch = new Cartographic()
 
 interface PlateauTilesetContentProps extends PrimitiveOptions {
   url: string
@@ -134,9 +138,14 @@ const PlateauTilesetContent = withEphemerality(
         if (x == null || y == null || z == null || height == null) {
           return undefined
         }
-        result.center.x = x
-        result.center.y = y
-        result.center.z = z
+        cartographicScratch.longitude = CesiumMath.toRadians(x)
+        cartographicScratch.latitude = CesiumMath.toRadians(y)
+        cartographicScratch.height = z
+        Cartographic.toCartesian(
+          cartographicScratch,
+          scene.globe.ellipsoid,
+          result.center
+        )
         result.radius = height / 2
         return result
       }

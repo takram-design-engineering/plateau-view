@@ -1,6 +1,6 @@
 import { BoundingSphere } from '@cesium/engine'
 import { atom, type SetStateAction } from 'jotai'
-import { difference, intersection, uniq, without } from 'lodash'
+import { difference, intersection, without } from 'lodash'
 import { createContext } from 'react'
 
 import { type ScreenSpaceSelectionHandler } from './ScreenSpaceSelectionHandler'
@@ -83,39 +83,47 @@ export function createContextValue() {
     }
   )
 
-  function handleSelect(objects: readonly object[]): void {
+  function handleSelect(objects: readonly object[]): object[] {
+    const results: object[] = []
     responders.forEach(responder => {
       const filteredObjects = objects.filter(responder.predicate)
       if (filteredObjects.length > 0) {
         responder.onSelect(filteredObjects)
         cacheBoundingSpheres(filteredObjects, responder.computeBoundingSphere)
+        results.push(...filteredObjects)
       }
     })
+    return results
   }
 
-  function handleDeselect(objects: readonly object[]): void {
+  function handleDeselect(objects: readonly object[]): object[] {
+    const results: object[] = []
     responders.forEach(responder => {
       const filteredObjects = objects.filter(responder.predicate)
       if (filteredObjects.length > 0) {
         responder.onDeselect(filteredObjects)
+        results.push(...filteredObjects)
       }
     })
+    return results
   }
 
   const replaceAtom = atom(null, (get, set, objects: readonly object[]) => {
     set(updateSelectionAtom, prevSelection => {
       // Assume that the cost of deriving difference here is smaller than
       // triggering state update.
-      const objectsToRemove = difference(prevSelection, objects)
-      const objectsToAdd = difference(objects, prevSelection)
-      if (objectsToRemove.length > 0) {
-        handleDeselect(objectsToRemove)
+      const maybeObjectsToRemove = difference(prevSelection, objects)
+      const maybeObjectsToAdd = difference(objects, prevSelection)
+      let objectsToRemove: object[] = []
+      let objectsToAdd: object[] = []
+      if (maybeObjectsToRemove.length > 0) {
+        objectsToRemove = handleDeselect(maybeObjectsToRemove)
       }
-      if (objectsToAdd.length > 0) {
-        handleSelect(objectsToAdd)
+      if (maybeObjectsToAdd.length > 0) {
+        objectsToAdd = handleSelect(maybeObjectsToAdd)
       }
       return objectsToRemove.length > 0 || objectsToAdd.length > 0
-        ? uniq(objects)
+        ? [...without(prevSelection, ...objectsToRemove), ...objectsToAdd]
         : prevSelection
     })
   })
@@ -125,11 +133,14 @@ export function createContextValue() {
       if (objects.length === 0) {
         return prevSelection
       }
-      const objectsToAdd = difference(objects, prevSelection)
+      const maybeObjectsToAdd = difference(objects, prevSelection)
+      if (maybeObjectsToAdd.length === 0) {
+        return prevSelection
+      }
+      const objectsToAdd = handleSelect(maybeObjectsToAdd)
       if (objectsToAdd.length === 0) {
         return prevSelection
       }
-      handleSelect(objectsToAdd)
       return [...prevSelection, ...objectsToAdd]
     })
   })
@@ -139,11 +150,14 @@ export function createContextValue() {
       if (objects.length === 0) {
         return prevSelection
       }
-      const objectsToRemove = intersection(prevSelection, objects)
+      const maybeObjectsToRemove = intersection(prevSelection, objects)
+      if (maybeObjectsToRemove.length === 0) {
+        return prevSelection
+      }
+      const objectsToRemove = handleDeselect(maybeObjectsToRemove)
       if (objectsToRemove.length === 0) {
         return prevSelection
       }
-      handleDeselect(objectsToRemove)
       return without(prevSelection, ...objectsToRemove)
     })
   })
