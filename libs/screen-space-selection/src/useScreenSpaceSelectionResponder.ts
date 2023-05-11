@@ -53,11 +53,10 @@ export function useScreenSpaceSelectionResponder<T extends object>(
   useEffect(() => {
     const resignResponder = becomeResponder(responder)
     return () => {
-      resignResponder()
-      // Deselect currently selected objects.
       if (selection.size > 0) {
         remove(Array.from(selection.values()))
       }
+      resignResponder()
     }
   }, [selection, responder, becomeResponder, remove])
 }
