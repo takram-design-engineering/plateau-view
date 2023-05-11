@@ -5,7 +5,7 @@ import { useCallback, useContext, useEffect, useMemo, type FC } from 'react'
 import { useCesium } from '@plateau/cesium'
 import { assignPropertyProps } from '@plateau/react-helpers'
 
-import { Marker } from './Marker'
+import { Marquee } from './Marquee'
 import { ScreenSpaceSelectionContext } from './ScreenSpaceSelectionContext'
 import { type ScreenSpaceSelectionEventHandler } from './ScreenSpaceSelectionEvent'
 import { ScreenSpaceSelectionHandler } from './ScreenSpaceSelectionHandler'
@@ -80,5 +80,5 @@ export const ScreenSpaceSelection: FC<ScreenSpaceSelectionProps> = ({
     return handler?.change.addEventListener(handleEvent)
   }, [handler, handleEvent])
 
-  return <Marker />
+  return <Marquee />
 }

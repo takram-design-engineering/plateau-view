@@ -20,7 +20,7 @@ const Root = styled('div', {
   }
 })
 
-export const Marker: FC = () => {
+export const Marquee: FC = () => {
   const ref = useRef<HTMLDivElement>(null)
 
   const { colorModeAtom, handlerAtom } = useContext(ScreenSpaceSelectionContext)
