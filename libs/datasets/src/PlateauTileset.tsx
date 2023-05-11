@@ -17,7 +17,7 @@ import { type Primitive } from 'type-fest'
 
 import { useAsyncInstance, useCesium } from '@plateau/cesium'
 import { withDeferredProps, withEphemerality } from '@plateau/react-helpers'
-import { useScreenSpaceSelectionDelegate } from '@plateau/screen-space-selection'
+import { useScreenSpaceSelectionResponder } from '@plateau/screen-space-selection'
 
 import { PlateauDatasetsContext } from './PlateauDatasetsContext'
 
@@ -102,7 +102,7 @@ const PlateauTilesetContent = withEphemerality(
       [theme]
     )
 
-    useScreenSpaceSelectionDelegate({
+    useScreenSpaceSelectionResponder({
       predicate: (object): object is Cesium3DTileFeature => {
         return (
           object instanceof Cesium3DTileFeature && object.tileset === tileset
