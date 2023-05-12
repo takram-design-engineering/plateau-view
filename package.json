@@ -47,6 +47,7 @@
     "maplibre-gl": "^2.4.0",
     "mapshaper": "^0.6.29",
     "material-ui-popup-state": "^5.0.8",
+    "minimatch": "^9.0.0",
     "minimist": "^1.2.8",
     "mkdirp": "^3.0.1",
     "nanoid": "^4.0.2",

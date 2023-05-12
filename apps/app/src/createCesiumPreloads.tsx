@@ -1,5 +1,5 @@
 import { readdir } from 'fs/promises'
-import minimatch from 'minimatch'
+import { minimatch } from 'minimatch'
 import { createRequire } from 'node:module'
 import path from 'path'
 
