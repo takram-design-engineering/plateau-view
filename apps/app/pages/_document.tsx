@@ -11,6 +11,7 @@ import NextDocument, {
 } from 'next/document'
 import React, { type ComponentProps, type ComponentType } from 'react'
 
+import { createCesiumPreloads } from '../src/createCesiumPreloads'
 import { createEmotionCache } from '../src/createEmotionCache'
 import { type AppProps } from './_app'
 
@@ -59,6 +60,7 @@ class Document extends NextDocument<DocumentProps> {
     ))
     return {
       ...initialProps,
+      head: [...(initialProps.head ?? []), ...(await createCesiumPreloads())],
       styles: [
         ...React.Children.toArray(initialProps.styles),
         ...emotionStyleTags

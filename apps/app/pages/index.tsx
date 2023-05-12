@@ -9,8 +9,6 @@ import UAParser from 'ua-parser-js'
 import { LoadingScreen, type Platform } from '@plateau/ui-components'
 import { PlateauView, platformAtom, readyAtom } from '@plateau/view'
 
-import { PreloadCesium } from '../src/PreloadCesium'
-
 const Loading: FC = () => {
   const ready = useAtomValue(readyAtom)
   return <AnimatePresence>{!ready && <LoadingScreen />}</AnimatePresence>
@@ -26,7 +24,12 @@ const Page: NextPage<PageProps> = ({ platform }) => {
     <>
       <Head>
         <title>PLATEAU VIEW 3.0 Design & Technology Preview</title>
-        <PreloadCesium />
+        <link
+          rel='preload'
+          as='fetch'
+          crossOrigin='anonymous'
+          href={`https://api.cesium.com/v1/assets/770371/endpoint?access_token=${process.env.NEXT_PUBLIC_PLATEAU_TERRAIN_ACCESS_TOKEN}`}
+        />
       </Head>
       <Suspense>
         <PlateauView />
