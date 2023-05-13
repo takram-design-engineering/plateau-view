@@ -20,6 +20,7 @@
     "@emotion/react": "^11.10.6",
     "@emotion/server": "^11.10.0",
     "@emotion/styled": "^11.10.6",
+    "@google-cloud/firestore": "^6.5.0",
     "@google-cloud/storage": "^6.10.1",
     "@mapbox/point-geometry": "^0.1.0",
     "@maplibre/maplibre-gl-native": "^5.2.0",
