@@ -15,14 +15,13 @@ export class PlateauDataset {
   static fromFirestore(
     snapshot: QueryDocumentSnapshot<PlateauCatalog0>
   ): PlateauDataset {
-    const data = snapshot.data()
-    return plainToInstance(PlateauDataset, { data })
+    return plainToInstance(PlateauDataset, {
+      data: snapshot.data()
+    })
   }
 
-  static toFirestore(model: PlateauDataset): DocumentData {
-    return instanceToPlain(model.data, {
-      exposeUnsetFields: false
-    })
+  static toFirestore(data: PlateauCatalog0): DocumentData {
+    return instanceToPlain(data)
   }
 
   @Field(() => ID)

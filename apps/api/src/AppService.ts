@@ -1,13 +1,13 @@
 import { Injectable, Logger, type OnApplicationBootstrap } from '@nestjs/common'
 
-import { PlateauDatasetsService } from './plateau/PlateauDatasetsService'
+import { PlateauCatalogService } from './plateau/PlateauCatalogService'
 
 @Injectable()
 export class AppService implements OnApplicationBootstrap {
   private readonly logger = new Logger(AppService.name)
 
   constructor(
-    private readonly plateauDatasetsService: PlateauDatasetsService
+    private readonly plateauDatasetsService: PlateauCatalogService
   ) {}
 
   async onApplicationBootstrap(): Promise<void> {
