@@ -1,3 +1,4 @@
+import { ApolloProvider } from '@apollo/client'
 import { CacheProvider, type EmotionCache } from '@emotion/react'
 import { ThemeProvider } from '@mui/material/styles'
 import { type AppType } from 'next/app'
@@ -6,9 +7,11 @@ import { type ComponentProps, type ComponentType } from 'react'
 
 import { CssBaseline, lightTheme } from '@plateau/ui-components'
 
+import { createApolloClient } from '../src/createApolloClient'
 import { createEmotionCache } from '../src/createEmotionCache'
 
 const clientSideEmotionCache = createEmotionCache()
+const apolloClient = createApolloClient()
 
 if (typeof window !== 'undefined') {
   window.CESIUM_BASE_URL = process.env.NEXT_PUBLIC_CESIUM_BASE_URL
@@ -30,7 +33,9 @@ const App: ComponentType<ComponentProps<AppType> & AppProps> = ({
       </Head>
       <ThemeProvider theme={lightTheme}>
         <CssBaseline />
-        <Component {...pageProps} />
+        <ApolloProvider client={apolloClient}>
+          <Component {...pageProps} />
+        </ApolloProvider>
       </ThemeProvider>
     </CacheProvider>
   )
