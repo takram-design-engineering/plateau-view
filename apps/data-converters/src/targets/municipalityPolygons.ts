@@ -89,6 +89,6 @@ export async function main(): Promise<void> {
       path.resolve('./data/estat', `${source}.topojson`),
       geojson
     )
-    console.log(`Processed ${source}.`)
+    console.log('Done')
   }
 }
