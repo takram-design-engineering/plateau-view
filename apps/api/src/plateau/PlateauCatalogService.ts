@@ -17,8 +17,9 @@ import { type PlateauDataset } from './dto/PlateauDataset'
 import { PlateauMunicipality } from './dto/PlateauMunicipality'
 import { PlateauUnknownDataset } from './dto/PlateauUnknownDataset'
 import { getMunicipalitiesInCatalog } from './helpers/getMunicipalitiesInCatalog'
+import { type PlateauCatalog0 } from './schemas/catalog'
 
-function createDataset(catalog: PlateauCatalog): PlateauDataset {
+function createDataset(catalog: PlateauCatalog0): PlateauDataset {
   switch (catalog.type) {
     case 'フォルダ':
       return new PlateauUnknownDataset(catalog)
@@ -79,7 +80,7 @@ export class PlateauCatalogService {
     @Inject(FIRESTORE)
     private readonly firestore: Firestore,
     @Inject(PlateauCatalog)
-    private readonly catalogCollection: CollectionReference<PlateauCatalog>,
+    private readonly catalogCollection: CollectionReference<PlateauCatalog0>,
     @Inject(PlateauMunicipality)
     private readonly municipalityCollection: CollectionReference<PlateauMunicipality>
   ) {}
@@ -107,7 +108,7 @@ export class PlateauCatalogService {
         // Firestore currently doesn't support query for null value.
         ...citySnapshot.docs
           .map(doc => doc.data())
-          .filter(data => data.ward_code == null),
+          .filter(data => !('ward_code' in data) || data.ward_code == null),
         ...wardSnapshot.docs.map(doc => doc.data())
       ],
       'id'
@@ -116,7 +117,7 @@ export class PlateauCatalogService {
 
   async syncWithRemote(): Promise<void> {
     this.logger.log('Started syncing with remote...')
-    const { data } = await axios<PlateauCatalog[]>(
+    const { data } = await axios<PlateauCatalog0[]>(
       'https://api.plateau.reearth.io/datacatalog/plateau-2022',
       { responseType: 'json' }
     )

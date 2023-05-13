@@ -8,8 +8,6 @@ import { Collection } from '@plateau/nest-firestore'
 
 import { type PlateauCatalog0 } from '../schemas/catalog'
 
-export interface PlateauCatalog extends PlateauCatalog0 {}
-
 @Collection('plateau/catalog')
 export class PlateauCatalog {
   static fromFirestore(

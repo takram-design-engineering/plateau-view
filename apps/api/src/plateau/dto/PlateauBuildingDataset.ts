@@ -1,6 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { groupBy } from 'lodash'
 
+import { type PlateauCatalog0 } from '../schemas/catalog'
 import { PlateauDataset } from './PlateauDataset'
 
 @ObjectType()
@@ -18,7 +19,9 @@ class PlateauBuildingDatasetVariant {
 @ObjectType({
   implements: [PlateauDataset]
 })
-export class PlateauBuildingDataset extends PlateauDataset {
+export class PlateauBuildingDataset extends PlateauDataset<
+  PlateauCatalog0 & { type: '建築物モデル' }
+> {
   @Field(() => [PlateauBuildingDatasetVariant])
   get variants(): PlateauBuildingDatasetVariant[] {
     if (this.catalog.config == null) {
