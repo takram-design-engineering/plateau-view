@@ -6,6 +6,7 @@ interface PlateauArea {
   code: String!
   id: ID!
   name: String!
+  parents: [PlateauArea!]!
   type: PlateauAreaType!
 }
 
@@ -23,7 +24,7 @@ type PlateauMunicipality implements PlateauArea {
   code: String!
   id: ID!
   name: String!
-  parent: PlateauArea!
+  parents: [PlateauArea!]!
   prefecture: PlateauPrefecture!
   type: PlateauAreaType!
 }
@@ -32,6 +33,7 @@ type PlateauPrefecture implements PlateauArea {
   code: String!
   id: ID!
   name: String!
+  parents: [PlateauArea!]!
   type: PlateauAreaType!
 }
 

@@ -37,6 +37,5 @@ export class PlateauMunicipality extends PlateauArea {
   @Field()
   name!: string
 
-  parentCode!: string
-  prefectureCode!: string
+  parents!: InstanceType<typeof PlateauArea>['parents']
 }

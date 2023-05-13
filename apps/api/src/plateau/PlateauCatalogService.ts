@@ -10,6 +10,7 @@ import { isEqual, omit } from 'lodash'
 import invariant from 'tiny-invariant'
 
 import { FIRESTORE } from '@plateau/nest-firestore'
+import { isNotNullish } from '@plateau/type-helpers'
 
 import schema from '../assets/plateau-2022.jtd.json'
 import { PlateauDataset } from './dto/PlateauDataset'
@@ -22,22 +23,31 @@ function reduceMunicipalities(data: PlateauCatalog): PlateauMunicipality[] {
     if (entry.pref_code == null) {
       return
     }
-    const [code, name, parentCode] =
+    const [code, name] =
       entry.ward_code != null
-        ? [entry.ward_code, entry.ward, entry.city_code ?? entry.pref_code]
-        : [entry.city_code, entry.city, entry.pref_code]
+        ? [entry.ward_code, entry.ward]
+        : [entry.city_code, entry.city]
     if (code == null) {
       return
     }
     invariant(name != null, 'Missing name')
-    invariant(parentCode != null, 'Missing parentCode')
 
     const data: PlateauMunicipality = {
       type: 'municipality',
       code,
       name,
-      parentCode,
-      prefectureCode: entry.pref_code
+      parents: [
+        entry.city_code !== code && entry.city_code != null
+          ? ({
+              type: 'municipality',
+              code: entry.city_code
+            } as const)
+          : undefined,
+        {
+          type: 'prefecture',
+          code: entry.pref_code
+        } as const
+      ].filter(isNotNullish)
     }
     if (!municipalities.has(data.code)) {
       municipalities.set(data.code, data)
@@ -51,18 +61,24 @@ function reduceMunicipalities(data: PlateauCatalog): PlateauMunicipality[] {
       return
     }
     if (
-      prevData.parentCode !== data.parentCode &&
-      isEqual(omit(prevData, 'parentCode'), omit(data, 'parentCode'))
+      !isEqual(prevData.parents, data.parents) &&
+      isEqual(omit(prevData, 'parents'), omit(data, 'parents'))
     ) {
       // Some entries inconsistently doesn't seem to have city codes. Take more
       // specific one for our parent code.
-      if (
-        data.parentCode.length > prevData.parentCode.length ||
-        +data.parentCode > +prevData.parentCode
-      ) {
+      if (data.parents.length > prevData.parents.length) {
         municipalities.set(prevData.code, {
           ...prevData,
-          parentCode: data.parentCode
+          parents: data.parents
+        })
+      } else if (data.parents.length === prevData.parents.length) {
+        municipalities.set(prevData.code, {
+          ...prevData,
+          parents: data.parents.map((parent, index) => {
+            const prevParent = prevData.parents[index]
+            invariant(parent.type === prevParent.type)
+            return +parent.code > +prevParent.code ? parent : prevParent
+          })
         })
       }
     } else {

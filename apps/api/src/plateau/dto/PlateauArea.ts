@@ -13,5 +13,9 @@ export abstract class PlateauArea {
   @Field()
   abstract name: string
 
-  abstract parentCode: string | null
+  // In Descending order. The root area comes last.
+  abstract parents: Array<{
+    type: PlateauAreaType
+    code: string
+  }>
 }
