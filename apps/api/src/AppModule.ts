@@ -2,6 +2,7 @@ import { ApolloDriver, type ApolloDriverConfig } from '@nestjs/apollo'
 import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
 import { ServeStaticModule } from '@nestjs/serve-static'
+import * as envalid from 'envalid'
 import path from 'path'
 
 import { FirestoreModule } from '@plateau/nest-firestore'
@@ -9,6 +10,10 @@ import { FirestoreModule } from '@plateau/nest-firestore'
 import { AppController } from './AppController'
 import { AppService } from './AppService'
 import { PlateauModule } from './plateau/PlateauModule'
+
+const env = envalid.cleanEnv(process.env, {
+  DATA_ROOT: envalid.str()
+})
 
 @Module({
   imports: [
@@ -23,7 +28,9 @@ import { PlateauModule } from './plateau/PlateauModule'
     FirestoreModule.forRoot({
       rootPath: 'api'
     }),
-    PlateauModule,
+    PlateauModule.forRoot({
+      dataRoot: env.DATA_ROOT
+    }),
 
     // Serve static files for development; these routes are behind our path
     // matcher in production.
