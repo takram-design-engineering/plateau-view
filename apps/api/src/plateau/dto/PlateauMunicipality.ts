@@ -8,10 +8,14 @@ import { instanceToPlain, plainToInstance } from 'class-transformer'
 import { Collection } from '@plateau/nest-firestore'
 
 import { validateSyncOrThrow } from '../../helpers/validateSyncOrThrow'
+import { PlateauArea } from './PlateauArea'
+import { PlateauAreaType, PlateauAreaTypeEnum } from './PlateauAreaType'
 
 @Collection('plateau/municipalities')
-@ObjectType()
-export class PlateauMunicipality {
+@ObjectType({
+  implements: [PlateauArea]
+})
+export class PlateauMunicipality extends PlateauArea {
   static fromFirestore(
     snapshot: QueryDocumentSnapshot<PlateauMunicipality>
   ): PlateauMunicipality {
@@ -23,6 +27,9 @@ export class PlateauMunicipality {
   static toFirestore(model: PlateauMunicipality): DocumentData {
     return instanceToPlain(model)
   }
+
+  @Field(() => PlateauAreaTypeEnum)
+  type: PlateauAreaType = 'municipality'
 
   @Field()
   code!: string

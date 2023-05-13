@@ -2,11 +2,40 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+interface PlateauArea {
+  code: String!
+  id: ID!
+  name: String!
+  type: PlateauAreaType!
+}
+
+enum PlateauAreaType {
+  Municipality
+  Prefecture
+}
+
 type PlateauDataset {
   id: ID!
   name: String!
 }
 
+type PlateauMunicipality implements PlateauArea {
+  code: String!
+  id: ID!
+  name: String!
+  parent: PlateauArea!
+  prefecture: PlateauPrefecture!
+  type: PlateauAreaType!
+}
+
+type PlateauPrefecture implements PlateauArea {
+  code: String!
+  id: ID!
+  name: String!
+  type: PlateauAreaType!
+}
+
 type Query {
   datasets: [PlateauDataset!]!
+  municipalities: [PlateauMunicipality!]!
 }

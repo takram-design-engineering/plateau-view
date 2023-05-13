@@ -33,6 +33,7 @@ function reduceMunicipalities(data: PlateauCatalog): PlateauMunicipality[] {
     invariant(parentCode != null, 'Missing parentCode')
 
     const data: PlateauMunicipality = {
+      type: 'municipality',
       code,
       name,
       parentCode,
@@ -83,13 +84,13 @@ export class PlateauCatalogService {
     @Inject(FIRESTORE)
     private readonly firestore: Firestore,
     @Inject(PlateauDataset)
-    private readonly datasets: CollectionReference<PlateauDataset>,
+    private readonly datasetCollection: CollectionReference<PlateauDataset>,
     @Inject(PlateauMunicipality)
-    private readonly municipalities: CollectionReference<PlateauMunicipality>
+    private readonly municipalityCollection: CollectionReference<PlateauMunicipality>
   ) {}
 
   async findAll(): Promise<PlateauDataset[]> {
-    const snapshot = await this.datasets.get()
+    const snapshot = await this.datasetCollection.get()
     return snapshot.docs.map(doc => doc.data())
   }
 
@@ -118,7 +119,7 @@ export class PlateauCatalogService {
     this.logger.log('Updating datasets...')
     writer = this.firestore.bulkWriter()
     data.forEach(entry => {
-      const ref = this.datasets.doc(entry.id)
+      const ref = this.datasetCollection.doc(entry.id)
       void writer.set(ref, entry)
     })
     await writer.close()
@@ -129,7 +130,7 @@ export class PlateauCatalogService {
     const municipalities = reduceMunicipalities(data)
     writer = this.firestore.bulkWriter()
     for (const municipality of municipalities.values()) {
-      const ref = this.municipalities.doc(municipality.code)
+      const ref = this.municipalityCollection.doc(municipality.code)
       void writer.set(ref, municipality)
     }
     await writer.close()

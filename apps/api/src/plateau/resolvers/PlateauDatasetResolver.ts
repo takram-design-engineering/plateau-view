@@ -6,7 +6,7 @@ import { PlateauDataset } from '../dto/PlateauDataset'
 
 @Injectable()
 @Resolver()
-export class PlateauDatasetsResolver {
+export class PlateauDatasetResolver {
   constructor(private readonly service: PlateauCatalogService) {}
 
   @Query(() => [PlateauDataset])
