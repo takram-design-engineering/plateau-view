@@ -3,11 +3,11 @@ import invariant from 'tiny-invariant'
 
 import { isNotNullish } from '@plateau/type-helpers'
 
+import { type PlateauCatalogData } from '../dto/PlateauCatalog'
 import { type PlateauMunicipality } from '../dto/PlateauMunicipality'
-import { type PlateauCatalog0 } from '../schemas/catalog'
 
 export function getMunicipalitiesInCatalog(
-  data: readonly PlateauCatalog0[]
+  data: readonly PlateauCatalogData[]
 ): PlateauMunicipality[] {
   const municipalities = new Map<string, PlateauMunicipality>()
   data.forEach(entry => {

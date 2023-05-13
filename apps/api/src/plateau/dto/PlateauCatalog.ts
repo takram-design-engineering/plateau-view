@@ -8,15 +8,23 @@ import { Collection } from '@plateau/nest-firestore'
 
 import { type PlateauCatalog0 } from '../schemas/catalog'
 
+export type PlateauCatalogType = PlateauCatalog0['type']
+
+export type PlateauCatalogData<
+  T extends PlateauCatalogType = PlateauCatalogType
+> = PlateauCatalog0 & { type: T }
+
 @Collection('plateau/catalog')
-export class PlateauCatalog {
+export class PlateauCatalog<T extends PlateauCatalogType = PlateauCatalogType> {
   static fromFirestore(
-    snapshot: QueryDocumentSnapshot<PlateauCatalog0>
+    snapshot: QueryDocumentSnapshot<PlateauCatalog>
   ): PlateauCatalog {
     return plainToInstance(PlateauCatalog, snapshot.data())
   }
 
-  static toFirestore(data: PlateauCatalog0): DocumentData {
-    return instanceToPlain(data)
+  static toFirestore(model: PlateauCatalog): DocumentData {
+    return instanceToPlain(model)
   }
+
+  data!: PlateauCatalogData<`${T}`>
 }

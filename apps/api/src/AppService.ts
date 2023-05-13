@@ -13,8 +13,8 @@ export class AppService implements OnApplicationBootstrap {
   async onApplicationBootstrap(): Promise<void> {
     // Don't wait this for complete.
     // TODO: Don't sync in every bootstrap.
-    // this.plateauDatasetsService.syncWithRemote().catch(error => {
-    //   this.logger.error(`Error during syncWithRemote: ${error.message}`)
-    // })
+    this.plateauDatasetsService.syncWithRemote().catch(error => {
+      this.logger.error(`Error during syncWithRemote: ${error.message}`)
+    })
   }
 }

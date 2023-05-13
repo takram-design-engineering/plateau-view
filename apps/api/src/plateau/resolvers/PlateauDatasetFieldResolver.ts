@@ -8,6 +8,6 @@ import { PlateauDataset } from '../dto/PlateauDataset'
 export class PlateauDatasetFieldResolver {
   @ResolveField()
   type(@Parent() dataset: PlateauDataset): string {
-    return dataset.catalog.type
+    return dataset.catalog.data.type
   }
 }
