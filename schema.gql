@@ -2,11 +2,11 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type PlateauCatalogDataset {
+type PlateauDataset {
   id: ID!
   name: String!
 }
 
 type Query {
-  datasets: [PlateauCatalogDataset!]!
+  datasets: [PlateauDataset!]!
 }

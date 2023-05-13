@@ -6,19 +6,24 @@ import { validate, type Schema } from 'jtd'
 import { FIRESTORE } from '@plateau/nest-firestore'
 
 import schema from '../assets/plateau-2022.jtd.json'
-import { PlateauCatalogDataset } from './dto/PlateauCatalogDataset'
+import { PlateauDataset } from './dto/PlateauDataset'
 import { type PlateauCatalog } from './schemas/catalog'
 
 @Injectable()
-export class PlateauCatalogService {
-  private readonly logger = new Logger(PlateauCatalogService.name)
+export class PlateauDatasetsService {
+  private readonly logger = new Logger(PlateauDatasetsService.name)
 
   constructor(
     @Inject(FIRESTORE)
     private readonly firestore: Firestore,
-    @Inject(PlateauCatalogDataset)
-    private readonly datasetCollection: CollectionReference<PlateauCatalogDataset>
+    @Inject(PlateauDataset)
+    private readonly datasetCollection: CollectionReference<PlateauDataset>
   ) {}
+
+  async findAll(): Promise<PlateauDataset[]> {
+    const snapshot = await this.datasetCollection.get()
+    return snapshot.docs.map(doc => doc.data())
+  }
 
   async syncWithRemote(): Promise<void> {
     this.logger.log('Started syncing with remote...')
@@ -45,10 +50,5 @@ export class PlateauCatalogService {
     })
     await writer.close()
     this.logger.log('Finished uploading catalog')
-  }
-
-  async findAll(): Promise<PlateauCatalogDataset[]> {
-    const snapshot = await this.datasetCollection.get()
-    return snapshot.docs.map(doc => doc.data())
   }
 }

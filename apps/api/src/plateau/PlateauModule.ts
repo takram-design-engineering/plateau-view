@@ -2,14 +2,14 @@ import { Global, Module } from '@nestjs/common'
 
 import { FirestoreModule } from '@plateau/nest-firestore'
 
-import { PlateauCatalogService } from './PlateauCatalogService'
-import { PlateauDatasetsResolver } from './PlateauDatasetsResolver'
-import { PlateauCatalogDataset } from './dto/PlateauCatalogDataset'
+import { PlateauDatasetsService } from './PlateauDatasetsService'
+import { PlateauDatasetsResolver } from './resolvers/PlateauDatasetsResolver'
+import { PlateauDataset } from './dto/PlateauDataset'
 
 @Global()
 @Module({
-  imports: [FirestoreModule.forFeatures([PlateauCatalogDataset])],
-  providers: [PlateauCatalogService, PlateauDatasetsResolver],
-  exports: [PlateauCatalogService]
+  imports: [FirestoreModule.forFeatures([PlateauDataset])],
+  providers: [PlateauDatasetsService, PlateauDatasetsResolver],
+  exports: [PlateauDatasetsService]
 })
 export class PlateauModule {}

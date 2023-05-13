@@ -11,15 +11,15 @@ import { type PlateauCatalog0 } from '../schemas/catalog'
 
 @Collection('plateau/datasets')
 @ObjectType()
-export class PlateauCatalogDataset {
+export class PlateauDataset {
   static fromFirestore(
     snapshot: QueryDocumentSnapshot<PlateauCatalog0>
-  ): PlateauCatalogDataset {
+  ): PlateauDataset {
     const data = snapshot.data()
-    return plainToInstance(PlateauCatalogDataset, { data })
+    return plainToInstance(PlateauDataset, { data })
   }
 
-  static toFirestore(model: PlateauCatalogDataset): DocumentData {
+  static toFirestore(model: PlateauDataset): DocumentData {
     return instanceToPlain(model.data, {
       exposeUnsetFields: false
     })
