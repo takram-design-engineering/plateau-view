@@ -4,21 +4,23 @@ import { FirestoreModule } from '@plateau/nest-firestore'
 
 import { PlateauCatalogService } from './PlateauCatalogService'
 import { PlateauMunicipalityService } from './PlateauMunicipalityService'
-import { PlateauDataset } from './dto/PlateauDataset'
+import { PlateauCatalog } from './dto/PlateauCatalog'
 import { PlateauMunicipality } from './dto/PlateauMunicipality'
 import { PlateauAreaFieldResolver } from './resolvers/PlateauAreaFieldResolver'
+import { PlateauDatasetFieldResolver } from './resolvers/PlateauDatasetFieldResolver'
 import { PlateauDatasetResolver } from './resolvers/PlateauDatasetResolver'
 import { PlateauMunicipalityFieldResolver } from './resolvers/PlateauMunicipalityFieldResolver'
 import { PlateauMunicipalityResolver } from './resolvers/PlateauMunicipalityResolver'
 
 @Global()
 @Module({
-  imports: [FirestoreModule.forFeatures([PlateauDataset, PlateauMunicipality])],
+  imports: [FirestoreModule.forFeatures([PlateauCatalog, PlateauMunicipality])],
   providers: [
     PlateauCatalogService,
     PlateauMunicipalityService,
-    PlateauDatasetResolver,
     PlateauAreaFieldResolver,
+    PlateauDatasetResolver,
+    PlateauDatasetFieldResolver,
     PlateauMunicipalityResolver,
     PlateauMunicipalityFieldResolver
   ],

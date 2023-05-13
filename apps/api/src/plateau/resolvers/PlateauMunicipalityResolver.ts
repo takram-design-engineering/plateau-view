@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { Query, Resolver } from '@nestjs/graphql'
+import { Args, Query, Resolver } from '@nestjs/graphql'
 
 import { PlateauMunicipalityService } from '../PlateauMunicipalityService'
 import { PlateauMunicipality } from '../dto/PlateauMunicipality'
@@ -14,5 +14,12 @@ export class PlateauMunicipalityResolver {
   @Query(() => [PlateauMunicipality])
   async municipalities(): Promise<PlateauMunicipality[]> {
     return await this.municipalityService.findAll()
+  }
+
+  @Query(() => PlateauMunicipality, { nullable: true })
+  async municipality(
+    @Args('code') code: string
+  ): Promise<PlateauMunicipality | undefined> {
+    return await this.municipalityService.findOne({ code })
   }
 }

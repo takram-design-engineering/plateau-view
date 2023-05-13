@@ -15,13 +15,26 @@ enum PlateauAreaType {
   Prefecture
 }
 
-type PlateauDataset {
-  id: ID!
-  name: String!
+type PlateauBuildingDataset implements PlateauDataset {
+  id: String!
+  type: String!
+  variants: [PlateauBuildingDatasetVariant!]!
+}
+
+type PlateauBuildingDatasetVariant {
+  lod: Float!
+  textured: Boolean!
+  url: String!
+}
+
+interface PlateauDataset {
+  id: String!
+  type: String!
 }
 
 type PlateauMunicipality implements PlateauArea {
   code: String!
+  datasets: [PlateauDataset!]!
   id: ID!
   name: String!
   parents: [PlateauArea!]!
@@ -37,7 +50,13 @@ type PlateauPrefecture implements PlateauArea {
   type: PlateauAreaType!
 }
 
+type PlateauUnknownDataset implements PlateauDataset {
+  id: String!
+  type: String!
+}
+
 type Query {
   datasets: [PlateauDataset!]!
   municipalities: [PlateauMunicipality!]!
+  municipality(code: String!): PlateauMunicipality
 }
