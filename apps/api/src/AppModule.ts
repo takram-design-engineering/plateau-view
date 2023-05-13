@@ -1,4 +1,6 @@
-import { Logger, Module } from '@nestjs/common'
+import { ApolloDriver, type ApolloDriverConfig } from '@nestjs/apollo'
+import { Module } from '@nestjs/common'
+import { GraphQLModule } from '@nestjs/graphql'
 import { ServeStaticModule } from '@nestjs/serve-static'
 import path from 'path'
 
@@ -10,6 +12,14 @@ import { PlateauModule } from './plateau/PlateauModule'
 
 @Module({
   imports: [
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      cache: 'bounded',
+      path: 'graphql',
+      useGlobalPrefix: true,
+      driver: ApolloDriver,
+      autoSchemaFile: 'schema.gql',
+      sortSchema: true
+    }),
     FirestoreModule.forRoot({
       rootPath: 'api'
     }),

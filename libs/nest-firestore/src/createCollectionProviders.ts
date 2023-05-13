@@ -7,7 +7,7 @@ import { Reflector } from '@nestjs/core'
 import path from 'path'
 
 import {
-  FIRESTORE_COLLECTION,
+  FIRESTORE,
   FIRESTORE_COLLECTION_METADATA,
   FIRESTORE_MODULE_OPTIONS
 } from './constants'
@@ -43,6 +43,6 @@ export function createCollectionProviders(
       )
       return hasConverter(collection) ? ref.withConverter(collection) : ref
     },
-    inject: [Reflector, FIRESTORE_COLLECTION, FIRESTORE_MODULE_OPTIONS]
+    inject: [Reflector, FIRESTORE, FIRESTORE_MODULE_OPTIONS]
   }))
 }

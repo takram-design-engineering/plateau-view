@@ -1,0 +1,12 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type PlateauCatalogDataset {
+  id: ID!
+  name: String!
+}
+
+type Query {
+  datasets: [PlateauCatalogDataset!]!
+}

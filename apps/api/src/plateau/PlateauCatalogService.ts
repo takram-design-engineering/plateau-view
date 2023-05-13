@@ -1,4 +1,4 @@
-import { Firestore } from '@google-cloud/firestore'
+import { CollectionReference, Firestore } from '@google-cloud/firestore'
 import { Inject, Injectable, Logger } from '@nestjs/common'
 import axios from 'axios'
 import { validate, type Schema } from 'jtd'
@@ -6,6 +6,7 @@ import { validate, type Schema } from 'jtd'
 import { FIRESTORE } from '@plateau/nest-firestore'
 
 import schema from '../assets/plateau-2022.jtd.json'
+import { PlateauCatalogDataset } from './dto/PlateauCatalogDataset'
 import { type PlateauCatalog } from './schemas/catalog'
 
 @Injectable()
@@ -14,7 +15,9 @@ export class PlateauCatalogService {
 
   constructor(
     @Inject(FIRESTORE)
-    private readonly firestore: Firestore
+    private readonly firestore: Firestore,
+    @Inject(PlateauCatalogDataset)
+    private readonly datasetCollection: CollectionReference<PlateauCatalogDataset>
   ) {}
 
   async syncWithRemote(): Promise<void> {
@@ -42,5 +45,10 @@ export class PlateauCatalogService {
     })
     await writer.close()
     this.logger.log('Finished uploading catalog')
+  }
+
+  async findAll(): Promise<PlateauCatalogDataset[]> {
+    const snapshot = await this.datasetCollection.get()
+    return snapshot.docs.map(doc => doc.data())
   }
 }
