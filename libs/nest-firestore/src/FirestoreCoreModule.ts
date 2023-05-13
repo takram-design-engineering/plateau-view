@@ -19,8 +19,9 @@ import {
     {
       provide: FIRESTORE,
       useFactory: (options: Settings) => new Firestore(options),
-      inject: [FIRESTORE_MODULE_OPTIONS, FIRESTORE]
+      inject: [FIRESTORE_MODULE_OPTIONS]
     }
-  ]
+  ],
+  exports: [FIRESTORE_MODULE_OPTIONS, FIRESTORE]
 })
 export class FirestoreCoreModule extends ConfigurableModuleClass {}
