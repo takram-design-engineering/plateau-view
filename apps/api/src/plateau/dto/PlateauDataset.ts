@@ -1,5 +1,7 @@
 import { Field, InterfaceType } from '@nestjs/graphql'
 
+import { type PlateauStorageService } from '../PlateauStorageService'
+import { type PlateauDatasetVersion } from '../interfaces/PlateauDatasetFiles'
 import { type PlateauCatalog } from './PlateauCatalog'
 
 export const enum PlateauDatasetType {
@@ -30,7 +32,19 @@ export const enum PlateauDatasetType {
 export abstract class PlateauDataset<
   T extends PlateauDatasetType = PlateauDatasetType
 > {
-  constructor(readonly catalog: PlateauCatalog<`${T}`>) {}
+  readonly catalog: PlateauCatalog<`${T}`>
+  readonly version: PlateauDatasetVersion | undefined
+  readonly storageService: PlateauStorageService
+
+  constructor(params: {
+    catalog: PlateauCatalog<`${T}`>
+    version?: PlateauDatasetVersion
+    storageService: PlateauStorageService
+  }) {
+    this.catalog = params.catalog
+    this.version = params.version
+    this.storageService = params.storageService
+  }
 
   @Field()
   get id(): string {

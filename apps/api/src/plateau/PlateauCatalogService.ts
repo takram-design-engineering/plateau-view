@@ -3,7 +3,7 @@ import {
   Firestore,
   type BulkWriter
 } from '@google-cloud/firestore'
-import { Inject, Injectable, Logger } from '@nestjs/common'
+import { Inject, Injectable, Logger, type Type } from '@nestjs/common'
 import axios from 'axios'
 import { validate, type Schema } from 'jtd'
 
@@ -11,11 +11,38 @@ import { FIRESTORE } from '@plateau/nest-firestore'
 import { isNotNullish } from '@plateau/type-helpers'
 
 import schema from '../assets/plateau-2022.jtd.json'
+import { PlateauStorageService } from './PlateauStorageService'
+import { PlateauBuildingDataset } from './dto/PlateauBuildingDataset'
 import { PlateauCatalog, type PlateauCatalogData } from './dto/PlateauCatalog'
-import { type PlateauDataset } from './dto/PlateauDataset'
+import { PlateauDatasetType, type PlateauDataset } from './dto/PlateauDataset'
 import { PlateauMunicipality } from './dto/PlateauMunicipality'
-import { createDataset } from './helpers/createDataset'
+import { PlateauUnknownDataset } from './dto/PlateauUnknownDataset'
 import { getMunicipalitiesInCatalog } from './helpers/getMunicipalitiesInCatalog'
+import { type PlateauDatasetVersion } from './interfaces/PlateauDatasetFiles'
+
+const datasetClasses: Record<string, Type | undefined> = {
+  [PlateauDatasetType.Border]: PlateauUnknownDataset,
+  [PlateauDatasetType.Bridge]: PlateauUnknownDataset,
+  [PlateauDatasetType.Building]: PlateauBuildingDataset,
+  [PlateauDatasetType.EmergencyRoute]: PlateauUnknownDataset,
+  [PlateauDatasetType.Facility]: PlateauUnknownDataset,
+  [PlateauDatasetType.Flood]: PlateauUnknownDataset,
+  [PlateauDatasetType.Furniture]: PlateauUnknownDataset,
+  [PlateauDatasetType.Generic]: PlateauUnknownDataset,
+  [PlateauDatasetType.Hightide]: PlateauUnknownDataset,
+  [PlateauDatasetType.InlandFlood]: PlateauUnknownDataset,
+  [PlateauDatasetType.Landmark]: PlateauUnknownDataset,
+  [PlateauDatasetType.Landslide]: PlateauUnknownDataset,
+  [PlateauDatasetType.Landuse]: PlateauUnknownDataset,
+  [PlateauDatasetType.Park]: PlateauUnknownDataset,
+  [PlateauDatasetType.Railway]: PlateauUnknownDataset,
+  [PlateauDatasetType.Road]: PlateauUnknownDataset,
+  [PlateauDatasetType.Shelter]: PlateauUnknownDataset,
+  [PlateauDatasetType.Station]: PlateauUnknownDataset,
+  [PlateauDatasetType.Tsunami]: PlateauUnknownDataset,
+  [PlateauDatasetType.UseCase]: PlateauUnknownDataset,
+  [PlateauDatasetType.Vegetation]: PlateauUnknownDataset
+}
 
 @Injectable()
 export class PlateauCatalogService {
@@ -27,19 +54,43 @@ export class PlateauCatalogService {
     @Inject(PlateauCatalog)
     private readonly catalogCollection: CollectionReference<PlateauCatalog>,
     @Inject(PlateauMunicipality)
-    private readonly municipalityCollection: CollectionReference<PlateauMunicipality>
+    private readonly municipalityCollection: CollectionReference<PlateauMunicipality>,
+    private readonly storageService: PlateauStorageService
   ) {}
 
-  async findAll(): Promise<PlateauDataset[]> {
+  private createDataset(params: {
+    catalog: PlateauCatalog
+    version?: PlateauDatasetVersion
+  }): PlateauDataset | undefined {
+    const constructor = datasetClasses[params.catalog.data.type]
+    return constructor != null
+      ? new constructor({
+          ...params,
+          storageService: this.storageService
+        })
+      : undefined
+  }
+
+  async findAll(
+    params: {
+      version?: PlateauDatasetVersion
+    } = {}
+  ): Promise<PlateauDataset[]> {
     // TODO: Pagination
     const snapshot = await this.catalogCollection.get()
     return snapshot.docs
-      .map(doc => createDataset(doc.data()))
+      .map(doc =>
+        this.createDataset({
+          catalog: doc.data(),
+          version: params.version
+        })
+      )
       .filter(isNotNullish)
   }
 
   async findMany(params: {
     municipalityCode: string
+    version?: PlateauDatasetVersion
   }): Promise<PlateauDataset[]> {
     // TODO: Use logical OR when @google-cloud/firestore supports it.
     const [citySnapshot, wardSnapshot] = await Promise.all([
@@ -59,7 +110,12 @@ export class PlateauCatalogService {
         ),
       ...wardSnapshot.docs.map(doc => doc.data())
     ]
-      .map(data => createDataset(data))
+      .map(data =>
+        this.createDataset({
+          catalog: data,
+          version: params.version
+        })
+      )
       .filter(isNotNullish)
   }
 

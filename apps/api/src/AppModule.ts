@@ -12,7 +12,10 @@ import { AppService } from './AppService'
 import { PlateauModule } from './plateau/PlateauModule'
 
 const env = envalid.cleanEnv(process.env, {
-  DATA_ROOT: envalid.str()
+  BASE_URL: envalid.url(),
+  DATA_ROOT: envalid.url({
+    devDefault: path.resolve(process.env.PROJECT_ROOT, 'data')
+  })
 })
 
 @Module({
@@ -29,6 +32,7 @@ const env = envalid.cleanEnv(process.env, {
       rootPath: 'api'
     }),
     PlateauModule.forRoot({
+      baseUrl: env.BASE_URL,
       dataRoot: env.DATA_ROOT
     }),
 

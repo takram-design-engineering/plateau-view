@@ -34,7 +34,7 @@ interface PlateauDataset {
 
 type PlateauMunicipality implements PlateauArea {
   code: String!
-  datasets: [PlateauDataset!]!
+  datasets(version: String): [PlateauDataset!]!
   id: ID!
   name: String!
   parents: [PlateauArea!]!
@@ -56,7 +56,6 @@ type PlateauUnknownDataset implements PlateauDataset {
 }
 
 type Query {
-  datasets: [PlateauDataset!]!
   municipalities: [PlateauMunicipality!]!
   municipality(code: String!): PlateauMunicipality
 }

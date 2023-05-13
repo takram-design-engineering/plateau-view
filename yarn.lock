@@ -9471,6 +9471,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/url-join@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "@types/url-join@npm:4.0.1"
+  checksum: 29444b90e165b3970c8ad3fcef1e2de092e72b67e1f3aaff3016eea1697f98a01a28fb4f71f8044e3338a95bd2262327e9299be416efe5297018658760a331b4
+  languageName: node
+  linkType: hard
+
 "@types/validator@npm:^13.7.10":
   version: 13.7.15
   resolution: "@types/validator@npm:13.7.15"
@@ -21406,6 +21413,7 @@ __metadata:
     "@types/string-template": ^1.0.2
     "@types/topojson-client": ^3.1.1
     "@types/ua-parser-js": ^0.7.36
+    "@types/url-join": ^4.0.1
     "@typescript-eslint/eslint-plugin": 5.59.1
     "@typescript-eslint/parser": 5.59.1
     "@vitejs/plugin-react": ^3.0.0
@@ -21490,6 +21498,7 @@ __metadata:
     type-fest: ^3.10.0
     typescript: ^5.0.4
     ua-parser-js: ^1.0.35
+    url-join: ^4.0.1
     url-loader: ^4.1.1
     vite: 4.3.5
     vite-plugin-dts: ~1.7.1

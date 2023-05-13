@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common'
-import { Parent, ResolveField, Resolver } from '@nestjs/graphql'
+import { BadRequestException, Injectable } from '@nestjs/common'
+import { Args, Parent, ResolveField, Resolver } from '@nestjs/graphql'
 import invariant from 'tiny-invariant'
 
 import { PlateauCatalogService } from '../PlateauCatalogService'
@@ -23,10 +23,16 @@ export class PlateauMunicipalityFieldResolver {
 
   @ResolveField(() => [PlateauDataset])
   async datasets(
-    @Parent() municipality: PlateauMunicipality
+    @Parent() municipality: PlateauMunicipality,
+    @Args('version', { type: () => String, nullable: true })
+    version?: string
   ): Promise<PlateauDataset[]> {
+    if (version != null && version !== '2020' && version !== '2022') {
+      throw new BadRequestException('Illegal version')
+    }
     return await this.catalogService.findMany({
-      municipalityCode: municipality.code
+      municipalityCode: municipality.code,
+      version
     })
   }
 }

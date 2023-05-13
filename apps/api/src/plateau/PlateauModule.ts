@@ -19,7 +19,6 @@ import {
 } from './moduleDefinitions'
 import { PlateauAreaFieldResolver } from './resolvers/PlateauAreaFieldResolver'
 import { PlateauDatasetFieldResolver } from './resolvers/PlateauDatasetFieldResolver'
-import { PlateauDatasetResolver } from './resolvers/PlateauDatasetResolver'
 import { PlateauMunicipalityFieldResolver } from './resolvers/PlateauMunicipalityFieldResolver'
 import { PlateauMunicipalityResolver } from './resolvers/PlateauMunicipalityResolver'
 
@@ -47,10 +46,7 @@ import { PlateauMunicipalityResolver } from './resolvers/PlateauMunicipalityReso
           return JSON.parse(buffer.toString('utf-8'))
         } else {
           return JSON.parse(
-            await readFile(
-              path.resolve(process.env.PROJECT_ROOT, 'data/plateau.json'),
-              'utf-8'
-            )
+            await readFile(path.join(options.dataRoot, 'plateau.json'), 'utf-8')
           )
         }
       },
@@ -60,7 +56,6 @@ import { PlateauMunicipalityResolver } from './resolvers/PlateauMunicipalityReso
     PlateauStorageService,
     PlateauMunicipalityService,
     PlateauAreaFieldResolver,
-    PlateauDatasetResolver,
     PlateauDatasetFieldResolver,
     PlateauMunicipalityResolver,
     PlateauMunicipalityFieldResolver
