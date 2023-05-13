@@ -43,4 +43,5 @@ export async function main(): Promise<void> {
     path.resolve('./data/municipalities.json'),
     JSON.stringify(output)
   )
+  console.log('Done')
 }

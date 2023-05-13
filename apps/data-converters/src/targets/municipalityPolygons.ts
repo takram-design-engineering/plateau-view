@@ -5,10 +5,14 @@ import path from 'path'
 import { read as readShapefile } from 'shapefile'
 import invariant from 'tiny-invariant'
 
-import { type MunicipalityProperties } from '@plateau/data-sources'
 import { isNotNullish } from '@plateau/type-helpers'
 
-// TODO: Separate into commands.
+interface Properties {
+  municipalityCode: string
+  municipalityName: string
+  prefectureCode: string
+  prefectureName: string
+}
 
 // Convert shapefile into GeoJSON, preprocessing geometries and properties.
 async function convertToGeoJSON(file: string): Promise<FeatureCollection> {
@@ -26,7 +30,7 @@ async function convertToGeoJSON(file: string): Promise<FeatureCollection> {
         if (typeof input.CITY !== 'string' || typeof input.PREF !== 'string') {
           return undefined
         }
-        const properties: MunicipalityProperties = {
+        const properties: Properties = {
           municipalityCode: `${input.PREF}${input.CITY}`,
           municipalityName: input.CITY_NAME,
           prefectureCode: input.PREF,
@@ -85,6 +89,6 @@ export async function main(): Promise<void> {
       path.resolve('./data/estat', `${source}.topojson`),
       geojson
     )
-    console.log(`Processed ${source}.`)
+    console.log('Done')
   }
 }

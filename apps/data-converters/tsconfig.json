@@ -11,7 +11,6 @@
     }
   ],
   "compilerOptions": {
-    "jsx": "preserve",
     "esModuleInterop": true
   }
 }

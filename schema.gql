@@ -1,0 +1,61 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+interface PlateauArea {
+  code: String!
+  id: ID!
+  name: String!
+  parents: [PlateauArea!]!
+  type: PlateauAreaType!
+}
+
+enum PlateauAreaType {
+  Municipality
+  Prefecture
+}
+
+type PlateauBuildingDataset implements PlateauDataset {
+  id: String!
+  type: String!
+  variants: [PlateauBuildingDatasetVariant!]!
+}
+
+type PlateauBuildingDatasetVariant {
+  lod: Float!
+  textured: Boolean!
+  url: String!
+}
+
+interface PlateauDataset {
+  id: String!
+  type: String!
+}
+
+type PlateauMunicipality implements PlateauArea {
+  code: String!
+  datasets(version: String): [PlateauDataset!]!
+  id: ID!
+  name: String!
+  parents: [PlateauArea!]!
+  prefecture: PlateauPrefecture!
+  type: PlateauAreaType!
+}
+
+type PlateauPrefecture implements PlateauArea {
+  code: String!
+  id: ID!
+  name: String!
+  parents: [PlateauArea!]!
+  type: PlateauAreaType!
+}
+
+type PlateauUnknownDataset implements PlateauDataset {
+  id: String!
+  type: String!
+}
+
+type Query {
+  municipalities: [PlateauMunicipality!]!
+  municipality(code: String!): PlateauMunicipality
+}

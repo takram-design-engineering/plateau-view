@@ -28,11 +28,11 @@ async function bootstrap(): Promise<void> {
 }
 
 bootstrap().catch(error => {
-  Logger.error({ error }, 'Error during bootstrap.')
+  Logger.error('Error during bootstrap.', error)
   process.exit(1)
 })
 
 process.on('uncaughtException', error => {
-  Logger.error({ error }, 'Uncaught exception')
+  Logger.error('Uncaught exception', error)
   process.exit(1)
 })

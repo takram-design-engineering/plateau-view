@@ -1,0 +1,18 @@
+overwrite: true
+schema:
+  - ../../schema.gql
+documents:
+  - ./fragments.gql
+  - ./operations.gql
+generates:
+  ./operations.ts:
+    plugins:
+      - typescript
+      - typescript-operations
+      - typescript-react-apollo
+  ./introspectionResult.ts:
+    plugins:
+      - fragment-matcher
+hooks:
+  afterAllFileWrite:
+    - prettier --write
