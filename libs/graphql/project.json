@@ -1,0 +1,24 @@
+{
+  "name": "graphql",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "serve": {
+      "executor": "nx:run-commands",
+      "outputs": [],
+      "options": {
+        "command": "graphql-codegen --watch --config graphql.config.yml",
+        "cwd": "libs/graphql"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "outputs": [],
+      "options": {
+        "command": "graphql-codegen --config graphql.config.yml",
+        "cwd": "libs/graphql"
+      }
+    }
+  }
+}

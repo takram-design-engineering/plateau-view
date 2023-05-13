@@ -6,15 +6,13 @@ import { PlateauCatalogService } from './plateau/PlateauCatalogService'
 export class AppService implements OnApplicationBootstrap {
   private readonly logger = new Logger(AppService.name)
 
-  constructor(
-    private readonly plateauDatasetsService: PlateauCatalogService
-  ) {}
+  constructor(private readonly plateauDatasetsService: PlateauCatalogService) {}
 
   async onApplicationBootstrap(): Promise<void> {
     // Don't wait this for complete.
     // TODO: Don't sync in every bootstrap.
-    this.plateauDatasetsService.syncWithRemote().catch(error => {
-      this.logger.error(`Error during syncWithRemote: ${error.message}`)
-    })
+    // this.plateauDatasetsService.syncWithRemote().catch(error => {
+    //   this.logger.error(`Error during syncWithRemote: ${error.message}`)
+    // })
   }
 }

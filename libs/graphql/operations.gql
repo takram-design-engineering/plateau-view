@@ -1,0 +1,8 @@
+query municipalityDatasets($municipalityCode: String!) {
+  municipality(code: $municipalityCode) {
+    ...PlateauMunicipality
+    datasets {
+      ...PlateauDataset
+    }
+  }
+}

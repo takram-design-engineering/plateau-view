@@ -1,0 +1,17 @@
+fragment PlateauMunicipality on PlateauMunicipality {
+  id
+  code
+  name
+}
+
+fragment PlateauDataset on PlateauDataset {
+  id
+  type
+  ... on PlateauBuildingDataset {
+    variants {
+      lod
+      textured
+      url
+    }
+  }
+}
