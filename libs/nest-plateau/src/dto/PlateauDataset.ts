@@ -14,7 +14,7 @@ import {
 @InterfaceType()
 export abstract class PlateauDatasetVariant {
   @Field(() => PlateauDatasetFormatEnum)
-  type!: PlateauDatasetFormat
+  format!: PlateauDatasetFormat
 
   @Field()
   url!: string
