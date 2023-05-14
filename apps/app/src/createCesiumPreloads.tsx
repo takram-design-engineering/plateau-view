@@ -1,3 +1,5 @@
+import { Storage } from '@google-cloud/storage'
+import { parseISO } from 'date-fns'
 import { readdir } from 'fs/promises'
 import { minimatch } from 'minimatch'
 import { createRequire } from 'node:module'
@@ -46,13 +48,32 @@ const workers = [
 ]
 
 export async function createCesiumPreloads(): Promise<JSX.Element[]> {
-  const require = createRequire(import.meta.url)
-  const workerFiles = await readdir(
-    path.resolve(
-      path.dirname(require.resolve('@cesium/engine')),
-      'Build/Workers'
+  let workerFiles: string[]
+  if (process.env.NODE_ENV === 'production') {
+    if (process.env.CESIUM_ROOT == null) {
+      throw new Error('Missing environment variables: CESIUM_ROOT')
+    }
+    const url = new URL(process.env.CESIUM_ROOT)
+    const storage = new Storage()
+    const bucket = storage.bucket(url.host)
+    const [files] = await bucket.getFiles({
+      prefix: `${url.pathname.slice(1)}/Worker`
+    })
+    workerFiles = files
+      .sort(
+        ({ metadata: a }, { metadata: b }) =>
+          +parseISO(b.updated) - +parseISO(a.updated)
+      )
+      .map(file => path.basename(file.name))
+  } else {
+    const require = createRequire(import.meta.url)
+    workerFiles = await readdir(
+      path.resolve(
+        path.dirname(require.resolve('@cesium/engine')),
+        'Build/Workers'
+      )
     )
-  )
+  }
   return [
     ...assets.map(({ as, file }, index) => (
       <link
