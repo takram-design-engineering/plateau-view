@@ -16,25 +16,96 @@ enum PlateauAreaType {
 }
 
 type PlateauBuildingDataset implements PlateauDataset {
+  description: String
   id: String!
-  type: String!
+  municipality: PlateauMunicipality
+  name: String!
+  type: PlateauDatasetType!
+  typeName: String!
   variants: [PlateauBuildingDatasetVariant!]!
 }
 
-type PlateauBuildingDatasetVariant {
+type PlateauBuildingDatasetVariant implements PlateauDatasetVariant {
+  format: PlateauDatasetFormat!
   lod: Float!
+  name: String!
   textured: Boolean!
   url: String!
+  version: String!
 }
 
 interface PlateauDataset {
+  description: String
   id: String!
-  type: String!
+  municipality: PlateauMunicipality
+  name: String!
+  type: PlateauDatasetType!
+  typeName: String!
+  variants: [PlateauDatasetVariant!]!
+}
+
+enum PlateauDatasetFormat {
+  CSV
+  CZML
+  Cesium3DTiles
+  GLTF
+  GTFS
+  GeoJson
+  MVT
+  TMS
+  Tiles
+  WMS
+}
+
+enum PlateauDatasetType {
+  Border
+  Bridge
+  Building
+  EmergencyRoute
+  Facility
+  Flood
+  Furniture
+  Generic
+  Hightide
+  InlandFlood
+  Landmark
+  Landslide
+  Landuse
+  Park
+  Railway
+  Road
+  Shelter
+  Station
+  Tsunami
+  UseCase
+  Vegetation
+}
+
+interface PlateauDatasetVariant {
+  format: PlateauDatasetFormat!
+  name: String!
+  url: String!
+}
+
+type PlateauDefaultDataset implements PlateauDataset {
+  description: String
+  id: String!
+  municipality: PlateauMunicipality
+  name: String!
+  type: PlateauDatasetType!
+  typeName: String!
+  variants: [PlateauDefaultDatasetVariant!]!
+}
+
+type PlateauDefaultDatasetVariant implements PlateauDatasetVariant {
+  format: PlateauDatasetFormat!
+  name: String!
+  url: String!
 }
 
 type PlateauMunicipality implements PlateauArea {
   code: String!
-  datasets(version: String): [PlateauDataset!]!
+  datasets(excludeTypes: [PlateauDatasetType!]): [PlateauDataset!]!
   id: ID!
   name: String!
   parents: [PlateauArea!]!
@@ -45,17 +116,15 @@ type PlateauMunicipality implements PlateauArea {
 type PlateauPrefecture implements PlateauArea {
   code: String!
   id: ID!
+  municipalities: [PlateauMunicipality!]!
   name: String!
   parents: [PlateauArea!]!
   type: PlateauAreaType!
 }
 
-type PlateauUnknownDataset implements PlateauDataset {
-  id: String!
-  type: String!
-}
-
 type Query {
-  municipalities: [PlateauMunicipality!]!
+  municipalities(prefectureCode: String): [PlateauMunicipality!]!
   municipality(code: String!): PlateauMunicipality
+  prefecture(code: String!): PlateauPrefecture
+  prefectures: [PlateauPrefecture!]!
 }

@@ -7,11 +7,16 @@ fragment PlateauMunicipality on PlateauMunicipality {
 fragment PlateauDataset on PlateauDataset {
   id
   type
-  ... on PlateauBuildingDataset {
-    variants {
+  typeName
+  name
+  variants {
+    format
+    url
+    name
+    ... on PlateauBuildingDatasetVariant {
+      version
       lod
       textured
-      url
     }
   }
 }

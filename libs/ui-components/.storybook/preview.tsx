@@ -19,6 +19,12 @@ const preview: Preview = {
           value: darkTheme.palette.background.default
         }
       ]
+    },
+    options: {
+      showPanel: false
+    },
+    controls: {
+      hideNoControlsWarning: true
     }
   },
   decorators: [

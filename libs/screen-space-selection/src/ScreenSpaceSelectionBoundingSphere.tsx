@@ -6,7 +6,13 @@ import { Entity, type EntityProps } from '@plateau/cesium'
 
 import { ScreenSpaceSelectionContext } from './ScreenSpaceSelectionContext'
 
-export const ScreenSpaceSelectionBoundingSphere: FC = () => {
+export interface ScreenSpaceSelectionBoundingSphereProps {
+  color?: Color
+}
+
+export const ScreenSpaceSelectionBoundingSphere: FC<
+  ScreenSpaceSelectionBoundingSphereProps
+> = ({ color = Color.GRAY }) => {
   const { boundingSphereAtom } = useContext(ScreenSpaceSelectionContext)
   const boundingSphere = useAtomValue(boundingSphereAtom)
 
@@ -23,11 +29,11 @@ export const ScreenSpaceSelectionBoundingSphere: FC = () => {
               ),
               fill: false,
               outline: true,
-              outlineColor: Color.GREY
+              outlineColor: color
             }
           }
         : undefined,
-    [boundingSphere]
+    [color, boundingSphere]
   )
 
   return options != null ? <Entity {...options} /> : null

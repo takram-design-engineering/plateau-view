@@ -6,7 +6,11 @@ export interface PossibleTypesResultData {
 const result: PossibleTypesResultData = {
   possibleTypes: {
     PlateauArea: ['PlateauMunicipality', 'PlateauPrefecture'],
-    PlateauDataset: ['PlateauBuildingDataset', 'PlateauUnknownDataset']
+    PlateauDataset: ['PlateauBuildingDataset', 'PlateauDefaultDataset'],
+    PlateauDatasetVariant: [
+      'PlateauBuildingDatasetVariant',
+      'PlateauDefaultDatasetVariant'
+    ]
   }
 }
 export default result
