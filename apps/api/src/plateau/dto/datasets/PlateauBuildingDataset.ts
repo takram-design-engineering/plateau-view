@@ -2,7 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql'
 import { groupBy } from 'lodash'
 import format from 'string-template'
 
-import { PlateauDataset, type PlateauDatasetType } from './PlateauDataset'
+import { PlateauDataset, type PlateauDatasetType } from '../PlateauDataset'
 
 @ObjectType()
 class PlateauBuildingDatasetVariant {
