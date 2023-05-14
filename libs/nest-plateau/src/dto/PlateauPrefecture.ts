@@ -25,7 +25,7 @@ export class PlateauPrefecture extends PlateauArea {
     this.name = name
   }
 
-  static values: Record<string, PlateauPrefecture | undefined> = mapValues(
+  static values: Record<string, PlateauPrefecture> = mapValues(
     {
       '01': '北海道',
       '02': '青森県',
@@ -75,6 +75,6 @@ export class PlateauPrefecture extends PlateauArea {
       '46': '鹿児島県',
       '47': '沖縄県'
     },
-    (code, name) => new PlateauPrefecture(code, name)
+    (name, code) => new PlateauPrefecture(code, name)
   )
 }

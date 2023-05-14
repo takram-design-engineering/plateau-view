@@ -23,6 +23,8 @@ import { PlateauAreaFieldResolver } from './resolvers/PlateauAreaFieldResolver'
 import { PlateauDatasetFieldResolver } from './resolvers/PlateauDatasetFieldResolver'
 import { PlateauMunicipalityFieldResolver } from './resolvers/PlateauMunicipalityFieldResolver'
 import { PlateauMunicipalityResolver } from './resolvers/PlateauMunicipalityResolver'
+import { PlateauPrefectureFieldResolver } from './resolvers/PlateauPrefectureFieldResolver'
+import { PlateauPrefectureResolver } from './resolvers/PlateauPrefectureResolver'
 
 @Global()
 @Module({
@@ -60,7 +62,9 @@ import { PlateauMunicipalityResolver } from './resolvers/PlateauMunicipalityReso
     PlateauAreaFieldResolver,
     PlateauDatasetFieldResolver,
     PlateauMunicipalityResolver,
-    PlateauMunicipalityFieldResolver
+    PlateauMunicipalityFieldResolver,
+    PlateauPrefectureResolver,
+    PlateauPrefectureFieldResolver
   ],
   exports: [PlateauCatalogService]
 })
