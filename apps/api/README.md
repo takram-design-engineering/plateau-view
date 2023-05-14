@@ -14,6 +14,7 @@ curl -s https://api.plateau.reearth.io/datacatalog/plateau-2022 \
     --enum-hint=/-/format \
     --enum-hint=/-/type \
     --enum-hint=/-/type_en \
+    --enum-hint=/-/config/data/-/type \
     --discriminator-hint=/-/type \
     > src/assets/plateau-2022.jtd.json
 jtd-codegen src/assets/plateau-2022.jtd.json \

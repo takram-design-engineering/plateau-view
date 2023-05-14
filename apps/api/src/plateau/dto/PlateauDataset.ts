@@ -3,14 +3,18 @@ import { Field, InterfaceType } from '@nestjs/graphql'
 import { type PlateauStorageService } from '../PlateauStorageService'
 import { type PlateauCatalog } from './PlateauCatalog'
 import {
+  PlateauDatasetFormat,
+  PlateauDatasetFormatEnum
+} from './PlateauDatasetFormat'
+import {
   PlateauDatasetTypeEnum,
   type PlateauDatasetType
 } from './PlateauDatasetType'
 
 @InterfaceType()
 export abstract class PlateauDatasetVariant {
-  @Field()
-  type!: string
+  @Field(() => PlateauDatasetFormatEnum)
+  type!: PlateauDatasetFormat
 
   @Field()
   url!: string
@@ -31,6 +35,11 @@ export abstract class PlateauDataset<
   @Field()
   get id(): string {
     return this.catalog.data.id
+  }
+
+  @Field()
+  get name(): string {
+    return this.catalog.data.name
   }
 
   @Field(() => PlateauDatasetTypeEnum)

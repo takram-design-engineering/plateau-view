@@ -3,6 +3,7 @@ import { groupBy } from 'lodash'
 import format from 'string-template'
 
 import { PlateauDataset, PlateauDatasetVariant } from '../PlateauDataset'
+import { PlateauDatasetFormatEnum } from '../PlateauDatasetFormat'
 import { type PlateauDatasetTypeEnum } from '../PlateauDatasetType'
 
 @ObjectType({
@@ -37,7 +38,7 @@ export class PlateauBuildingDataset extends PlateauDataset<PlateauDatasetTypeEnu
     return Object.values(groups).flatMap(variants =>
       variants
         .map(({ lod, variant }) => ({
-          type: '3dtiles',
+          type: PlateauDatasetFormatEnum.Cesium3DTiles,
           url: variant.url,
           name: '',
           version: '2022',
@@ -63,12 +64,12 @@ export class PlateauBuildingDataset extends PlateauDataset<PlateauDatasetTypeEnu
         code: this.catalog.data.ward_code ?? this.catalog.data.city_code
       }),
       version: '2020',
-      fileType: '3dtiles'
+      fileType: PlateauDatasetFormatEnum.Cesium3DTiles
     })
     const lod = files.some(file => file.includes('_low_resolution')) ? 2 : 1
     return files
       .map(file => ({
-        type: '3dtiles',
+        type: PlateauDatasetFormatEnum.Cesium3DTiles,
         url: file,
         name: '',
         version: '2020',

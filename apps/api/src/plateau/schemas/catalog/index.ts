@@ -22,9 +22,17 @@ export enum PlateauCatalogTypeEn0 {
   Usecase = "usecase",
 }
 
+export enum PlateauCatalogConfigDaumType {
+  DTiles = "3D Tiles",
+  Czml = "CZML",
+  GeoJson = "GeoJSON",
+  Tms = "TMS",
+  GlTf = "glTF",
+}
+
 export interface PlateauCatalogConfigDaum {
   name: string;
-  type: string;
+  type: PlateauCatalogConfigDaumType;
   url: string;
 }
 
@@ -73,9 +81,14 @@ export enum PlateauCatalogTypeEn1 {
   Landmark = "landmark",
 }
 
+export enum PlateauCatalogConfigDaumType0 {
+  Czml = "CZML",
+  Czml0 = "czml",
+}
+
 export interface PlateauCatalogConfigDaum0 {
   name: string;
-  type: string;
+  type: PlateauCatalogConfigDaumType0;
   url: string;
 }
 
@@ -203,9 +216,13 @@ export interface PlateauCatalog7 {
   year: number;
 }
 
+export enum PlateauCatalogConfigDaumType1 {
+  Dtiles = "3dtiles",
+}
+
 export interface PlateauCatalogConfigDaum1 {
   name: string;
-  type: string;
+  type: PlateauCatalogConfigDaumType1;
   url: string;
 }
 
@@ -245,9 +262,13 @@ export interface PlateauCatalog8 {
   ward_en?: string;
 }
 
+export enum PlateauCatalogConfigDaumType2 {
+  Dtiles = "3dtiles",
+}
+
 export interface PlateauCatalogConfigDaum2 {
   name: string;
-  type: string;
+  type: PlateauCatalogConfigDaumType2;
   url: string;
 }
 
@@ -281,10 +302,14 @@ export interface PlateauCatalog9 {
   year: number;
 }
 
+export enum PlateauCatalogConfigDaumType3 {
+  Dtiles = "3dtiles",
+}
+
 export interface PlateauCatalogConfigDaum3 {
   layer: string[];
   name: string;
-  type: string;
+  type: PlateauCatalogConfigDaumType3;
   url: string;
 }
 
@@ -319,10 +344,14 @@ export interface PlateauCatalog10 {
   year: number;
 }
 
+export enum PlateauCatalogConfigDaumType4 {
+  Mvt = "mvt",
+}
+
 export interface PlateauCatalogConfigDaum4 {
   layer: string[];
   name: string;
-  type: string;
+  type: PlateauCatalogConfigDaumType4;
   url: string;
 }
 
@@ -382,9 +411,13 @@ export interface PlateauCatalog12 {
   year: number;
 }
 
+export enum PlateauCatalogConfigDaumType5 {
+  Dtiles = "3dtiles",
+}
+
 export interface PlateauCatalogConfigDaum5 {
   name: string;
-  type: string;
+  type: PlateauCatalogConfigDaumType5;
   url: string;
 }
 
@@ -467,9 +500,14 @@ export interface PlateauCatalog15 {
   openDataUrl?: string;
 }
 
+export enum PlateauCatalogConfigDaumType6 {
+  Dtiles = "3dtiles",
+  Mvt = "mvt",
+}
+
 export interface PlateauCatalogConfigDaum6 {
   name: string;
-  type: string;
+  type: PlateauCatalogConfigDaumType6;
   url: string;
   layer?: string[];
 }
@@ -561,9 +599,13 @@ export interface PlateauCatalog18 {
   desc?: string;
 }
 
+export enum PlateauCatalogConfigDaumType7 {
+  Dtiles = "3dtiles",
+}
+
 export interface PlateauCatalogConfigDaum7 {
   name: string;
-  type: string;
+  type: PlateauCatalogConfigDaumType7;
   url: string;
 }
 
@@ -597,10 +639,14 @@ export interface PlateauCatalog19 {
   year: number;
 }
 
+export enum PlateauCatalogConfigDaumType8 {
+  Mvt = "mvt",
+}
+
 export interface PlateauCatalogConfigDaum8 {
   layer: string[];
   name: string;
-  type: string;
+  type: PlateauCatalogConfigDaumType8;
   url: string;
 }
 
