@@ -55,7 +55,7 @@ export function getMunicipalitiesInCatalog(
       !isEqual(prevData.parents, data.parents) &&
       isEqual(omit(prevData, 'parents'), omit(data, 'parents'))
     ) {
-      // Some entries inconsistently doesn't seem to have city codes. Take more
+      // Some entries inconsistently don't seem to have city codes. Take more
       // specific one for our parent code.
       if (data.parents.length > prevData.parents.length) {
         municipalities.set(prevData.code, {
