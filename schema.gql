@@ -39,7 +39,7 @@ interface PlateauDataset {
 
 type PlateauMunicipality implements PlateauArea {
   code: String!
-  datasets(version: String): [PlateauDataset!]!
+  datasets: [PlateauDataset!]!
   id: ID!
   name: String!
   parents: [PlateauArea!]!
