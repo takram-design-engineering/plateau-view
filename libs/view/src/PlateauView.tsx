@@ -5,9 +5,17 @@ import {
   type Cartesian2,
   type ScreenSpaceCameraController
 } from '@cesium/engine'
-import { styled } from '@mui/material'
+import { Color } from '@cesium/engine'
+import { styled, useTheme } from '@mui/material'
 import { useAtomValue, useSetAtom } from 'jotai'
-import { Suspense, useCallback, useContext, useEffect, type FC } from 'react'
+import {
+  Suspense,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  type FC
+} from 'react'
 
 import {
   CurrentTime,
@@ -206,7 +214,12 @@ const SyncColorMode: FC = () => {
 // TODO: Settle into appropriate component.
 const SelectionBoundingSphere: FC = () => {
   const show = useAtomValue(showSelectionBoundingSphereAtom)
-  return show ? <ScreenSpaceSelectionBoundingSphere /> : null
+  const theme = useTheme()
+  const color = useMemo(
+    () => Color.fromCssColorString(theme.palette.primary.main),
+    [theme]
+  )
+  return show ? <ScreenSpaceSelectionBoundingSphere color={color} /> : null
 }
 
 export interface PlateauViewProps {}
