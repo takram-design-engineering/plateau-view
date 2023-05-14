@@ -4,14 +4,15 @@ import {
 } from '@google-cloud/firestore'
 import { Field, ObjectType } from '@nestjs/graphql'
 import { instanceToPlain, plainToInstance } from 'class-transformer'
+import { IsNumberString, IsString } from 'class-validator'
 
-import { Collection } from '@plateau/nest-firestore'
+import { FirestoreCollection } from '@plateau/nest-firestore'
 
 import { validateSyncOrThrow } from '../../helpers/validateSyncOrThrow'
 import { PlateauArea } from './PlateauArea'
 import { PlateauAreaType, PlateauAreaTypeEnum } from './PlateauAreaType'
 
-@Collection('plateau/municipalities')
+@FirestoreCollection('plateau/municipalities')
 @ObjectType({
   implements: [PlateauArea]
 })
@@ -32,9 +33,11 @@ export class PlateauMunicipality extends PlateauArea {
   type: PlateauAreaType = 'municipality'
 
   @Field()
+  @IsNumberString()
   code!: string
 
   @Field()
+  @IsString()
   name!: string
 
   parents!: InstanceType<typeof PlateauArea>['parents']
