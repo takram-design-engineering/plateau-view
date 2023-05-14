@@ -25,6 +25,7 @@ type PlateauBuildingDatasetVariant {
   lod: Float!
   textured: Boolean!
   url: String!
+  version: String!
 }
 
 interface PlateauDataset {
