@@ -1,7 +1,10 @@
-query municipalityDatasets($municipalityCode: String!) {
+query municipalityDatasets(
+  $municipalityCode: String!
+  $excludeTypes: [PlateauDatasetType!]
+) {
   municipality(code: $municipalityCode) {
     ...PlateauMunicipality
-    datasets {
+    datasets(excludeTypes: $excludeTypes) {
       ...PlateauDataset
     }
   }
