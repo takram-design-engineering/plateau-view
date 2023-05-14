@@ -3,12 +3,12 @@ import { fromPairs, isArray } from 'lodash'
 import path from 'path'
 import invariant from 'tiny-invariant'
 
-type Prefectures = Record<
+export type Prefectures = Record<
   string, // code
   string // name
 >
 
-type Municipalities = Record<
+export type Municipalities = Record<
   string, // code
   | string // name
   | [string, string[]] // [name, childCodes]
