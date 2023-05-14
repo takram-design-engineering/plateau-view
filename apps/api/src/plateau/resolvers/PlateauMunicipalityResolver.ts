@@ -12,8 +12,10 @@ export class PlateauMunicipalityResolver {
   ) {}
 
   @Query(() => [PlateauMunicipality])
-  async municipalities(): Promise<PlateauMunicipality[]> {
-    return await this.municipalityService.findAll()
+  async municipalities(
+    @Args('prefectureCode', { nullable: true }) prefectureCode?: string
+  ): Promise<PlateauMunicipality[]> {
+    return await this.municipalityService.findAll({ prefectureCode })
   }
 
   @Query(() => PlateauMunicipality, { nullable: true })
