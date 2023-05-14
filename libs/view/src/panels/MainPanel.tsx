@@ -5,8 +5,8 @@ import { useCallback, useRef, useState, type FC } from 'react'
 import { useWindowEvent } from '@plateau/react-helpers'
 import { FloatingPanel, SearchField, Shortcut } from '@plateau/ui-components'
 
-import { MainMenuButton } from '../containers/MainMenuButton'
 import { platformAtom } from '../states/app'
+import { MainMenuButton } from './MainPanel/MainMenuButton'
 
 const Root = styled(FloatingPanel)(({ theme }) => ({
   display: 'flex',
@@ -26,6 +26,7 @@ export const MainPanel: FC = () => {
   const textFieldRef = useRef<HTMLInputElement>(null)
 
   useWindowEvent('keydown', event => {
+    // TODO: Manage shortcut globally
     if (event.key === 'k' && event.metaKey && textFieldRef.current != null) {
       event.preventDefault()
       textFieldRef.current.select()
