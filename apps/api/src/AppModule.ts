@@ -6,10 +6,10 @@ import * as envalid from 'envalid'
 import path from 'path'
 
 import { FirestoreModule } from '@plateau/nest-firestore'
+import { PlateauModule } from '@plateau/nest-plateau'
 
 import { AppController } from './AppController'
 import { AppService } from './AppService'
-import { PlateauModule } from './plateau/PlateauModule'
 
 const env = envalid.cleanEnv(process.env, {
   BASE_URL: envalid.url(),

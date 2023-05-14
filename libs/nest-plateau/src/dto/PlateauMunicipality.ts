@@ -8,7 +8,7 @@ import { IsNumberString, IsString } from 'class-validator'
 
 import { FirestoreCollection } from '@plateau/nest-firestore'
 
-import { validateSyncOrThrow } from '../../helpers/validateSyncOrThrow'
+import { validateSyncOrThrow } from '../helpers/validateSyncOrThrow'
 import { PlateauArea } from './PlateauArea'
 import { PlateauAreaType, PlateauAreaTypeEnum } from './PlateauAreaType'
 
