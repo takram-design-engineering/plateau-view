@@ -1,0 +1,89 @@
+import { Stack, Typography, type SelectChangeEvent } from '@mui/material'
+import { type Meta, type StoryObj } from '@storybook/react'
+import { useCallback, useState, type FC } from 'react'
+
+import { ContextBar } from './ContextBar'
+import { ContextButton } from './ContextButton'
+import { ContextButtonSelect } from './ContextButtonSelect'
+import { ContextSelect } from './ContextSelect'
+import { SelectItem } from './SelectItem'
+
+const meta: Meta<typeof ContextBar> = {
+  title: 'ContextBar',
+  component: ContextBar
+}
+
+export default meta
+
+type Story = StoryObj<typeof ContextBar>
+
+const ButtonComponent: FC = () => {
+  const [active, setActive] = useState(false)
+  const handleClick = useCallback(() => {
+    setActive(value => !value)
+  }, [])
+  return (
+    <ContextButton active={active} onClick={handleClick}>
+      Single Button
+    </ContextButton>
+  )
+}
+
+const ButtonSelectComponent: FC = () => {
+  const defaultValue = '1'
+  const [value, setValue] = useState<string>('')
+  const handleClick = useCallback(() => {
+    setValue(prevValue => (prevValue === '' ? defaultValue : ''))
+  }, [])
+  const handleChange = useCallback((event: SelectChangeEvent<string>) => {
+    setValue(event.target.value)
+  }, [])
+  return (
+    <ContextButtonSelect
+      label='Single Select'
+      value={value}
+      onChange={handleChange}
+      onClick={handleClick}
+    >
+      {[...Array(5)].map((_, index) => (
+        <SelectItem key={index} value={`${index}`}>
+          <Typography variant='body2'>Item {index + 1}</Typography>
+        </SelectItem>
+      ))}
+    </ContextButtonSelect>
+  )
+}
+
+const SelectComponent: FC = () => {
+  const [value, setValue] = useState<string[]>([])
+  const handleChange = useCallback((event: SelectChangeEvent<string[]>) => {
+    if (Array.isArray(event.target.value)) {
+      setValue(event.target.value)
+    }
+  }, [])
+  return (
+    <ContextSelect
+      label='Multiple Select'
+      value={value}
+      onChange={handleChange}
+    >
+      {[...Array(10)].map((_, index) => (
+        <SelectItem key={index} value={`${index}`}>
+          <Typography variant='body2'>Item {index + 1}</Typography>
+        </SelectItem>
+      ))}
+    </ContextSelect>
+  )
+}
+
+export const Default: Story = {
+  render: () => (
+    <ContextBar>
+      <Stack direction='row' spacing={1} alignItems='center' height='100%'>
+        <ButtonComponent />
+        <ButtonSelectComponent />
+        <SelectComponent />
+      </Stack>
+    </ContextBar>
+  )
+}
