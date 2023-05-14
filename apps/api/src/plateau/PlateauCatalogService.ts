@@ -12,11 +12,11 @@ import { isNotNullish } from '@plateau/type-helpers'
 
 import schema from '../assets/plateau-2022.jtd.json'
 import { PlateauStorageService } from './PlateauStorageService'
-import { PlateauBuildingDataset } from './dto/PlateauBuildingDataset'
 import { PlateauCatalog, type PlateauCatalogData } from './dto/PlateauCatalog'
 import { PlateauDatasetType, type PlateauDataset } from './dto/PlateauDataset'
 import { PlateauMunicipality } from './dto/PlateauMunicipality'
-import { PlateauUnknownDataset } from './dto/PlateauUnknownDataset'
+import { PlateauBuildingDataset } from './dto/datasets/PlateauBuildingDataset'
+import { PlateauUnknownDataset } from './dto/datasets/PlateauUnknownDataset'
 import { getMunicipalitiesInCatalog } from './helpers/getMunicipalitiesInCatalog'
 import { type PlateauDatasetVersion } from './interfaces/PlateauDatasetFiles'
 

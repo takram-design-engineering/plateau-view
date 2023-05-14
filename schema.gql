@@ -16,7 +16,9 @@ enum PlateauAreaType {
 }
 
 type PlateauBuildingDataset implements PlateauDataset {
+  description: String
   id: String!
+  municipality: PlateauMunicipality
   type: String!
   variants: [PlateauBuildingDatasetVariant!]!
 }
@@ -29,7 +31,9 @@ type PlateauBuildingDatasetVariant {
 }
 
 interface PlateauDataset {
+  description: String
   id: String!
+  municipality: PlateauMunicipality
   type: String!
 }
 
@@ -52,7 +56,9 @@ type PlateauPrefecture implements PlateauArea {
 }
 
 type PlateauUnknownDataset implements PlateauDataset {
+  description: String
   id: String!
+  municipality: PlateauMunicipality
   type: String!
 }
 

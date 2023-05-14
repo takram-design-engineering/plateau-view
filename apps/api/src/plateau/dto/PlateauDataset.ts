@@ -50,4 +50,14 @@ export abstract class PlateauDataset<
   get id(): string {
     return this.catalog.data.id
   }
+
+  @Field()
+  get type(): string {
+    return this.catalog.data.type
+  }
+
+  @Field(() => String, { nullable: true })
+  get description(): string | undefined {
+    return this.catalog.data.desc
+  }
 }
