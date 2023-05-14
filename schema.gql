@@ -63,6 +63,6 @@ type PlateauUnknownDataset implements PlateauDataset {
 }
 
 type Query {
-  municipalities: [PlateauMunicipality!]!
+  municipalities(prefectureCode: String): [PlateauMunicipality!]!
   municipality(code: String!): PlateauMunicipality
 }
