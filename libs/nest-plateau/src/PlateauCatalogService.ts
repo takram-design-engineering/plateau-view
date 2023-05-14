@@ -11,14 +11,14 @@ import { type Constructor } from 'type-fest'
 import { FIRESTORE } from '@plateau/nest-firestore'
 import { isNotNullish } from '@plateau/type-helpers'
 
-import schema from '../assets/plateau-2022.jtd.json'
 import { PlateauStorageService } from './PlateauStorageService'
+import schema from './assets/plateau-2022.jtd.json'
+import { PlateauBuildingDataset } from './dto/PlateauBuildingDataset'
 import { PlateauCatalog, type PlateauCatalogData } from './dto/PlateauCatalog'
 import { type PlateauDataset } from './dto/PlateauDataset'
 import { PlateauDatasetTypeEnum } from './dto/PlateauDatasetType'
+import { PlateauDefaultDataset } from './dto/PlateauDefaultDataset'
 import { PlateauMunicipality } from './dto/PlateauMunicipality'
-import { PlateauBuildingDataset } from './dto/datasets/PlateauBuildingDataset'
-import { PlateauDefaultDataset } from './dto/datasets/PlateauDefaultDataset'
 import { getMunicipalitiesInCatalog } from './helpers/getMunicipalitiesInCatalog'
 
 const datasetClasses: Record<string, Constructor<PlateauDataset> | undefined> =

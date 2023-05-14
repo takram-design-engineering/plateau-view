@@ -40,6 +40,7 @@ export type PlateauBuildingDataset = PlateauDataset & {
   description?: Maybe<Scalars['String']>
   id: Scalars['String']
   municipality?: Maybe<PlateauMunicipality>
+  name: Scalars['String']
   type: PlateauDatasetType
   typeName: Scalars['String']
   variants: Array<PlateauBuildingDatasetVariant>
@@ -50,7 +51,7 @@ export type PlateauBuildingDatasetVariant = PlateauDatasetVariant & {
   lod: Scalars['Float']
   name: Scalars['String']
   textured: Scalars['Boolean']
-  type: Scalars['String']
+  type: PlateauDatasetFormat
   url: Scalars['String']
   version: Scalars['String']
 }
@@ -59,9 +60,23 @@ export type PlateauDataset = {
   description?: Maybe<Scalars['String']>
   id: Scalars['String']
   municipality?: Maybe<PlateauMunicipality>
+  name: Scalars['String']
   type: PlateauDatasetType
   typeName: Scalars['String']
   variants: Array<PlateauDatasetVariant>
+}
+
+export enum PlateauDatasetFormat {
+  Csv = 'CSV',
+  Czml = 'CZML',
+  Cesium3DTiles = 'Cesium3DTiles',
+  Gltf = 'GLTF',
+  Gtfs = 'GTFS',
+  GeoJson = 'GeoJson',
+  Mvt = 'MVT',
+  Tms = 'TMS',
+  Tiles = 'Tiles',
+  Wms = 'WMS'
 }
 
 export enum PlateauDatasetType {
@@ -90,7 +105,7 @@ export enum PlateauDatasetType {
 
 export type PlateauDatasetVariant = {
   name: Scalars['String']
-  type: Scalars['String']
+  type: PlateauDatasetFormat
   url: Scalars['String']
 }
 
@@ -99,6 +114,7 @@ export type PlateauDefaultDataset = PlateauDataset & {
   description?: Maybe<Scalars['String']>
   id: Scalars['String']
   municipality?: Maybe<PlateauMunicipality>
+  name: Scalars['String']
   type: PlateauDatasetType
   typeName: Scalars['String']
   variants: Array<PlateauDefaultDatasetVariant>
@@ -107,7 +123,7 @@ export type PlateauDefaultDataset = PlateauDataset & {
 export type PlateauDefaultDatasetVariant = PlateauDatasetVariant & {
   __typename?: 'PlateauDefaultDatasetVariant'
   name: Scalars['String']
-  type: Scalars['String']
+  type: PlateauDatasetFormat
   url: Scalars['String']
 }
 
