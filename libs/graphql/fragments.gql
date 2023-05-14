@@ -7,6 +7,8 @@ fragment PlateauMunicipality on PlateauMunicipality {
 fragment PlateauDataset on PlateauDataset {
   id
   type
+  typeName
+  name
   variants {
     format
     url

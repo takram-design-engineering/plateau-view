@@ -146,6 +146,7 @@ export type PlateauPrefecture = PlateauArea & {
   __typename?: 'PlateauPrefecture'
   code: Scalars['String']
   id: Scalars['ID']
+  municipalities: Array<PlateauMunicipality>
   name: Scalars['String']
   parents: Array<PlateauArea>
   type: PlateauAreaType
@@ -155,6 +156,8 @@ export type Query = {
   __typename?: 'Query'
   municipalities: Array<PlateauMunicipality>
   municipality?: Maybe<PlateauMunicipality>
+  prefecture?: Maybe<PlateauPrefecture>
+  prefectures: Array<PlateauPrefecture>
 }
 
 export type QueryMunicipalitiesArgs = {
@@ -162,6 +165,10 @@ export type QueryMunicipalitiesArgs = {
 }
 
 export type QueryMunicipalityArgs = {
+  code: Scalars['String']
+}
+
+export type QueryPrefectureArgs = {
   code: Scalars['String']
 }
 
@@ -176,6 +183,8 @@ type PlateauDataset_PlateauBuildingDataset_Fragment = {
   __typename?: 'PlateauBuildingDataset'
   id: string
   type: PlateauDatasetType
+  typeName: string
+  name: string
   variants: Array<{
     __typename?: 'PlateauBuildingDatasetVariant'
     version: string
@@ -191,6 +200,8 @@ type PlateauDataset_PlateauDefaultDataset_Fragment = {
   __typename?: 'PlateauDefaultDataset'
   id: string
   type: PlateauDatasetType
+  typeName: string
+  name: string
   variants: Array<{
     __typename?: 'PlateauDefaultDatasetVariant'
     format: PlateauDatasetFormat
@@ -220,6 +231,8 @@ export type MunicipalityDatasetsQuery = {
           __typename?: 'PlateauBuildingDataset'
           id: string
           type: PlateauDatasetType
+          typeName: string
+          name: string
           variants: Array<{
             __typename?: 'PlateauBuildingDatasetVariant'
             version: string
@@ -234,6 +247,8 @@ export type MunicipalityDatasetsQuery = {
           __typename?: 'PlateauDefaultDataset'
           id: string
           type: PlateauDatasetType
+          typeName: string
+          name: string
           variants: Array<{
             __typename?: 'PlateauDefaultDatasetVariant'
             format: PlateauDatasetFormat
@@ -256,6 +271,8 @@ export const PlateauDatasetFragmentDoc = gql`
   fragment PlateauDataset on PlateauDataset {
     id
     type
+    typeName
+    name
     variants {
       format
       url
