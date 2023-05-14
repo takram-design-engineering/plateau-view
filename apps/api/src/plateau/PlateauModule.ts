@@ -7,11 +7,13 @@ import { FirestoreModule } from '@plateau/nest-firestore'
 
 import { PlateauCatalogService } from './PlateauCatalogService'
 import { PlateauMunicipalityService } from './PlateauMunicipalityService'
-import { PlateauStorageService } from './PlateauStorageService'
+import {
+  PlateauStorageService,
+  type PlateauStorageFiles
+} from './PlateauStorageService'
 import { PLATEAU_DATASET_FILES, PLATEAU_MODULE_OPTIONS } from './constants'
 import { PlateauCatalog } from './dto/PlateauCatalog'
 import { PlateauMunicipality } from './dto/PlateauMunicipality'
-import { type PlateauDatasetFiles } from './interfaces/PlateauDatasetFiles'
 import { type PlateauModuleOptions } from './interfaces/PlateauModuleOptions'
 import {
   ConfigurableModuleClass,
@@ -35,7 +37,7 @@ import { PlateauMunicipalityResolver } from './resolvers/PlateauMunicipalityReso
       provide: PLATEAU_DATASET_FILES,
       useFactory: async (
         options: PlateauModuleOptions
-      ): Promise<PlateauDatasetFiles> => {
+      ): Promise<PlateauStorageFiles> => {
         if (options.dataRoot.startsWith('gs://')) {
           const url = new URL(options.dataRoot)
           const storage = new Storage()

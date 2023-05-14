@@ -14,35 +14,36 @@ import { isNotNullish } from '@plateau/type-helpers'
 import schema from '../assets/plateau-2022.jtd.json'
 import { PlateauStorageService } from './PlateauStorageService'
 import { PlateauCatalog, type PlateauCatalogData } from './dto/PlateauCatalog'
-import { PlateauDatasetType, type PlateauDataset } from './dto/PlateauDataset'
+import { type PlateauDataset } from './dto/PlateauDataset'
+import { PlateauDatasetTypeEnum } from './dto/PlateauDatasetType'
 import { PlateauMunicipality } from './dto/PlateauMunicipality'
 import { PlateauBuildingDataset } from './dto/datasets/PlateauBuildingDataset'
-import { PlateauUnknownDataset } from './dto/datasets/PlateauUnknownDataset'
+import { PlateauDefaultDataset } from './dto/datasets/PlateauDefaultDataset'
 import { getMunicipalitiesInCatalog } from './helpers/getMunicipalitiesInCatalog'
 
 const datasetClasses: Record<string, Constructor<PlateauDataset> | undefined> =
   {
-    [PlateauDatasetType.Border]: PlateauUnknownDataset,
-    [PlateauDatasetType.Bridge]: PlateauUnknownDataset,
-    [PlateauDatasetType.Building]: PlateauBuildingDataset,
-    [PlateauDatasetType.EmergencyRoute]: PlateauUnknownDataset,
-    [PlateauDatasetType.Facility]: PlateauUnknownDataset,
-    [PlateauDatasetType.Flood]: PlateauUnknownDataset,
-    [PlateauDatasetType.Furniture]: PlateauUnknownDataset,
-    [PlateauDatasetType.Generic]: PlateauUnknownDataset,
-    [PlateauDatasetType.Hightide]: PlateauUnknownDataset,
-    [PlateauDatasetType.InlandFlood]: PlateauUnknownDataset,
-    [PlateauDatasetType.Landmark]: PlateauUnknownDataset,
-    [PlateauDatasetType.Landslide]: PlateauUnknownDataset,
-    [PlateauDatasetType.Landuse]: PlateauUnknownDataset,
-    [PlateauDatasetType.Park]: PlateauUnknownDataset,
-    [PlateauDatasetType.Railway]: PlateauUnknownDataset,
-    [PlateauDatasetType.Road]: PlateauUnknownDataset,
-    [PlateauDatasetType.Shelter]: PlateauUnknownDataset,
-    [PlateauDatasetType.Station]: PlateauUnknownDataset,
-    [PlateauDatasetType.Tsunami]: PlateauUnknownDataset,
-    [PlateauDatasetType.UseCase]: PlateauUnknownDataset,
-    [PlateauDatasetType.Vegetation]: PlateauUnknownDataset
+    [PlateauDatasetTypeEnum.Border]: PlateauDefaultDataset,
+    [PlateauDatasetTypeEnum.Bridge]: PlateauDefaultDataset,
+    [PlateauDatasetTypeEnum.Building]: PlateauBuildingDataset,
+    [PlateauDatasetTypeEnum.EmergencyRoute]: PlateauDefaultDataset,
+    [PlateauDatasetTypeEnum.Facility]: PlateauDefaultDataset,
+    [PlateauDatasetTypeEnum.Flood]: PlateauDefaultDataset,
+    [PlateauDatasetTypeEnum.Furniture]: PlateauDefaultDataset,
+    [PlateauDatasetTypeEnum.Generic]: PlateauDefaultDataset,
+    [PlateauDatasetTypeEnum.Hightide]: PlateauDefaultDataset,
+    [PlateauDatasetTypeEnum.InlandFlood]: PlateauDefaultDataset,
+    [PlateauDatasetTypeEnum.Landmark]: PlateauDefaultDataset,
+    [PlateauDatasetTypeEnum.Landslide]: PlateauDefaultDataset,
+    [PlateauDatasetTypeEnum.Landuse]: PlateauDefaultDataset,
+    [PlateauDatasetTypeEnum.Park]: PlateauDefaultDataset,
+    [PlateauDatasetTypeEnum.Railway]: PlateauDefaultDataset,
+    [PlateauDatasetTypeEnum.Road]: PlateauDefaultDataset,
+    [PlateauDatasetTypeEnum.Shelter]: PlateauDefaultDataset,
+    [PlateauDatasetTypeEnum.Station]: PlateauDefaultDataset,
+    [PlateauDatasetTypeEnum.Tsunami]: PlateauDefaultDataset,
+    [PlateauDatasetTypeEnum.UseCase]: PlateauDefaultDataset,
+    [PlateauDatasetTypeEnum.Vegetation]: PlateauDefaultDataset
   }
 
 @Injectable()

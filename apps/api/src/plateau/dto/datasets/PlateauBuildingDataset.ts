@@ -2,10 +2,13 @@ import { Field, ObjectType } from '@nestjs/graphql'
 import { groupBy } from 'lodash'
 import format from 'string-template'
 
-import { PlateauDataset, type PlateauDatasetType } from '../PlateauDataset'
+import { PlateauDataset, PlateauDatasetVariant } from '../PlateauDataset'
+import { type PlateauDatasetTypeEnum } from '../PlateauDatasetType'
 
-@ObjectType()
-class PlateauBuildingDatasetVariant {
+@ObjectType({
+  implements: [PlateauDatasetVariant]
+})
+class PlateauBuildingDatasetVariant extends PlateauDatasetVariant {
   @Field()
   version!: string
 
@@ -14,15 +17,12 @@ class PlateauBuildingDatasetVariant {
 
   @Field(() => Boolean)
   textured!: boolean
-
-  @Field()
-  url!: string
 }
 
 @ObjectType({
   implements: [PlateauDataset]
 })
-export class PlateauBuildingDataset extends PlateauDataset<PlateauDatasetType.Building> {
+export class PlateauBuildingDataset extends PlateauDataset<PlateauDatasetTypeEnum.Building> {
   private getVariants2022(): PlateauBuildingDatasetVariant[] {
     // Strangely, when a LOD doesn't have a variant with non-textured suffix,
     // the only variant of the LOD is *not* textured, which forces me to
@@ -37,11 +37,13 @@ export class PlateauBuildingDataset extends PlateauDataset<PlateauDatasetType.Bu
     return Object.values(groups).flatMap(variants =>
       variants
         .map(({ lod, variant }) => ({
+          type: '3dtiles',
+          url: variant.url,
+          name: '',
           version: '2022',
           lod,
           textured:
-            variants.length > 1 && !variant.name.includes('テクスチャなし'),
-          url: variant.url
+            variants.length > 1 && !variant.name.includes('テクスチャなし')
         }))
         .sort((a, b) =>
           `${a.lod}-${a.textured ? 1 : 0}`.localeCompare(
@@ -66,10 +68,12 @@ export class PlateauBuildingDataset extends PlateauDataset<PlateauDatasetType.Bu
     const lod = files.some(file => file.includes('_low_resolution')) ? 2 : 1
     return files
       .map(file => ({
+        type: '3dtiles',
+        url: file,
+        name: '',
         version: '2020',
         lod: file.includes('_low_resolution') ? 1 : lod,
-        textured: file.includes('_texture'),
-        url: file
+        textured: file.includes('_texture')
       }))
       .sort((a, b) =>
         `${a.lod}-${a.textured ? 1 : 0}`.localeCompare(

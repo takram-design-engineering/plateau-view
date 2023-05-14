@@ -19,13 +19,16 @@ type PlateauBuildingDataset implements PlateauDataset {
   description: String
   id: String!
   municipality: PlateauMunicipality
-  type: String!
+  type: PlateauDatasetType!
+  typeName: String!
   variants: [PlateauBuildingDatasetVariant!]!
 }
 
-type PlateauBuildingDatasetVariant {
+type PlateauBuildingDatasetVariant implements PlateauDatasetVariant {
   lod: Float!
+  name: String!
   textured: Boolean!
+  type: String!
   url: String!
   version: String!
 }
@@ -34,7 +37,54 @@ interface PlateauDataset {
   description: String
   id: String!
   municipality: PlateauMunicipality
+  type: PlateauDatasetType!
+  typeName: String!
+  variants: [PlateauDatasetVariant!]!
+}
+
+enum PlateauDatasetType {
+  Border
+  Bridge
+  Building
+  EmergencyRoute
+  Facility
+  Flood
+  Furniture
+  Generic
+  Hightide
+  InlandFlood
+  Landmark
+  Landslide
+  Landuse
+  Park
+  Railway
+  Road
+  Shelter
+  Station
+  Tsunami
+  UseCase
+  Vegetation
+}
+
+interface PlateauDatasetVariant {
+  name: String!
   type: String!
+  url: String!
+}
+
+type PlateauDefaultDataset implements PlateauDataset {
+  description: String
+  id: String!
+  municipality: PlateauMunicipality
+  type: PlateauDatasetType!
+  typeName: String!
+  variants: [PlateauDefaultDatasetVariant!]!
+}
+
+type PlateauDefaultDatasetVariant implements PlateauDatasetVariant {
+  name: String!
+  type: String!
+  url: String!
 }
 
 type PlateauMunicipality implements PlateauArea {
@@ -53,13 +103,6 @@ type PlateauPrefecture implements PlateauArea {
   name: String!
   parents: [PlateauArea!]!
   type: PlateauAreaType!
-}
-
-type PlateauUnknownDataset implements PlateauDataset {
-  description: String
-  id: String!
-  municipality: PlateauMunicipality
-  type: String!
 }
 
 type Query {

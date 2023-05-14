@@ -3,12 +3,15 @@ import { minimatch } from 'minimatch'
 import urlJoin from 'url-join'
 
 import { PLATEAU_DATASET_FILES, PLATEAU_MODULE_OPTIONS } from './constants'
-import {
-  PlateauDatasetFiles,
-  type PlateauDatasetFileType,
-  type PlateauDatasetVersion
-} from './interfaces/PlateauDatasetFiles'
+import { type PlateauDatasetFormat } from './dto/PlateauDatasetFormat'
 import { PlateauModuleOptions } from './interfaces/PlateauModuleOptions'
+
+export type PlateauStorageVersion = '2020' | '2022'
+
+export type PlateauStorageFiles = Record<
+  PlateauStorageVersion,
+  Record<PlateauDatasetFormat, string[] | undefined>
+>
 
 @Injectable()
 export class PlateauStorageService {
@@ -16,22 +19,28 @@ export class PlateauStorageService {
     @Inject(PLATEAU_MODULE_OPTIONS)
     private readonly options: PlateauModuleOptions,
     @Inject(PLATEAU_DATASET_FILES)
-    private readonly files: PlateauDatasetFiles
+    private readonly files: PlateauStorageFiles
   ) {}
 
   match(params: {
     pattern: string
-    version: PlateauDatasetVersion
-    fileType: PlateauDatasetFileType
+    version: PlateauStorageVersion
+    fileType: PlateauDatasetFormat
   }): string[] {
     const { pattern, version, fileType } = params
-    const files = minimatch.match(this.files[version][fileType], `*/${pattern}`)
+    const list = this.files[version][fileType]
+    if (list == null) {
+      return []
+    }
+    const matches = minimatch.match(list, `*/${pattern}`)
     if (this.options.dataRoot.startsWith('gs://')) {
-      return files.map(file =>
+      return matches.map(file =>
         urlJoin(this.options.dataRoot, `plateau/${file}`)
       )
     } else {
-      return files.map(file => urlJoin(this.options.baseUrl, `plateau/${file}`))
+      return matches.map(file =>
+        urlJoin(this.options.baseUrl, `plateau/${file}`)
+      )
     }
   }
 }
