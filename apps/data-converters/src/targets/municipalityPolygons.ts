@@ -1,4 +1,4 @@
-import { writeFile } from 'fs/promises'
+import { readFile, writeFile } from 'fs/promises'
 import { type FeatureCollection } from 'geojson'
 import { round } from 'lodash'
 import { applyCommands } from 'mapshaper'
@@ -6,17 +6,18 @@ import { mkdirp } from 'mkdirp'
 import path from 'path'
 import { read as readShapefile } from 'shapefile'
 import invariant from 'tiny-invariant'
-import { merge } from 'topojson-client'
+import { merge, mergeArcs } from 'topojson-client'
 import type TopoJSON from 'topojson-specification'
 
 import { isNotNullish } from '@plateau/type-helpers'
+
+import { type Municipalities, type Prefectures } from './municipalityCodes'
 
 export interface MunicipalityProperties {
   municipalityCode: string
   municipalityName: string
   prefectureCode: string
   prefectureName: string
-  area: number
   center: [number, number, number]
   radius: number
 }
@@ -43,12 +44,11 @@ async function processGeoJSON(
         if (isNaN(+input.AREA)) {
           throw new Error('Cannot coarse area to number')
         }
-        const properties: Omit<MunicipalityProperties, 'center' | 'radius'> = {
+        const properties: Partial<MunicipalityProperties> = {
           municipalityCode: `${input.PREF}${input.CITY}`,
           municipalityName: input.CITY_NAME,
           prefectureCode: input.PREF,
-          prefectureName: input.PREF_NAME,
-          area: input.AREA
+          prefectureName: input.PREF_NAME
         }
         invariant(feature.geometry.type === 'Polygon')
         return {
@@ -62,10 +62,21 @@ async function processGeoJSON(
 
 // Convert GeoJSON to TopoJSON, simplifying and merging geometries. Mapshaper is
 // the best option to do so as far as I know.
-async function convertToTopoJSON(
-  data: FeatureCollection,
-  interval = 50
-): Promise<TopoJSON.Topology> {
+async function convertToTopoJSON(params: {
+  collection: FeatureCollection
+  municipalities: Municipalities
+  prefectureCode: string
+  prefectureName: string
+  interval?: number
+}): Promise<TopoJSON.Topology> {
+  const {
+    collection,
+    prefectureCode,
+    prefectureName,
+    municipalities,
+    interval = 50
+  } = params
+
   const result = await applyCommands(
     [
       '-i input.geojson name=root encoding=utf-8 snap',
@@ -79,7 +90,7 @@ async function convertToTopoJSON(
       `-o "output.topojson" format=topojson`
     ].join(' '),
     {
-      'input.geojson': data
+      'input.geojson': collection
     }
   )
   const topology: TopoJSON.Topology<{
@@ -88,6 +99,39 @@ async function convertToTopoJSON(
       geometries: MunicipalityGeometry[]
     }
   }> = JSON.parse(result['output.topojson'])
+
+  // Add geometries of designated cities and special wards.
+  const municipalitiesToMerge = Object.entries(municipalities)
+    .filter(([code]) => code.startsWith(prefectureCode))
+    .filter((pair): pair is [string, [string, string[]]] =>
+      Array.isArray(pair[1][1])
+    )
+  topology.objects.root.geometries.push(
+    ...municipalitiesToMerge.map(
+      ([
+        municipalityCode,
+        [municipalityName, childCodes]
+      ]): MunicipalityGeometry => {
+        const geometry = mergeArcs(
+          topology,
+          childCodes
+            .map(code =>
+              topology.objects.root.geometries.find(
+                geometry => geometry.properties?.municipalityCode === code
+              )
+            )
+            .filter(isNotNullish)
+        )
+        geometry.properties = {
+          municipalityCode,
+          municipalityName,
+          prefectureCode,
+          prefectureName
+        }
+        return geometry as MunicipalityGeometry
+      }
+    )
+  )
 
   const cesium = await import('@cesium/engine')
   const { BoundingSphere, Cartesian3, Ellipsoid } = cesium
@@ -131,20 +175,21 @@ async function convertToTopoJSON(
       round(boundingSphere.center.z, 3)
     ]
     geometryArcs.properties.radius = round(boundingSphere.radius, 3)
-
-    // Correct floating-point error of the area summed by Mapshaper.
-    geometryArcs.properties.area = round(geometryArcs.properties.area, 3)
   }
 
   return topology
 }
 
 export async function main(): Promise<void> {
-  const prefectureCodes = [...Array(47)].map((_, index) =>
-    `${index + 1}`.padStart(2, '0')
-  )
+  const { prefectures, municipalities } = JSON.parse(
+    await readFile(path.resolve('./data/municipalityCodes.json'), 'utf-8')
+  ) as {
+    prefectures: Prefectures
+    municipalities: Municipalities
+  }
+
   await mkdirp(path.resolve('./data/municipalityPolygons'))
-  for (const prefectureCode of prefectureCodes) {
+  for (const [prefectureCode, prefectureName] of Object.entries(prefectures)) {
     // Get the data at:
     // https://www.e-stat.go.jp/gis/statmap-search?page=1&type=2&aggregateUnitForBoundary=A&toukeiCode=00200521&toukeiYear=2020&serveyId=B002005212020&prefCode=01&coordsys=1&format=shape&datum=2000
     const source = path.resolve(
@@ -154,7 +199,12 @@ export async function main(): Promise<void> {
       encoding: 'sjis'
     })
     const geojson = await processGeoJSON(input)
-    const topojson = await convertToTopoJSON(geojson)
+    const topojson = await convertToTopoJSON({
+      collection: geojson,
+      municipalities,
+      prefectureCode,
+      prefectureName
+    })
     await writeFile(
       path.resolve('./data/municipalityPolygons', `${prefectureCode}.topojson`),
       JSON.stringify(topojson)
