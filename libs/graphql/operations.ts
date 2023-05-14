@@ -47,6 +47,7 @@ export type PlateauBuildingDatasetVariant = {
   lod: Scalars['Float']
   textured: Scalars['Boolean']
   url: Scalars['String']
+  version: Scalars['String']
 }
 
 export type PlateauDataset = {
@@ -107,6 +108,7 @@ type PlateauDataset_PlateauBuildingDataset_Fragment = {
   type: string
   variants: Array<{
     __typename?: 'PlateauBuildingDatasetVariant'
+    version: string
     lod: number
     textured: boolean
     url: string
@@ -141,6 +143,7 @@ export type MunicipalityDatasetsQuery = {
           type: string
           variants: Array<{
             __typename?: 'PlateauBuildingDatasetVariant'
+            version: string
             lod: number
             textured: boolean
             url: string
@@ -164,6 +167,7 @@ export const PlateauDatasetFragmentDoc = gql`
     type
     ... on PlateauBuildingDataset {
       variants {
+        version
         lod
         textured
         url

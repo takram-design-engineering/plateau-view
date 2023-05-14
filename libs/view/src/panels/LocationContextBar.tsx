@@ -5,7 +5,8 @@ import {
   type SelectChangeEvent
 } from '@mui/material'
 import { useAtomValue } from 'jotai'
-import { useCallback, useState, type FC } from 'react'
+import { groupBy, uniqBy } from 'lodash'
+import { Fragment, useCallback, useState, type FC } from 'react'
 import invariant from 'tiny-invariant'
 
 import {
@@ -25,7 +26,7 @@ import { LocationBreadcrumbs } from './LocationContextBar/LocationBreadcrumbs'
 
 export const LocationContextBar: FC = () => {
   const address = useAtomValue(municipalityAddressAtom)
-  const { data, loading } = useMunicipalityDatasetsQuery({
+  const { data } = useMunicipalityDatasetsQuery({
     variables:
       address != null
         ? {
@@ -41,16 +42,14 @@ export const LocationContextBar: FC = () => {
     setBuilding(event.target.value)
   }, [])
 
-  if (address == null || loading) {
+  if (address == null) {
     return null
   }
-  invariant(data != null) // TODO: Show error snackbar
 
-  const buildingDatasets =
-    data.municipality?.datasets.filter(
-      (dataset): dataset is PlateauBuildingDataset =>
-        dataset.__typename === 'PlateauBuildingDataset'
-    ) ?? []
+  const buildingDataset = data?.municipality?.datasets.find(
+    (dataset): dataset is PlateauBuildingDataset =>
+      dataset.__typename === 'PlateauBuildingDataset'
+  )
 
   return (
     <ContextBar>
@@ -58,18 +57,29 @@ export const LocationContextBar: FC = () => {
         <LocationBreadcrumbs />
         <Divider orientation='vertical' light />
         <Stack direction='row' spacing={1} alignItems='center' height='100%'>
-          {buildingDatasets.length > 0 && (
+          {buildingDataset != null && buildingDataset.variants.length > 0 && (
             <ContextButtonSelect
               label='建築物'
               value={building}
               onChange={handleChange}
             >
-              {buildingDatasets.flatMap(dataset =>
-                dataset.variants.map(variant => (
-                  <SelectItem key={variant.url} value={variant.url}>
-                    <Typography variant='body2'>LOD {variant.lod}</Typography>
-                  </SelectItem>
-                ))
+              {Object.entries(groupBy(buildingDataset.variants, 'version')).map(
+                ([version, variants]) => (
+                  <Fragment key={version}>
+                    {uniqBy(variants, 'lod').map(variant => (
+                      <SelectItem key={variant.url} value={variant.url}>
+                        <Stack>
+                          <Typography variant='body2'>
+                            LOD {variant.lod}
+                          </Typography>
+                          <Typography variant='caption' color='text.secondary'>
+                            {variant.version}年度版
+                          </Typography>
+                        </Stack>
+                      </SelectItem>
+                    ))}
+                  </Fragment>
+                )
               )}
             </ContextButtonSelect>
           )}
