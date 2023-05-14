@@ -37,22 +37,78 @@ export enum PlateauAreaType {
 
 export type PlateauBuildingDataset = PlateauDataset & {
   __typename?: 'PlateauBuildingDataset'
+  description?: Maybe<Scalars['String']>
   id: Scalars['String']
-  type: Scalars['String']
+  municipality?: Maybe<PlateauMunicipality>
+  type: PlateauDatasetType
+  typeName: Scalars['String']
   variants: Array<PlateauBuildingDatasetVariant>
 }
 
-export type PlateauBuildingDatasetVariant = {
+export type PlateauBuildingDatasetVariant = PlateauDatasetVariant & {
   __typename?: 'PlateauBuildingDatasetVariant'
   lod: Scalars['Float']
+  name: Scalars['String']
   textured: Scalars['Boolean']
+  type: Scalars['String']
   url: Scalars['String']
   version: Scalars['String']
 }
 
 export type PlateauDataset = {
+  description?: Maybe<Scalars['String']>
   id: Scalars['String']
+  municipality?: Maybe<PlateauMunicipality>
+  type: PlateauDatasetType
+  typeName: Scalars['String']
+  variants: Array<PlateauDatasetVariant>
+}
+
+export enum PlateauDatasetType {
+  Border = 'Border',
+  Bridge = 'Bridge',
+  Building = 'Building',
+  EmergencyRoute = 'EmergencyRoute',
+  Facility = 'Facility',
+  Flood = 'Flood',
+  Furniture = 'Furniture',
+  Generic = 'Generic',
+  Hightide = 'Hightide',
+  InlandFlood = 'InlandFlood',
+  Landmark = 'Landmark',
+  Landslide = 'Landslide',
+  Landuse = 'Landuse',
+  Park = 'Park',
+  Railway = 'Railway',
+  Road = 'Road',
+  Shelter = 'Shelter',
+  Station = 'Station',
+  Tsunami = 'Tsunami',
+  UseCase = 'UseCase',
+  Vegetation = 'Vegetation'
+}
+
+export type PlateauDatasetVariant = {
+  name: Scalars['String']
   type: Scalars['String']
+  url: Scalars['String']
+}
+
+export type PlateauDefaultDataset = PlateauDataset & {
+  __typename?: 'PlateauDefaultDataset'
+  description?: Maybe<Scalars['String']>
+  id: Scalars['String']
+  municipality?: Maybe<PlateauMunicipality>
+  type: PlateauDatasetType
+  typeName: Scalars['String']
+  variants: Array<PlateauDefaultDatasetVariant>
+}
+
+export type PlateauDefaultDatasetVariant = PlateauDatasetVariant & {
+  __typename?: 'PlateauDefaultDatasetVariant'
+  name: Scalars['String']
+  type: Scalars['String']
+  url: Scalars['String']
 }
 
 export type PlateauMunicipality = PlateauArea & {
@@ -66,10 +122,6 @@ export type PlateauMunicipality = PlateauArea & {
   type: PlateauAreaType
 }
 
-export type PlateauMunicipalityDatasetsArgs = {
-  version?: InputMaybe<Scalars['String']>
-}
-
 export type PlateauPrefecture = PlateauArea & {
   __typename?: 'PlateauPrefecture'
   code: Scalars['String']
@@ -79,16 +131,14 @@ export type PlateauPrefecture = PlateauArea & {
   type: PlateauAreaType
 }
 
-export type PlateauUnknownDataset = PlateauDataset & {
-  __typename?: 'PlateauUnknownDataset'
-  id: Scalars['String']
-  type: Scalars['String']
-}
-
 export type Query = {
   __typename?: 'Query'
   municipalities: Array<PlateauMunicipality>
   municipality?: Maybe<PlateauMunicipality>
+}
+
+export type QueryMunicipalitiesArgs = {
+  prefectureCode?: InputMaybe<Scalars['String']>
 }
 
 export type QueryMunicipalityArgs = {
@@ -105,7 +155,7 @@ export type PlateauMunicipalityFragment = {
 type PlateauDataset_PlateauBuildingDataset_Fragment = {
   __typename?: 'PlateauBuildingDataset'
   id: string
-  type: string
+  type: PlateauDatasetType
   variants: Array<{
     __typename?: 'PlateauBuildingDatasetVariant'
     version: string
@@ -115,15 +165,15 @@ type PlateauDataset_PlateauBuildingDataset_Fragment = {
   }>
 }
 
-type PlateauDataset_PlateauUnknownDataset_Fragment = {
-  __typename?: 'PlateauUnknownDataset'
+type PlateauDataset_PlateauDefaultDataset_Fragment = {
+  __typename?: 'PlateauDefaultDataset'
   id: string
-  type: string
+  type: PlateauDatasetType
 }
 
 export type PlateauDatasetFragment =
   | PlateauDataset_PlateauBuildingDataset_Fragment
-  | PlateauDataset_PlateauUnknownDataset_Fragment
+  | PlateauDataset_PlateauDefaultDataset_Fragment
 
 export type MunicipalityDatasetsQueryVariables = Exact<{
   municipalityCode: Scalars['String']
@@ -140,7 +190,7 @@ export type MunicipalityDatasetsQuery = {
       | {
           __typename?: 'PlateauBuildingDataset'
           id: string
-          type: string
+          type: PlateauDatasetType
           variants: Array<{
             __typename?: 'PlateauBuildingDatasetVariant'
             version: string
@@ -149,7 +199,11 @@ export type MunicipalityDatasetsQuery = {
             url: string
           }>
         }
-      | { __typename?: 'PlateauUnknownDataset'; id: string; type: string }
+      | {
+          __typename?: 'PlateauDefaultDataset'
+          id: string
+          type: PlateauDatasetType
+        }
     >
   } | null
 }
