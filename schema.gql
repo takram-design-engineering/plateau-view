@@ -26,10 +26,10 @@ type PlateauBuildingDataset implements PlateauDataset {
 }
 
 type PlateauBuildingDatasetVariant implements PlateauDatasetVariant {
+  format: PlateauDatasetFormat!
   lod: Float!
   name: String!
   textured: Boolean!
-  type: PlateauDatasetFormat!
   url: String!
   version: String!
 }
@@ -82,8 +82,8 @@ enum PlateauDatasetType {
 }
 
 interface PlateauDatasetVariant {
+  format: PlateauDatasetFormat!
   name: String!
-  type: PlateauDatasetFormat!
   url: String!
 }
 
@@ -98,8 +98,8 @@ type PlateauDefaultDataset implements PlateauDataset {
 }
 
 type PlateauDefaultDatasetVariant implements PlateauDatasetVariant {
+  format: PlateauDatasetFormat!
   name: String!
-  type: PlateauDatasetFormat!
   url: String!
 }
 

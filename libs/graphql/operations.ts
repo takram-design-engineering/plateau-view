@@ -48,10 +48,10 @@ export type PlateauBuildingDataset = PlateauDataset & {
 
 export type PlateauBuildingDatasetVariant = PlateauDatasetVariant & {
   __typename?: 'PlateauBuildingDatasetVariant'
+  format: PlateauDatasetFormat
   lod: Scalars['Float']
   name: Scalars['String']
   textured: Scalars['Boolean']
-  type: PlateauDatasetFormat
   url: Scalars['String']
   version: Scalars['String']
 }
@@ -104,8 +104,8 @@ export enum PlateauDatasetType {
 }
 
 export type PlateauDatasetVariant = {
+  format: PlateauDatasetFormat
   name: Scalars['String']
-  type: PlateauDatasetFormat
   url: Scalars['String']
 }
 
@@ -122,8 +122,8 @@ export type PlateauDefaultDataset = PlateauDataset & {
 
 export type PlateauDefaultDatasetVariant = PlateauDatasetVariant & {
   __typename?: 'PlateauDefaultDatasetVariant'
+  format: PlateauDatasetFormat
   name: Scalars['String']
-  type: PlateauDatasetFormat
   url: Scalars['String']
 }
 
@@ -177,7 +177,9 @@ type PlateauDataset_PlateauBuildingDataset_Fragment = {
     version: string
     lod: number
     textured: boolean
+    format: PlateauDatasetFormat
     url: string
+    name: string
   }>
 }
 
@@ -185,6 +187,12 @@ type PlateauDataset_PlateauDefaultDataset_Fragment = {
   __typename?: 'PlateauDefaultDataset'
   id: string
   type: PlateauDatasetType
+  variants: Array<{
+    __typename?: 'PlateauDefaultDatasetVariant'
+    format: PlateauDatasetFormat
+    url: string
+    name: string
+  }>
 }
 
 export type PlateauDatasetFragment =
@@ -212,13 +220,21 @@ export type MunicipalityDatasetsQuery = {
             version: string
             lod: number
             textured: boolean
+            format: PlateauDatasetFormat
             url: string
+            name: string
           }>
         }
       | {
           __typename?: 'PlateauDefaultDataset'
           id: string
           type: PlateauDatasetType
+          variants: Array<{
+            __typename?: 'PlateauDefaultDatasetVariant'
+            format: PlateauDatasetFormat
+            url: string
+            name: string
+          }>
         }
     >
   } | null
@@ -235,12 +251,14 @@ export const PlateauDatasetFragmentDoc = gql`
   fragment PlateauDataset on PlateauDataset {
     id
     type
-    ... on PlateauBuildingDataset {
-      variants {
+    variants {
+      format
+      url
+      name
+      ... on PlateauBuildingDatasetVariant {
         version
         lod
         textured
-        url
       }
     }
   }

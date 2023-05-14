@@ -38,7 +38,7 @@ export class PlateauBuildingDataset extends PlateauDataset<PlateauDatasetTypeEnu
     return Object.values(groups).flatMap(variants =>
       variants
         .map(({ lod, variant }) => ({
-          type: PlateauDatasetFormatEnum.Cesium3DTiles,
+          format: PlateauDatasetFormatEnum.Cesium3DTiles,
           url: variant.url,
           name: '',
           version: '2022',
@@ -69,7 +69,7 @@ export class PlateauBuildingDataset extends PlateauDataset<PlateauDatasetTypeEnu
     const lod = files.some(file => file.includes('_low_resolution')) ? 2 : 1
     return files
       .map(file => ({
-        type: PlateauDatasetFormatEnum.Cesium3DTiles,
+        format: PlateauDatasetFormatEnum.Cesium3DTiles,
         url: file,
         name: '',
         version: '2020',
