@@ -1,20 +1,23 @@
 import AddOutlined from '@mui/icons-material/AddOutlined'
 import CheckOutlined from '@mui/icons-material/CheckOutlined'
-import { Button, styled, type ButtonProps } from '@mui/material'
+import { Button, buttonClasses, styled, type ButtonProps } from '@mui/material'
 import { forwardRef } from 'react'
 
 const StyledButton = styled(Button)(({ theme }) => ({
-  height: '100%',
-  paddingRight: theme.spacing(1),
+  height: `calc(100% - ${theme.spacing(1)})`,
+  paddingRight: theme.spacing(1.5),
   paddingLeft: theme.spacing(1),
-  borderRadius: 0
+  // borderRadius: 0,
+  [`& .${buttonClasses.startIcon}`]: {
+    marginRight: theme.spacing(0.75)
+  }
 }))
 
-export interface AssetControlProps extends Omit<ButtonProps, 'startIcon'> {
+export interface ContextButtonProps extends Omit<ButtonProps, 'startIcon'> {
   active?: boolean
 }
 
-export const AssetControl = forwardRef<HTMLButtonElement, AssetControlProps>(
+export const ContextButton = forwardRef<HTMLButtonElement, ContextButtonProps>(
   ({ active = false, children, ...props }, ref) => (
     <StyledButton
       ref={ref}
