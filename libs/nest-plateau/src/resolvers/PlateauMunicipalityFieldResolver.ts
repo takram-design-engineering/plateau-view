@@ -1,9 +1,13 @@
 import { Injectable } from '@nestjs/common'
-import { Parent, ResolveField, Resolver } from '@nestjs/graphql'
+import { Args, Parent, ResolveField, Resolver } from '@nestjs/graphql'
 import invariant from 'tiny-invariant'
 
 import { PlateauCatalogService } from '../PlateauCatalogService'
 import { PlateauDataset } from '../dto/PlateauDataset'
+import {
+  PlateauDatasetTypeEnum,
+  type PlateauDatasetType
+} from '../dto/PlateauDatasetType'
 import { PlateauMunicipality } from '../dto/PlateauMunicipality'
 import { PlateauPrefecture } from '../dto/PlateauPrefecture'
 
@@ -23,10 +27,16 @@ export class PlateauMunicipalityFieldResolver {
 
   @ResolveField(() => [PlateauDataset])
   async datasets(
-    @Parent() municipality: PlateauMunicipality
+    @Parent() municipality: PlateauMunicipality,
+    @Args('excludeTypes', {
+      type: () => [PlateauDatasetTypeEnum],
+      nullable: true
+    })
+    excludeTypes?: readonly PlateauDatasetType[]
   ): Promise<PlateauDataset[]> {
     return await this.catalogService.findAll({
-      municipalityCode: municipality.code
+      municipalityCode: municipality.code,
+      excludeTypes
     })
   }
 }
