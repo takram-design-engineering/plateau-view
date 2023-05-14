@@ -10,11 +10,9 @@ import { useCallback, type FC } from 'react'
 
 import { useCesium } from '@plateau/cesium'
 import { flyToPolygonEntity } from '@plateau/cesium-helpers'
+import { type Address } from '@plateau/gsi-geocoder'
 
-import {
-  municipalityAddressAtom,
-  municipalityDataSourceAtom
-} from '../../states/address'
+import { municipalityDataSourceAtom } from '../../states/address'
 
 const StyledBreadcrumbs = styled(Breadcrumbs)(({ theme }) => ({
   ...theme.typography.body2,
@@ -31,9 +29,14 @@ const StyledBreadcrumbs = styled(Breadcrumbs)(({ theme }) => ({
   }
 }))
 
-export const LocationBreadcrumbs: FC = () => {
+export interface LocationBreadcrumbsProps {
+  address?: Address
+}
+
+export const LocationBreadcrumbs: FC<LocationBreadcrumbsProps> = ({
+  address
+}) => {
   const scene = useCesium(({ scene }) => scene, { indirect: true })
-  const address = useAtomValue(municipalityAddressAtom)
   const dataSource = useAtomValue(municipalityDataSourceAtom)
 
   // TODO: Handle in atoms and make them declarative.

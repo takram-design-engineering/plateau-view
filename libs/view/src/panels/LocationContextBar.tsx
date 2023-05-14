@@ -1,18 +1,6 @@
-import {
-  Divider,
-  Stack,
-  Typography,
-  type SelectChangeEvent
-} from '@mui/material'
-import { useAtomValue } from 'jotai'
-import { groupBy, uniqBy } from 'lodash'
-import { Fragment, useCallback, useState, type FC } from 'react'
-import invariant from 'tiny-invariant'
+import { Divider, Stack, Typography } from '@mui/material'
+import { type FC } from 'react'
 
-import {
-  useMunicipalityDatasetsQuery,
-  type PlateauBuildingDataset
-} from '@plateau/graphql'
 import {
   ContextBar,
   ContextButton,
@@ -21,52 +9,33 @@ import {
   SelectItem
 } from '@plateau/ui-components'
 
-import { municipalityAddressAtom } from '../states/address'
+import { useLocationContextState } from '../hooks/useLocationContextState'
 import { LocationBreadcrumbs } from './LocationContextBar/LocationBreadcrumbs'
 
 export const LocationContextBar: FC = () => {
-  const address = useAtomValue(municipalityAddressAtom)
-  const { data } = useMunicipalityDatasetsQuery({
-    variables:
-      address != null
-        ? {
-            municipalityCode: address?.municipalityCode
-          }
-        : undefined,
-    skip: address == null
-  })
-
-  const [building, setBuilding] = useState<string>('')
-  const handleChange = useCallback((event: SelectChangeEvent<string>) => {
-    invariant(!Array.isArray(event.target.value))
-    setBuilding(event.target.value)
-  }, [])
-
+  const { address, datasets } = useLocationContextState()
   if (address == null) {
     return null
   }
-
-  const buildingDataset = data?.municipality?.datasets.find(
-    (dataset): dataset is PlateauBuildingDataset =>
-      dataset.__typename === 'PlateauBuildingDataset'
-  )
-
   return (
     <ContextBar>
       <Stack direction='row' spacing={1} alignItems='center' height='100%'>
-        <LocationBreadcrumbs />
-        <Divider orientation='vertical' light />
-        <Stack direction='row' spacing={1} alignItems='center' height='100%'>
-          {buildingDataset != null && buildingDataset.variants.length > 0 && (
-            <ContextButtonSelect
-              label='建築物'
-              value={building}
-              onChange={handleChange}
+        <LocationBreadcrumbs address={address} />
+        {datasets != null && (
+          <>
+            <Divider orientation='vertical' light />
+            <Stack
+              direction='row'
+              spacing={1}
+              alignItems='center'
+              height='100%'
             >
-              {Object.entries(groupBy(buildingDataset.variants, 'version')).map(
-                ([version, variants]) => (
-                  <Fragment key={version}>
-                    {uniqBy(variants, 'lod').map(variant => (
+              {datasets.map(dataset =>
+                dataset.variants.length === 1 ? (
+                  <ContextButton>{dataset.typeName}</ContextButton>
+                ) : dataset.__typename === 'PlateauBuildingDataset' ? (
+                  <ContextButtonSelect label={dataset.typeName} value=''>
+                    {dataset.variants.map(variant => (
                       <SelectItem key={variant.url} value={variant.url}>
                         <Stack>
                           <Typography variant='body2'>
@@ -78,20 +47,23 @@ export const LocationContextBar: FC = () => {
                         </Stack>
                       </SelectItem>
                     ))}
-                  </Fragment>
+                  </ContextButtonSelect>
+                ) : (
+                  <ContextSelect
+                    label={dataset.typeName}
+                    value={[] as string[]}
+                  >
+                    {dataset.variants.map(variant => (
+                      <SelectItem key={variant.url} value={variant.url}>
+                        <Typography variant='body2'>{variant.name}</Typography>
+                      </SelectItem>
+                    ))}
+                  </ContextSelect>
                 )
               )}
-            </ContextButtonSelect>
-          )}
-          <ContextButton>避難施設</ContextButton>
-          <ContextButton>ランドマーク</ContextButton>
-          <ContextButton>鉄道駅</ContextButton>
-          <ContextSelect label='ユースケース' value={[]}>
-            <SelectItem value=''>
-              <Typography variant='body2'>ユースケース</Typography>
-            </SelectItem>
-          </ContextSelect>
-        </Stack>
+            </Stack>
+          </>
+        )}
       </Stack>
     </ContextBar>
   )
