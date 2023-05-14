@@ -17,7 +17,7 @@ import { forwardRef, useCallback, useId, useRef, type MouseEvent } from 'react'
 
 import { Logotype, SelectItem, Shortcut, Symbol } from '@plateau/ui-components'
 
-import { platformAtom, showDeveloperPanelsAtom } from '../states/app'
+import { platformAtom, showDeveloperPanelsAtom } from '../../states/app'
 
 const StyledIconButton = styled(IconButton)(({ theme }) => ({
   width: theme.spacing(6.5),
