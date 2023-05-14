@@ -19,6 +19,7 @@ type PlateauBuildingDataset implements PlateauDataset {
   description: String
   id: String!
   municipality: PlateauMunicipality
+  name: String!
   type: PlateauDatasetType!
   typeName: String!
   variants: [PlateauBuildingDatasetVariant!]!
@@ -28,7 +29,7 @@ type PlateauBuildingDatasetVariant implements PlateauDatasetVariant {
   lod: Float!
   name: String!
   textured: Boolean!
-  type: String!
+  type: PlateauDatasetFormat!
   url: String!
   version: String!
 }
@@ -37,9 +38,23 @@ interface PlateauDataset {
   description: String
   id: String!
   municipality: PlateauMunicipality
+  name: String!
   type: PlateauDatasetType!
   typeName: String!
   variants: [PlateauDatasetVariant!]!
+}
+
+enum PlateauDatasetFormat {
+  CSV
+  CZML
+  Cesium3DTiles
+  GLTF
+  GTFS
+  GeoJson
+  MVT
+  TMS
+  Tiles
+  WMS
 }
 
 enum PlateauDatasetType {
@@ -68,7 +83,7 @@ enum PlateauDatasetType {
 
 interface PlateauDatasetVariant {
   name: String!
-  type: String!
+  type: PlateauDatasetFormat!
   url: String!
 }
 
@@ -76,6 +91,7 @@ type PlateauDefaultDataset implements PlateauDataset {
   description: String
   id: String!
   municipality: PlateauMunicipality
+  name: String!
   type: PlateauDatasetType!
   typeName: String!
   variants: [PlateauDefaultDatasetVariant!]!
@@ -83,7 +99,7 @@ type PlateauDefaultDataset implements PlateauDataset {
 
 type PlateauDefaultDatasetVariant implements PlateauDatasetVariant {
   name: String!
-  type: String!
+  type: PlateauDatasetFormat!
   url: String!
 }
 
