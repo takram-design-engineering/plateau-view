@@ -4,7 +4,7 @@ import {
 } from '@google-cloud/firestore'
 import { instanceToPlain, plainToInstance } from 'class-transformer'
 
-import { Collection } from '@plateau/nest-firestore'
+import { FirestoreCollection } from '@plateau/nest-firestore'
 
 import { type PlateauCatalog0 } from '../schemas/catalog'
 
@@ -14,7 +14,7 @@ export type PlateauCatalogData<
   T extends PlateauCatalogType = PlateauCatalogType
 > = PlateauCatalog0 & { type: T }
 
-@Collection('plateau/catalog')
+@FirestoreCollection('plateau/catalog')
 export class PlateauCatalog<T extends PlateauCatalogType = PlateauCatalogType> {
   static fromFirestore(
     snapshot: QueryDocumentSnapshot<PlateauCatalog>
