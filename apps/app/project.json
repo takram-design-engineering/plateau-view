@@ -17,8 +17,7 @@
           "outputPath": "apps/app"
         },
         "production": {}
-      },
-      "dependsOn": ["graphql"]
+      }
     },
     "serve": {
       "executor": "@nx/next:server",
@@ -36,8 +35,7 @@
           "buildTarget": "app:build:production",
           "dev": false
         }
-      },
-      "dependsOn": ["graphql"]
+      }
     },
     "export": {
       "executor": "@nx/next:export",

@@ -28,6 +28,7 @@
       "@plateau/gsi-geocoder": ["libs/gsi-geocoder/src/index.ts"],
       "@plateau/nest-cesium": ["libs/nest-cesium/src/index.ts"],
       "@plateau/nest-firestore": ["libs/nest-firestore/src/index.ts"],
+      "@plateau/nest-plateau": ["libs/nest-plateau/src/index.ts"],
       "@plateau/nest-vector-tile": ["libs/nest-vector-tile/src/index.ts"],
       "@plateau/react-helpers": ["libs/react-helpers/src/index.ts"],
       "@plateau/screen-space-selection": [
