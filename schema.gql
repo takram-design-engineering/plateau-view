@@ -116,6 +116,7 @@ type PlateauMunicipality implements PlateauArea {
 type PlateauPrefecture implements PlateauArea {
   code: String!
   id: ID!
+  municipalities: [PlateauMunicipality!]!
   name: String!
   parents: [PlateauArea!]!
   type: PlateauAreaType!
@@ -124,4 +125,6 @@ type PlateauPrefecture implements PlateauArea {
 type Query {
   municipalities(prefectureCode: String): [PlateauMunicipality!]!
   municipality(code: String!): PlateauMunicipality
+  prefecture(code: String!): PlateauPrefecture
+  prefectures: [PlateauPrefecture!]!
 }

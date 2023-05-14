@@ -1,5 +1,5 @@
 import { CollectionReference, type Query } from '@google-cloud/firestore'
-import { BadRequestException, Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 
 import { PlateauMunicipality } from './dto/PlateauMunicipality'
 
@@ -17,9 +17,6 @@ export class PlateauMunicipalityService {
   ): Promise<PlateauMunicipality[]> {
     let query: Query<PlateauMunicipality> = this.collection
     if (params.prefectureCode != null) {
-      if (!/^\d{2}$/.test(params.prefectureCode)) {
-        throw new BadRequestException('Illegal prefecture code')
-      }
       query = query
         .where('code', '>=', params.prefectureCode)
         .where('code', '<=', `${params.prefectureCode}\uf8ff`)
