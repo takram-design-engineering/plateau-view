@@ -1,2 +1,2 @@
-export * from './MunicipalityEntities'
-export * from './MunicipalityDataSource'
+export * from './AreaEntities'
+export * from './AreaDataSource'
