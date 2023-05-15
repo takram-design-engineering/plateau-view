@@ -3,24 +3,24 @@ import { forwardRef, useEffect } from 'react'
 import { useAsyncInstance, useCesium } from '@plateau/cesium'
 import { assignForwardedRef, withEphemerality } from '@plateau/react-helpers'
 
-import { MunicipalityDataSource } from './MunicipalityDataSource'
+import { AreaDataSource } from './AreaDataSource'
 
-export interface MunicipalityEntitiesProps {
+export interface AreaEntitiesProps {
   url: string
   show?: boolean
 }
 
-export const MunicipalityEntities = withEphemerality(
+export const AreaEntities = withEphemerality(
   () => useCesium(({ dataSources }) => dataSources),
   ['url'],
-  forwardRef<MunicipalityDataSource, MunicipalityEntitiesProps>(
+  forwardRef<AreaDataSource, AreaEntitiesProps>(
     ({ url, show = true }, forwardedRef) => {
       const dataSources = useCesium(({ dataSources }) => dataSources)
       const dataSource = useAsyncInstance({
         owner: dataSources,
         keys: [url],
         create: async () => {
-          const dataSource = await MunicipalityDataSource.fromUrl(url)
+          const dataSource = await AreaDataSource.fromUrl(url)
           dataSource.show = show
           return dataSource
         },
