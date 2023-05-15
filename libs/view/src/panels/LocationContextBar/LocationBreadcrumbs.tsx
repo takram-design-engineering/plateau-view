@@ -57,8 +57,8 @@ export const LocationBreadcrumbs: FC<LocationBreadcrumbsProps> = ({
       const entities = dataSource.getEntities(area.code)
       if (entities != null) {
         replace(entities)
+        void flyToArea(scene, dataSource, area.code)
       }
-      void flyToArea(scene, dataSource, area.code)
     },
     [areas, scene, dataSource, replace]
   )

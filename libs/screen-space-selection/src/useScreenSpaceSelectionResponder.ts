@@ -14,7 +14,7 @@ export interface ScreenSpaceSelectionResponderParams<T extends object>
 
 export function useScreenSpaceSelectionResponder<T extends object>(
   params: ScreenSpaceSelectionResponder<T>
-): void {
+): ReadonlySet<T> {
   const scene = useCesium(({ scene }) => scene, { indirect: true })
   const selection = useConstant(() => new Set<T>())
 
@@ -59,4 +59,6 @@ export function useScreenSpaceSelectionResponder<T extends object>(
       resignResponder()
     }
   }, [selection, responder, becomeResponder, remove])
+
+  return selection
 }
