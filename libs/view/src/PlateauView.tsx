@@ -25,7 +25,10 @@ import {
   useScreenSpaceEventHandler
 } from '@plateau/cesium'
 import { SuspendUntilTilesLoaded } from '@plateau/cesium-helpers'
-import { PlateauDatasetsContext } from '@plateau/datasets'
+import {
+  GooglePhotorealisticTileset,
+  PlateauDatasetsContext
+} from '@plateau/datasets'
 import { useWindowEvent } from '@plateau/react-helpers'
 import {
   ScreenSpaceSelectionBoundingSphere,
@@ -49,6 +52,7 @@ import { Toolbar } from './panels/Toolbar'
 import { addressAtom } from './states/address'
 import {
   colorModeAtom,
+  environmentTypeAtom,
   readyAtom,
   showSelectionBoundingSphereAtom
 } from './states/app'
@@ -230,6 +234,8 @@ export const PlateauView: FC<PlateauViewProps> = () => {
     setReady(true)
   }, [setReady])
 
+  const environmentType = useAtomValue(environmentTypeAtom)
+
   return (
     <Root>
       <Canvas>
@@ -242,16 +248,22 @@ export const PlateauView: FC<PlateauViewProps> = () => {
         <Suspense>
           <Terrains />
         </Suspense>
-        <Suspense>
-          <SuspendUntilTilesLoaded
-            initialTileCount={40}
-            remainingTileCount={25}
-            onComplete={handleTilesLoadComplete}
-          >
-            <IsomorphicTokyo23BuildingTileset name='13101_chiyoda-ku' />
-            <IsomorphicTokyo23BuildingTileset name='13102_chuo-ku' />
-          </SuspendUntilTilesLoaded>
-        </Suspense>
+        {environmentType !== 'google-photorealistic' ? (
+          <Suspense>
+            <SuspendUntilTilesLoaded
+              initialTileCount={40}
+              remainingTileCount={25}
+              onComplete={handleTilesLoadComplete}
+            >
+              <IsomorphicTokyo23BuildingTileset name='13101_chiyoda-ku' />
+              <IsomorphicTokyo23BuildingTileset name='13102_chuo-ku' />
+            </SuspendUntilTilesLoaded>
+          </Suspense>
+        ) : (
+          <GooglePhotorealisticTileset
+            apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAP_TILES_API_KEY}
+          />
+        )}
         <Areas />
         <Events />
         <CanvasPointer />

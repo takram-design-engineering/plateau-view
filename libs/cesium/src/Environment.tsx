@@ -44,6 +44,7 @@ const sphericalHarmonicCoefficientsScratch = [
 export interface EnvironmentProps {
   backgroundColor?: Color | string | number
   globeBaseColor?: Color | string | number
+  showGlobe?: boolean
   lightColor?: Color | string | number
   lightIntensity?: number
   shadowDarkness?: number
@@ -68,6 +69,7 @@ export interface EnvironmentProps {
 export const Environment: FC<EnvironmentProps> = ({
   backgroundColor = Color.BLACK,
   globeBaseColor = Color.BLACK,
+  showGlobe = true,
   lightColor = Color.WHITE,
   lightIntensity = 2,
   shadowDarkness = 0.3,
@@ -93,6 +95,7 @@ export const Environment: FC<EnvironmentProps> = ({
   cloneColor(backgroundColor, scene.backgroundColor)
   scene.globe.baseColor = cloneColor(globeBaseColor)
   scene.globe.depthTestAgainstTerrain = true
+  scene.globe.show = showGlobe
 
   // Light and shadow
   cloneColor(lightColor, scene.light.color)

@@ -11,8 +11,7 @@ import { type TilesetPrimitiveConstructorOptions } from './types'
 
 interface GooglePhotorealisticTilesetContentProps
   extends TilesetPrimitiveConstructorOptions {
-  apiKey: string
-  removeTexture?: boolean
+  apiKey?: string
   showWireframe?: boolean
   showBoundingVolume?: boolean
 }
@@ -22,11 +21,13 @@ const GooglePhotorealisticTilesetContent = withEphemerality(
   ['apiKey'],
   ({
     apiKey,
-    removeTexture = false,
     showWireframe = false,
     showBoundingVolume = false,
     ...props
   }: GooglePhotorealisticTilesetContentProps) => {
+    const { showTexturesAtom } = useContext(PlateauDatasetsContext)
+    const showTextures = useAtomValue(showTexturesAtom)
+
     const scene = useCesium(({ scene }) => scene)
     const tileset = useAsyncInstance({
       owner: scene.primitives,
@@ -36,7 +37,7 @@ const GooglePhotorealisticTilesetContent = withEphemerality(
           `https://tile.googleapis.com/v1/3dtiles/root.json?key=${apiKey}`,
           {
             // @ts-expect-error missing type
-            customShader: removeTexture ? LambertDiffuseShader : undefined,
+            customShader: !showTextures ? LambertDiffuseShader : undefined,
             debugWireframe: showWireframe,
             debugShowBoundingVolume: showBoundingVolume,
             shadows: showWireframe ? ShadowMode.DISABLED : ShadowMode.ENABLED
@@ -51,7 +52,7 @@ const GooglePhotorealisticTilesetContent = withEphemerality(
     })
 
     if (tileset != null) {
-      tileset.customShader = removeTexture ? LambertDiffuseShader : undefined
+      tileset.customShader = !showTextures ? LambertDiffuseShader : undefined
       tileset.debugWireframe = showWireframe
       tileset.debugShowBoundingVolume = showBoundingVolume
       Object.assign(tileset, props)
@@ -78,6 +79,10 @@ export const GooglePhotorealisticTileset: FC<
   const context = useContext(PlateauDatasetsContext)
   const showWireframe = useAtomValue(context.showWireframeAtom)
   const showBoundingVolume = useAtomValue(context.showBoundingVolumeAtom)
+
+  if (props.apiKey == null) {
+    return null
+  }
   return (
     <DeferredGooglePhotorealisticTilesetContent
       {...props}

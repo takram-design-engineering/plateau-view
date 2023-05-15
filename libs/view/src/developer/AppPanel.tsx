@@ -1,8 +1,9 @@
 import { Divider, Stack } from '@mui/material'
 import { useAtomValue } from 'jotai'
 import { useResetAtom } from 'jotai/utils'
-import { useContext, type FC } from 'react'
+import { useContext, useMemo, type FC } from 'react'
 
+import { PlateauDatasetsContext } from '@plateau/datasets'
 import { ScreenSpaceSelectionContext } from '@plateau/screen-space-selection'
 import {
   DeveloperPanel,
@@ -23,20 +24,26 @@ import {
 } from '../states/app'
 import { atomWithResettableAtoms } from '../states/atomWithResettableAtoms'
 
-const resetAtom = atomWithResettableAtoms([
-  colorModeAtom,
-  debugSphericalHarmonicsAtom,
-  environmentTypeAtom,
-  plateauDataSourceAtom,
-  showAreaEntitiesAtom,
-  showSelectionBoundingSphereAtom,
-  terrainTypeAtom
-])
-
 export const AppPanel: FC = () => {
   const environmentType = useAtomValue(environmentTypeAtom)
+  const { showTexturesAtom } = useContext(PlateauDatasetsContext)
   const { selectionAtom } = useContext(ScreenSpaceSelectionContext)
   const selection = useAtomValue(selectionAtom)
+
+  const resetAtom = useMemo(
+    () =>
+      atomWithResettableAtoms([
+        colorModeAtom,
+        debugSphericalHarmonicsAtom,
+        environmentTypeAtom,
+        plateauDataSourceAtom,
+        showAreaEntitiesAtom,
+        showSelectionBoundingSphereAtom,
+        showTexturesAtom,
+        terrainTypeAtom
+      ]),
+    [showTexturesAtom]
+  )
 
   const handleReset = useResetAtom(resetAtom)
 
@@ -49,7 +56,8 @@ export const AppPanel: FC = () => {
             atom={environmentTypeAtom}
             items={[
               ['map', 'Map'],
-              ['satellite', 'Satellite']
+              ['satellite', 'Satellite'],
+              ['google-photorealistic', 'Google Photorealistic']
             ]}
           />
           <SelectParameterItem
@@ -68,6 +76,10 @@ export const AppPanel: FC = () => {
               ['light', 'Light'],
               ['dark', 'Dark']
             ]}
+          />
+          <SwitchParameterItem
+            label='Show Tileset Textures'
+            atom={showTexturesAtom}
           />
           <SwitchParameterItem
             label='Debug Spherical Harmonics'

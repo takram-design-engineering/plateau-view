@@ -6,6 +6,7 @@ import { createContext } from 'react'
 export function createContextValue() {
   return {
     colorModeAtom: atom<'light' | 'dark'>('light'),
+    showTexturesAtom: atomWithReset(true),
     showWireframeAtom: atomWithReset(false),
     showBoundingVolumeAtom: atomWithReset(false)
   }
