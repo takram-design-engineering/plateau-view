@@ -141,11 +141,7 @@ export const Canvas = forwardRef<HTMLDivElement, CanvasProps>(
         {...props}
       >
         <Configure />
-        <ShadowMap
-          {...shadowMapProps}
-          maximumDistance={10000}
-          primitiveBias={{ normalOffsetScale: 5 }}
-        />
+        <ShadowMap {...shadowMapProps} maximumDistance={10000} />
         <AmbientOcclusion {...ambientOcclusionProps} />
         {children}
       </Root>
