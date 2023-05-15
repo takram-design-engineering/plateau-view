@@ -6,6 +6,7 @@
     "build": "nx run-many --targets build,build-storybook --projects app,api,tiles,ui-components --configuration production --verbose",
     "deploy:api": "gcloud builds submit --project t-plateau --config infrastructure/cloudbuild.yaml --substitutions _TARGET=api,COMMIT_SHA=latest",
     "deploy:app": "gcloud builds submit --project t-plateau --config infrastructure/cloudbuild.yaml --substitutions _TARGET=app,COMMIT_SHA=latest",
+    "deploy:storybook": "nx build-storybook --projects ui-components && zx infrastructure/scripts/deploy_storybook.mjs",
     "dev": "nx run-many --parallel 8 --output-style stream --target serve,storybook --projects app,api,tiles,ui-components,graphql",
     "lint": "nx run-many --target lint",
     "start": "nx run-many --target serve --projects app,api,tiles --configuration production --verbose",
