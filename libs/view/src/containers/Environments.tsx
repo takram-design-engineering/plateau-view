@@ -1,6 +1,7 @@
 import { useAtomValue } from 'jotai'
 import { type FC } from 'react'
 
+import { GooglePhotorealisticEnvironment } from '../environments/GooglePhotorealisticEnvironment'
 import { MapEnvironment } from '../environments/MapEnvironment'
 import { SatelliteEnvironment } from '../environments/SatelliteEnvironment'
 import { BingMapsImageryLayer } from '../imageryLayers/BingMapsImageryLayer'
@@ -11,7 +12,7 @@ import {
   environmentTypeAtom
 } from '../states/app'
 
-export type EnvironmentType = 'map' | 'satellite'
+export type EnvironmentType = 'map' | 'satellite' | 'google-photorealistic'
 
 export const Environments: FC = () => {
   const environmentType = useAtomValue(environmentTypeAtom)
@@ -48,5 +49,7 @@ export const Environments: FC = () => {
           <BingMapsImageryLayer />
         </>
       )
+    case 'google-photorealistic':
+      return <GooglePhotorealisticEnvironment />
   }
 }
