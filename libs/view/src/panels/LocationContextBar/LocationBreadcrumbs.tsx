@@ -9,9 +9,9 @@ import { useAtomValue } from 'jotai'
 import { useCallback, type FC, type MouseEvent } from 'react'
 
 import { useCesium } from '@plateau/cesium'
-import { flyToPolygonEntity } from '@plateau/cesium-helpers'
 import type { Area } from '@plateau/gsi-geocoder'
 
+import { flyToArea } from '../../helpers/flyToArea'
 import { areaDataSourceAtom } from '../../states/address'
 
 const StyledBreadcrumbs = styled(Breadcrumbs)(({ theme }) => ({
@@ -49,14 +49,8 @@ export const LocationBreadcrumbs: FC<LocationBreadcrumbsProps> = ({
       if (reverseIndex == null) {
         return
       }
-      const entities = dataSource.findEntities(
-        areas[areas.length - 1 - +reverseIndex].code
-      )
-      if (entities != null) {
-        flyToPolygonEntity(scene, entities).catch(error => {
-          console.error(error)
-        })
-      }
+      const area = areas[areas.length - 1 - +reverseIndex]
+      void flyToArea(scene, dataSource, area.code)
     },
     [areas, dataSource, scene]
   )

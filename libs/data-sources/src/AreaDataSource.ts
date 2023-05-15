@@ -1,10 +1,10 @@
 import {
   ClassificationType,
   Color,
+  ColorMaterialProperty,
   CustomDataSource,
-  type Entity
+  Entity
 } from '@cesium/engine'
-import { ColorMaterialProperty } from '@cesium/engine'
 import axios from 'axios'
 import { type Feature, type MultiPolygon, type Polygon } from 'geojson'
 import invariant from 'tiny-invariant'
@@ -19,6 +19,8 @@ export interface AreaProperties {
   prefectureName: string
   municipalityCode?: string
   municipalityName?: string
+  center: [number, number, number]
+  radius: number
 }
 
 export type AreaEntity = SetRequired<Entity, 'polygon'>
@@ -43,17 +45,24 @@ function isPolygonFeature<T extends Feature>(
   )
 }
 
+function isPolygonFeatures<T extends Feature>(
+  features: T[]
+): features is Array<T & { geometry: { type: 'Polygon' | 'MultiPolygon' } }> {
+  return features.every(feature => isPolygonFeature(feature))
+}
+
 export interface AreaDataSourceOptions {
   color?: Color
 }
 
 export class AreaDataSource extends CustomDataSource {
   private readonly color: Color
-  private readonly entitiesRecord: Record<string, AreaEntity[] | undefined> = {}
+  private readonly entitiesCache: Record<string, AreaEntity[] | undefined> = {}
 
-  private constructor({
-    color = new Color(0, 0, 0, 0.1)
-  }: AreaDataSourceOptions = {}) {
+  private constructor(
+    private readonly features: AreaFeature[],
+    { color = new Color(0, 0, 0, 0.1) }: AreaDataSourceOptions = {}
+  ) {
     super()
     this.color = color
   }
@@ -68,25 +77,45 @@ export class AreaDataSource extends CustomDataSource {
     const topology = response.data
     const root = response.data.objects.root
     const features = feature(topology, root).features
-    const dataSource = new AreaDataSource(options)
-    for (const feature of features) {
-      invariant(isPolygonFeature(feature))
-      dataSource.addEntity(feature)
-    }
-    return dataSource
+    invariant(isPolygonFeatures(features))
+    return new AreaDataSource(features, options)
+  }
+
+  findFeature(code: string): AreaFeature | undefined {
+    return this.features.find(
+      feature =>
+        feature.properties.municipalityCode === code ||
+        (feature.properties.municipalityCode == null &&
+          feature.properties.prefectureCode === code)
+    )
   }
 
   findEntities(code: string): readonly AreaEntity[] | undefined {
-    return this.entitiesRecord[code]
+    return this.entitiesCache[code]
   }
 
-  private addEntity(feature: AreaFeature): readonly AreaEntity[] {
+  addEntities(code: string): AreaEntity[] | undefined {
+    const feature = this.findFeature(code)
+    if (feature == null) {
+      return
+    }
+    const entities =
+      this.entitiesCache[code] ??
+      (this.entitiesCache[code] = this.createEntities(feature))
+
+    entities.forEach(entity => {
+      this.entities.add(entity)
+    })
+    return entities
+  }
+
+  private createEntities(feature: AreaFeature): AreaEntity[] {
     const { properties, geometry } = feature
     const hierarchies = convertPolygonToHierarchyArray(geometry)
     const material = new ColorMaterialProperty(this.color)
-    const entities = hierarchies.map(
+    return hierarchies.map(
       (hierarchy, index) =>
-        this.entities.add({
+        new Entity({
           id: `${properties.municipalityCode}-${index}`,
           properties,
           polygon: {
@@ -96,10 +125,5 @@ export class AreaDataSource extends CustomDataSource {
           }
         }) as AreaEntity
     )
-
-    this.entitiesRecord[
-      feature.properties.municipalityCode ?? feature.properties.prefectureCode
-    ] = entities
-    return entities
   }
 }
