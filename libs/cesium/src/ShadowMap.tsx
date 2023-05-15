@@ -26,10 +26,10 @@ const defaultTerrainBias: ShadowMapBias = {
 const defaultPrimitiveBias: ShadowMapBias = {
   polygonOffsetFactor: 1.1,
   polygonOffsetUnits: 4.0,
-  normalOffsetScale: 0.1,
+  normalOffsetScale: 0.1 * 100,
   normalShading: true,
   normalShadingSmooth: 0.05,
-  depthBias: 0.00002
+  depthBias: 0.00002 * 10
 }
 
 const defaultPointBias: ShadowMapBias = {
