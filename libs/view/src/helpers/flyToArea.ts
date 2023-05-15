@@ -2,6 +2,7 @@ import { BoundingSphere, Cartesian3, type Scene } from '@cesium/engine'
 
 import { flyToBoundingSphere } from '@plateau/cesium-helpers'
 import { type AreaDataSource } from '@plateau/data-sources'
+import { JapanSeaLevelEllipsoid } from '@plateau/datasets'
 
 const boundingSphereScratch = new BoundingSphere()
 
@@ -14,8 +15,10 @@ export async function flyToArea(
   if (feature == null) {
     return
   }
-  Cartesian3.fromElements(
-    ...feature.properties.center,
+  Cartesian3.fromDegrees(
+    ...feature.properties.poleOfInaccessibility,
+    0,
+    JapanSeaLevelEllipsoid,
     boundingSphereScratch.center
   )
   boundingSphereScratch.radius = feature.properties.radius

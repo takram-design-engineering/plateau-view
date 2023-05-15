@@ -7,7 +7,7 @@ import { AreaEntities, type AreaEntity } from '@plateau/data-sources'
 import { useScreenSpaceSelectionResponder } from '@plateau/screen-space-selection'
 
 import { areaDataSourceAtom, prefectureAtom } from '../states/address'
-import { showMunicipalityEntitiesAtom } from '../states/app'
+import { showAreaEntitiesAtom } from '../states/app'
 
 function getUrl(prefectureCode: string): string {
   return [
@@ -24,7 +24,7 @@ export const Areas: FC = () => {
   // or related resources from being destroyed when DataSourceDisplay is
   // destroyed.
   const [dataSource, setDataSource] = useAtom(areaDataSourceAtom)
-  const show = useAtomValue(showMunicipalityEntitiesAtom)
+  const show = useAtomValue(showAreaEntitiesAtom)
 
   useScreenSpaceSelectionResponder({
     predicate: (object): object is AreaEntity => {
