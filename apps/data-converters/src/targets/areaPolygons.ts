@@ -1,9 +1,11 @@
+import * as turf from '@turf/turf'
 import { readFile, writeFile } from 'fs/promises'
 import { type FeatureCollection } from 'geojson'
-import { round } from 'lodash'
+import { maxBy, round } from 'lodash'
 import { applyCommands } from 'mapshaper'
 import { mkdirp } from 'mkdirp'
 import path from 'path'
+import polylabel from 'polylabel'
 import { read as readShapefile } from 'shapefile'
 import invariant from 'tiny-invariant'
 import { merge, mergeArcs } from 'topojson-client'
@@ -18,7 +20,8 @@ export interface AreaProperties {
   prefectureName: string
   municipalityCode?: string
   municipalityName?: string
-  center: [number, number, number]
+  poleOfInaccessibility: [number, number]
+  center: [number, number]
   radius: number
 }
 
@@ -141,9 +144,16 @@ async function convertToTopoJSON(params: {
   topology.objects.root.geometries.push(prefectureGeometry as AreaGeometry)
 
   const cesium = await import('@cesium/engine')
-  const { BoundingSphere, Cartesian3, Ellipsoid } = cesium
+  const {
+    BoundingSphere,
+    Cartesian3,
+    Cartographic,
+    Ellipsoid,
+    Math: CesiumMath
+  } = cesium
   const boundingSphereScratch = new BoundingSphere()
   const cartesianScratch = new Cartesian3()
+  const cartographicScratch = new Cartographic()
 
   // TODO: We can't import @plateau/datasets right now.
   // See libs/datasets/src/JapanSeaLevelEllipsoid.ts
@@ -176,10 +186,25 @@ async function convertToTopoJSON(params: {
     })
     invariant(boundingSphere != null)
     invariant(geometryArcs.properties != null)
+
+    const maxPolygonCoordinates = maxBy(geometry.coordinates, coordinates =>
+      turf.area(turf.polygon(coordinates))
+    )
+    invariant(maxPolygonCoordinates != null)
+    const poleOfInaccessibility = polylabel(maxPolygonCoordinates, 1.0)
+    geometryArcs.properties.poleOfInaccessibility = [
+      round(poleOfInaccessibility[0], 6),
+      round(poleOfInaccessibility[1], 6)
+    ]
+
+    const center = Cartographic.fromCartesian(
+      boundingSphere.center,
+      ellipsoid,
+      cartographicScratch
+    )
     geometryArcs.properties.center = [
-      round(boundingSphere.center.x, 3),
-      round(boundingSphere.center.y, 3),
-      round(boundingSphere.center.z, 3)
+      round(CesiumMath.toDegrees(center.longitude), 6),
+      round(CesiumMath.toDegrees(center.latitude), 6)
     ]
     geometryArcs.properties.radius = round(boundingSphere.radius, 3)
   }

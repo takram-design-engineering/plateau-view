@@ -15,13 +15,15 @@ import type TopoJSON from 'topojson-specification'
 import { type SetRequired } from 'type-fest'
 
 import { convertPolygonToHierarchyArray } from '@plateau/cesium-helpers'
+import { JapanSeaLevelEllipsoid } from '@plateau/datasets'
 
 export interface AreaProperties {
   prefectureCode: string
   prefectureName: string
   municipalityCode?: string
   municipalityName?: string
-  center: [number, number, number]
+  poleOfInaccessibility: [number, number]
+  center: [number, number]
   radius: number
 }
 
@@ -109,7 +111,12 @@ export class AreaDataSource extends CustomDataSource {
     const hierarchies = convertPolygonToHierarchyArray(geometry)
     const material = new ColorMaterialProperty(this.color)
     const boundingSphere = new BoundingSphere()
-    Cartesian3.fromElements(...properties.center, boundingSphere.center)
+    Cartesian3.fromDegrees(
+      ...properties.poleOfInaccessibility,
+      0,
+      JapanSeaLevelEllipsoid,
+      boundingSphere.center
+    )
     boundingSphere.radius = properties.radius
 
     const code = properties.municipalityCode ?? properties.prefectureCode

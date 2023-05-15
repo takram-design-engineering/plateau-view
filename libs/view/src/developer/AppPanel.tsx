@@ -17,7 +17,7 @@ import {
   debugSphericalHarmonicsAtom,
   environmentTypeAtom,
   plateauDataSourceAtom,
-  showMunicipalityEntitiesAtom,
+  showAreaEntitiesAtom,
   showSelectionBoundingSphereAtom,
   terrainTypeAtom
 } from '../states/app'
@@ -28,7 +28,7 @@ const resetAtom = atomWithResettableAtoms([
   debugSphericalHarmonicsAtom,
   environmentTypeAtom,
   plateauDataSourceAtom,
-  showMunicipalityEntitiesAtom,
+  showAreaEntitiesAtom,
   showSelectionBoundingSphereAtom,
   terrainTypeAtom
 ])
@@ -86,8 +86,8 @@ export const AppPanel: FC = () => {
             ]}
           />
           <SwitchParameterItem
-            label='Show Municipality Entities'
-            atom={showMunicipalityEntitiesAtom}
+            label='Show Area Entities'
+            atom={showAreaEntitiesAtom}
           />
         </ParameterList>
         <Divider />

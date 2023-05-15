@@ -9904,6 +9904,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/polylabel@npm:^1.0.5":
+  version: 1.0.5
+  resolution: "@types/polylabel@npm:1.0.5"
+  checksum: b56a93415eba93fe4ad167f642bb72a3cd9d265c8a9aeec4693c265785b8cd97534cfd41ba4b4a3155fde673d97cde3f1674e056dd42aee4b7557490ef97824a
+  languageName: node
+  linkType: hard
+
 "@types/prettier@npm:^2.1.5":
   version: 2.7.2
   resolution: "@types/prettier@npm:2.7.2"
@@ -22845,6 +22852,7 @@ __metadata:
     "@types/minimist": ^1.2.2
     "@types/node": 18.16.0
     "@types/offscreencanvas": ^2019.7.0
+    "@types/polylabel": ^1.0.5
     "@types/react": 18.0.38
     "@types/react-dom": 18.0.11
     "@types/shapefile": ^0.6.1
@@ -22910,6 +22918,7 @@ __metadata:
     nx: 16.1.4
     overlayscrollbars: ^2.1.1
     overlayscrollbars-react: ^0.5.0
+    polylabel: ^1.1.0
     prettier: ^2.8.8
     prettier-plugin-glsl: ^0.0.10
     protomaps: ^1.23.1
