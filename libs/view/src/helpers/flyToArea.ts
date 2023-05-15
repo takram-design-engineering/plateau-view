@@ -10,7 +10,7 @@ export async function flyToArea(
   dataSource: AreaDataSource,
   code: string
 ): Promise<void> {
-  const feature = dataSource.findFeature(code)
+  const feature = dataSource.getFeature(code)
   if (feature == null) {
     return
   }
