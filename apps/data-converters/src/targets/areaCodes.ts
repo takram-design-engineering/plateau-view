@@ -91,7 +91,7 @@ export async function main(): Promise<void> {
     municipalities
   }
   await writeFile(
-    path.resolve('./apps/app/public/assets/areaCodes.json'),
+    path.resolve('./libs/geocoder/src/assets/areaCodes.json'),
     JSON.stringify(output)
   )
   console.log('Done')
