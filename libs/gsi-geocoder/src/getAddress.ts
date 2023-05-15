@@ -1,27 +1,30 @@
 import axios, { CanceledError } from 'axios'
 
-import { getMunicipality } from './getMunicipality'
+import { getAreas, type Area } from './getAreas'
 
 export interface Coords {
   longitude: number
   latitude: number
 }
 
-export interface GetAddressOptions {
+export interface AddressOptions<R extends boolean = boolean> {
+  includeRadii?: R
   signal?: AbortSignal
 }
 
-export interface Address {
-  prefectureCode: string
-  prefectureName: string
-  municipalityCode: string
-  municipalityName: string
-  name?: string
+export interface Address<R extends boolean = boolean> {
+  areas: Array<Area<R>>
+  address?: string
 }
+
+export function getAddress<R extends boolean = boolean>(
+  coords: Coords,
+  options: AddressOptions<R>
+): Promise<Address<R> | undefined>
 
 export async function getAddress(
   { longitude, latitude }: Coords,
-  { signal }: GetAddressOptions = {}
+  { includeRadii = false, signal }: AddressOptions = {}
 ): Promise<Address | undefined> {
   try {
     const { data } = await axios.get(
@@ -39,14 +42,14 @@ export async function getAddress(
     if (typeof municipalityCode !== 'string' || typeof name !== 'string') {
       return undefined
     }
-    const municipality = await getMunicipality(municipalityCode)
-    if (municipality == null) {
+    const areas = await getAreas(municipalityCode, includeRadii)
+    if (areas == null) {
       return undefined
     }
     return {
-      ...municipality,
+      areas,
       // Empty value is denoted by "－".
-      name: name !== '－' ? name.replace('　', ' ') : undefined
+      address: name !== '－' ? name.replace('　', ' ') : undefined
     }
   } catch (error) {
     if (error instanceof CanceledError) {
