@@ -90,9 +90,6 @@ export async function main(): Promise<void> {
     prefectures,
     municipalities
   }
-  await writeFile(
-    path.resolve('./data/municipalityCodes.json'),
-    JSON.stringify(output)
-  )
+  await writeFile(path.resolve('./data/areaCodes.json'), JSON.stringify(output))
   console.log('Done')
 }

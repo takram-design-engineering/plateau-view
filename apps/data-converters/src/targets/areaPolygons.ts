@@ -11,20 +11,20 @@ import type TopoJSON from 'topojson-specification'
 
 import { isNotNullish } from '@plateau/type-helpers'
 
-import { type Municipalities, type Prefectures } from './municipalityCodes'
+import { type Municipalities, type Prefectures } from './areaCodes'
 
-export interface MunicipalityProperties {
-  municipalityCode: string
-  municipalityName: string
+export interface AreaProperties {
   prefectureCode: string
   prefectureName: string
+  municipalityCode?: string
+  municipalityName?: string
   center: [number, number, number]
   radius: number
 }
 
-export type MunicipalityGeometry =
-  | TopoJSON.Polygon<MunicipalityProperties>
-  | TopoJSON.MultiPolygon<MunicipalityProperties>
+export type AreaGeometry =
+  | TopoJSON.Polygon<AreaProperties>
+  | TopoJSON.MultiPolygon<AreaProperties>
 
 // Preprocess geometries and properties.
 async function processGeoJSON(
@@ -44,7 +44,7 @@ async function processGeoJSON(
         if (isNaN(+input.AREA)) {
           throw new Error('Cannot coarse area to number')
         }
-        const properties: Partial<MunicipalityProperties> = {
+        const properties: Partial<AreaProperties> = {
           municipalityCode: `${input.PREF}${input.CITY}`,
           municipalityName: input.CITY_NAME,
           prefectureCode: input.PREF,
@@ -96,7 +96,7 @@ async function convertToTopoJSON(params: {
   const topology: TopoJSON.Topology<{
     root: {
       type: 'GeometryCollection'
-      geometries: MunicipalityGeometry[]
+      geometries: AreaGeometry[]
     }
   }> = JSON.parse(result['output.topojson'])
 
@@ -106,32 +106,39 @@ async function convertToTopoJSON(params: {
     .filter((pair): pair is [string, [string, string[]]] =>
       Array.isArray(pair[1][1])
     )
-  topology.objects.root.geometries.push(
-    ...municipalitiesToMerge.map(
-      ([
-        municipalityCode,
-        [municipalityName, childCodes]
-      ]): MunicipalityGeometry => {
-        const geometry = mergeArcs(
-          topology,
-          childCodes
-            .map(code =>
-              topology.objects.root.geometries.find(
-                geometry => geometry.properties?.municipalityCode === code
-              )
+  const mergedGeometries = municipalitiesToMerge.map(
+    ([municipalityCode, [municipalityName, childCodes]]): AreaGeometry => {
+      const geometry = mergeArcs(
+        topology,
+        childCodes
+          .map(code =>
+            topology.objects.root.geometries.find(
+              geometry => geometry.properties?.municipalityCode === code
             )
-            .filter(isNotNullish)
-        )
-        geometry.properties = {
-          municipalityCode,
-          municipalityName,
-          prefectureCode,
-          prefectureName
-        }
-        return geometry as MunicipalityGeometry
+          )
+          .filter(isNotNullish)
+      )
+      geometry.properties = {
+        municipalityCode,
+        municipalityName,
+        prefectureCode,
+        prefectureName
       }
-    )
+      return geometry as AreaGeometry
+    }
   )
+
+  // Add prefecture geometry
+  const prefectureGeometry = mergeArcs(
+    topology,
+    topology.objects.root.geometries
+  )
+  prefectureGeometry.properties = {
+    prefectureCode,
+    prefectureName
+  }
+  topology.objects.root.geometries.push(...mergedGeometries)
+  topology.objects.root.geometries.push(prefectureGeometry as AreaGeometry)
 
   const cesium = await import('@cesium/engine')
   const { BoundingSphere, Cartesian3, Ellipsoid } = cesium
@@ -182,13 +189,13 @@ async function convertToTopoJSON(params: {
 
 export async function main(): Promise<void> {
   const { prefectures, municipalities } = JSON.parse(
-    await readFile(path.resolve('./data/municipalityCodes.json'), 'utf-8')
+    await readFile(path.resolve('./data/areaCodes.json'), 'utf-8')
   ) as {
     prefectures: Prefectures
     municipalities: Municipalities
   }
 
-  await mkdirp(path.resolve('./data/municipalityPolygons'))
+  await mkdirp(path.resolve('./data/areaPolygons'))
   for (const [prefectureCode, prefectureName] of Object.entries(prefectures)) {
     // Get the data at:
     // https://www.e-stat.go.jp/gis/statmap-search?page=1&type=2&aggregateUnitForBoundary=A&toukeiCode=00200521&toukeiYear=2020&serveyId=B002005212020&prefCode=01&coordsys=1&format=shape&datum=2000
@@ -206,7 +213,7 @@ export async function main(): Promise<void> {
       prefectureName
     })
     await writeFile(
-      path.resolve('./data/municipalityPolygons', `${prefectureCode}.topojson`),
+      path.resolve('./data/areaPolygons', `${prefectureCode}.topojson`),
       JSON.stringify(topojson)
     )
     console.log(`Saved ${prefectureCode}.topojson`)
