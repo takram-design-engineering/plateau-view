@@ -6,47 +6,24 @@ import {
   Cesium3DTileset,
   Math as CesiumMath,
   Color,
-  CustomShader,
-  CustomShaderMode,
-  CustomShaderTranslucencyMode,
-  LightingModel,
   ShadowMode
 } from '@cesium/engine'
 import { useTheme } from '@mui/material'
 import { useAtomValue } from 'jotai'
 import { useContext, useEffect, useMemo, type FC } from 'react'
-import { type Primitive } from 'type-fest'
 
 import { useAsyncInstance, useCesium } from '@plateau/cesium'
 import { withDeferredProps, withEphemerality } from '@plateau/react-helpers'
 import { useScreenSpaceSelectionResponder } from '@plateau/screen-space-selection'
 
+import { LambertDiffuseShader } from './LambertDiffuseShader'
 import { PlateauDatasetsContext } from './PlateauDatasetsContext'
-
-// Total Lambert diffuse
-const customShader = new CustomShader({
-  mode: CustomShaderMode.MODIFY_MATERIAL, // Need lighting
-  lightingModel: LightingModel.PBR,
-  translucencyMode: CustomShaderTranslucencyMode.OPAQUE,
-  fragmentShaderText: /* glsl */ `
-    void fragmentMain(FragmentInput fsInput, inout czm_modelMaterial material) {
-      material.diffuse = vec3(1.0);
-      material.specular = vec3(0.0);
-      material.emissive = vec3(0.0);
-      material.alpha = 1.0;
-    }
-  `
-})
-
-type PrimitiveOptions = {
-  [K in keyof Cesium3DTileset.ConstructorOptions]: Cesium3DTileset.ConstructorOptions[K] extends Primitive
-    ? Cesium3DTileset.ConstructorOptions[K]
-    : never
-}
+import { type TilesetPrimitiveConstructorOptions } from './types'
 
 const cartographicScratch = new Cartographic()
 
-interface PlateauTilesetContentProps extends PrimitiveOptions {
+interface PlateauTilesetContentProps
+  extends TilesetPrimitiveConstructorOptions {
   url: string
   color?: string
   showWireframe?: boolean
@@ -70,7 +47,7 @@ const PlateauTilesetContent = withEphemerality(
       create: async () =>
         await Cesium3DTileset.fromUrl(url, {
           // @ts-expect-error missing type
-          customShader,
+          customShader: LambertDiffuseShader,
           debugWireframe: showWireframe,
           debugShowBoundingVolume: showBoundingVolume,
           shadows: showWireframe ? ShadowMode.DISABLED : ShadowMode.ENABLED

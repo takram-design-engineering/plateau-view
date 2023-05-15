@@ -1,3 +1,4 @@
+export * from './GooglePhotorealisticTileset'
 export * from './JapanSeaLevelEllipsoid'
 export * from './JapanSeaLevelEllipsoidTerrain'
 export * from './PlateauDatasetsContext'
