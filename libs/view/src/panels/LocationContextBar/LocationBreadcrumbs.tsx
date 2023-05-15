@@ -5,11 +5,12 @@ import {
   buttonClasses,
   styled
 } from '@mui/material'
-import { useAtomValue } from 'jotai'
-import { useCallback, type FC, type MouseEvent } from 'react'
+import { useAtomValue, useSetAtom } from 'jotai'
+import { useCallback, useContext, type FC, type MouseEvent } from 'react'
 
 import { useCesium } from '@plateau/cesium'
 import type { Area } from '@plateau/gsi-geocoder'
+import { ScreenSpaceSelectionContext } from '@plateau/screen-space-selection'
 
 import { flyToArea } from '../../helpers/flyToArea'
 import { areaDataSourceAtom } from '../../states/address'
@@ -39,6 +40,9 @@ export const LocationBreadcrumbs: FC<LocationBreadcrumbsProps> = ({
   const scene = useCesium(({ scene }) => scene, { indirect: true })
   const dataSource = useAtomValue(areaDataSourceAtom)
 
+  const { replaceAtom } = useContext(ScreenSpaceSelectionContext)
+  const replace = useSetAtom(replaceAtom)
+
   // TODO: Handle in atoms and make them declarative.
   const handleClick = useCallback(
     (event: MouseEvent<HTMLElement>) => {
@@ -50,9 +54,13 @@ export const LocationBreadcrumbs: FC<LocationBreadcrumbsProps> = ({
         return
       }
       const area = areas[areas.length - 1 - +reverseIndex]
+      const entities = dataSource.getEntities(area.code)
+      if (entities != null) {
+        replace(entities)
+      }
       void flyToArea(scene, dataSource, area.code)
     },
-    [areas, dataSource, scene]
+    [areas, scene, dataSource, replace]
   )
 
   if (areas == null) {

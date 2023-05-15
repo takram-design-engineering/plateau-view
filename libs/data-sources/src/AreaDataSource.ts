@@ -1,4 +1,6 @@
 import {
+  BoundingSphere,
+  Cartesian3,
   ClassificationType,
   Color,
   ColorMaterialProperty,
@@ -23,7 +25,10 @@ export interface AreaProperties {
   radius: number
 }
 
-export type AreaEntity = SetRequired<Entity, 'polygon'>
+export type AreaFeature = Feature<Polygon | MultiPolygon, AreaProperties>
+export type AreaEntity = SetRequired<Entity, 'polygon'> & {
+  boundingSphere: BoundingSphere
+}
 
 type Topology = TopoJSON.Topology<{
   root: {
@@ -33,8 +38,6 @@ type Topology = TopoJSON.Topology<{
     >
   }
 }>
-
-type AreaFeature = Feature<Polygon | MultiPolygon, AreaProperties>
 
 function isPolygonFeature<T extends Feature>(
   feature: T
@@ -81,7 +84,7 @@ export class AreaDataSource extends CustomDataSource {
     return new AreaDataSource(features, options)
   }
 
-  findFeature(code: string): AreaFeature | undefined {
+  getFeature(code: string): AreaFeature | undefined {
     return this.features.find(
       feature =>
         feature.properties.municipalityCode === code ||
@@ -90,40 +93,38 @@ export class AreaDataSource extends CustomDataSource {
     )
   }
 
-  findEntities(code: string): readonly AreaEntity[] | undefined {
-    return this.entitiesCache[code]
-  }
-
-  addEntities(code: string): AreaEntity[] | undefined {
-    const feature = this.findFeature(code)
+  getEntities(code: string): readonly AreaEntity[] | undefined {
+    const feature = this.getFeature(code)
     if (feature == null) {
       return
     }
-    const entities =
+    return (
       this.entitiesCache[code] ??
       (this.entitiesCache[code] = this.createEntities(feature))
-
-    entities.forEach(entity => {
-      this.entities.add(entity)
-    })
-    return entities
+    )
   }
 
   private createEntities(feature: AreaFeature): AreaEntity[] {
     const { properties, geometry } = feature
     const hierarchies = convertPolygonToHierarchyArray(geometry)
     const material = new ColorMaterialProperty(this.color)
-    return hierarchies.map(
-      (hierarchy, index) =>
-        new Entity({
-          id: `${properties.municipalityCode}-${index}`,
-          properties,
-          polygon: {
-            hierarchy,
-            material,
-            classificationType: ClassificationType.TERRAIN
-          }
-        }) as AreaEntity
-    )
+    const boundingSphere = new BoundingSphere()
+    Cartesian3.fromElements(...properties.center, boundingSphere.center)
+    boundingSphere.radius = properties.radius
+
+    const code = properties.municipalityCode ?? properties.prefectureCode
+    return hierarchies.map((hierarchy, index) => {
+      const entity = new Entity({
+        id: `AreaEntity:Polygon:${code}-${index}`,
+        properties,
+        polygon: {
+          hierarchy,
+          material,
+          classificationType: ClassificationType.TERRAIN
+        }
+      }) as AreaEntity
+      entity.boundingSphere = boundingSphere
+      return entity
+    })
   }
 }

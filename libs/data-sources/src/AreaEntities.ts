@@ -1,3 +1,4 @@
+import { type Color } from '@cesium/engine'
 import { forwardRef, useEffect } from 'react'
 
 import { useAsyncInstance, useCesium } from '@plateau/cesium'
@@ -7,6 +8,7 @@ import { AreaDataSource } from './AreaDataSource'
 
 export interface AreaEntitiesProps {
   url: string
+  color?: Color
   show?: boolean
 }
 
@@ -14,13 +16,13 @@ export const AreaEntities = withEphemerality(
   () => useCesium(({ dataSources }) => dataSources),
   ['url'],
   forwardRef<AreaDataSource, AreaEntitiesProps>(
-    ({ url, show = true }, forwardedRef) => {
+    ({ url, color, show = true }, forwardedRef) => {
       const dataSources = useCesium(({ dataSources }) => dataSources)
       const dataSource = useAsyncInstance({
         owner: dataSources,
         keys: [url],
         create: async () => {
-          const dataSource = await AreaDataSource.fromUrl(url)
+          const dataSource = await AreaDataSource.fromUrl(url, { color })
           dataSource.show = show
           return dataSource
         },
@@ -37,6 +39,7 @@ export const AreaEntities = withEphemerality(
         }
       })
 
+      // TODO: Update color
       if (dataSource != null) {
         dataSource.show = show
       }
