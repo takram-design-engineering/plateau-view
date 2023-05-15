@@ -6,13 +6,13 @@ import {
   styled
 } from '@mui/material'
 import { useAtomValue } from 'jotai'
-import { useCallback, type FC } from 'react'
+import { useCallback, type FC, type MouseEvent } from 'react'
 
 import { useCesium } from '@plateau/cesium'
 import { flyToPolygonEntity } from '@plateau/cesium-helpers'
-import { type Address } from '@plateau/gsi-geocoder'
+import type { Area } from '@plateau/gsi-geocoder'
 
-import { municipalityDataSourceAtom } from '../../states/address'
+import { areaDataSourceAtom } from '../../states/address'
 
 const StyledBreadcrumbs = styled(Breadcrumbs)(({ theme }) => ({
   ...theme.typography.body2,
@@ -30,59 +30,55 @@ const StyledBreadcrumbs = styled(Breadcrumbs)(({ theme }) => ({
 }))
 
 export interface LocationBreadcrumbsProps {
-  address?: Address
+  areas?: readonly Area[]
 }
 
 export const LocationBreadcrumbs: FC<LocationBreadcrumbsProps> = ({
-  address
+  areas
 }) => {
   const scene = useCesium(({ scene }) => scene, { indirect: true })
-  const dataSource = useAtomValue(municipalityDataSourceAtom)
+  const dataSource = useAtomValue(areaDataSourceAtom)
 
   // TODO: Handle in atoms and make them declarative.
-  const handlePrefecture = useCallback(() => {
-    if (address == null || dataSource == null || scene == null) {
-      return
-    }
-    flyToPolygonEntity(scene, dataSource.entities.values).catch(error => {
-      console.error(error)
-    })
-  }, [address, dataSource, scene])
+  const handleClick = useCallback(
+    (event: MouseEvent<HTMLElement>) => {
+      if (areas == null || dataSource == null || scene == null) {
+        return
+      }
+      const reverseIndex = event.currentTarget.dataset.reverseIndex
+      if (reverseIndex == null) {
+        return
+      }
+      const entities = dataSource.findEntities(
+        areas[areas.length - 1 - +reverseIndex].code
+      )
+      if (entities != null) {
+        flyToPolygonEntity(scene, entities).catch(error => {
+          console.error(error)
+        })
+      }
+    },
+    [areas, dataSource, scene]
+  )
 
-  const handleMunicipality = useCallback(() => {
-    if (address == null || dataSource == null || scene == null) {
-      return
-    }
-    const entities = dataSource.findEntities(address.municipalityCode)
-    if (entities != null) {
-      flyToPolygonEntity(scene, entities).catch(error => {
-        console.error(error)
-      })
-    }
-  }, [address, dataSource, scene])
-
-  if (address == null) {
+  if (areas == null) {
     return null
   }
   return (
     <StyledBreadcrumbs separator='›'>
-      <Button
-        variant='text'
-        size='small'
-        color='inherit'
-        fullWidth
-        onClick={handlePrefecture}
-      >
-        {address.prefectureName}
-      </Button>
-      <Button
-        variant='text'
-        size='small'
-        color='inherit'
-        onClick={handleMunicipality}
-      >
-        {address.municipalityName}
-      </Button>
+      {[...areas].reverse().map((area, index) => (
+        <Button
+          key={area.code}
+          variant='text'
+          size='small'
+          color='inherit'
+          fullWidth
+          onClick={handleClick}
+          data-reverse-index={index}
+        >
+          {area.name}
+        </Button>
+      ))}
     </StyledBreadcrumbs>
   )
 }
