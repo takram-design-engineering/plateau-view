@@ -1,5 +1,6 @@
 import { registerEnumType } from '@nestjs/graphql'
 
+// Excludes フォルダ and 鉄道モデル
 export enum PlateauDatasetTypeEnum {
   Border = '行政界情報',
   Bridge = '橋梁モデル',
