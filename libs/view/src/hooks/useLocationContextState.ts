@@ -6,9 +6,9 @@ import {
   useMunicipalityDatasetsQuery,
   type PlateauDatasetFragment
 } from '@plateau/graphql'
+import type { Area } from '@plateau/gsi-geocoder'
 
-import { municipalityAddressAtom } from '../states/address'
-import { type ReverseGeocoderResult } from './useReverseGeocoder'
+import { areasAtom } from '../states/address'
 
 const datasetTypeOrder = [
   PlateauDatasetType.Building,
@@ -33,24 +33,24 @@ const datasetTypeOrder = [
 ]
 
 export interface LocationContextStateState {
-  address?: ReverseGeocoderResult<'municipality'>
+  areas?: readonly Area[]
   datasets?: PlateauDatasetFragment[]
 }
 
 export function useLocationContextState(): LocationContextStateState {
-  const address = useAtomValue(municipalityAddressAtom)
+  const areas = useAtomValue(areasAtom)
   const { data, loading } = useMunicipalityDatasetsQuery({
     variables:
-      address != null
+      areas != null
         ? {
-            municipalityCode: address?.municipalityCode,
+            municipalityCode: areas?.[0].code,
             excludeTypes: [
               PlateauDatasetType.UseCase,
               PlateauDatasetType.Generic
             ]
           }
         : undefined,
-    skip: address == null
+    skip: areas == null
   })
 
   const datasets = useMemo(() => {
@@ -68,9 +68,9 @@ export function useLocationContextState(): LocationContextStateState {
   const [state, setState] = useState<LocationContextStateState>({})
   useEffect(() => {
     if (!loading) {
-      setState({ address: address ?? undefined, datasets })
+      setState({ areas: areas ?? undefined, datasets })
     }
-  }, [address, loading, datasets])
+  }, [areas, loading, datasets])
 
   return state
 }

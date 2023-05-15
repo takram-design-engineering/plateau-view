@@ -33,9 +33,9 @@ import {
 } from '@plateau/screen-space-selection'
 import { AppLayout } from '@plateau/ui-components'
 
+import { Areas } from './containers/Areas'
 import { Canvas } from './containers/Canvas'
 import { Environments } from './containers/Environments'
-import { Municipalities } from './containers/Municipalities'
 import { ScreenSpaceCamera } from './containers/ScreenSpaceCamera'
 import { ScreenSpaceSelection } from './containers/ScreenSpaceSelection'
 import { Terrains } from './containers/Terrains'
@@ -252,7 +252,7 @@ export const PlateauView: FC<PlateauViewProps> = () => {
             <IsomorphicTokyo23BuildingTileset name='13102_chuo-ku' />
           </SuspendUntilTilesLoaded>
         </Suspense>
-        <Municipalities />
+        <Areas />
         <Events />
         <CanvasPointer />
         <KeyBindings />

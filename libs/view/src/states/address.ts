@@ -1,11 +1,11 @@
 import { atom, type SetStateAction } from 'jotai'
-import { omit, pick } from 'lodash'
 
-import { type MunicipalityDataSource } from '@plateau/data-sources'
+import { type AreaDataSource } from '@plateau/data-sources'
+import type { Area, PrefectureArea } from '@plateau/gsi-geocoder'
 
 import { type ReverseGeocoderResult } from '../hooks/useReverseGeocoder'
 
-export const addressPrimitiveAtom = atom<ReverseGeocoderResult | null>(null)
+const addressPrimitiveAtom = atom<ReverseGeocoderResult | null>(null)
 export const addressAtom = atom(
   get => get(addressPrimitiveAtom),
   (get, set, value: SetStateAction<ReverseGeocoderResult | null>) => {
@@ -13,19 +13,21 @@ export const addressAtom = atom(
 
     // Propagate changes to municipality and prefecture.
     const address = get(addressPrimitiveAtom)
-    set(municipalityAddressPrimitiveAtom, prevValue =>
-      address?.municipalityCode !== prevValue?.municipalityCode
-        ? address != null
-          ? omit(address, 'name')
-          : address
-        : prevValue
+    set(areasPrimitiveAtom, prevValue =>
+      address != null
+        ? address.areas[0].code !== prevValue?.[0].code
+          ? address.areas
+          : prevValue
+        : null
     )
-    set(prefectureAddressPrimitiveAtom, prevValue =>
-      address?.prefectureCode !== prevValue?.prefectureCode
-        ? address != null
-          ? pick(address, ['prefectureCode', 'prefectureName'])
-          : address
-        : prevValue
+    set(prefecturePrimitiveAtom, prevValue =>
+      address != null
+        ? address.areas[address.areas.length - 1].code !== prevValue?.code
+          ? address.areas.find(
+              (area: Area): area is PrefectureArea => area.type === 'prefecture'
+            ) ?? null
+          : prevValue
+        : null
     )
 
     // I really want to manage data sources in atoms but Cesiums' ownership
@@ -35,18 +37,10 @@ export const addressAtom = atom(
   }
 )
 
-export const municipalityAddressPrimitiveAtom =
-  atom<ReverseGeocoderResult<'municipality'> | null>(null)
-export const municipalityAddressAtom = atom(get =>
-  get(municipalityAddressPrimitiveAtom)
-)
+const areasPrimitiveAtom = atom<Area[] | null>(null)
+export const areasAtom = atom(get => get(areasPrimitiveAtom))
 
-export const prefectureAddressPrimitiveAtom =
-  atom<ReverseGeocoderResult<'prefecture'> | null>(null)
-export const prefectureAddressAtom = atom(get =>
-  get(prefectureAddressPrimitiveAtom)
-)
+const prefecturePrimitiveAtom = atom<PrefectureArea | null>(null)
+export const prefectureAtom = atom(get => get(prefecturePrimitiveAtom))
 
-export const municipalityDataSourceAtom = atom<MunicipalityDataSource | null>(
-  null
-)
+export const areaDataSourceAtom = atom<AreaDataSource | null>(null)
