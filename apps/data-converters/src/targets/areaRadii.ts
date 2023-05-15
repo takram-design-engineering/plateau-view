@@ -12,7 +12,7 @@ import { type AreaGeometry } from './areaPolygons'
 export async function main(): Promise<void> {
   const { prefectures, municipalities } = JSON.parse(
     await readFile(
-      path.resolve('./apps/app/public/assets/areaCodes.json'),
+      path.resolve('./libs/geocoder/src/assets/areaCodes.json'),
       'utf-8'
     )
   ) as {
@@ -77,7 +77,7 @@ export async function main(): Promise<void> {
   ])
 
   await writeFile(
-    path.resolve('./data/apps/app/public/assets/areaRadii.json'),
+    path.resolve('./libs/geocoder/src/assets/areaRadii.json'),
     JSON.stringify(output)
   )
   console.log('Done')

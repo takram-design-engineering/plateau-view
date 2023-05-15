@@ -9,7 +9,7 @@ import { useAtomValue, useSetAtom } from 'jotai'
 import { useCallback, useContext, type FC, type MouseEvent } from 'react'
 
 import { useCesium } from '@plateau/cesium'
-import type { Area } from '@plateau/gsi-geocoder'
+import type { Area } from '@plateau/geocoder'
 import { ScreenSpaceSelectionContext } from '@plateau/screen-space-selection'
 
 import { flyToArea } from '../../helpers/flyToArea'
