@@ -14,16 +14,11 @@ WORKDIR /app
 COPY . .
 RUN npx nx run api:build:production --verbose
 
-FROM node:18-slim AS build
-WORKDIR /app
-COPY --from=builder /app/dist/ ./dist/
-
 FROM node:18-slim AS runner
 ENV NODE_ENV=production
 ARG GOOGLE_CLOUD_PROJECT
 WORKDIR /app
 COPY --from=dependencies /app/ ./
-COPY --from=build /app/ ./
-COPY . .
+COPY --from=builder /app/dist/ ./dist/
 
 CMD ["node", "./dist/apps/api/main.js"]
