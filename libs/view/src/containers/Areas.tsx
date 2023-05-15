@@ -9,13 +9,6 @@ import { useScreenSpaceSelectionResponder } from '@plateau/screen-space-selectio
 import { areaDataSourceAtom, prefectureAtom } from '../states/address'
 import { showAreaEntitiesAtom } from '../states/app'
 
-function getUrl(prefectureCode: string): string {
-  return [
-    process.env.NEXT_PUBLIC_DATA_BASE_URL,
-    `areaPolygons/${prefectureCode}.topojson`
-  ].join('/')
-}
-
 export const Areas: FC = () => {
   const prefecture = useAtomValue(prefectureAtom)
 
@@ -57,7 +50,7 @@ export const Areas: FC = () => {
   return (
     <AreaEntities
       ref={setDataSource}
-      url={getUrl(prefecture.code)}
+      url={`/assets/areaPolygons/${prefecture.code}.topojson`}
       color={color}
       show={show}
     />

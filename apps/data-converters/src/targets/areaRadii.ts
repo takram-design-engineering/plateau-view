@@ -11,7 +11,10 @@ import { type AreaGeometry } from './areaPolygons'
 
 export async function main(): Promise<void> {
   const { prefectures, municipalities } = JSON.parse(
-    await readFile(path.resolve('./data/areaCodes.json'), 'utf-8')
+    await readFile(
+      path.resolve('./apps/app/public/assets/areaCodes.json'),
+      'utf-8'
+    )
   ) as {
     prefectures: Prefectures
     municipalities: Municipalities
@@ -31,7 +34,7 @@ export async function main(): Promise<void> {
         prefectureCode,
         JSON.parse(
           await readFile(
-            `./data/areaPolygons/${prefectureCode}.topojson`,
+            `./apps/app/public/assets/areaPolygons/${prefectureCode}.topojson`,
             'utf-8'
           )
         )
@@ -73,6 +76,9 @@ export async function main(): Promise<void> {
       .filter(isNotNullish)
   ])
 
-  await writeFile(path.resolve('./data/areaRadii.json'), JSON.stringify(output))
+  await writeFile(
+    path.resolve('./data/apps/app/public/assets/areaRadii.json'),
+    JSON.stringify(output)
+  )
   console.log('Done')
 }

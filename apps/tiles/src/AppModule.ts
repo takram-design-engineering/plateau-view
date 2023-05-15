@@ -14,7 +14,7 @@ import { AppController } from './AppController'
       path: 'light',
       mapStyle: path.resolve(
         process.env.PROJECT_ROOT,
-        'apps/app/public/assets/map-styles/light.json'
+        'apps/app/public/assets/mapStyles/light.json'
       ),
       maximumLevel: 24,
       nativeMaximumLevel: 16

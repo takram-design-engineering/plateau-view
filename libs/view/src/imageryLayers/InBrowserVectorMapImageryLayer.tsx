@@ -14,7 +14,7 @@ export const InBrowserVectorMapImageryLayer: FC<
     () =>
       new VectorImageryProvider({
         url: 'https://cyberjapandata.gsi.go.jp/xyz/experimental_bvmap/{z}/{x}/{y}.pbf',
-        styleUrl: '/assets/map-styles/light.json',
+        styleUrl: '/assets/mapStyles/light.json',
         maximumNativeZoom: 16,
         pixelRatio: 2
       })

@@ -15,7 +15,7 @@ import { VectorMapImageryLayer } from '@plateau/view'
 
 import 'maplibre-gl/dist/maplibre-gl.css'
 
-import mapStyle from '../public/assets/map-styles/light.json'
+import mapStyle from '../public/assets/mapStyles/light.json'
 
 const rectangleScratch = new Rectangle()
 
