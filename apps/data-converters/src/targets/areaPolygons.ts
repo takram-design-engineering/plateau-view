@@ -214,13 +214,16 @@ async function convertToTopoJSON(params: {
 
 export async function main(): Promise<void> {
   const { prefectures, municipalities } = JSON.parse(
-    await readFile(path.resolve('./data/areaCodes.json'), 'utf-8')
+    await readFile(
+      path.resolve('./apps/app/public/assets/areaCodes.json'),
+      'utf-8'
+    )
   ) as {
     prefectures: Prefectures
     municipalities: Municipalities
   }
 
-  await mkdirp(path.resolve('./data/areaPolygons'))
+  await mkdirp(path.resolve('./apps/app/public/assets/areaPolygons'))
   for (const [prefectureCode, prefectureName] of Object.entries(prefectures)) {
     // Get the data at:
     // https://www.e-stat.go.jp/gis/statmap-search?page=1&type=2&aggregateUnitForBoundary=A&toukeiCode=00200521&toukeiYear=2020&serveyId=B002005212020&prefCode=01&coordsys=1&format=shape&datum=2000
@@ -238,7 +241,10 @@ export async function main(): Promise<void> {
       prefectureName
     })
     await writeFile(
-      path.resolve('./data/areaPolygons', `${prefectureCode}.topojson`),
+      path.resolve(
+        './apps/app/public/assets/areaPolygons',
+        `${prefectureCode}.topojson`
+      ),
       JSON.stringify(topojson)
     )
     console.log(`Saved ${prefectureCode}.topojson`)
