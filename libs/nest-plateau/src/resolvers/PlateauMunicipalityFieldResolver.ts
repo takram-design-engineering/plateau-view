@@ -28,6 +28,11 @@ export class PlateauMunicipalityFieldResolver {
   @ResolveField(() => [PlateauDataset])
   async datasets(
     @Parent() municipality: PlateauMunicipality,
+    @Args('includeTypes', {
+      type: () => [PlateauDatasetTypeEnum],
+      nullable: true
+    })
+    includeTypes?: readonly PlateauDatasetType[],
     @Args('excludeTypes', {
       type: () => [PlateauDatasetTypeEnum],
       nullable: true
@@ -36,6 +41,7 @@ export class PlateauMunicipalityFieldResolver {
   ): Promise<PlateauDataset[]> {
     return await this.catalogService.findAll({
       municipalityCode: municipality.code,
+      includeTypes,
       excludeTypes
     })
   }
