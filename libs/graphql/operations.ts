@@ -140,6 +140,7 @@ export type PlateauMunicipality = PlateauArea & {
 
 export type PlateauMunicipalityDatasetsArgs = {
   excludeTypes?: InputMaybe<Array<PlateauDatasetType>>
+  includeTypes?: InputMaybe<Array<PlateauDatasetType>>
 }
 
 export type PlateauPrefecture = PlateauArea & {
@@ -216,6 +217,7 @@ export type PlateauDatasetFragment =
 
 export type MunicipalityDatasetsQueryVariables = Exact<{
   municipalityCode: Scalars['String']
+  includeTypes?: InputMaybe<Array<PlateauDatasetType> | PlateauDatasetType>
   excludeTypes?: InputMaybe<Array<PlateauDatasetType> | PlateauDatasetType>
 }>
 
@@ -288,11 +290,12 @@ export const PlateauDatasetFragmentDoc = gql`
 export const MunicipalityDatasetsDocument = gql`
   query municipalityDatasets(
     $municipalityCode: String!
+    $includeTypes: [PlateauDatasetType!]
     $excludeTypes: [PlateauDatasetType!]
   ) {
     municipality(code: $municipalityCode) {
       ...PlateauMunicipality
-      datasets(excludeTypes: $excludeTypes) {
+      datasets(includeTypes: $includeTypes, excludeTypes: $excludeTypes) {
         ...PlateauDataset
       }
     }
@@ -314,6 +317,7 @@ export const MunicipalityDatasetsDocument = gql`
  * const { data, loading, error } = useMunicipalityDatasetsQuery({
  *   variables: {
  *      municipalityCode: // value for 'municipalityCode'
+ *      includeTypes: // value for 'includeTypes'
  *      excludeTypes: // value for 'excludeTypes'
  *   },
  * });

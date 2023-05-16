@@ -1,10 +1,10 @@
 /* eslint-disable */
 export default {
-  displayName: 'gsi-geocoder',
+  displayName: 'geocoder',
   preset: '../../jest.preset.js',
   transform: {
     '^.+\\.[tj]s$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.spec.json' }]
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
-  coverageDirectory: '../../coverage/libs/gsi-geocoder'
+  coverageDirectory: '../../coverage/libs/geocoder'
 }

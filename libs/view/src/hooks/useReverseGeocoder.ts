@@ -9,7 +9,7 @@ import invariant from 'tiny-invariant'
 
 import { useCameraEvent, useCesium } from '@plateau/cesium'
 import { getCameraEllipsoidIntersection } from '@plateau/cesium-helpers'
-import type { Address } from '@plateau/gsi-geocoder'
+import type { Address } from '@plateau/geocoder'
 import { useConstant } from '@plateau/react-helpers'
 import { type CancelablePromise } from '@plateau/type-helpers'
 
@@ -48,7 +48,7 @@ export function useReverseGeocoder(): ReverseGeocoderResult | undefined {
     let canceled = false
     const controller = new AbortController()
     const promise = (async () => {
-      const { getAddress } = await import('@plateau/gsi-geocoder')
+      const { getAddress } = await import('@plateau/geocoder')
       const next = await getAddress(coords, {
         includeRadii: true,
         signal: controller.signal

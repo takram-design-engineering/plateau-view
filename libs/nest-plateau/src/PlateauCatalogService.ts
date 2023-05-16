@@ -25,30 +25,32 @@ import { PlateauDefaultDataset } from './dto/PlateauDefaultDataset'
 import { PlateauMunicipality } from './dto/PlateauMunicipality'
 import { getMunicipalitiesInCatalog } from './helpers/getMunicipalitiesInCatalog'
 
-const datasetClasses: Record<string, Constructor<PlateauDataset> | undefined> =
-  {
-    [PlateauDatasetTypeEnum.Border]: PlateauDefaultDataset,
-    [PlateauDatasetTypeEnum.Bridge]: PlateauDefaultDataset,
-    [PlateauDatasetTypeEnum.Building]: PlateauBuildingDataset,
-    [PlateauDatasetTypeEnum.EmergencyRoute]: PlateauDefaultDataset,
-    [PlateauDatasetTypeEnum.Facility]: PlateauDefaultDataset,
-    [PlateauDatasetTypeEnum.Flood]: PlateauDefaultDataset,
-    [PlateauDatasetTypeEnum.Furniture]: PlateauDefaultDataset,
-    [PlateauDatasetTypeEnum.Generic]: PlateauDefaultDataset,
-    [PlateauDatasetTypeEnum.Hightide]: PlateauDefaultDataset,
-    [PlateauDatasetTypeEnum.InlandFlood]: PlateauDefaultDataset,
-    [PlateauDatasetTypeEnum.Landmark]: PlateauDefaultDataset,
-    [PlateauDatasetTypeEnum.Landslide]: PlateauDefaultDataset,
-    [PlateauDatasetTypeEnum.Landuse]: PlateauDefaultDataset,
-    [PlateauDatasetTypeEnum.Park]: PlateauDefaultDataset,
-    [PlateauDatasetTypeEnum.Railway]: PlateauDefaultDataset,
-    [PlateauDatasetTypeEnum.Road]: PlateauDefaultDataset,
-    [PlateauDatasetTypeEnum.Shelter]: PlateauDefaultDataset,
-    [PlateauDatasetTypeEnum.Station]: PlateauDefaultDataset,
-    [PlateauDatasetTypeEnum.Tsunami]: PlateauDefaultDataset,
-    [PlateauDatasetTypeEnum.UseCase]: PlateauDefaultDataset,
-    [PlateauDatasetTypeEnum.Vegetation]: PlateauDefaultDataset
-  }
+const datasetConstructors: Record<
+  string,
+  Constructor<PlateauDataset> | undefined
+> = {
+  [PlateauDatasetTypeEnum.Border]: PlateauDefaultDataset,
+  [PlateauDatasetTypeEnum.Bridge]: PlateauDefaultDataset,
+  [PlateauDatasetTypeEnum.Building]: PlateauBuildingDataset,
+  [PlateauDatasetTypeEnum.EmergencyRoute]: PlateauDefaultDataset,
+  [PlateauDatasetTypeEnum.Facility]: PlateauDefaultDataset,
+  [PlateauDatasetTypeEnum.Flood]: PlateauDefaultDataset,
+  [PlateauDatasetTypeEnum.Furniture]: PlateauDefaultDataset,
+  [PlateauDatasetTypeEnum.Generic]: PlateauDefaultDataset,
+  [PlateauDatasetTypeEnum.Hightide]: PlateauDefaultDataset,
+  [PlateauDatasetTypeEnum.InlandFlood]: PlateauDefaultDataset,
+  [PlateauDatasetTypeEnum.Landmark]: PlateauDefaultDataset,
+  [PlateauDatasetTypeEnum.Landslide]: PlateauDefaultDataset,
+  [PlateauDatasetTypeEnum.Landuse]: PlateauDefaultDataset,
+  [PlateauDatasetTypeEnum.Park]: PlateauDefaultDataset,
+  [PlateauDatasetTypeEnum.Railway]: PlateauDefaultDataset,
+  [PlateauDatasetTypeEnum.Road]: PlateauDefaultDataset,
+  [PlateauDatasetTypeEnum.Shelter]: PlateauDefaultDataset,
+  [PlateauDatasetTypeEnum.Station]: PlateauDefaultDataset,
+  [PlateauDatasetTypeEnum.Tsunami]: PlateauDefaultDataset,
+  [PlateauDatasetTypeEnum.UseCase]: PlateauDefaultDataset,
+  [PlateauDatasetTypeEnum.Vegetation]: PlateauDefaultDataset
+}
 
 @Injectable()
 export class PlateauCatalogService {
@@ -65,7 +67,7 @@ export class PlateauCatalogService {
   ) {}
 
   private createDataset(catalog: PlateauCatalog): PlateauDataset | undefined {
-    const constructor = datasetClasses[catalog.data.type]
+    const constructor = datasetConstructors[catalog.data.type]
     if (constructor == null) {
       return
     }
@@ -80,11 +82,15 @@ export class PlateauCatalogService {
   async findAll(
     params: {
       municipalityCode?: string
+      includeTypes?: readonly PlateauDatasetType[]
       excludeTypes?: readonly PlateauDatasetType[]
     } = {}
   ): Promise<PlateauDataset[]> {
     if (params.municipalityCode == null) {
       let query: Query<PlateauCatalog> = this.catalogCollection
+      if (params.includeTypes != null) {
+        query = query.where('data.type', 'in', params.includeTypes)
+      }
       if (params.excludeTypes != null) {
         query = query.where('data.type', 'not-in', params.excludeTypes)
       }
@@ -105,6 +111,10 @@ export class PlateauCatalogService {
       '==',
       params.municipalityCode
     )
+    if (params.includeTypes != null) {
+      cityQuery = cityQuery.where('data.type', 'in', params.includeTypes)
+      wardQuery = wardQuery.where('data.type', 'in', params.includeTypes)
+    }
     if (params.excludeTypes != null) {
       cityQuery = cityQuery.where('data.type', 'not-in', params.excludeTypes)
       wardQuery = wardQuery.where('data.type', 'not-in', params.excludeTypes)

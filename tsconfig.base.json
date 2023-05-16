@@ -24,8 +24,9 @@
       ],
       "@plateau/data-sources": ["libs/data-sources/src/index.ts"],
       "@plateau/datasets": ["libs/datasets/src/index.ts"],
+      "@plateau/geocoder": ["libs/geocoder/src/index.ts"],
       "@plateau/graphql": ["libs/graphql/index.ts"],
-      "@plateau/gsi-geocoder": ["libs/gsi-geocoder/src/index.ts"],
+      "@plateau/layers": ["libs/layers/src/index.ts"],
       "@plateau/nest-cesium": ["libs/nest-cesium/src/index.ts"],
       "@plateau/nest-firestore": ["libs/nest-firestore/src/index.ts"],
       "@plateau/nest-plateau": ["libs/nest-plateau/src/index.ts"],
@@ -37,7 +38,8 @@
       "@plateau/sketch": ["libs/sketch/src/index.ts"],
       "@plateau/type-helpers": ["libs/type-helpers/src/index.ts"],
       "@plateau/ui-components": ["libs/ui-components/src/index.ts"],
-      "@plateau/view": ["libs/view/src/index.ts"]
+      "@plateau/view": ["libs/view/src/index.ts"],
+      "@plateau/view-layers": ["libs/view-layers/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -1,12 +1,12 @@
 import { useAtomValue } from 'jotai'
 import { useEffect, useMemo, useState } from 'react'
 
+import type { Area } from '@plateau/geocoder'
 import {
   PlateauDatasetType,
   useMunicipalityDatasetsQuery,
   type PlateauDatasetFragment
 } from '@plateau/graphql'
-import type { Area } from '@plateau/gsi-geocoder'
 
 import { areasAtom } from '../states/address'
 

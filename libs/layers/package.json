@@ -1,11 +1,10 @@
 {
-  "name": "@plateau/gsi-geocoder",
+  "name": "@plateau/layers",
   "version": "0.0.0",
   "sideEffects": false,
   "exports": {
     ".": {
-      "import": "./index.mjs",
-      "require": "./index.js"
+      "import": "./index.mjs"
     }
   },
   "main": "./index.js",
