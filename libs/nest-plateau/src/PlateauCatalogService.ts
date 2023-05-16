@@ -82,11 +82,15 @@ export class PlateauCatalogService {
   async findAll(
     params: {
       municipalityCode?: string
+      includeTypes?: readonly PlateauDatasetType[]
       excludeTypes?: readonly PlateauDatasetType[]
     } = {}
   ): Promise<PlateauDataset[]> {
     if (params.municipalityCode == null) {
       let query: Query<PlateauCatalog> = this.catalogCollection
+      if (params.includeTypes != null) {
+        query = query.where('data.type', 'in', params.includeTypes)
+      }
       if (params.excludeTypes != null) {
         query = query.where('data.type', 'not-in', params.excludeTypes)
       }
@@ -107,6 +111,10 @@ export class PlateauCatalogService {
       '==',
       params.municipalityCode
     )
+    if (params.includeTypes != null) {
+      cityQuery = cityQuery.where('data.type', 'in', params.includeTypes)
+      wardQuery = wardQuery.where('data.type', 'in', params.includeTypes)
+    }
     if (params.excludeTypes != null) {
       cityQuery = cityQuery.where('data.type', 'not-in', params.excludeTypes)
       wardQuery = wardQuery.where('data.type', 'not-in', params.excludeTypes)

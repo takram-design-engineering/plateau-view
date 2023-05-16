@@ -105,7 +105,7 @@ type PlateauDefaultDatasetVariant implements PlateauDatasetVariant {
 
 type PlateauMunicipality implements PlateauArea {
   code: String!
-  datasets(excludeTypes: [PlateauDatasetType!]): [PlateauDataset!]!
+  datasets(excludeTypes: [PlateauDatasetType!], includeTypes: [PlateauDatasetType!]): [PlateauDataset!]!
   id: ID!
   name: String!
   parents: [PlateauArea!]!

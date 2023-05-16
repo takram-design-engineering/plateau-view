@@ -36,4 +36,6 @@ export function createContextValue() {
   }
 }
 
+export type CesiumContextValue = ReturnType<typeof createContextValue>
+
 export const CesiumContext = createContext(createContextValue())

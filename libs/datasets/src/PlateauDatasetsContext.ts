@@ -12,4 +12,6 @@ export function createContextValue() {
   }
 }
 
+export type PlateauDatasetsContextValue = ReturnType<typeof createContextValue>
+
 export const PlateauDatasetsContext = createContext(createContextValue())
