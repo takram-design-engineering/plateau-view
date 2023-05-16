@@ -26,6 +26,7 @@
       "@plateau/datasets": ["libs/datasets/src/index.ts"],
       "@plateau/geocoder": ["libs/geocoder/src/index.ts"],
       "@plateau/graphql": ["libs/graphql/index.ts"],
+      "@plateau/layers": ["libs/layers/src/index.ts"],
       "@plateau/nest-cesium": ["libs/nest-cesium/src/index.ts"],
       "@plateau/nest-firestore": ["libs/nest-firestore/src/index.ts"],
       "@plateau/nest-plateau": ["libs/nest-plateau/src/index.ts"],

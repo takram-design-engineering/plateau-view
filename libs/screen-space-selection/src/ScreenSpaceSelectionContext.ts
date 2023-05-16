@@ -188,4 +188,8 @@ export function createContextValue() {
   }
 }
 
+export type ScreenSpaceSelectionContextValue = ReturnType<
+  typeof createContextValue
+>
+
 export const ScreenSpaceSelectionContext = createContext(createContextValue())
