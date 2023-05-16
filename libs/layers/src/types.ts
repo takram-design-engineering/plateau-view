@@ -14,17 +14,12 @@ export interface LayerModelOverrides {
 
 export type LayerType = keyof LayerModelOverrides
 
-export type AnyLayerModel<T extends LayerType = LayerType> =
-  LayerModelOverrides[T]
+export type AnyLayerModel = LayerModelOverrides[LayerType]
 
 export interface LayerProps<T extends LayerType = LayerType> {
-  layerAtom: PrimitiveAtom<AnyLayerModel<T>>
+  layerAtom: PrimitiveAtom<LayerModelOverrides[T]>
 }
 
-export type LayerComponent<T extends LayerType = LayerType> = ComponentType<
-  LayerProps<T>
->
-
 export type LayerComponents = {
-  [T in LayerType]: LayerComponent<T>
+  [T in LayerType]: ComponentType<LayerProps<any>> // TODO: Refine type
 }

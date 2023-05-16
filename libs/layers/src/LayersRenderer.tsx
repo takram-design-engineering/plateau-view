@@ -1,7 +1,6 @@
 import { useAtomValue, type PrimitiveAtom } from 'jotai'
 import { type FC, type ReactNode } from 'react'
 
-import { layerComponents } from './layerComponents'
 import { type LayerComponents, type LayerModel } from './types'
 import { useLayers } from './useLayers'
 
@@ -16,14 +15,14 @@ const LayerRenderer: FC<LayerRendererProps> = ({ components, layerAtom }) => {
   return <Component layerAtom={layerAtom} />
 }
 
-export interface LayersRendererProps {
-  components?: LayerComponents
+export interface LayersRendererProps<T extends LayerComponents> {
+  components: T
   children?: ReactNode
 }
 
-export const LayersRenderer: FC<LayersRendererProps> = ({
-  components = layerComponents
-}) => {
+export function LayersRenderer<T extends LayerComponents>({
+  components
+}: LayersRendererProps<T>): JSX.Element {
   const { layerAtomsAtom } = useLayers()
   const layerAtoms = useAtomValue(layerAtomsAtom)
   return (
@@ -31,7 +30,7 @@ export const LayersRenderer: FC<LayersRendererProps> = ({
       {layerAtoms.map(layerAtom => (
         <LayerRenderer
           key={`${layerAtom}`}
-          components={components as LayerComponents}
+          components={components}
           layerAtom={layerAtom}
         />
       ))}

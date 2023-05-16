@@ -6,10 +6,7 @@ export interface LayersProviderProps {
   children?: ReactNode
 }
 
-export const LayersProvider: FC<LayersProviderProps> = ({
-  children,
-  ...props
-}) => {
+export const LayersProvider: FC<LayersProviderProps> = ({ children }) => {
   const context = useMemo(() => createContextValue(), [])
   return (
     <LayersContext.Provider value={context}>{children}</LayersContext.Provider>

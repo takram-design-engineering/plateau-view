@@ -14,7 +14,7 @@ import {
   verticalListSortingStrategy
 } from '@dnd-kit/sortable'
 import { styled } from '@mui/material'
-import { useAtomValue, useSetAtom, type PrimitiveAtom } from 'jotai'
+import { useAtomValue, useSetAtom } from 'jotai'
 import {
   forwardRef,
   useCallback,
@@ -24,17 +24,13 @@ import {
 import invariant from 'tiny-invariant'
 
 import { LayerListItem } from './LayerListItem'
-import { type AnyLayerModel } from './types'
+import { type LayerProps } from './types'
 import { useLayers } from './useLayers'
 
 const Root = styled('div')({})
 
-export interface LayerListItemProps {
-  layerAtom: PrimitiveAtom<AnyLayerModel>
-}
-
 export interface LayerListProps extends ComponentPropsWithRef<typeof Root> {
-  ItemComponent: ComponentType<LayerListItemProps>
+  ItemComponent: ComponentType<LayerProps>
   minimumDragDistance?: number
 }
 
