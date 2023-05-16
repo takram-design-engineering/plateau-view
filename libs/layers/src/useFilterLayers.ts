@@ -1,11 +1,13 @@
-import { useSetAtom } from 'jotai'
+import { useSetAtom, type Getter } from 'jotai'
 import { useContext } from 'react'
 
 import { LayersContext } from './LayersContext'
 import { type LayerModelOverrides, type LayerType } from './types'
 
 export function useFilterLayers(): <T extends LayerType>(
-  layer: Partial<{ type: T } & Omit<LayerModelOverrides[T], 'type'>>
+  layerOrPredicate:
+    | Partial<{ type: T } & Omit<LayerModelOverrides[T], 'type'>>
+    | ((layer: LayerModelOverrides[T], get: Getter) => boolean)
 ) => Array<LayerModelOverrides[T]> {
   const context = useContext(LayersContext)
   if (context == null) {

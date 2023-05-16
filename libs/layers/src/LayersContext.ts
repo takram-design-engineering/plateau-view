@@ -1,4 +1,4 @@
-import { atom } from 'jotai'
+import { atom, type Getter } from 'jotai'
 import { atomWithReset, splitAtom } from 'jotai/utils'
 import { isEqual, pick } from 'lodash'
 import { nanoid } from 'nanoid'
@@ -6,6 +6,8 @@ import { createContext } from 'react'
 import { type SetOptional } from 'type-fest'
 
 import { type AnyLayerModel } from './types'
+
+type AnyLayerPredicate = (layer: AnyLayerModel, get: Getter) => boolean
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export function createContextValue() {
@@ -41,24 +43,46 @@ export function createContextValue() {
     }
   )
 
-  const findAtom = atom(null, (get, set, layer: Partial<AnyLayerModel>) => {
-    const keys = Object.entries(layer)
-      .filter(([, value]) => value !== undefined)
-      .map(([key]) => key)
-    const layerAtom = get(layerAtomsAtom).find(layerAtom =>
-      isEqual(pick(get(layerAtom), keys), layer)
-    )
-    return layerAtom != null ? get(layerAtom) : undefined
-  })
+  const findAtom = atom(
+    null,
+    (
+      get,
+      set,
+      layerOrPredicate: Partial<AnyLayerModel> | AnyLayerPredicate
+    ) => {
+      if (typeof layerOrPredicate === 'function') {
+        return get(layersAtom).find(layerAtom =>
+          layerOrPredicate(layerAtom, get)
+        )
+      }
+      const keys = Object.entries(layerOrPredicate)
+        .filter(([, value]) => value !== undefined)
+        .map(([key]) => key)
+      const layer = get(layersAtom).find(layer =>
+        isEqual(pick(layer, keys), layerOrPredicate)
+      )
+      return layer != null ? layer : undefined
+    }
+  )
 
-  const filterAtom = atom(null, (get, set, layer: Partial<AnyLayerModel>) => {
-    const keys = Object.entries(layer)
-      .filter(([, value]) => value !== undefined)
-      .map(([key]) => key)
-    return get(layerAtomsAtom)
-      .filter(layerAtom => isEqual(pick(get(layerAtom), keys), layer))
-      .map(layerAtom => get(layerAtom))
-  })
+  const filterAtom = atom(
+    null,
+    (
+      get,
+      set,
+      layerOrPredicate: Partial<AnyLayerModel> | AnyLayerPredicate
+    ) => {
+      if (typeof layerOrPredicate === 'function') {
+        return get(layersAtom).filter(layer => layerOrPredicate(layer, get))
+      }
+      const keys = Object.entries(layerOrPredicate)
+        .filter(([, value]) => value !== undefined)
+        .map(([key]) => key)
+      return get(layersAtom).filter(layer =>
+        isEqual(pick(layer, keys), layerOrPredicate)
+      )
+    }
+  )
 
   const removeAtom = atom(null, (get, set, id: string) => {
     const layerAtom = get(layerAtomsAtom).find(
