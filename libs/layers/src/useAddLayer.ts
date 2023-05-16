@@ -7,7 +7,8 @@ import { type LayerModelOverrides, type LayerType } from './types'
 export function useAddLayer(): <T extends LayerType>(
   layer: {
     type: T
-  } & Omit<LayerModelOverrides[T], 'id' | 'type'>
+    id?: string
+  } & Omit<LayerModelOverrides[T], 'type' | 'id'>
 ) => ReturnType<LayersContextValue['addAtom']['write']> {
   const context = useContext(LayersContext)
   if (context == null) {

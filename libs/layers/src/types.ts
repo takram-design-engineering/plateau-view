@@ -9,7 +9,7 @@ export interface LayerModel {
 
 // eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
 export interface LayerModelOverrides {
-  [type: string | symbol]: LayerModel
+  [type: string]: LayerModel
 }
 
 export type LayerType = keyof LayerModelOverrides

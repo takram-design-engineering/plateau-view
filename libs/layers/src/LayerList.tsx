@@ -19,7 +19,8 @@ import {
   forwardRef,
   useCallback,
   type ComponentPropsWithRef,
-  type ComponentType
+  type ComponentType,
+  type ElementType
 } from 'react'
 import invariant from 'tiny-invariant'
 
@@ -29,13 +30,15 @@ import { useLayers } from './useLayers'
 
 const Root = styled('div')({})
 
-export interface LayerListProps extends ComponentPropsWithRef<typeof Root> {
-  ItemComponent: ComponentType<LayerProps>
-  minimumDragDistance?: number
-}
+export type LayerListProps<C extends ElementType = typeof Root> =
+  ComponentPropsWithRef<C> & {
+    component?: C
+    ItemComponent: ComponentType<LayerProps>
+    minimumDragDistance?: number
+  }
 
 export const LayerList = forwardRef<HTMLDivElement, LayerListProps>(
-  ({ minimumDragDistance = 5, ItemComponent, ...props }, ref) => {
+  ({ minimumDragDistance = 5, component, ItemComponent, ...props }, ref) => {
     const sensors = useSensors(
       useSensor(PointerSensor, {
         activationConstraint: {
@@ -64,8 +67,9 @@ export const LayerList = forwardRef<HTMLDivElement, LayerListProps>(
       [move]
     )
 
+    const Component = component ?? Root
     return (
-      <Root ref={ref} {...props}>
+      <Component ref={ref} {...props}>
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}
@@ -87,7 +91,7 @@ export const LayerList = forwardRef<HTMLDivElement, LayerListProps>(
             ))}
           </SortableContext>
         </DndContext>
-      </Root>
+      </Component>
     )
   }
-)
+) as <C extends ElementType>(props: LayerListProps<C>) => JSX.Element // For generics

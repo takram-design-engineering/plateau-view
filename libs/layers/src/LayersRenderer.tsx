@@ -23,13 +23,14 @@ export interface LayersRendererProps<T extends LayerComponents> {
 export function LayersRenderer<T extends LayerComponents>({
   components
 }: LayersRendererProps<T>): JSX.Element {
-  const { layerAtomsAtom } = useLayers()
+  const { layerAtomsAtom, layerIdsAtom } = useLayers()
   const layerAtoms = useAtomValue(layerAtomsAtom)
+  const layerIds = useAtomValue(layerIdsAtom)
   return (
     <>
-      {layerAtoms.map(layerAtom => (
+      {layerAtoms.map((layerAtom, index) => (
         <LayerRenderer
-          key={`${layerAtom}`}
+          key={layerIds[index]}
           components={components}
           layerAtom={layerAtom}
         />
