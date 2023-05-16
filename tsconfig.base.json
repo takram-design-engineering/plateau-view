@@ -38,7 +38,8 @@
       "@plateau/sketch": ["libs/sketch/src/index.ts"],
       "@plateau/type-helpers": ["libs/type-helpers/src/index.ts"],
       "@plateau/ui-components": ["libs/ui-components/src/index.ts"],
-      "@plateau/view": ["libs/view/src/index.ts"]
+      "@plateau/view": ["libs/view/src/index.ts"],
+      "@plateau/view-layers": ["libs/view-layers/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
