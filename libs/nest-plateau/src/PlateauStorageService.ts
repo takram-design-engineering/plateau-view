@@ -33,14 +33,6 @@ export class PlateauStorageService {
       return []
     }
     const matches = minimatch.match(list, `*/${pattern}`)
-    if (this.options.dataRoot.startsWith('gs://')) {
-      return matches.map(file =>
-        urlJoin(this.options.dataRoot, `plateau/${file}`)
-      )
-    } else {
-      return matches.map(file =>
-        urlJoin(this.options.baseUrl, `plateau/${file}`)
-      )
-    }
+    return matches.map(file => urlJoin(this.options.baseUrl, `plateau/${file}`))
   }
 }
