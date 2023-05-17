@@ -9,15 +9,14 @@ import {
   type MapRef,
   type ViewStateChangeEvent
 } from 'react-map-gl'
+import invariant from 'tiny-invariant'
 
 import { Canvas, type CesiumRoot } from '@plateau/cesium'
 import { VectorMapImageryLayer } from '@plateau/datasets'
 
-import 'maplibre-gl/dist/maplibre-gl.css'
-
-import invariant from 'tiny-invariant'
-
 import mapStyle from '../public/assets/mapStyles/light.json'
+
+import 'maplibre-gl/dist/maplibre-gl.css'
 
 const rectangleScratch = new Rectangle()
 
