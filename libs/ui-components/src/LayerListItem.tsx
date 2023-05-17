@@ -8,7 +8,7 @@ import {
 import { useAtomValue } from 'jotai'
 import { type FC } from 'react'
 
-import { type LayerProps } from '@plateau/layers'
+import { type LayerProps, type LayerType } from '@plateau/layers'
 import { BUILDING_LAYER } from '@plateau/view-layers'
 
 const StyledListItem = styled(ListItem)(({ theme }) => ({
@@ -27,7 +27,7 @@ const StyledListItemText = styled(ListItemText)(({ theme }) => ({
 }))
 
 // TODO: Separate file
-const layerTypeNames: Record<string, string | undefined> = {
+const layerTypeNames: Record<LayerType, string | undefined> = {
   // [BORDER_LAYER]: '行政界情報',
   // [BRIDGE_LAYER]: '橋梁モデル',
   [BUILDING_LAYER]: '建築物モデル'
@@ -59,7 +59,7 @@ export const LayerListItem: FC<LayerProps> = ({ layerAtom }) => {
         <LayerIcon fontSize='large' />
       </ListItemIcon>
       <StyledListItemText
-        primary={layer.name}
+        primary={layer.title}
         secondary={layerTypeNames[layer.type]}
       />
     </StyledListItem>

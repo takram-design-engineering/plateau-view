@@ -1,10 +1,10 @@
 import { type PrimitiveAtom } from 'jotai'
-import { type ComponentType } from 'react'
+import { type ComponentType, type ReactNode } from 'react'
 
 export interface LayerModel {
   type: LayerType
   id: string
-  name: string
+  title: ReactNode
 }
 
 // eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
