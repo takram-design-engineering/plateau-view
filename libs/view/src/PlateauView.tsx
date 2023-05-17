@@ -6,10 +6,11 @@ import {
   type Cartesian2,
   type ScreenSpaceCameraController
 } from '@cesium/engine'
-import { List, Stack, styled, useTheme } from '@mui/material'
+import { List, Stack, styled, useTheme, type ListProps } from '@mui/material'
 import { useAtomValue, useSetAtom } from 'jotai'
 import {
   Suspense,
+  forwardRef,
   useCallback,
   useContext,
   useEffect,
@@ -69,6 +70,10 @@ const initialView = Cartesian3.fromDegrees(139.765, 35.68, 8000)
 const Root = styled('div')({
   touchAction: 'none' // TODO: Don't disable globally
 })
+
+const LayerListComponent = forwardRef<HTMLDivElement, ListProps<'div'>>(
+  (props, ref) => <List ref={ref} component='div' {...props} />
+)
 
 // TODO: Settle into appropriate component.
 const Events: FC = () => {
@@ -325,7 +330,7 @@ export const PlateauView: FC<PlateauViewProps> = () => {
             <Stack spacing={1}>
               <MainPanel>
                 <LayerList
-                  component={List}
+                  component={LayerListComponent}
                   dense
                   ItemComponent={LayerListItem}
                 />

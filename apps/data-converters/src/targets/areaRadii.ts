@@ -52,9 +52,7 @@ export async function main(): Promise<void> {
             geometry.properties?.prefectureCode === prefectureCode &&
             geometry.properties.municipalityCode == null
         )
-        if (geometry == null) {
-          return undefined // Some municipalities don't have polygons.
-        }
+        invariant(geometry != null)
         invariant(geometry.properties != null)
         return [prefectureCode, geometry.properties.radius]
       })

@@ -1,5 +1,6 @@
 import { CesiumTerrainProvider, IonResource } from '@cesium/engine'
 import { useEffect, type FC } from 'react'
+import invariant from 'tiny-invariant'
 
 import { useCesium, useSuspendInstance } from '@plateau/cesium'
 
@@ -12,6 +13,10 @@ export const PlateauTerrain: FC<PlateauTerrainProps> = ({
   requestVertexNormals,
   requestWaterMask
 }) => {
+  invariant(
+    process.env.NEXT_PUBLIC_PLATEAU_TERRAIN_ACCESS_TOKEN != null,
+    'Missing environment variable: NEXT_PUBLIC_PLATEAU_TERRAIN_ACCESS_TOKEN'
+  )
   const terrainProvider = useSuspendInstance({
     owner: PlateauTerrain,
     keys: [requestVertexNormals, requestWaterMask],

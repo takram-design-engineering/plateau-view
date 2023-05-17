@@ -60,7 +60,7 @@ export async function getAreas(
       type: 'municipality',
       code,
       name: typeof municipality === 'string' ? municipality : municipality[0],
-      radius: areaRadii?.[code]
+      radius: areaRadii?.[code] ?? 0
     }
   ]
   if (typeof municipality !== 'string' && typeof municipality[1] === 'string') {
@@ -71,7 +71,7 @@ export async function getAreas(
         type: 'municipality',
         code: municipality[1],
         name: parent[0],
-        radius: areaRadii?.[municipality[1]]
+        radius: areaRadii?.[municipality[1]] ?? 0
       })
     }
   }
@@ -79,7 +79,7 @@ export async function getAreas(
     type: 'prefecture',
     code: prefectureCode,
     name: prefectureName,
-    radius: areaRadii?.[prefectureCode]
+    radius: areaRadii?.[prefectureCode] ?? 0
   })
   return areas
 }

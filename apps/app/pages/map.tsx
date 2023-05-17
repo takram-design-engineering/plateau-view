@@ -9,13 +9,14 @@ import {
   type MapRef,
   type ViewStateChangeEvent
 } from 'react-map-gl'
+import invariant from 'tiny-invariant'
 
 import { Canvas, type CesiumRoot } from '@plateau/cesium'
-import { VectorMapImageryLayer } from '@plateau/view'
-
-import 'maplibre-gl/dist/maplibre-gl.css'
+import { VectorMapImageryLayer } from '@plateau/datasets'
 
 import mapStyle from '../public/assets/mapStyles/light.json'
+
+import 'maplibre-gl/dist/maplibre-gl.css'
 
 const rectangleScratch = new Rectangle()
 
@@ -61,6 +62,10 @@ const Page: NextPage = () => {
   //   }
   // }, [camera])
 
+  invariant(
+    process.env.NEXT_PUBLIC_TILES_BASE_URL != null,
+    'Missing environment variable: NEXT_PUBLIC_TILES_BASE_URL'
+  )
   return (
     <Box
       sx={{
@@ -90,7 +95,9 @@ const Page: NextPage = () => {
             inset: 0
           }}
         >
-          <VectorMapImageryLayer />
+          <VectorMapImageryLayer
+            baseUrl={process.env.NEXT_PUBLIC_TILES_BASE_URL}
+          />
         </Canvas>
       </Box>
       <Box

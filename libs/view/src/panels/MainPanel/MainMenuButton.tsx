@@ -74,6 +74,7 @@ export const MainMenuButton = forwardRef<
       <StyledIconButton
         ref={ref}
         size='small'
+        aria-label='メインメニュー'
         {...bindTrigger(popupState)}
         {...props}
       >

@@ -2,6 +2,7 @@ import {
   Stack,
   ToggleButton,
   Tooltip,
+  styled,
   type ToggleButtonProps
 } from '@mui/material'
 import { useAtomValue, useSetAtom } from 'jotai'
@@ -25,6 +26,11 @@ import { platformAtom } from '../states/app'
 import { toolAtom, toolMachineAtom, type Tool } from '../states/tool'
 import { type EventObject } from '../states/toolMachine'
 
+const TooltipContent = styled('div')({
+  display: 'inline-flex',
+  height: '100%'
+})
+
 export const ToolbarItem = forwardRef<
   HTMLButtonElement,
   ToggleButtonProps & Omit<ShortcutTooltipProps, 'children'>
@@ -36,7 +42,9 @@ export const ToolbarItem = forwardRef<
       platform={platform}
       shortcutKey={shortcutKey}
     >
-      <ToggleButton ref={ref} {...props} />
+      <TooltipContent>
+        <ToggleButton ref={ref} aria-label={title} {...props} />
+      </TooltipContent>
     </ShortcutTooltip>
   )
 })
@@ -72,25 +80,34 @@ export const Toolbar: FC = () => {
         <ToolbarItem value='select' title='選択' shortcutKey='V'>
           <SelectToolIcon fontSize='large' />
         </ToolbarItem>
-        <ToolbarItem value='sketch' title='作図' shortcutKey='G'>
+        <ToolbarItem value='sketch' title='作図' shortcutKey='G' disabled>
           <SketchToolIcon fontSize='large' />
         </ToolbarItem>
-        <ToolbarItem value='story' title='ストーリー' shortcutKey='T'>
+        <ToolbarItem value='story' title='ストーリー' shortcutKey='T' disabled>
           <StoryToolIcon fontSize='large' />
         </ToolbarItem>
-        <ToolbarItem value='pedestrian' title='歩行者視点' shortcutKey='P'>
+        <ToolbarItem
+          value='pedestrian'
+          title='歩行者視点'
+          shortcutKey='P'
+          disabled
+        >
           <PedestrianToolIcon fontSize='large' />
         </ToolbarItem>
       </FloatingToolbar>
       <Tooltip title='設定'>
-        <FloatingButton>
-          <SettingsIcon fontSize='large' />
-        </FloatingButton>
+        <span>
+          <FloatingButton aria-label='設定' disabled>
+            <SettingsIcon fontSize='large' />
+          </FloatingButton>
+        </span>
       </Tooltip>
       <Tooltip title='タイムライン'>
-        <FloatingButton>
-          <TimelineIcon fontSize='large' />
-        </FloatingButton>
+        <span>
+          <FloatingButton aria-label='タイムライン' disabled>
+            <TimelineIcon fontSize='large' />
+          </FloatingButton>
+        </span>
       </Tooltip>
     </Stack>
   )

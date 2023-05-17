@@ -9,10 +9,10 @@ import { useAtomValue, useSetAtom } from 'jotai'
 import { useCallback, useContext, type FC, type MouseEvent } from 'react'
 
 import { useCesium } from '@plateau/cesium'
+import { flyToArea } from '@plateau/data-sources'
 import type { Area } from '@plateau/geocoder'
 import { ScreenSpaceSelectionContext } from '@plateau/screen-space-selection'
 
-import { flyToArea } from '../../helpers/flyToArea'
 import { areaDataSourceAtom } from '../../states/address'
 
 const StyledBreadcrumbs = styled(Breadcrumbs)(({ theme }) => ({

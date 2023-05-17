@@ -5,13 +5,18 @@ import { ImageryLayer, type ImageryLayerProps } from '@plateau/cesium'
 import { useConstant } from '@plateau/react-helpers'
 
 export interface VectorMapImageryLayerProps
-  extends Omit<ImageryLayerProps, 'imageryProvider'> {}
+  extends Omit<ImageryLayerProps, 'imageryProvider'> {
+  baseUrl: string
+}
 
-export const VectorMapImageryLayer: FC<VectorMapImageryLayerProps> = props => {
+export const VectorMapImageryLayer: FC<VectorMapImageryLayerProps> = ({
+  baseUrl,
+  ...props
+}) => {
   const imageryProvider = useConstant(
     () =>
       new UrlTemplateImageryProvider({
-        url: `${process.env.NEXT_PUBLIC_TILES_BASE_URL}/light/{z}/{x}/{y}.webp`
+        url: `${baseUrl}/light/{z}/{x}/{y}.webp`
       })
   )
   return <ImageryLayer imageryProvider={imageryProvider} {...props} />
