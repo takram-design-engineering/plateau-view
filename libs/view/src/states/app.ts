@@ -17,9 +17,12 @@ export const showDeveloperPanelsAtom = atom(false)
 export type ColorMode = 'light' | 'dark'
 
 export const environmentTypeAtom = atomWithReset<EnvironmentType>('map')
-export const colorModeAtom = atomWithReset<ColorMode>('light')
 export const terrainTypeAtom = atomWithReset<TerrainType>('plateau')
-export const plateauDataSourceAtom = atomWithReset<PlateauDataSource>('2020')
+export const colorModeAtom = atomWithReset<ColorMode>('light')
+export const enableTerrainLightingAtom = atomWithReset(false)
 export const debugSphericalHarmonicsAtom = atomWithReset(false)
+
+export const plateauDataSourceAtom = atomWithReset<PlateauDataSource>('2020')
 export const showAreaEntitiesAtom = atomWithReset(false)
+
 export const showSelectionBoundingSphereAtom = atomWithReset(false)

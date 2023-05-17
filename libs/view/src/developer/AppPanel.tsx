@@ -16,6 +16,7 @@ import {
 import {
   colorModeAtom,
   debugSphericalHarmonicsAtom,
+  enableTerrainLightingAtom,
   environmentTypeAtom,
   plateauDataSourceAtom,
   showAreaEntitiesAtom,
@@ -35,6 +36,7 @@ export const AppPanel: FC = () => {
       atomWithResettableAtoms([
         colorModeAtom,
         debugSphericalHarmonicsAtom,
+        enableTerrainLightingAtom,
         environmentTypeAtom,
         plateauDataSourceAtom,
         showAreaEntitiesAtom,
@@ -65,7 +67,8 @@ export const AppPanel: FC = () => {
             atom={terrainTypeAtom}
             items={[
               ['ellipsoid', 'Ellipsoid'],
-              ['plateau', 'Plateau']
+              ['plateau', 'Plateau'],
+              ['cesium-world', 'Cesium World']
             ]}
           />
           <SelectParameterItem
@@ -78,7 +81,11 @@ export const AppPanel: FC = () => {
             ]}
           />
           <SwitchParameterItem
-            label='Show Tileset Textures'
+            label='Terrain Lighting'
+            atom={enableTerrainLightingAtom}
+          />
+          <SwitchParameterItem
+            label='Tileset Textures'
             atom={showTexturesAtom}
           />
           <SwitchParameterItem
@@ -109,7 +116,7 @@ export const AppPanel: FC = () => {
             value={selection.length.toLocaleString()}
           />
           <SwitchParameterItem
-            label='Show Selection Bounding Sphere'
+            label='Selection Bounding Sphere'
             atom={showSelectionBoundingSphereAtom}
           />
         </ParameterList>

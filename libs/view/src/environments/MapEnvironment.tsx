@@ -1,9 +1,10 @@
 import { Cartesian3, Color } from '@cesium/engine'
+import { useAtomValue } from 'jotai'
 import { type FC } from 'react'
 
 import { Environment, type EnvironmentProps } from '@plateau/cesium'
 
-import { type ColorMode } from '../states/app'
+import { enableTerrainLightingAtom, type ColorMode } from '../states/app'
 
 // Flat white sky and gray ground
 const sphericalHarmonicCoefficients = [
@@ -26,6 +27,7 @@ export const MapEnvironment: FC<MapEnvironmentProps> = ({
   colorMode = 'light',
   ...props
 }) => {
+  const enableTerrainLighting = useAtomValue(enableTerrainLightingAtom)
   return (
     <Environment
       // TODO: Define in theme
@@ -40,6 +42,7 @@ export const MapEnvironment: FC<MapEnvironmentProps> = ({
           ? Color.fromCssColorString('#f7f7f7')
           : Color.fromCssColorString('#000000')
       }
+      enableGlobeLighting={enableTerrainLighting}
       lightIntensity={colorMode === 'light' ? 10 : 0.5}
       shadowDarkness={colorMode === 'light' ? 0.7 : 0.6}
       imageBasedLightingIntensity={colorMode === 'light' ? 1 : 0.15}
