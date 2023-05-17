@@ -10,14 +10,7 @@ import { isNotFalse } from '@plateau/type-helpers'
 
 const assets = [
   { as: 'fetch', file: 'approximateTerrainHeights.json' },
-  { as: 'fetch', file: 'IAU2006_XYS/IAU2006_XYS_17.json' },
-  { as: 'image', file: 'Textures/SkyBox/tycho2t3_80_px.jpg' },
-  { as: 'image', file: 'Textures/SkyBox/tycho2t3_80_mx.jpg' },
-  { as: 'image', file: 'Textures/SkyBox/tycho2t3_80_py.jpg' },
-  { as: 'image', file: 'Textures/SkyBox/tycho2t3_80_my.jpg' },
-  { as: 'image', file: 'Textures/SkyBox/tycho2t3_80_pz.jpg' },
-  { as: 'image', file: 'Textures/SkyBox/tycho2t3_80_mz.jpg' },
-  { as: 'image', file: 'Textures/moonSmall.jpg' }
+  { as: 'fetch', file: 'IAU2006_XYS/IAU2006_XYS_17.json' }
 ]
 
 // List up worker files fetched on load.
@@ -94,7 +87,7 @@ export async function createCesiumPreloads(): Promise<JSX.Element[]> {
         rel='preload'
         as={as}
         href={`${process.env.NEXT_PUBLIC_CESIUM_BASE_URL}/Assets/${file}`}
-        {...crossOrigin}
+        {...(as === 'fetch' ? { crossOrigin: 'anonymous' } : crossOrigin)}
       />
     )),
     ...workers
