@@ -4,6 +4,7 @@ import { ThemeProvider } from '@mui/material/styles'
 import { type AppType } from 'next/app'
 import Head from 'next/head'
 import { type ComponentProps, type ComponentType } from 'react'
+import invariant from 'tiny-invariant'
 
 import { CssBaseline, lightTheme } from '@plateau/ui-components'
 
@@ -14,6 +15,10 @@ const clientSideEmotionCache = createEmotionCache()
 const apolloClient = createApolloClient()
 
 if (typeof window !== 'undefined') {
+  invariant(
+    process.env.NEXT_PUBLIC_CESIUM_BASE_URL != null,
+    'Missing environment variable: NEXT_PUBLIC_CESIUM_BASE_URL'
+  )
   window.CESIUM_BASE_URL = process.env.NEXT_PUBLIC_CESIUM_BASE_URL
 }
 

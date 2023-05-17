@@ -4,6 +4,7 @@ import { useContext } from 'react'
 import { LayersContext, type LayersContextValue } from './LayersContext'
 import { type LayerModelOverrides, type LayerType } from './types'
 
+// Provided for generic setter.
 export function useAddLayer(): <T extends LayerType>(
   layer: {
     type: T

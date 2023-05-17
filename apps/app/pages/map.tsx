@@ -11,9 +11,11 @@ import {
 } from 'react-map-gl'
 
 import { Canvas, type CesiumRoot } from '@plateau/cesium'
-import { VectorMapImageryLayer } from '@plateau/view'
+import { VectorMapImageryLayer } from '@plateau/datasets'
 
 import 'maplibre-gl/dist/maplibre-gl.css'
+
+import invariant from 'tiny-invariant'
 
 import mapStyle from '../public/assets/mapStyles/light.json'
 
@@ -61,6 +63,10 @@ const Page: NextPage = () => {
   //   }
   // }, [camera])
 
+  invariant(
+    process.env.NEXT_PUBLIC_TILES_BASE_URL != null,
+    'Missing environment variable: NEXT_PUBLIC_TILES_BASE_URL'
+  )
   return (
     <Box
       sx={{
@@ -90,7 +96,9 @@ const Page: NextPage = () => {
             inset: 0
           }}
         >
-          <VectorMapImageryLayer />
+          <VectorMapImageryLayer
+            baseUrl={process.env.NEXT_PUBLIC_TILES_BASE_URL}
+          />
         </Canvas>
       </Box>
       <Box

@@ -4,6 +4,7 @@ import { readdir } from 'fs/promises'
 import { minimatch } from 'minimatch'
 import { createRequire } from 'node:module'
 import path from 'path'
+import invariant from 'tiny-invariant'
 
 import { isNotFalse } from '@plateau/type-helpers'
 
@@ -50,9 +51,10 @@ const workers = [
 export async function createCesiumPreloads(): Promise<JSX.Element[]> {
   let workerFiles: string[]
   if (process.env.NODE_ENV === 'production') {
-    if (process.env.CESIUM_ROOT == null) {
-      throw new Error('Missing environment variables: CESIUM_ROOT')
-    }
+    invariant(
+      process.env.CESIUM_ROOT != null,
+      'Missing environment variable: CESIUM_ROOT'
+    )
     const url = new URL(process.env.CESIUM_ROOT)
     const storage = new Storage()
     const bucket = storage.bucket(url.host)
@@ -74,6 +76,10 @@ export async function createCesiumPreloads(): Promise<JSX.Element[]> {
       )
     )
   }
+  invariant(
+    process.env.NEXT_PUBLIC_CESIUM_BASE_URL != null,
+    'Missing environment variable: NEXT_PUBLIC_CESIUM_BASE_URL'
+  )
   return [
     ...assets.map(({ as, file }, index) => (
       <link
