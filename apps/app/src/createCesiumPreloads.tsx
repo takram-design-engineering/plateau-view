@@ -76,18 +76,25 @@ export async function createCesiumPreloads(): Promise<JSX.Element[]> {
       )
     )
   }
+
   invariant(
     process.env.NEXT_PUBLIC_CESIUM_BASE_URL != null,
     'Missing environment variable: NEXT_PUBLIC_CESIUM_BASE_URL'
   )
+
+  const crossOrigin =
+    process.env.NODE_ENV !== 'production'
+      ? { crossOrigin: 'anonymous' as const }
+      : undefined
+
   return [
     ...assets.map(({ as, file }, index) => (
       <link
         key={`cesium-asset:${index}`}
         rel='preload'
         as={as}
-        crossOrigin='anonymous'
         href={`${process.env.NEXT_PUBLIC_CESIUM_BASE_URL}/Assets/${file}`}
+        {...crossOrigin}
       />
     )),
     ...workers
@@ -101,8 +108,8 @@ export async function createCesiumPreloads(): Promise<JSX.Element[]> {
               key={`cesium-worker:${index}`}
               rel='preload'
               as='script'
-              crossOrigin='anonymous'
               href={`${process.env.NEXT_PUBLIC_CESIUM_BASE_URL}/Workers/${file}`}
+              {...crossOrigin}
             />
           )
         )
