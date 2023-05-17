@@ -3,16 +3,28 @@ import { useEffect, type FC } from 'react'
 
 import { useCesium, useSuspendInstance } from '@plateau/cesium'
 
-export const PlateauTerrain: FC = () => {
+export interface PlateauTerrainProps {
+  requestVertexNormals?: boolean
+  requestWaterMask?: boolean
+}
+
+export const PlateauTerrain: FC<PlateauTerrainProps> = ({
+  requestVertexNormals,
+  requestWaterMask
+}) => {
   const terrainProvider = useSuspendInstance({
     owner: PlateauTerrain,
-    keys: [],
+    keys: [requestVertexNormals, requestWaterMask],
     create: async () =>
       await CesiumTerrainProvider.fromUrl(
         // https://github.com/Project-PLATEAU/plateau-streaming-tutorial/blob/main/terrain/plateau-terrain-streaming.md
         IonResource.fromAssetId(770371, {
           accessToken: process.env.NEXT_PUBLIC_PLATEAU_TERRAIN_ACCESS_TOKEN
-        })
+        }),
+        {
+          requestVertexNormals,
+          requestWaterMask
+        }
       )
   })
 
