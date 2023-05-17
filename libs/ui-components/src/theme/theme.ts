@@ -40,7 +40,7 @@ export const themeOptions: ThemeOptions = {
     primary: cyan,
     secondary: grey,
     text: {
-      secondary: grey[500]
+      secondary: grey[600]
     }
   },
   typography: {
