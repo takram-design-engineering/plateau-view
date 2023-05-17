@@ -11,7 +11,7 @@ import {
   PlateauStorageService,
   type PlateauStorageFiles
 } from './PlateauStorageService'
-import { PLATEAU_DATASET_FILES, PLATEAU_MODULE_OPTIONS } from './constants'
+import { PLATEAU_STORAGE_FILES, PLATEAU_MODULE_OPTIONS } from './constants'
 import { PlateauCatalog } from './dto/PlateauCatalog'
 import { PlateauMunicipality } from './dto/PlateauMunicipality'
 import { type PlateauModuleOptions } from './interfaces/PlateauModuleOptions'
@@ -36,7 +36,7 @@ import { PlateauPrefectureResolver } from './resolvers/PlateauPrefectureResolver
       inject: [MODULE_OPTIONS_TOKEN]
     },
     {
-      provide: PLATEAU_DATASET_FILES,
+      provide: PLATEAU_STORAGE_FILES,
       useFactory: async (
         options: PlateauModuleOptions
       ): Promise<PlateauStorageFiles> => {
