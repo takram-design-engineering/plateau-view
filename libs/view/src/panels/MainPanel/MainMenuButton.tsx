@@ -15,7 +15,12 @@ import {
 } from 'material-ui-popup-state/hooks'
 import { forwardRef, useCallback, useId, useRef, type MouseEvent } from 'react'
 
-import { Logotype, SelectItem, Shortcut, Symbol } from '@plateau/ui-components'
+import {
+  PlateauLogotype,
+  PlateauSymbol,
+  SelectItem,
+  Shortcut
+} from '@plateau/ui-components'
 
 import { platformAtom, showDeveloperPanelsAtom } from '../../states/app'
 
@@ -72,7 +77,7 @@ export const MainMenuButton = forwardRef<
         {...bindTrigger(popupState)}
         {...props}
       >
-        <Symbol sx={{ fontSize: 24 }} />
+        <PlateauSymbol sx={{ fontSize: 24 }} />
       </StyledIconButton>
       <Menu
         {...bindMenu(popupState)}
@@ -92,7 +97,7 @@ export const MainMenuButton = forwardRef<
           rel='noopener noreferrer'
           onClick={handleClick}
         >
-          <Logotype sx={{ height: 32, marginX: 2, marginY: 1 }} />
+          <PlateauLogotype sx={{ height: 32, marginX: 2, marginY: 1 }} />
         </MenuItem>
         <Divider light />
         <SelectItem
