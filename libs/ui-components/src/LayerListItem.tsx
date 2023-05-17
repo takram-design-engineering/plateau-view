@@ -16,7 +16,7 @@ import { BuildingIcon } from './icons'
 const StyledListItem = styled(ListItem)(({ theme }) => ({
   height: theme.spacing(7),
   cursor: 'default'
-}))
+})) as unknown as typeof ListItem // For generics
 
 const ListItemIcon = styled('span')(({ theme }) => ({
   marginRight: theme.spacing(1.5)
@@ -82,7 +82,7 @@ export const LayerListItem: FC<LayerProps> = ({ layerAtom }) => {
   const layer = useAtomValue(layerAtom)
   const Icon = layerIcons[layer.type]
   return (
-    <StyledListItem>
+    <StyledListItem component='div'>
       <ListItemIcon>
         <Icon fontSize='large' />
       </ListItemIcon>

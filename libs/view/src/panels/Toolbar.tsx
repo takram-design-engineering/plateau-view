@@ -43,7 +43,7 @@ export const ToolbarItem = forwardRef<
       shortcutKey={shortcutKey}
     >
       <TooltipContent>
-        <ToggleButton ref={ref} {...props} />
+        <ToggleButton ref={ref} aria-label={title} {...props} />
       </TooltipContent>
     </ShortcutTooltip>
   )
@@ -97,14 +97,14 @@ export const Toolbar: FC = () => {
       </FloatingToolbar>
       <Tooltip title='設定'>
         <span>
-          <FloatingButton disabled>
+          <FloatingButton aria-label='設定' disabled>
             <SettingsIcon fontSize='large' />
           </FloatingButton>
         </span>
       </Tooltip>
       <Tooltip title='タイムライン'>
         <span>
-          <FloatingButton disabled>
+          <FloatingButton aria-label='タイムライン' disabled>
             <TimelineIcon fontSize='large' />
           </FloatingButton>
         </span>
