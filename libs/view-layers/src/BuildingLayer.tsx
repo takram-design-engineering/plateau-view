@@ -9,16 +9,16 @@ import {
 } from '@plateau/graphql'
 import { type LayerModel, type LayerProps } from '@plateau/layers'
 
-export const TILESET_LAYER = 'TILESET_LAYER'
+export const BUILDING_LAYER = 'BUILDING_LAYER'
 
-export interface TilesetLayerModel extends LayerModel {
+export interface BuildingLayerModel extends LayerModel {
   municipalityCode: string
   version?: string
   lod?: number
   textured?: boolean
 }
 
-export const TilesetLayer: FC<LayerProps<typeof TILESET_LAYER>> = ({
+export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
   layerAtom
 }) => {
   const { municipalityCode, version, lod, textured } = useAtomValue(layerAtom)
