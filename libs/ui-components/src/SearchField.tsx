@@ -15,7 +15,7 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(
         InputProps={{
           startAdornment: (
             <InputAdornment position='start'>
-              <AntIcon IconComponent={SearchIcon} />
+              <AntIcon iconComponent={SearchIcon} />
             </InputAdornment>
           ),
           ...props.InputProps
