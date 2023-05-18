@@ -1,15 +1,11 @@
-import { Divider, Stack, Typography } from '@mui/material'
+import { Divider, Stack } from '@mui/material'
 import { Fragment, type FC } from 'react'
 
-import {
-  ContextBar,
-  ContextButton,
-  ContextButtonSelect,
-  ContextSelect,
-  SelectItem
-} from '@plateau/ui-components'
+import { ContextBar, ContextButton } from '@plateau/ui-components'
 
 import { useLocationContextState } from '../hooks/useLocationContextState'
+import { BuildingDatasetSelect } from './LocationContextBar/BuildingDatasetSelect'
+import { DefaultDatasetSelect } from './LocationContextBar/DefaultDatasetSelect'
 import { LocationBreadcrumbs } from './LocationContextBar/LocationBreadcrumbs'
 
 export const LocationContextBar: FC = () => {
@@ -35,36 +31,9 @@ export const LocationContextBar: FC = () => {
                   {dataset.variants.length === 1 ? (
                     <ContextButton>{dataset.typeName}</ContextButton>
                   ) : dataset.__typename === 'PlateauBuildingDataset' ? (
-                    <ContextButtonSelect label={dataset.typeName} value=''>
-                      {dataset.variants.map(variant => (
-                        <SelectItem key={variant.url} value={variant.url}>
-                          <Stack>
-                            <Typography variant='body2'>
-                              LOD {variant.lod}
-                            </Typography>
-                            <Typography
-                              variant='caption'
-                              color='text.secondary'
-                            >
-                              {variant.version}年度版
-                            </Typography>
-                          </Stack>
-                        </SelectItem>
-                      ))}
-                    </ContextButtonSelect>
+                    <BuildingDatasetSelect dataset={dataset} areas={areas} />
                   ) : (
-                    <ContextSelect
-                      label={dataset.typeName}
-                      value={[] as string[]}
-                    >
-                      {dataset.variants.map(variant => (
-                        <SelectItem key={variant.url} value={variant.url}>
-                          <Typography variant='body2'>
-                            {variant.name}
-                          </Typography>
-                        </SelectItem>
-                      ))}
-                    </ContextSelect>
+                    <DefaultDatasetSelect dataset={dataset} />
                   )}
                 </Fragment>
               ))}
