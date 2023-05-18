@@ -39,7 +39,9 @@
       "@plateau/type-helpers": ["libs/type-helpers/src/index.ts"],
       "@plateau/ui-components": ["libs/ui-components/src/index.ts"],
       "@plateau/ui-components/icons": ["libs/ui-components/src/icons/index.ts"],
-      "@plateau/ui-components/styles": ["libs/ui-components/src/styles/index.ts"],
+      "@plateau/ui-components/styles": [
+        "libs/ui-components/src/styles/index.ts"
+      ],
       "@plateau/ui-components/theme": ["libs/ui-components/src/theme/index.ts"],
       "@plateau/view": ["libs/view/src/index.ts"],
       "@plateau/view-layers": ["libs/view-layers/src/index.ts"]

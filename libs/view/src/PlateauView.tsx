@@ -42,7 +42,7 @@ import {
   ScreenSpaceSelectionContext
 } from '@plateau/screen-space-selection'
 import { AppLayout, LayerListItem } from '@plateau/ui-components'
-import { BUILDING_LAYER, layerComponents } from '@plateau/view-layers'
+import { createBuildingLayer, layerComponents } from '@plateau/view-layers'
 
 import { Areas } from './containers/Areas'
 import { Canvas } from './containers/Canvas'
@@ -72,7 +72,7 @@ const Root = styled('div')({
 })
 
 const LayerListComponent = forwardRef<HTMLDivElement, ListProps<'div'>>(
-  (props, ref) => <List ref={ref} component='div' {...props} />
+  (props, ref) => <List ref={ref} component='div' dense {...props} />
 )
 
 // TODO: Settle into appropriate component.
@@ -243,30 +243,22 @@ const Layers: FC = () => {
 
   useEffect(() => {
     const remove = [
-      add({
-        type: BUILDING_LAYER,
-        title: '東京都 千代田区',
-        municipalityCode: '13101',
-        version: '2020',
-        lod: 2,
-        textured: false
-      }),
-      add({
-        type: BUILDING_LAYER,
-        title: '東京都 中央区',
-        municipalityCode: '13102',
-        version: '2020',
-        lod: 2,
-        textured: false
-      })
-      // add({
-      //   type: BUILDING_LAYER,
-      //   name: '東京都 › 東京23区 › 新宿区',
-      //   municipalityCode: '13104',
-      //   version: '2020',
-      //   lod: 2,
-      //   textured: false
-      // })
+      add(
+        createBuildingLayer({
+          municipalityCode: '13101',
+          version: '2020',
+          lod: 2,
+          textured: false
+        })
+      ),
+      add(
+        createBuildingLayer({
+          municipalityCode: '13102',
+          version: '2020',
+          lod: 2,
+          textured: false
+        })
+      )
     ]
     return () => {
       remove.forEach(remove => {
@@ -331,8 +323,7 @@ export const PlateauView: FC<PlateauViewProps> = () => {
               <MainPanel>
                 <LayerList
                   component={LayerListComponent}
-                  dense
-                  ItemComponent={LayerListItem}
+                  itemComponent={LayerListItem}
                 />
               </MainPanel>
             </Stack>
