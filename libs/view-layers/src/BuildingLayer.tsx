@@ -136,6 +136,14 @@ export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
   const scene = useCesium(({ scene }) => scene)
   scene.requestRender()
 
+  useEffect(() => {
+    return () => {
+      if (!scene.isDestroyed()) {
+        scene.requestRender()
+      }
+    }
+  }, [scene])
+
   if (hidden || variant == null) {
     return null
   }
