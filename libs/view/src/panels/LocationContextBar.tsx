@@ -1,5 +1,5 @@
 import { Divider, Stack } from '@mui/material'
-import { Fragment, useMemo, type FC } from 'react'
+import { useMemo, type FC } from 'react'
 
 import { ContextBar, ContextButton } from '@plateau/ui-components'
 
@@ -30,22 +30,27 @@ export const LocationContextBar: FC = () => {
               alignItems='center'
               height='100%'
             >
-              {datasets.map(dataset => (
-                <Fragment key={dataset.id}>
-                  {dataset.variants.length === 1 ? (
-                    <ContextButton>{dataset.typeName}</ContextButton>
-                  ) : dataset.__typename === 'PlateauBuildingDataset' ? (
-                    municipalityCode != null ? (
-                      <BuildingDatasetSelect
-                        dataset={dataset}
-                        municipalityCode={municipalityCode}
-                      />
-                    ) : null
-                  ) : (
-                    <DefaultDatasetSelect dataset={dataset} />
-                  )}
-                </Fragment>
-              ))}
+              {datasets.map(dataset =>
+                dataset.__typename === 'PlateauBuildingDataset' ? (
+                  municipalityCode != null ? (
+                    <BuildingDatasetSelect
+                      key={dataset.id}
+                      dataset={dataset}
+                      municipalityCode={municipalityCode}
+                    />
+                  ) : null
+                ) : dataset.variants.length === 1 ? (
+                  <ContextButton key={dataset.id} disabled>
+                    {dataset.typeName}
+                  </ContextButton>
+                ) : (
+                  <DefaultDatasetSelect
+                    key={dataset.id}
+                    dataset={dataset}
+                    disabled
+                  />
+                )
+              )}
             </Stack>
           </>
         )}

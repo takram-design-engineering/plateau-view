@@ -31,16 +31,18 @@ function parseParams(value: string): Params {
   return JSON.parse(value)
 }
 
-export interface DefaultDatasetSelectProps {
+export interface BuildingDatasetSelectProps {
   dataset: PlateauDatasetFragment & {
     __typename?: 'PlateauBuildingDataset'
   }
   municipalityCode: string
+  disabled?: boolean
 }
 
-export const BuildingDatasetSelect: FC<DefaultDatasetSelectProps> = ({
+export const BuildingDatasetSelect: FC<BuildingDatasetSelectProps> = ({
   dataset,
-  municipalityCode
+  municipalityCode,
+  disabled
 }) => {
   const { layersAtom, removeAtom } = useLayers()
   const layers = useAtomValue(layersAtom)
@@ -130,6 +132,7 @@ export const BuildingDatasetSelect: FC<DefaultDatasetSelectProps> = ({
     <ContextButtonSelect
       label={dataset.typeName}
       value={params != null ? serializeParams(params) : ''}
+      disabled={disabled}
       onClick={handleClick}
       onChange={handleChange}
     >
