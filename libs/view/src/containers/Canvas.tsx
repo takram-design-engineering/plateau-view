@@ -19,7 +19,7 @@ import { JapanSeaLevelEllipsoid } from '@plateau/datasets'
 import { withDeferredProps } from '@plateau/react-helpers'
 import { isNotNullish } from '@plateau/type-helpers'
 
-import { cesiumAtom } from '../states/app'
+import { cesiumAtom, readyAtom } from '../states/app'
 import {
   ambientOcclusionAccurateNormalReconstructionAtom,
   ambientOcclusionDenoiseAtom,
@@ -122,6 +122,7 @@ export const Canvas = forwardRef<HTMLDivElement, CanvasProps>(
     )
 
     const setCesium = useSetAtom(cesiumAtom)
+    const ready = useAtomValue(readyAtom)
     const nativeResolutionEnabled = useAtomValue(nativeResolutionEnabledAtom)
     const explicitRenderingEnabled = useAtomValue(explicitRenderingEnabledAtom)
     const antialiasType = useAtomValue(antialiasTypeAtom)
@@ -135,6 +136,7 @@ export const Canvas = forwardRef<HTMLDivElement, CanvasProps>(
         constructorOptions={constructorOptions}
         msaaSamples={msaaSamples[antialiasType] ?? 0}
         useBrowserRecommendedResolution={!nativeResolutionEnabled}
+        resolutionScale={ready ? undefined : 0.1}
         requestRenderMode={explicitRenderingEnabled}
         shouldAnimate
         maximumRenderTimeChange={1}
