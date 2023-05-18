@@ -90,15 +90,10 @@ const HoverMenu: FC<HoverMenuProps> = ({ hiddenAtom }) => {
 
   return (
     <HoverMenuRoot onMouseDown={stopPropagation}>
-      <Tooltip title={hidden ? '表示' : '隠す'}>
+      <Tooltip title='削除'>
         <span>
-          <IconButton
-            size='small'
-            color='inherit'
-            aria-label={hidden ? '表示' : '隠す'}
-            onClick={handleVisibilityClick}
-          >
-            <ItemVisibilityIcon fontSize='medium' />
+          <IconButton size='small' color='inherit' aria-label='削除' disabled>
+            <ItemTrashIcon fontSize='medium' />
           </IconButton>
         </span>
       </Tooltip>
@@ -109,10 +104,15 @@ const HoverMenu: FC<HoverMenuProps> = ({ hiddenAtom }) => {
           </IconButton>
         </span>
       </Tooltip>
-      <Tooltip title='削除'>
+      <Tooltip title={hidden ? '表示' : '隠す'}>
         <span>
-          <IconButton size='small' color='inherit' aria-label='削除' disabled>
-            <ItemTrashIcon fontSize='medium' />
+          <IconButton
+            size='small'
+            color='inherit'
+            aria-label={hidden ? '表示' : '隠す'}
+            onClick={handleVisibilityClick}
+          >
+            <ItemVisibilityIcon fontSize='medium' />
           </IconButton>
         </span>
       </Tooltip>
