@@ -108,7 +108,7 @@ export const ContextButtonSelect = forwardRef<
         size='small'
         multiple
         value={value != null && value !== '' ? [value] : []}
-        iconComponent={DropdownIcon}
+        IconComponent={DropdownIcon}
         {...(props as SelectProps<string[]>)}
         renderValue={renderValue}
         onOpen={handleOpen}
