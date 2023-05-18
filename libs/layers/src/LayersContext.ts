@@ -45,32 +45,38 @@ export function createContextValue() {
 
   const findAtom = atom(
     null,
-    (get, set, predicate: Partial<AnyLayerModel> | AnyLayerPredicate) => {
+    (
+      get,
+      set,
+      layers: readonly AnyLayerModel[],
+      predicate: Partial<AnyLayerModel> | AnyLayerPredicate
+    ) => {
       if (typeof predicate === 'function') {
-        return get(layersAtom).find(layerAtom => predicate(layerAtom, get))
+        return layers.find(layerAtom => predicate(layerAtom, get))
       }
       const keys = Object.entries(predicate)
         .filter(([, value]) => value !== undefined)
         .map(([key]) => key)
-      const layer = get(layersAtom).find(layer =>
-        isEqual(pick(layer, keys), predicate)
-      )
+      const layer = layers.find(layer => isEqual(pick(layer, keys), predicate))
       return layer != null ? layer : undefined
     }
   )
 
   const filterAtom = atom(
     null,
-    (get, set, predicate: Partial<AnyLayerModel> | AnyLayerPredicate) => {
+    (
+      get,
+      set,
+      layers: readonly AnyLayerModel[],
+      predicate: Partial<AnyLayerModel> | AnyLayerPredicate
+    ) => {
       if (typeof predicate === 'function') {
-        return get(layersAtom).filter(layer => predicate(layer, get))
+        return layers.filter(layer => predicate(layer, get))
       }
       const keys = Object.entries(predicate)
         .filter(([, value]) => value !== undefined)
         .map(([key]) => key)
-      return get(layersAtom).filter(layer =>
-        isEqual(pick(layer, keys), predicate)
-      )
+      return layers.filter(layer => isEqual(pick(layer, keys), predicate))
     }
   )
 

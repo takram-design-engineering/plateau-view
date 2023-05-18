@@ -2,10 +2,15 @@ import { useSetAtom, type Getter } from 'jotai'
 import { useContext } from 'react'
 
 import { LayersContext } from './LayersContext'
-import { type LayerModelOverrides, type LayerType } from './types'
+import {
+  type AnyLayerModel,
+  type LayerModelOverrides,
+  type LayerType
+} from './types'
 
 // Provided for generic setter.
 export function useFilterLayers(): <T extends LayerType>(
+  layers: readonly AnyLayerModel[],
   predicate:
     | Partial<{ type: T } & Omit<LayerModelOverrides[T], 'type'>>
     | ((layer: LayerModelOverrides[T], get: Getter) => boolean)
