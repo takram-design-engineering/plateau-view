@@ -1,3 +1,5 @@
+import { type PrimitiveAtom } from 'jotai'
+
 import { type LayerComponents } from '@plateau/layers'
 
 import {
@@ -7,6 +9,13 @@ import {
 } from './BuildingLayer'
 
 declare module '@plateau/layers' {
+  interface LayerModel {
+    titleAtom: PrimitiveAtom<string | null>
+    readyAtom: PrimitiveAtom<boolean>
+    hiddenAtom: PrimitiveAtom<boolean>
+    selectedAtom: PrimitiveAtom<boolean>
+  }
+
   interface LayerModelOverrides {
     [BUILDING_LAYER]: BuildingLayerModel
   }

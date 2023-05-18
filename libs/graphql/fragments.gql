@@ -2,6 +2,11 @@ fragment PlateauMunicipality on PlateauMunicipality {
   id
   code
   name
+  prefecture {
+    id
+    code
+    name
+  }
 }
 
 fragment PlateauDataset on PlateauDataset {

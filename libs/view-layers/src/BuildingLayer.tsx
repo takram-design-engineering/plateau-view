@@ -1,6 +1,8 @@
-import { useAtomValue } from 'jotai'
-import { useMemo, type FC } from 'react'
+import { atom, useAtomValue, useSetAtom, type PrimitiveAtom } from 'jotai'
+import { useEffect, useMemo, type FC } from 'react'
+import { type SetOptional } from 'type-fest'
 
+import { useCesium } from '@plateau/cesium'
 import { PlateauTileset } from '@plateau/datasets'
 import {
   PlateauDatasetType,
@@ -9,19 +11,49 @@ import {
 } from '@plateau/graphql'
 import { type LayerModel, type LayerProps } from '@plateau/layers'
 
+import { createViewLayer, type ViewLayerModelParams } from './createViewLayer'
+
 export const BUILDING_LAYER = 'BUILDING_LAYER'
 
-export interface BuildingLayerModel extends LayerModel {
+export interface BuildingLayerModelParams extends ViewLayerModelParams {
   municipalityCode: string
   version?: string
   lod?: number
   textured?: boolean
 }
 
+export interface BuildingLayerModel extends LayerModel {
+  municipalityCode: string
+  versionAtom: PrimitiveAtom<string | null>
+  lodAtom: PrimitiveAtom<number | null>
+  texturedAtom: PrimitiveAtom<boolean | null>
+}
+
+export function createBuildingLayer(
+  params: BuildingLayerModelParams
+): SetOptional<BuildingLayerModel, 'id'> {
+  return {
+    ...createViewLayer(params),
+    type: BUILDING_LAYER,
+    municipalityCode: params.municipalityCode,
+    versionAtom: atom(params.version ?? null),
+    lodAtom: atom(params.lod ?? null),
+    texturedAtom: atom(params.textured ?? null)
+  }
+}
+
 export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
   layerAtom
 }) => {
-  const { municipalityCode, version, lod, textured } = useAtomValue(layerAtom)
+  const {
+    titleAtom,
+    hiddenAtom,
+    municipalityCode,
+    versionAtom,
+    lodAtom,
+    texturedAtom
+  } = useAtomValue(layerAtom)
+
   const query = useMunicipalityDatasetsQuery({
     variables: {
       municipalityCode,
@@ -29,6 +61,21 @@ export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
     }
   })
 
+  const setTitle = useSetAtom(titleAtom)
+  useEffect(() => {
+    if (query.data?.municipality?.name != null) {
+      setTitle(
+        [
+          query.data.municipality.prefecture.name,
+          query.data.municipality.name
+        ].join(' ')
+      )
+    }
+  }, [query, setTitle])
+
+  const version = useAtomValue(versionAtom)
+  const lod = useAtomValue(lodAtom)
+  const textured = useAtomValue(texturedAtom)
   const url = useMemo(() => {
     const variants = (
       query.data?.municipality?.datasets as PlateauBuildingDataset[] | undefined
@@ -44,7 +91,11 @@ export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
     )?.url
   }, [version, lod, textured, query.data])
 
-  if (url == null) {
+  const hidden = useAtomValue(hiddenAtom)
+  const scene = useCesium(({ scene }) => scene)
+  scene.requestRender()
+
+  if (hidden || url == null) {
     return null
   }
   return <PlateauTileset url={url} />
