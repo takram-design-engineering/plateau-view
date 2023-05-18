@@ -9,10 +9,10 @@ import {
   listItemTextClasses,
   styled
 } from '@mui/material'
-import { useAtom, useAtomValue, type PrimitiveAtom } from 'jotai'
+import { useAtom, useAtomValue, useSetAtom, type PrimitiveAtom } from 'jotai'
 import { useCallback, type FC, type SyntheticEvent } from 'react'
 
-import { type LayerProps } from '@plateau/layers'
+import { useLayers, type LayerProps } from '@plateau/layers'
 
 import { ItemLocationIcon } from './icons/ItemLocationIcon'
 import { ItemTrashIcon } from './icons/ItemTrashIcon'
@@ -79,23 +79,33 @@ function stopPropagation(event: SyntheticEvent): void {
 }
 
 interface HoverMenuProps {
+  id: string
   hiddenAtom: PrimitiveAtom<boolean>
 }
 
-const HoverMenu: FC<HoverMenuProps> = ({ hiddenAtom }) => {
+const HoverMenu: FC<HoverMenuProps> = ({ id, hiddenAtom }) => {
   const [hidden, setHidden] = useAtom(hiddenAtom)
   const handleVisibilityClick = useCallback(() => {
     setHidden(value => !value)
   }, [setHidden])
 
+  const { removeAtom } = useLayers()
+  const remove = useSetAtom(removeAtom)
+  const handleRemoveClick = useCallback(() => {
+    remove(id)
+  }, [id, remove])
+
   return (
     <HoverMenuRoot onMouseDown={stopPropagation}>
       <Tooltip title='削除'>
-        <span>
-          <IconButton size='small' color='inherit' aria-label='削除' disabled>
-            <ItemTrashIcon fontSize='medium' />
-          </IconButton>
-        </span>
+        <IconButton
+          size='small'
+          color='inherit'
+          aria-label='削除'
+          onClick={handleRemoveClick}
+        >
+          <ItemTrashIcon fontSize='medium' />
+        </IconButton>
       </Tooltip>
       <Tooltip title='移動'>
         <span>
@@ -105,23 +115,22 @@ const HoverMenu: FC<HoverMenuProps> = ({ hiddenAtom }) => {
         </span>
       </Tooltip>
       <Tooltip title={hidden ? '表示' : '隠す'}>
-        <span>
-          <IconButton
-            size='small'
-            color='inherit'
-            aria-label={hidden ? '表示' : '隠す'}
-            onClick={handleVisibilityClick}
-          >
-            <ItemVisibilityIcon fontSize='medium' />
-          </IconButton>
-        </span>
+        <IconButton
+          size='small'
+          color='inherit'
+          aria-label={hidden ? '表示' : '隠す'}
+          onClick={handleVisibilityClick}
+        >
+          <ItemVisibilityIcon fontSize='medium' />
+        </IconButton>
       </Tooltip>
     </HoverMenuRoot>
   )
 }
 
 export const LayerListItem: FC<LayerProps> = ({ layerAtom }) => {
-  const { type, titleAtom, hiddenAtom, selectedAtom } = useAtomValue(layerAtom)
+  const { id, type, titleAtom, hiddenAtom, selectedAtom } =
+    useAtomValue(layerAtom)
   const title = useAtomValue(titleAtom)
   const hidden = useAtomValue(hiddenAtom)
   const selected = useAtomValue(selectedAtom)
@@ -141,7 +150,7 @@ export const LayerListItem: FC<LayerProps> = ({ layerAtom }) => {
           variant: 'caption'
         }}
       />
-      <HoverMenu hiddenAtom={hiddenAtom} />
+      <HoverMenu id={id} hiddenAtom={hiddenAtom} />
     </StyledListItem>
   )
 }

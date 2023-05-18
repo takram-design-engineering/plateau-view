@@ -324,6 +324,7 @@ export const PlateauView: FC<PlateauViewProps> = () => {
                 <LayerList
                   component={LayerListComponent}
                   itemComponent={LayerListItem}
+                  unmountWhenEmpty
                 />
               </MainPanel>
             </Stack>

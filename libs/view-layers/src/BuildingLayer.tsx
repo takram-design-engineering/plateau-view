@@ -1,4 +1,10 @@
-import { atom, useAtomValue, useSetAtom, type PrimitiveAtom } from 'jotai'
+import {
+  atom,
+  useAtom,
+  useAtomValue,
+  useSetAtom,
+  type PrimitiveAtom
+} from 'jotai'
 import { useEffect, useMemo, type FC } from 'react'
 import { type SetOptional } from 'type-fest'
 
@@ -7,7 +13,8 @@ import { PlateauTileset } from '@plateau/datasets'
 import {
   PlateauDatasetType,
   useMunicipalityDatasetsQuery,
-  type PlateauBuildingDataset
+  type PlateauBuildingDataset,
+  type PlateauBuildingDatasetVariant
 } from '@plateau/graphql'
 import { type LayerModel, type LayerProps } from '@plateau/layers'
 
@@ -42,6 +49,35 @@ export function createBuildingLayer(
   }
 }
 
+function matchVariant(
+  variants: readonly PlateauBuildingDatasetVariant[],
+  predicate: {
+    version: string | null
+    lod: number | null
+    textured: boolean | null
+  }
+): PlateauBuildingDatasetVariant | undefined {
+  const version = predicate.version ?? '2020'
+  const lod = predicate.lod ?? 2
+  const textured = predicate.textured ?? false
+  const sorted = [...variants].sort((a, b) =>
+    a.version !== b.version
+      ? a.version === version
+        ? -1
+        : 1
+      : a.lod !== b.lod
+      ? a.lod === lod
+        ? -1
+        : 1
+      : a.textured !== b.textured
+      ? a.textured === textured
+        ? -1
+        : 1
+      : 0
+  )
+  return sorted[0]
+}
+
 export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
   layerAtom
 }) => {
@@ -73,30 +109,43 @@ export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
     }
   }, [query, setTitle])
 
-  const version = useAtomValue(versionAtom)
-  const lod = useAtomValue(lodAtom)
-  const textured = useAtomValue(texturedAtom)
-  const url = useMemo(() => {
+  const [version, setVersion] = useAtom(versionAtom)
+  const [lod, setLod] = useAtom(lodAtom)
+  const [textured, setTextured] = useAtom(texturedAtom)
+  const variant = useMemo(() => {
     const variants = (
       query.data?.municipality?.datasets as PlateauBuildingDataset[] | undefined
     )?.flatMap(({ variants }) => variants)
     if (variants == null || variants.length === 0) {
       return
     }
-    return variants.find(
-      variant =>
-        variant.version === version &&
-        variant.lod === lod &&
-        variant.textured === textured
-    )?.url
+    return matchVariant(variants, {
+      version,
+      lod,
+      textured
+    })
   }, [version, lod, textured, query.data])
+
+  useEffect(() => {
+    setVersion(variant?.version ?? null)
+    setLod(variant?.lod ?? null)
+    setTextured(variant?.textured ?? null)
+  }, [setVersion, setLod, setTextured, variant])
 
   const hidden = useAtomValue(hiddenAtom)
   const scene = useCesium(({ scene }) => scene)
   scene.requestRender()
 
-  if (hidden || url == null) {
+  useEffect(() => {
+    return () => {
+      if (!scene.isDestroyed()) {
+        scene.requestRender()
+      }
+    }
+  }, [scene])
+
+  if (hidden || variant == null) {
     return null
   }
-  return <PlateauTileset url={url} />
+  return <PlateauTileset url={variant.url} />
 }
