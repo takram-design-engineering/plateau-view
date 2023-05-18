@@ -3,8 +3,10 @@ import { type Components, type Theme } from '@mui/material/styles'
 
 export const MuiTooltip: Components<Theme>['MuiTooltip'] = {
   defaultProps: {
+    placement: 'top',
     arrow: true,
-    enterDelay: 500,
+    enterDelay: 1000,
+    disableInteractive: true,
     TransitionComponent: Fade,
     TransitionProps: {
       timeout: 0
