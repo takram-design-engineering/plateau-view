@@ -13,9 +13,7 @@ import { AppService } from './AppService'
 
 const env = envalid.cleanEnv(process.env, {
   DATA_BASE_URL: envalid.url(),
-  DATA_STORAGE_ROOT: envalid.url({
-    devDefault: path.resolve(process.env.PROJECT_ROOT, 'data')
-  })
+  DATA_STORAGE_ROOT: envalid.str()
 })
 
 @Module({

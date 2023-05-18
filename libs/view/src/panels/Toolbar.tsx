@@ -75,16 +75,16 @@ export const Toolbar: FC = () => {
     <Stack direction='row' spacing={1}>
       <FloatingToolbar value={tool} onChange={handleChange}>
         <ToolbarItem value='hand' title='移動' shortcutKey='H'>
-          <HandToolIcon fontSize='large' />
+          <HandToolIcon fontSize='medium' />
         </ToolbarItem>
         <ToolbarItem value='select' title='選択' shortcutKey='V'>
-          <SelectToolIcon fontSize='large' />
+          <SelectToolIcon fontSize='medium' />
         </ToolbarItem>
         <ToolbarItem value='sketch' title='作図' shortcutKey='G' disabled>
-          <SketchToolIcon fontSize='large' />
+          <SketchToolIcon fontSize='medium' />
         </ToolbarItem>
         <ToolbarItem value='story' title='ストーリー' shortcutKey='T' disabled>
-          <StoryToolIcon fontSize='large' />
+          <StoryToolIcon fontSize='medium' />
         </ToolbarItem>
         <ToolbarItem
           value='pedestrian'
@@ -92,20 +92,20 @@ export const Toolbar: FC = () => {
           shortcutKey='P'
           disabled
         >
-          <PedestrianToolIcon fontSize='large' />
+          <PedestrianToolIcon fontSize='medium' />
         </ToolbarItem>
       </FloatingToolbar>
       <Tooltip title='設定'>
         <span>
           <FloatingButton aria-label='設定' disabled>
-            <SettingsIcon fontSize='large' />
+            <SettingsIcon fontSize='medium' />
           </FloatingButton>
         </span>
       </Tooltip>
       <Tooltip title='タイムライン'>
         <span>
           <FloatingButton aria-label='タイムライン' disabled>
-            <TimelineIcon fontSize='large' />
+            <TimelineIcon fontSize='medium' />
           </FloatingButton>
         </span>
       </Tooltip>

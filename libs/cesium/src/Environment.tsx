@@ -124,9 +124,11 @@ export const Environment: FC<EnvironmentProps> = ({
     : scaledSphericalHarmonicCoefficients ?? []
 
   // Celestial
-  scene.sun.show = showSun
-  scene.moon.show = showMoon
-  scene.skyBox.show = showSkyBox
+  if (scene.skyBox != null) {
+    scene.sun.show = showSun
+    scene.moon.show = showMoon
+    scene.skyBox.show = showSkyBox
+  }
 
   // Fog
   scene.fog.enabled = enableFog

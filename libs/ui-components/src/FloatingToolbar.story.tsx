@@ -31,10 +31,10 @@ const StoryComponent: FC = () => {
       <ToggleButton value={1}>Text Item</ToggleButton>
       <ToggleButton value={2}>Text Item</ToggleButton>
       <ToggleButton value={3}>
-        <AntIcon IconComponent={ZoomInOutlined} />
+        <AntIcon iconComponent={ZoomInOutlined} />
       </ToggleButton>
       <ToggleButton value={4}>
-        <AntIcon IconComponent={ZoomOutOutlined} />
+        <AntIcon iconComponent={ZoomOutOutlined} />
       </ToggleButton>
     </FloatingToolbar>
   )

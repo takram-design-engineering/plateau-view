@@ -15,16 +15,17 @@ const Root = styled('div')({})
 
 export interface LayerListItemProps extends ComponentPropsWithRef<typeof Root> {
   layerAtom: PrimitiveAtom<LayerModel>
-  ItemComponent: ComponentType<LayerProps>
+  itemComponent: ComponentType<LayerProps>
 }
 
 export const LayerListItem = forwardRef<HTMLDivElement, LayerListItemProps>(
-  ({ layerAtom, ItemComponent, ...props }, forwardedRef) => {
+  ({ layerAtom, itemComponent, ...props }, forwardedRef) => {
     const layer = useAtomValue(layerAtom)
 
     const { attributes, listeners, setNodeRef, transform, transition } =
       useSortable({ id: layer.id })
 
+    const ItemComponent = itemComponent
     return (
       <Root
         ref={mergeRefs([forwardedRef, setNodeRef])}

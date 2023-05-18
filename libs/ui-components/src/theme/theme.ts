@@ -38,10 +38,7 @@ export const themeOptions: ThemeOptions = {
   },
   palette: {
     primary: cyan,
-    secondary: grey,
-    text: {
-      secondary: grey[600]
-    }
+    secondary: grey
   },
   typography: {
     fontSize: 14,

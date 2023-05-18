@@ -22,12 +22,12 @@ const Root = styled('span', {
 
 export interface AntIconProps
   extends Omit<ComponentPropsWithRef<typeof Root>, 'size'> {
-  IconComponent: ComponentType<ComponentProps<typeof Icon>>
+  iconComponent: ComponentType<ComponentProps<typeof Icon>>
   size?: SvgIconProps['fontSize']
 }
 
 export const AntIcon = forwardRef<HTMLSpanElement, AntIconProps>(
-  ({ IconComponent, ...props }, ref) => (
+  ({ iconComponent: IconComponent, ...props }, ref) => (
     <Root ref={ref} {...props}>
       <IconComponent />
     </Root>

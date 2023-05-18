@@ -1,22 +1,64 @@
 import {
-  ListItem,
+  IconButton,
+  ListItemButton,
+  ListItemSecondaryAction,
   ListItemText,
+  Tooltip,
+  listItemButtonClasses,
+  listItemSecondaryActionClasses,
   listItemTextClasses,
-  styled,
-  type SvgIconProps
+  styled
 } from '@mui/material'
-import { useAtomValue } from 'jotai'
-import { type ComponentType, type FC } from 'react'
+import { useAtom, useAtomValue, type PrimitiveAtom } from 'jotai'
+import { useCallback, type FC, type SyntheticEvent } from 'react'
 
-import { type LayerProps, type LayerType } from '@plateau/layers'
-import { BUILDING_LAYER } from '@plateau/view-layers'
+import { type LayerProps } from '@plateau/layers'
 
-import { BuildingIcon } from './icons'
+import { ItemLocationIcon } from './icons/ItemLocationIcon'
+import { ItemTrashIcon } from './icons/ItemTrashIcon'
+import { ItemVisibilityIcon } from './icons/ItemVisibilityIcon'
+import { layerIcons } from './layerIcons'
+import { layerTypeNames } from './layerTypeNames'
 
-const StyledListItem = styled(ListItem)(({ theme }) => ({
+const StyledListItem = styled(ListItemButton, {
+  shouldForwardProp: prop => prop !== 'hidden'
+})<{
+  hidden?: boolean
+}>(({ theme, hidden = false }) => ({
   height: theme.spacing(7),
-  cursor: 'default'
-})) as unknown as typeof ListItem // For generics
+  cursor: 'default',
+  ...(hidden && {
+    opacity: theme.palette.action.disabledOpacity
+  }),
+
+  // Disable hover style
+  backgroundColor: 'transparent',
+  '&:hover': {
+    backgroundColor: 'transparent'
+  },
+  [`&.${listItemButtonClasses.selected}:hover`]: {
+    backgroundColor: 'transparent'
+  },
+
+  [`&.${listItemButtonClasses.selected}`]: {
+    color: theme.palette.getContrastText(theme.palette.primary.dark),
+    backgroundColor: theme.palette.primary.main,
+    '&:hover': {
+      backgroundColor: theme.palette.primary.main
+    },
+    [`& .${listItemTextClasses.secondary}`]: {
+      color: theme.palette.getContrastText(theme.palette.primary.dark)
+    }
+  },
+
+  // Show secondary actions only when hovered
+  [`& .${listItemSecondaryActionClasses.root}`]: {
+    display: 'none'
+  },
+  [`&:hover .${listItemSecondaryActionClasses.root}`]: {
+    display: 'block'
+  }
+}))
 
 const ListItemIcon = styled('span')(({ theme }) => ({
   marginRight: theme.spacing(1.5)
@@ -24,78 +66,82 @@ const ListItemIcon = styled('span')(({ theme }) => ({
 
 const StyledListItemText = styled(ListItemText)(({ theme }) => ({
   [`& .${listItemTextClasses.secondary}`]: {
-    marginTop: theme.spacing(0.5)
+    marginTop: theme.spacing(0.25)
   }
 }))
 
-// TODO: Separate file
-const layerTypeNames: Record<LayerType, string | undefined> = {
-  // [BORDER_LAYER]: '行政界情報',
-  // [BRIDGE_LAYER]: '橋梁モデル',
-  [BUILDING_LAYER]: '建築物モデル'
-  // [EMERGENCY_ROUTE_LAYER]: '緊急輸送道路情報',
-  // [FACILITY_LAYER]: '都市計画決定情報モデル',
-  // [FLOOD_LAYER]: '洪水浸水想定区域モデル',
-  // [FURNITURE_LAYER]: '都市設備モデル',
-  // [GENERIC_LAYER]: '汎用都市オブジェクトモデル',
-  // [HIGHTIDE_LAYER]: '高潮浸水想定区域モデル',
-  // [INLAND_FLOOD_LAYER]: '内水浸水想定区域モデル',
-  // [LANDMARK_LAYER]: 'ランドマーク情報',
-  // [LANDSLIDE_LAYER]: '土砂災害警戒区域モデル',
-  // [LANDUSE_LAYER]: '土地利用モデル',
-  // [PARK_LAYER]: '公園情報',
-  // [RAILWAY_LAYER]: '鉄道情報',
-  // [ROAD_LAYER]: '道路モデル',
-  // [SHELTER_LAYER]: '避難施設情報',
-  // [STATION_LAYER]: '鉄道駅情報',
-  // [TSUNAMI_LAYER]: '津波浸水想定区域モデル',
-  // [USE_CASE_LAYER]: 'ユースケース',
-  // [VEGETATION_LAYER]: '植生モデル'
+const HoverMenuRoot = styled(ListItemSecondaryAction)(({ theme }) => ({
+  right: theme.spacing(1)
+}))
+
+function stopPropagation(event: SyntheticEvent): void {
+  event.stopPropagation()
 }
 
-// TODO: Separate file
-const layerIcons: Record<LayerType, ComponentType<SvgIconProps>> = {
-  // [BORDER_LAYER]: BorderIcon,
-  // [BRIDGE_LAYER]: BridgeIcon,
-  [BUILDING_LAYER]: BuildingIcon
-  // [EMERGENCY_ROUTE_LAYER]: EmergencyRouteIcon,
-  // [FACILITY_LAYER]: FacilityIcon,
-  // [FLOOD_LAYER]: FloodIcon,
-  // [FURNITURE_LAYER]: FurnitureIcon,
-  // [GENERIC_LAYER]: GenericIcon,
-  // [HIGHTIDE_LAYER]: HightideIcon,
-  // [INLAND_FLOOD_LAYER]: InlandFloodIcon,
-  // [LANDMARK_LAYER]: LandmarkIcon,
-  // [LANDSLIDE_LAYER]: LandslideIcon,
-  // [LANDUSE_LAYER]: LanduseIcon,
-  // [PARK_LAYER]: ParkIcon,
-  // [RAILWAY_LAYER]: RailwayIcon,
-  // [ROAD_LAYER]: RoadIcon,
-  // [SHELTER_LAYER]: ShelterIcon,
-  // [STATION_LAYER]: StationIcon,
-  // [TSUNAMI_LAYER]: TsunamiIcon,
-  // [USE_CASE_LAYER]: UseCaseIcon,
-  // [VEGETATION_LAYER]: VegetationIcon
+interface HoverMenuProps {
+  hiddenAtom: PrimitiveAtom<boolean>
+}
+
+const HoverMenu: FC<HoverMenuProps> = ({ hiddenAtom }) => {
+  const [hidden, setHidden] = useAtom(hiddenAtom)
+  const handleVisibilityClick = useCallback(() => {
+    setHidden(value => !value)
+  }, [setHidden])
+
+  return (
+    <HoverMenuRoot onMouseDown={stopPropagation}>
+      <Tooltip title='削除'>
+        <span>
+          <IconButton size='small' color='inherit' aria-label='削除' disabled>
+            <ItemTrashIcon fontSize='medium' />
+          </IconButton>
+        </span>
+      </Tooltip>
+      <Tooltip title='移動'>
+        <span>
+          <IconButton size='small' color='inherit' aria-label='移動' disabled>
+            <ItemLocationIcon fontSize='medium' />
+          </IconButton>
+        </span>
+      </Tooltip>
+      <Tooltip title={hidden ? '表示' : '隠す'}>
+        <span>
+          <IconButton
+            size='small'
+            color='inherit'
+            aria-label={hidden ? '表示' : '隠す'}
+            onClick={handleVisibilityClick}
+          >
+            <ItemVisibilityIcon fontSize='medium' />
+          </IconButton>
+        </span>
+      </Tooltip>
+    </HoverMenuRoot>
+  )
 }
 
 export const LayerListItem: FC<LayerProps> = ({ layerAtom }) => {
-  const layer = useAtomValue(layerAtom)
-  const Icon = layerIcons[layer.type]
+  const { type, titleAtom, hiddenAtom, selectedAtom } = useAtomValue(layerAtom)
+  const title = useAtomValue(titleAtom)
+  const hidden = useAtomValue(hiddenAtom)
+  const selected = useAtomValue(selectedAtom)
+  const Icon = layerIcons[type]
   return (
-    <StyledListItem component='div'>
+    <StyledListItem selected={selected} hidden={hidden}>
       <ListItemIcon>
-        <Icon fontSize='large' />
+        <Icon fontSize='medium' />
       </ListItemIcon>
       <StyledListItemText
-        primary={layer.title}
-        secondary={layerTypeNames[layer.type]}
+        primary={title ?? '\u00a0'} // Reserve line height
+        secondary={layerTypeNames[type]}
         primaryTypographyProps={{
-          variant: 'body1'
+          variant: 'body2'
         }}
         secondaryTypographyProps={{
           variant: 'caption'
         }}
       />
+      <HoverMenu hiddenAtom={hiddenAtom} />
     </StyledListItem>
   )
 }

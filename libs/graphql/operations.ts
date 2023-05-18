@@ -178,6 +178,12 @@ export type PlateauMunicipalityFragment = {
   id: string
   code: string
   name: string
+  prefecture: {
+    __typename?: 'PlateauPrefecture'
+    id: string
+    code: string
+    name: string
+  }
 }
 
 type PlateauDataset_PlateauBuildingDataset_Fragment = {
@@ -259,6 +265,12 @@ export type MunicipalityDatasetsQuery = {
           }>
         }
     >
+    prefecture: {
+      __typename?: 'PlateauPrefecture'
+      id: string
+      code: string
+      name: string
+    }
   } | null
 }
 
@@ -267,6 +279,11 @@ export const PlateauMunicipalityFragmentDoc = gql`
     id
     code
     name
+    prefecture {
+      id
+      code
+      name
+    }
   }
 `
 export const PlateauDatasetFragmentDoc = gql`
