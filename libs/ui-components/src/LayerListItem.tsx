@@ -132,7 +132,7 @@ export const LayerListItem: FC<LayerProps> = ({ layerAtom }) => {
         <Icon fontSize='medium' />
       </ListItemIcon>
       <StyledListItemText
-        primary={title}
+        primary={title ?? '\u00a0'} // Reserve line height
         secondary={layerTypeNames[type]}
         primaryTypographyProps={{
           variant: 'body2'
