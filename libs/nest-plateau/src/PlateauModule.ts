@@ -11,7 +11,7 @@ import {
   PlateauStorageService,
   type PlateauStorageFiles
 } from './PlateauStorageService'
-import { PLATEAU_DATASET_FILES, PLATEAU_MODULE_OPTIONS } from './constants'
+import { PLATEAU_MODULE_OPTIONS, PLATEAU_STORAGE_FILES } from './constants'
 import { PlateauCatalog } from './dto/PlateauCatalog'
 import { PlateauMunicipality } from './dto/PlateauMunicipality'
 import { type PlateauModuleOptions } from './interfaces/PlateauModuleOptions'
@@ -36,12 +36,12 @@ import { PlateauPrefectureResolver } from './resolvers/PlateauPrefectureResolver
       inject: [MODULE_OPTIONS_TOKEN]
     },
     {
-      provide: PLATEAU_DATASET_FILES,
+      provide: PLATEAU_STORAGE_FILES,
       useFactory: async (
         options: PlateauModuleOptions
       ): Promise<PlateauStorageFiles> => {
-        if (options.dataRoot.startsWith('gs://')) {
-          const url = new URL(options.dataRoot)
+        if (options.storageRoot.startsWith('gs://')) {
+          const url = new URL(options.storageRoot)
           const storage = new Storage()
           const bucket = storage.bucket(url.host)
           const [buffer] = await bucket
@@ -50,7 +50,10 @@ import { PlateauPrefectureResolver } from './resolvers/PlateauPrefectureResolver
           return JSON.parse(buffer.toString('utf-8'))
         } else {
           return JSON.parse(
-            await readFile(path.join(options.dataRoot, 'plateau.json'), 'utf-8')
+            await readFile(
+              path.join(options.storageRoot, 'plateau.json'),
+              'utf-8'
+            )
           )
         }
       },

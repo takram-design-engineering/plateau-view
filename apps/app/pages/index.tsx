@@ -24,12 +24,6 @@ const Page: NextPage<PageProps> = ({ platform }) => {
     <>
       <Head>
         <title>PLATEAU VIEW 3.0 Design & Technology Preview</title>
-        <link
-          rel='preload'
-          as='fetch'
-          crossOrigin='anonymous'
-          href={`https://api.cesium.com/v1/assets/770371/endpoint?access_token=${process.env.NEXT_PUBLIC_PLATEAU_TERRAIN_ACCESS_TOKEN}`}
-        />
       </Head>
       <Suspense>
         <PlateauView />

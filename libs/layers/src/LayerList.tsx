@@ -33,12 +33,12 @@ const Root = styled('div')({})
 export type LayerListProps<C extends ElementType = typeof Root> =
   ComponentPropsWithRef<C> & {
     component?: C
-    ItemComponent: ComponentType<LayerProps>
+    itemComponent: ComponentType<LayerProps>
     minimumDragDistance?: number
   }
 
 export const LayerList = forwardRef<HTMLDivElement, LayerListProps>(
-  ({ minimumDragDistance = 5, component, ItemComponent, ...props }, ref) => {
+  ({ minimumDragDistance = 5, component, itemComponent, ...props }, ref) => {
     const sensors = useSensors(
       useSensor(PointerSensor, {
         activationConstraint: {
@@ -86,7 +86,7 @@ export const LayerList = forwardRef<HTMLDivElement, LayerListProps>(
               <LayerListItem
                 key={layerIds[index]}
                 layerAtom={layerAtom}
-                ItemComponent={ItemComponent}
+                itemComponent={itemComponent}
               />
             ))}
           </SortableContext>

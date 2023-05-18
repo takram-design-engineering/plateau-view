@@ -8,15 +8,20 @@ import {
 } from '@plateau/cesium'
 
 export interface BingMapsImageryLayerProps
-  extends Omit<ImageryLayerProps, 'imageryProvider'> {}
+  extends Omit<ImageryLayerProps, 'imageryProvider'> {
+  appKey: string
+}
 
-export const BingMapsImageryLayer: FC<BingMapsImageryLayerProps> = props => {
+export const BingMapsImageryLayer: FC<BingMapsImageryLayerProps> = ({
+  appKey,
+  ...props
+}) => {
   const imageryProvider = useSuspendInstance({
     owner: BingMapsImageryLayer,
-    keys: [],
+    keys: [appKey],
     create: async () =>
       await BingMapsImageryProvider.fromUrl('https://dev.virtualearth.net', {
-        key: process.env.NEXT_PUBLIC_BING_MAPS_APP_KEY,
+        key: appKey,
         mapStyle: BingMapsStyle.AERIAL
       })
   })

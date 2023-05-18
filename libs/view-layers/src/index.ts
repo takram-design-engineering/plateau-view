@@ -1,2 +1,2 @@
+export * from './BuildingLayer'
 export * from './layerComponents'
-export * from './TilesetLayer'

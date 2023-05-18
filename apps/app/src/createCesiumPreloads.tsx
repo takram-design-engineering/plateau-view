@@ -4,19 +4,13 @@ import { readdir } from 'fs/promises'
 import { minimatch } from 'minimatch'
 import { createRequire } from 'node:module'
 import path from 'path'
+import invariant from 'tiny-invariant'
 
 import { isNotFalse } from '@plateau/type-helpers'
 
 const assets = [
   { as: 'fetch', file: 'approximateTerrainHeights.json' },
-  { as: 'fetch', file: 'IAU2006_XYS/IAU2006_XYS_17.json' },
-  { as: 'image', file: 'Textures/SkyBox/tycho2t3_80_px.jpg' },
-  { as: 'image', file: 'Textures/SkyBox/tycho2t3_80_mx.jpg' },
-  { as: 'image', file: 'Textures/SkyBox/tycho2t3_80_py.jpg' },
-  { as: 'image', file: 'Textures/SkyBox/tycho2t3_80_my.jpg' },
-  { as: 'image', file: 'Textures/SkyBox/tycho2t3_80_pz.jpg' },
-  { as: 'image', file: 'Textures/SkyBox/tycho2t3_80_mz.jpg' },
-  { as: 'image', file: 'Textures/moonSmall.jpg' }
+  { as: 'fetch', file: 'IAU2006_XYS/IAU2006_XYS_17.json' }
 ]
 
 // List up worker files fetched on load.
@@ -50,9 +44,10 @@ const workers = [
 export async function createCesiumPreloads(): Promise<JSX.Element[]> {
   let workerFiles: string[]
   if (process.env.NODE_ENV === 'production') {
-    if (process.env.CESIUM_ROOT == null) {
-      throw new Error('Missing environment variables: CESIUM_ROOT')
-    }
+    invariant(
+      process.env.CESIUM_ROOT != null,
+      'Missing environment variable: CESIUM_ROOT'
+    )
     const url = new URL(process.env.CESIUM_ROOT)
     const storage = new Storage()
     const bucket = storage.bucket(url.host)
@@ -74,14 +69,25 @@ export async function createCesiumPreloads(): Promise<JSX.Element[]> {
       )
     )
   }
+
+  invariant(
+    process.env.NEXT_PUBLIC_CESIUM_BASE_URL != null,
+    'Missing environment variable: NEXT_PUBLIC_CESIUM_BASE_URL'
+  )
+
+  const crossOrigin =
+    process.env.NODE_ENV !== 'production'
+      ? { crossOrigin: 'anonymous' as const }
+      : undefined
+
   return [
     ...assets.map(({ as, file }, index) => (
       <link
         key={`cesium-asset:${index}`}
         rel='preload'
         as={as}
-        crossOrigin='anonymous'
         href={`${process.env.NEXT_PUBLIC_CESIUM_BASE_URL}/Assets/${file}`}
+        {...(as === 'fetch' ? { crossOrigin: 'anonymous' } : crossOrigin)}
       />
     )),
     ...workers
@@ -95,8 +101,8 @@ export async function createCesiumPreloads(): Promise<JSX.Element[]> {
               key={`cesium-worker:${index}`}
               rel='preload'
               as='script'
-              crossOrigin='anonymous'
               href={`${process.env.NEXT_PUBLIC_CESIUM_BASE_URL}/Workers/${file}`}
+              {...crossOrigin}
             />
           )
         )

@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import { minimatch } from 'minimatch'
 import urlJoin from 'url-join'
 
-import { PLATEAU_DATASET_FILES, PLATEAU_MODULE_OPTIONS } from './constants'
+import { PLATEAU_MODULE_OPTIONS, PLATEAU_STORAGE_FILES } from './constants'
 import { type PlateauDatasetFormat } from './dto/PlateauDatasetFormat'
 import { PlateauModuleOptions } from './interfaces/PlateauModuleOptions'
 
@@ -18,7 +18,7 @@ export class PlateauStorageService {
   constructor(
     @Inject(PLATEAU_MODULE_OPTIONS)
     private readonly options: PlateauModuleOptions,
-    @Inject(PLATEAU_DATASET_FILES)
+    @Inject(PLATEAU_STORAGE_FILES)
     private readonly files: PlateauStorageFiles
   ) {}
 
@@ -33,14 +33,6 @@ export class PlateauStorageService {
       return []
     }
     const matches = minimatch.match(list, `*/${pattern}`)
-    if (this.options.dataRoot.startsWith('gs://')) {
-      return matches.map(file =>
-        urlJoin(this.options.dataRoot, `plateau/${file}`)
-      )
-    } else {
-      return matches.map(file =>
-        urlJoin(this.options.baseUrl, `plateau/${file}`)
-      )
-    }
+    return matches.map(file => urlJoin(this.options.baseUrl, `plateau/${file}`))
   }
 }

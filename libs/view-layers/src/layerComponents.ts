@@ -1,17 +1,26 @@
+import { type PrimitiveAtom } from 'jotai'
+
 import { type LayerComponents } from '@plateau/layers'
 
 import {
-  TILESET_LAYER,
-  TilesetLayer,
-  type TilesetLayerModel
-} from './TilesetLayer'
+  BUILDING_LAYER,
+  BuildingLayer,
+  type BuildingLayerModel
+} from './BuildingLayer'
 
 declare module '@plateau/layers' {
+  interface LayerModel {
+    titleAtom: PrimitiveAtom<string | null>
+    readyAtom: PrimitiveAtom<boolean>
+    hiddenAtom: PrimitiveAtom<boolean>
+    selectedAtom: PrimitiveAtom<boolean>
+  }
+
   interface LayerModelOverrides {
-    [TILESET_LAYER]: TilesetLayerModel
+    [BUILDING_LAYER]: BuildingLayerModel
   }
 }
 
 export const layerComponents: LayerComponents = {
-  [TILESET_LAYER]: TilesetLayer
+  [BUILDING_LAYER]: BuildingLayer
 }

@@ -10,6 +10,7 @@ RUN yarn --immutable
 FROM dependencies AS builder
 ENV NODE_ENV=production
 ARG GOOGLE_CLOUD_PROJECT
+ARG CESIUM_ROOT
 WORKDIR /app
 COPY . .
 RUN npx nx run app:build:production --verbose
@@ -17,6 +18,7 @@ RUN npx nx run app:build:production --verbose
 FROM node:18-slim AS runner
 ENV NODE_ENV=production
 ARG GOOGLE_CLOUD_PROJECT
+ARG CESIUM_ROOT
 WORKDIR /app
 # https://github.com/nrwl/nx/issues/9017#issuecomment-1140066503
 COPY --from=builder /app/dist/apps/app/.next/standalone/ ./

@@ -4,7 +4,6 @@ import { type ComponentType } from 'react'
 export interface LayerModel {
   type: LayerType
   id: string
-  name: string
 }
 
 // eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style

@@ -1,5 +1,6 @@
 export * from './Canvas'
 export * from './CesiumContext'
+export * from './CesiumReference'
 export * from './CesiumRoot'
 export * from './CurrentTime'
 export * from './DMS'

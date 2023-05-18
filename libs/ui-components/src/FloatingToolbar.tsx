@@ -3,6 +3,7 @@ import {
   darken,
   styled,
   toggleButtonClasses,
+  toggleButtonGroupClasses,
   type ToggleButtonGroupProps
 } from '@mui/material'
 import { forwardRef, type ComponentPropsWithRef, type ReactNode } from 'react'
@@ -14,6 +15,7 @@ const Root = styled(FloatingPanel)({
 })
 
 const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
+  overflow: 'hidden',
   height: theme.spacing(6),
   [`& .${toggleButtonClasses.root}`]: {
     minWidth: theme.spacing(6.5),
@@ -37,6 +39,9 @@ const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
           backgroundColor: theme.palette.primary.main
         }
       }
+    },
+    [`&.${toggleButtonGroupClasses.grouped}`]: {
+      borderRadius: 0
     }
   }
 }))

@@ -114,6 +114,7 @@ export const Canvas = forwardRef<HTMLDivElement, CanvasProps>(
           containerRef.current,
           {
             showRenderLoopErrors: false,
+            skyBox: false,
             ...constructorOptions?.(),
             ...pick(props, [
               ...optionKeys,

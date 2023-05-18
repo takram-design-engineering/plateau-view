@@ -12,10 +12,8 @@ import { AppController } from './AppController'
 import { AppService } from './AppService'
 
 const env = envalid.cleanEnv(process.env, {
-  BASE_URL: envalid.url(),
-  DATA_ROOT: envalid.url({
-    devDefault: path.resolve(process.env.PROJECT_ROOT, 'data')
-  })
+  DATA_BASE_URL: envalid.url(),
+  DATA_STORAGE_ROOT: envalid.str()
 })
 
 @Module({
@@ -32,8 +30,8 @@ const env = envalid.cleanEnv(process.env, {
       rootPath: 'api'
     }),
     PlateauModule.forRoot({
-      baseUrl: env.BASE_URL,
-      dataRoot: env.DATA_ROOT
+      baseUrl: env.DATA_BASE_URL,
+      storageRoot: env.DATA_STORAGE_ROOT
     }),
 
     // Serve static files for development; these routes are behind our path

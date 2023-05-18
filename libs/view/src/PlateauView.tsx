@@ -6,10 +6,11 @@ import {
   type Cartesian2,
   type ScreenSpaceCameraController
 } from '@cesium/engine'
-import { styled, useTheme } from '@mui/material'
+import { List, Stack, styled, useTheme, type ListProps } from '@mui/material'
 import { useAtomValue, useSetAtom } from 'jotai'
 import {
   Suspense,
+  forwardRef,
   useCallback,
   useContext,
   useEffect,
@@ -29,12 +30,19 @@ import {
   GooglePhotorealisticTileset,
   PlateauDatasetsContext
 } from '@plateau/datasets'
+import {
+  LayerList,
+  LayersProvider,
+  LayersRenderer,
+  useAddLayer
+} from '@plateau/layers'
 import { useWindowEvent } from '@plateau/react-helpers'
 import {
   ScreenSpaceSelectionBoundingSphere,
   ScreenSpaceSelectionContext
 } from '@plateau/screen-space-selection'
-import { AppLayout } from '@plateau/ui-components'
+import { AppLayout, LayerListItem } from '@plateau/ui-components'
+import { createBuildingLayer, layerComponents } from '@plateau/view-layers'
 
 import { Areas } from './containers/Areas'
 import { Canvas } from './containers/Canvas'
@@ -42,7 +50,6 @@ import { Environments } from './containers/Environments'
 import { ScreenSpaceCamera } from './containers/ScreenSpaceCamera'
 import { ScreenSpaceSelection } from './containers/ScreenSpaceSelection'
 import { Terrains } from './containers/Terrains'
-import { IsomorphicTokyo23BuildingTileset } from './datasets/IsomorphicTokyo23BuildingTileset'
 import { DeveloperPanels } from './developer/DeveloperPanels'
 import { useReverseGeocoder } from './hooks/useReverseGeocoder'
 import { LocationContextBar } from './panels/LocationContextBar'
@@ -63,6 +70,10 @@ const initialView = Cartesian3.fromDegrees(139.765, 35.68, 8000)
 const Root = styled('div')({
   touchAction: 'none' // TODO: Don't disable globally
 })
+
+const LayerListComponent = forwardRef<HTMLDivElement, ListProps<'div'>>(
+  (props, ref) => <List ref={ref} component='div' dense {...props} />
+)
 
 // TODO: Settle into appropriate component.
 const Events: FC = () => {
@@ -226,6 +237,39 @@ const SelectionBoundingSphere: FC = () => {
   return show ? <ScreenSpaceSelectionBoundingSphere color={color} /> : null
 }
 
+// TODO: Just for temporary.
+const Layers: FC = () => {
+  const add = useAddLayer()
+
+  useEffect(() => {
+    const remove = [
+      add(
+        createBuildingLayer({
+          municipalityCode: '13101',
+          version: '2020',
+          lod: 2,
+          textured: false
+        })
+      ),
+      add(
+        createBuildingLayer({
+          municipalityCode: '13102',
+          version: '2020',
+          lod: 2,
+          textured: false
+        })
+      )
+    ]
+    return () => {
+      remove.forEach(remove => {
+        remove()
+      })
+    }
+  }, [add])
+
+  return null
+}
+
 export interface PlateauViewProps {}
 
 export const PlateauView: FC<PlateauViewProps> = () => {
@@ -238,48 +282,59 @@ export const PlateauView: FC<PlateauViewProps> = () => {
 
   return (
     <Root>
-      <Canvas>
-        <ScreenSpaceCamera tiltByRightButton />
-        <CurrentTime hours={7} />
-        <ViewLocator initialView={initialView} />
-        <Suspense>
-          <Environments />
-        </Suspense>
-        <Suspense>
-          <Terrains />
-        </Suspense>
-        {environmentType !== 'google-photorealistic' ? (
+      <LayersProvider>
+        <Canvas>
+          <ScreenSpaceCamera tiltByRightButton />
+          <CurrentTime hours={7} />
+          <ViewLocator initialView={initialView} />
           <Suspense>
-            <SuspendUntilTilesLoaded
-              initialTileCount={40}
-              remainingTileCount={25}
-              onComplete={handleTilesLoadComplete}
-            >
-              <IsomorphicTokyo23BuildingTileset name='13101_chiyoda-ku' />
-              <IsomorphicTokyo23BuildingTileset name='13102_chuo-ku' />
-            </SuspendUntilTilesLoaded>
+            <Environments />
           </Suspense>
-        ) : (
-          <GooglePhotorealisticTileset
-            apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAP_TILES_API_KEY}
-          />
-        )}
-        <Areas />
-        <Events />
-        <CanvasPointer />
-        <KeyBindings />
-        <ReverseGeocoder />
-        <SelectionBoundingSphere />
-      </Canvas>
-      <ScreenSpaceSelection />
-      <SyncColorMode />
-      <AppLayout
-        main={<MainPanel />}
-        context={<LocationContextBar />}
-        aside={<SelectionPanel />}
-        bottomLeft={<Toolbar />}
-        developer={<DeveloperPanels />}
-      />
+          <Suspense>
+            <Terrains />
+          </Suspense>
+          {environmentType !== 'google-photorealistic' ? (
+            <Suspense>
+              <SuspendUntilTilesLoaded
+                initialTileCount={40}
+                remainingTileCount={25}
+                onComplete={handleTilesLoadComplete}
+              >
+                <LayersRenderer components={layerComponents} />
+              </SuspendUntilTilesLoaded>
+            </Suspense>
+          ) : (
+            <GooglePhotorealisticTileset
+              apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAP_TILES_API_KEY}
+            />
+          )}
+          <Areas />
+          <Events />
+          <CanvasPointer />
+          <KeyBindings />
+          <ReverseGeocoder />
+          <SelectionBoundingSphere />
+        </Canvas>
+        <ScreenSpaceSelection />
+        <SyncColorMode />
+        <AppLayout
+          main={
+            <Stack spacing={1}>
+              <MainPanel>
+                <LayerList
+                  component={LayerListComponent}
+                  itemComponent={LayerListItem}
+                />
+              </MainPanel>
+            </Stack>
+          }
+          context={<LocationContextBar />}
+          aside={<SelectionPanel />}
+          bottomLeft={<Toolbar />}
+          developer={<DeveloperPanels />}
+        />
+        <Layers />
+      </LayersProvider>
     </Root>
   )
 }

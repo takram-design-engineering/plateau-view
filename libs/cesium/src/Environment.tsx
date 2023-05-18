@@ -45,6 +45,7 @@ export interface EnvironmentProps {
   backgroundColor?: Color | string | number
   globeBaseColor?: Color | string | number
   showGlobe?: boolean
+  enableGlobeLighting?: boolean
   lightColor?: Color | string | number
   lightIntensity?: number
   shadowDarkness?: number
@@ -70,6 +71,7 @@ export const Environment: FC<EnvironmentProps> = ({
   backgroundColor = Color.BLACK,
   globeBaseColor = Color.BLACK,
   showGlobe = true,
+  enableGlobeLighting = false,
   lightColor = Color.WHITE,
   lightIntensity = 2,
   shadowDarkness = 0.3,
@@ -96,6 +98,7 @@ export const Environment: FC<EnvironmentProps> = ({
   scene.globe.baseColor = cloneColor(globeBaseColor)
   scene.globe.depthTestAgainstTerrain = true
   scene.globe.show = showGlobe
+  scene.globe.enableLighting = enableGlobeLighting
 
   // Light and shadow
   cloneColor(lightColor, scene.light.color)
@@ -121,9 +124,11 @@ export const Environment: FC<EnvironmentProps> = ({
     : scaledSphericalHarmonicCoefficients ?? []
 
   // Celestial
-  scene.sun.show = showSun
-  scene.moon.show = showMoon
-  scene.skyBox.show = showSkyBox
+  if (scene.skyBox != null) {
+    scene.sun.show = showSun
+    scene.moon.show = showMoon
+    scene.skyBox.show = showSkyBox
+  }
 
   // Fog
   scene.fog.enabled = enableFog
