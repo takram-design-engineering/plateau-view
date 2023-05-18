@@ -54,6 +54,7 @@
     "graphql": "^16.6.0",
     "jotai": "^2.1.0",
     "jotai-xstate": "^0.3.0",
+    "json-stable-stringify": "^1.0.2",
     "jtd": "^0.1.1",
     "lodash": "^4.17.21",
     "lru-cache": "^9.1.1",

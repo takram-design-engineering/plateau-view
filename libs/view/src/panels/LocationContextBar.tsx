@@ -1,5 +1,5 @@
 import { Divider, Stack } from '@mui/material'
-import { Fragment, type FC } from 'react'
+import { Fragment, useMemo, type FC } from 'react'
 
 import { ContextBar, ContextButton } from '@plateau/ui-components'
 
@@ -10,6 +10,10 @@ import { LocationBreadcrumbs } from './LocationContextBar/LocationBreadcrumbs'
 
 export const LocationContextBar: FC = () => {
   const { areas, datasets } = useLocationContextState()
+  const municipalityCode = useMemo(
+    () => areas?.find(({ type }) => type === 'municipality')?.code,
+    [areas]
+  )
   if (areas == null) {
     return null
   }
@@ -31,7 +35,12 @@ export const LocationContextBar: FC = () => {
                   {dataset.variants.length === 1 ? (
                     <ContextButton>{dataset.typeName}</ContextButton>
                   ) : dataset.__typename === 'PlateauBuildingDataset' ? (
-                    <BuildingDatasetSelect dataset={dataset} areas={areas} />
+                    municipalityCode != null ? (
+                      <BuildingDatasetSelect
+                        dataset={dataset}
+                        municipalityCode={municipalityCode}
+                      />
+                    ) : null
                   ) : (
                     <DefaultDatasetSelect dataset={dataset} />
                   )}
