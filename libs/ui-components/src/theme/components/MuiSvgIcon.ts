@@ -6,10 +6,10 @@ export const MuiSvgIcon: Components<Theme>['MuiSvgIcon'] = {
       fontSize: theme.typography.pxToRem(16)
     }),
     fontSizeMedium: ({ theme }) => ({
-      fontSize: theme.typography.pxToRem(20)
+      fontSize: theme.typography.pxToRem(24)
     }),
     fontSizeLarge: ({ theme }) => ({
-      fontSize: theme.typography.pxToRem(24)
+      fontSize: theme.typography.pxToRem(32)
     })
   }
 }
