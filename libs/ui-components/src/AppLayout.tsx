@@ -178,7 +178,7 @@ export interface AppLayoutProps {
 
 export const AppLayout: FC<AppLayoutProps> = memo(
   ({
-    spacing = 2,
+    spacing = 1.5,
     mainWidth = 360,
     contextWidth = 200,
     main,
