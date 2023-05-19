@@ -29,10 +29,10 @@ export function createBridgeLayer(
 }
 
 export const BridgeLayer: FC<LayerProps<typeof BRIDGE_LAYER>> = ({
-  layerAtom
+  municipalityCode,
+  titleAtom,
+  hiddenAtom
 }) => {
-  const { titleAtom, hiddenAtom, municipalityCode } = useAtomValue(layerAtom)
-
   const query = useMunicipalityDatasetsQuery({
     variables: {
       municipalityCode,

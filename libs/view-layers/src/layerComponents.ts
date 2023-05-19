@@ -14,7 +14,7 @@ import {
   type BuildingLayerModel
 } from './BuildingLayer'
 
-// TODO: Remove these when implemented.
+// TODO: Remove these after all the layers are implemented.
 export const BORDER_LAYER = 'BORDER_LAYER'
 export const EMERGENCY_ROUTE_LAYER = 'EMERGENCY_ROUTE_LAYER'
 export const FACILITY_LAYER = 'FACILITY_LAYER'
@@ -69,12 +69,13 @@ declare module '@plateau/layers' {
   }
 }
 
+// TODO: Remove this after all the layers are implemented.
 const NullLayer: FC<LayerProps<LayerType>> = () => null
 
-export const layerComponents: LayerComponents = {
-  [BUILDING_LAYER]: BuildingLayer,
-  [BRIDGE_LAYER]: BridgeLayer,
+export const layerComponents = {
   [BORDER_LAYER]: NullLayer,
+  [BRIDGE_LAYER]: BridgeLayer,
+  [BUILDING_LAYER]: BuildingLayer,
   [EMERGENCY_ROUTE_LAYER]: NullLayer,
   [FACILITY_LAYER]: NullLayer,
   [FLOOD_LAYER]: NullLayer,
@@ -93,4 +94,4 @@ export const layerComponents: LayerComponents = {
   [TSUNAMI_LAYER]: NullLayer,
   [USE_CASE_LAYER]: NullLayer,
   [VEGETATION_LAYER]: NullLayer
-}
+} as unknown as LayerComponents // TODO: Refine type

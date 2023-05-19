@@ -8,10 +8,16 @@ import {
   listItemButtonClasses,
   listItemSecondaryActionClasses,
   listItemTextClasses,
-  styled
+  styled,
+  type SvgIconProps
 } from '@mui/material'
 import { useAtom, useAtomValue, useSetAtom, type PrimitiveAtom } from 'jotai'
-import { useCallback, type FC, type SyntheticEvent } from 'react'
+import {
+  useCallback,
+  type ComponentType,
+  type FC,
+  type SyntheticEvent
+} from 'react'
 
 import { useLayers, type LayerProps } from '@plateau/layers'
 
@@ -19,8 +25,6 @@ import { AntIcon } from './AntIcon'
 import { ItemLocationIcon } from './icons/ItemLocationIcon'
 import { ItemTrashIcon } from './icons/ItemTrashIcon'
 import { ItemVisibilityIcon } from './icons/ItemVisibilityIcon'
-import { layerIcons } from './layerIcons'
-import { layerTypeNames } from './layerTypeNames'
 
 const StyledListItem = styled(ListItemButton, {
   shouldForwardProp: prop => prop !== 'hidden'
@@ -130,14 +134,25 @@ const HoverMenu: FC<HoverMenuProps> = ({ id, hiddenAtom }) => {
   )
 }
 
-export const LayerListItem: FC<LayerProps> = ({ layerAtom }) => {
-  const { id, type, titleAtom, loadingAtom, hiddenAtom, selectedAtom } =
-    useAtomValue(layerAtom)
+export interface LayerListItemProps extends LayerProps {
+  typeName: string
+  iconComponent: ComponentType<SvgIconProps>
+}
+
+export const LayerListItem: FC<LayerListItemProps> = ({
+  id,
+  typeName,
+  iconComponent,
+  titleAtom,
+  loadingAtom,
+  hiddenAtom,
+  selectedAtom
+}) => {
   const title = useAtomValue(titleAtom)
   const loading = useAtomValue(loadingAtom)
   const hidden = useAtomValue(hiddenAtom)
   const selected = useAtomValue(selectedAtom)
-  const Icon = layerIcons[type]
+  const Icon = iconComponent
   return (
     <StyledListItem selected={selected} hidden={hidden}>
       <ListItemIcon>
@@ -149,7 +164,7 @@ export const LayerListItem: FC<LayerProps> = ({ layerAtom }) => {
       </ListItemIcon>
       <StyledListItemText
         primary={title ?? '\u00a0'} // Reserve line height
-        secondary={layerTypeNames[type]}
+        secondary={typeName}
         primaryTypographyProps={{
           variant: 'body2'
         }}

@@ -77,17 +77,13 @@ function matchVariant(
 }
 
 export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
-  layerAtom
+  titleAtom,
+  hiddenAtom,
+  municipalityCode,
+  versionAtom,
+  lodAtom,
+  texturedAtom
 }) => {
-  const {
-    titleAtom,
-    hiddenAtom,
-    municipalityCode,
-    versionAtom,
-    lodAtom,
-    texturedAtom
-  } = useAtomValue(layerAtom)
-
   const query = useMunicipalityDatasetsQuery({
     variables: {
       municipalityCode,
