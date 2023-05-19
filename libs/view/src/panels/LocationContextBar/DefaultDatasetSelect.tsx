@@ -12,16 +12,18 @@ export interface DefaultDatasetSelectProps {
 export const DefaultDatasetSelect: FC<DefaultDatasetSelectProps> = ({
   dataset,
   disabled
-}) => (
-  <ContextSelect
-    label={dataset.typeName}
-    value={[] as string[]}
-    disabled={disabled}
-  >
-    {dataset.variants.map(variant => (
-      <SelectItem key={variant.url} value={variant.url}>
-        <Typography variant='body2'>{variant.name}</Typography>
-      </SelectItem>
-    ))}
-  </ContextSelect>
-)
+}) => {
+  return (
+    <ContextSelect
+      label={dataset.typeName}
+      value={[] as string[]}
+      disabled={disabled}
+    >
+      {dataset.variants.map(variant => (
+        <SelectItem key={variant.url} value={variant.url}>
+          <Typography variant='body2'>{variant.name}</Typography>
+        </SelectItem>
+      ))}
+    </ContextSelect>
+  )
+}

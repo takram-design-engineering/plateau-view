@@ -14,19 +14,19 @@ const StyledButton = styled(Button)(({ theme }) => ({
 }))
 
 export interface ContextButtonProps extends Omit<ButtonProps, 'startIcon'> {
-  active?: boolean
+  selected?: boolean
 }
 
 export const ContextButton = forwardRef<HTMLButtonElement, ContextButtonProps>(
-  ({ active = false, children, ...props }, ref) => (
+  ({ selected = false, children, ...props }, ref) => (
     <StyledButton
       ref={ref}
       variant='text'
       size='small'
-      color={active ? 'primary' : 'inherit'}
+      color={selected ? 'primary' : 'inherit'}
       {...props}
       startIcon={
-        active ? (
+        selected ? (
           <CheckOutlined color='primary' fontSize='small' />
         ) : (
           <AddOutlined color='action' fontSize='small' />
