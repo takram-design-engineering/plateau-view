@@ -23,14 +23,12 @@ import { createViewLayer, type ViewLayerModelParams } from './createViewLayer'
 export const BUILDING_LAYER = 'BUILDING_LAYER'
 
 export interface BuildingLayerModelParams extends ViewLayerModelParams {
-  municipalityCode: string
   version?: string
   lod?: number
   textured?: boolean
 }
 
 export interface BuildingLayerModel extends LayerModel {
-  municipalityCode: string
   versionAtom: PrimitiveAtom<string | null>
   lodAtom: PrimitiveAtom<number | null>
   texturedAtom: PrimitiveAtom<boolean | null>
