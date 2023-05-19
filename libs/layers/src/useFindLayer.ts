@@ -3,16 +3,17 @@ import { useContext } from 'react'
 
 import { LayersContext } from './LayersContext'
 import {
-  type AnyLayerModel,
+  type LayerModel,
   type LayerModelOverrides,
   type LayerType
 } from './types'
 
 // Provided for generic setter.
 export function useFindLayer(): <T extends LayerType>(
-  layers: readonly AnyLayerModel[],
+  layers: readonly LayerModel[],
   predicate:
-    | Partial<{ type: T } & Omit<LayerModelOverrides[T], 'type'>>
+    | ({ type: T } & Partial<Omit<LayerModelOverrides[T], 'type'>>)
+    | Partial<LayerModel>
     | ((layer: LayerModelOverrides[T], get: Getter) => boolean)
 ) => LayerModelOverrides[T] | undefined {
   const context = useContext(LayersContext)

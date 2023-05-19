@@ -6,11 +6,11 @@ import { LayersContext, type LayersContextValue } from './LayersContext'
 export function useLayers(): Omit<
   LayersContextValue,
   // Omit atoms with generic setters.
-  'addAtom' | 'filterAtom'
+  'addAtom' | 'findAtom' | 'filterAtom'
 > {
   const context = useContext(LayersContext)
   if (context == null) {
     throw new Error('useLayers must be used inside LayersProvider.')
   }
-  return omit(context, 'addAtom')
+  return omit(context, ['addAtom', 'findAtom', 'filterAtom'])
 }

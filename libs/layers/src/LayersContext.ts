@@ -5,19 +5,19 @@ import { nanoid } from 'nanoid'
 import { createContext } from 'react'
 import { type SetOptional } from 'type-fest'
 
-import { type AnyLayerModel } from './types'
+import { type LayerModel } from './types'
 
-type AnyLayerPredicate = (layer: AnyLayerModel, get: Getter) => boolean
+type AnyLayerPredicate = (layer: LayerModel, get: Getter) => boolean
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export function createContextValue() {
-  const layersAtom = atomWithReset<AnyLayerModel[]>([])
+  const layersAtom = atomWithReset<LayerModel[]>([])
   const layerAtomsAtom = splitAtom(layersAtom)
   const layerIdsAtom = atom(get => get(layersAtom).map(({ id }) => id))
 
   const addAtom = atom(
     null,
-    (get, set, layer: SetOptional<AnyLayerModel, 'id'>) => {
+    (get, set, layer: SetOptional<LayerModel, 'id'>) => {
       const id = layer.id ?? nanoid()
       if (get(layerIdsAtom).includes(id)) {
         console.warn(`Layer already exits: ${id}`)
@@ -48,8 +48,8 @@ export function createContextValue() {
     (
       get,
       set,
-      layers: readonly AnyLayerModel[],
-      predicate: Partial<AnyLayerModel> | AnyLayerPredicate
+      layers: readonly LayerModel[],
+      predicate: Partial<LayerModel> | AnyLayerPredicate
     ) => {
       if (typeof predicate === 'function') {
         return layers.find(layerAtom => predicate(layerAtom, get))
@@ -67,8 +67,8 @@ export function createContextValue() {
     (
       get,
       set,
-      layers: readonly AnyLayerModel[],
-      predicate: Partial<AnyLayerModel> | AnyLayerPredicate
+      layers: readonly LayerModel[],
+      predicate: Partial<LayerModel> | AnyLayerPredicate
     ) => {
       if (typeof predicate === 'function') {
         return layers.filter(layer => predicate(layer, get))

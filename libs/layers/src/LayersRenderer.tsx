@@ -12,7 +12,7 @@ interface LayerRendererProps {
 const LayerRenderer: FC<LayerRendererProps> = ({ components, layerAtom }) => {
   const layer = useAtomValue(layerAtom)
   const Component = components[layer.type]
-  return <Component layerAtom={layerAtom} />
+  return <Component {...layer} />
 }
 
 export interface LayersRendererProps<T extends LayerComponents> {

@@ -37,7 +37,7 @@ export const LayerListItem = forwardRef<HTMLDivElement, LayerListItemProps>(
         {...attributes}
         {...listeners}
       >
-        <ItemComponent layerAtom={layerAtom} />
+        <ItemComponent {...layer} />
       </Root>
     )
   }
