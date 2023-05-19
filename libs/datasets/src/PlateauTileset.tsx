@@ -111,8 +111,16 @@ const PlateauTilesetContent = withEphemerality(
             return
           }
           features.forEach(feature => {
-            // When color is white, the feature's color is not changed.
-            feature.color = Color.WHITE
+            try {
+              // When color is white, the feature's color is not changed.
+              feature.color = Color.WHITE
+            } catch (error) {
+              if (process.env.NODE_ENV !== 'production') {
+                // TODO: Remove features in unloaded tiles. This happens only
+                // with PLATEAU 2022 tilesets where refinement is replacement.
+                console.warn('Error during deselecting feature.')
+              }
+            }
           })
         },
         computeBoundingSphere: (feature, result = new BoundingSphere()) => {
