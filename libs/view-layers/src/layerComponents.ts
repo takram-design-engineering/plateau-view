@@ -11,7 +11,7 @@ import {
 declare module '@plateau/layers' {
   interface LayerModel {
     titleAtom: PrimitiveAtom<string | null>
-    readyAtom: PrimitiveAtom<boolean>
+    loadingAtom: PrimitiveAtom<boolean>
     hiddenAtom: PrimitiveAtom<boolean>
     selectedAtom: PrimitiveAtom<boolean>
   }

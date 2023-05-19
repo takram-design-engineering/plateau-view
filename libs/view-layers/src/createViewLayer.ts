@@ -11,8 +11,8 @@ export function createViewLayer(
   params: ViewLayerModelParams = {}
 ): Omit<SetOptional<LayerModel, 'id'>, 'type'> {
   return {
-    readyAtom: atom(true),
     titleAtom: atom<string | null>(params.title ?? null),
+    loadingAtom: atom(false),
     hiddenAtom: atom(false),
     selectedAtom: atom(false)
   }
