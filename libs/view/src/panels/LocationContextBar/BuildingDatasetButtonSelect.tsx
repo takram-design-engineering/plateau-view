@@ -18,6 +18,8 @@ import { useAddLayer, useFindLayer, useLayers } from '@plateau/layers'
 import { ContextButtonSelect, SelectItem } from '@plateau/ui-components'
 import { BUILDING_LAYER, createBuildingLayer } from '@plateau/view-layers'
 
+import { datasetTypeNames } from '../../constants/datasetTypeNames'
+
 interface Params {
   version: string | null
   lod: number | null
@@ -44,18 +46,18 @@ export const BuildingDatasetButtonSelect: FC<
 > = ({ dataset, municipalityCode, disabled }) => {
   const { layersAtom, removeAtom } = useLayers()
   const layers = useAtomValue(layersAtom)
-  const find = useFindLayer()
+  const findLayer = useFindLayer()
   const layer = useMemo(
     () =>
-      find(layers, {
+      findLayer(layers, {
         type: BUILDING_LAYER,
         municipalityCode
       }),
-    [municipalityCode, layers, find]
+    [municipalityCode, layers, findLayer]
   )
 
-  const add = useAddLayer()
-  const remove = useSetAtom(removeAtom)
+  const addLayer = useAddLayer()
+  const removeLayer = useSetAtom(removeAtom)
   const paramsAtom = useMemo(() => {
     if (layer == null) {
       return atom(null, (get, set, params?: SetStateAction<Params | null>) => {
@@ -63,7 +65,7 @@ export const BuildingDatasetButtonSelect: FC<
         if (nextParams == null) {
           return
         }
-        add(
+        addLayer(
           createBuildingLayer({
             municipalityCode,
             version: nextParams.version ?? undefined,
@@ -87,14 +89,14 @@ export const BuildingDatasetButtonSelect: FC<
               })
             : params
         if (nextParams == null) {
-          remove(layer.id)
+          removeLayer(layer.id)
         } else {
           set(layer.versionAtom, nextParams.version)
           set(layer.lodAtom, nextParams.lod)
         }
       }
     )
-  }, [municipalityCode, layer, add, remove])
+  }, [municipalityCode, layer, addLayer, removeLayer])
 
   const [params, setParams] = useAtom(paramsAtom)
 
@@ -126,9 +128,13 @@ export const BuildingDatasetButtonSelect: FC<
     (a, b) => a.version === b.version && a.lod === b.lod
   )
 
+  if (variants.length === 0) {
+    console.warn('Dataset must include at least 1 variant.')
+    return null
+  }
   return (
     <ContextButtonSelect
-      label={dataset.typeName}
+      label={datasetTypeNames[dataset.type]}
       value={params != null ? serializeParams(params) : ''}
       disabled={disabled}
       onClick={handleClick}

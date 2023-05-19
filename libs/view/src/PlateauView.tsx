@@ -41,8 +41,12 @@ import {
   ScreenSpaceSelectionBoundingSphere,
   ScreenSpaceSelectionContext
 } from '@plateau/screen-space-selection'
-import { AppLayout, LayerListItem } from '@plateau/ui-components'
-import { createBuildingLayer, layerComponents } from '@plateau/view-layers'
+import { AppLayout } from '@plateau/ui-components'
+import {
+  ViewLayerListItem,
+  createBuildingLayer,
+  layerComponents
+} from '@plateau/view-layers'
 
 import { Areas } from './containers/Areas'
 import { Canvas } from './containers/Canvas'
@@ -239,11 +243,11 @@ const SelectionBoundingSphere: FC = () => {
 
 // TODO: Just for temporary.
 const Layers: FC = () => {
-  const add = useAddLayer()
+  const addLayer = useAddLayer()
 
   useEffect(() => {
     const remove = [
-      add(
+      addLayer(
         createBuildingLayer({
           municipalityCode: '13101',
           version: '2020',
@@ -251,7 +255,7 @@ const Layers: FC = () => {
           textured: false
         })
       ),
-      add(
+      addLayer(
         createBuildingLayer({
           municipalityCode: '13102',
           version: '2020',
@@ -265,7 +269,7 @@ const Layers: FC = () => {
         remove()
       })
     }
-  }, [add])
+  }, [addLayer])
 
   return null
 }
@@ -323,7 +327,7 @@ export const PlateauView: FC<PlateauViewProps> = () => {
               <MainPanel>
                 <LayerList
                   component={LayerListComponent}
-                  itemComponent={LayerListItem}
+                  itemComponent={ViewLayerListItem}
                   unmountWhenEmpty
                 />
               </MainPanel>

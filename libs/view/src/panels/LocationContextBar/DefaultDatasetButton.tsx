@@ -6,7 +6,8 @@ import { useAddLayer, useFindLayer, useLayers } from '@plateau/layers'
 import { ContextButton } from '@plateau/ui-components'
 import { BRIDGE_LAYER, createBridgeLayer } from '@plateau/view-layers'
 
-import { layerTypes } from './layerTypes'
+import { datasetTypeLayers } from '../../constants/datasetTypeLayers'
+import { datasetTypeNames } from '../../constants/datasetTypeNames'
 
 export interface DefaultDatasetButtonProps {
   dataset: PlateauDatasetFragment
@@ -21,21 +22,21 @@ export const DefaultDatasetButton: FC<DefaultDatasetButtonProps> = ({
 }) => {
   const { layersAtom, removeAtom } = useLayers()
   const layers = useAtomValue(layersAtom)
-  const layerType = layerTypes[dataset.type as keyof typeof layerTypes]
-  const find = useFindLayer()
+  const layerType = datasetTypeLayers[dataset.type]
+  const findLayer = useFindLayer()
   const layer = useMemo(
     () =>
       layerType != null
-        ? find(layers, {
+        ? findLayer(layers, {
             type: layerType,
             municipalityCode
           })
         : undefined,
-    [municipalityCode, layers, layerType, find]
+    [municipalityCode, layers, layerType, findLayer]
   )
 
-  const add = useAddLayer()
-  const remove = useSetAtom(removeAtom)
+  const addLayer = useAddLayer()
+  const removeLayer = useSetAtom(removeAtom)
 
   const handleClick = useCallback(() => {
     if (layerType == null) {
@@ -44,7 +45,7 @@ export const DefaultDatasetButton: FC<DefaultDatasetButtonProps> = ({
     if (layer == null) {
       switch (layerType) {
         case BRIDGE_LAYER:
-          add(
+          addLayer(
             createBridgeLayer({
               municipalityCode
             })
@@ -54,13 +55,13 @@ export const DefaultDatasetButton: FC<DefaultDatasetButtonProps> = ({
           break
       }
     } else {
-      remove(layer.id)
+      removeLayer(layer.id)
     }
-  }, [municipalityCode, layer, layerType, add, remove])
+  }, [municipalityCode, layer, layerType, addLayer, removeLayer])
 
   const variant = dataset.variants[0]
   if (variant == null) {
-    console.warn('Dataset must includes at least 1 variant.')
+    console.warn('Dataset must include at least 1 variant.')
     return null
   }
   return (
@@ -69,7 +70,7 @@ export const DefaultDatasetButton: FC<DefaultDatasetButtonProps> = ({
       disabled={disabled || layerType == null}
       onClick={handleClick}
     >
-      {dataset.typeName}
+      {datasetTypeNames[dataset.type]}
     </ContextButton>
   )
 }

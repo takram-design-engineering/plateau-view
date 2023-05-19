@@ -4,6 +4,8 @@ import { type FC } from 'react'
 import { type PlateauDatasetFragment } from '@plateau/graphql'
 import { ContextSelect, SelectItem } from '@plateau/ui-components'
 
+import { datasetTypeNames } from '../../constants/datasetTypeNames'
+
 export interface DefaultDatasetSelectProps {
   dataset: PlateauDatasetFragment
   disabled?: boolean
@@ -15,7 +17,7 @@ export const DefaultDatasetSelect: FC<DefaultDatasetSelectProps> = ({
 }) => {
   return (
     <ContextSelect
-      label={dataset.typeName}
+      label={datasetTypeNames[dataset.type]}
       value={[] as string[]}
       disabled={disabled}
     >
