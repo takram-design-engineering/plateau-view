@@ -2,30 +2,54 @@ import { type SvgIconProps } from '@mui/material'
 import { type ComponentType } from 'react'
 
 import { type LayerType } from '@plateau/layers'
-import { BUILDING_LAYER } from '@plateau/view-layers'
+import {
+  BORDER_LAYER,
+  BRIDGE_LAYER,
+  BUILDING_LAYER,
+  EMERGENCY_ROUTE_LAYER,
+  FACILITY_LAYER,
+  FLOOD_LAYER,
+  FURNITURE_LAYER,
+  GENERIC_LAYER,
+  HIGHTIDE_LAYER,
+  INLAND_FLOOD_LAYER,
+  LANDMARK_LAYER,
+  LANDSLIDE_LAYER,
+  LANDUSE_LAYER,
+  PARK_LAYER,
+  RAILWAY_LAYER,
+  ROAD_LAYER,
+  SHELTER_LAYER,
+  STATION_LAYER,
+  TSUNAMI_LAYER,
+  USE_CASE_LAYER,
+  VEGETATION_LAYER
+} from '@plateau/view-layers'
 
 import { BuildingIcon } from './icons'
+import { LayerIcon } from './icons/LayerIcon'
 
+// TODO: Move to library other than UI.
 export const layerIcons: Record<LayerType, ComponentType<SvgIconProps>> = {
-  // [BORDER_LAYER]: BorderIcon,
-  // [BRIDGE_LAYER]: BridgeIcon,
-  [BUILDING_LAYER]: BuildingIcon
-  // [EMERGENCY_ROUTE_LAYER]: EmergencyRouteIcon,
-  // [FACILITY_LAYER]: FacilityIcon,
-  // [FLOOD_LAYER]: FloodIcon,
-  // [FURNITURE_LAYER]: FurnitureIcon,
-  // [GENERIC_LAYER]: GenericIcon,
-  // [HIGHTIDE_LAYER]: HightideIcon,
-  // [INLAND_FLOOD_LAYER]: InlandFloodIcon,
-  // [LANDMARK_LAYER]: LandmarkIcon,
-  // [LANDSLIDE_LAYER]: LandslideIcon,
-  // [LANDUSE_LAYER]: LanduseIcon,
-  // [PARK_LAYER]: ParkIcon,
-  // [RAILWAY_LAYER]: RailwayIcon,
-  // [ROAD_LAYER]: RoadIcon,
-  // [SHELTER_LAYER]: ShelterIcon,
-  // [STATION_LAYER]: StationIcon,
-  // [TSUNAMI_LAYER]: TsunamiIcon,
-  // [USE_CASE_LAYER]: UseCaseIcon,
-  // [VEGETATION_LAYER]: VegetationIcon
+  [BORDER_LAYER]: LayerIcon,
+  [BRIDGE_LAYER]: LayerIcon,
+  [BUILDING_LAYER]: BuildingIcon,
+  [EMERGENCY_ROUTE_LAYER]: LayerIcon,
+  [FACILITY_LAYER]: LayerIcon,
+  [FLOOD_LAYER]: LayerIcon,
+  [FURNITURE_LAYER]: LayerIcon,
+  [GENERIC_LAYER]: LayerIcon,
+  [HIGHTIDE_LAYER]: LayerIcon,
+  [INLAND_FLOOD_LAYER]: LayerIcon,
+  [LANDMARK_LAYER]: LayerIcon,
+  [LANDSLIDE_LAYER]: LayerIcon,
+  [LANDUSE_LAYER]: LayerIcon,
+  [PARK_LAYER]: LayerIcon,
+  [RAILWAY_LAYER]: LayerIcon,
+  [ROAD_LAYER]: LayerIcon,
+  [SHELTER_LAYER]: LayerIcon,
+  [STATION_LAYER]: LayerIcon,
+  [TSUNAMI_LAYER]: LayerIcon,
+  [USE_CASE_LAYER]: LayerIcon,
+  [VEGETATION_LAYER]: LayerIcon
 }

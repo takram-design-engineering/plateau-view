@@ -1,3 +1,4 @@
+import LoadingIcon from '@ant-design/icons/LoadingOutlined'
 import {
   IconButton,
   ListItemButton,
@@ -14,6 +15,7 @@ import { useCallback, type FC, type SyntheticEvent } from 'react'
 
 import { useLayers, type LayerProps } from '@plateau/layers'
 
+import { AntIcon } from './AntIcon'
 import { ItemLocationIcon } from './icons/ItemLocationIcon'
 import { ItemTrashIcon } from './icons/ItemTrashIcon'
 import { ItemVisibilityIcon } from './icons/ItemVisibilityIcon'
@@ -129,16 +131,21 @@ const HoverMenu: FC<HoverMenuProps> = ({ id, hiddenAtom }) => {
 }
 
 export const LayerListItem: FC<LayerProps> = ({ layerAtom }) => {
-  const { id, type, titleAtom, hiddenAtom, selectedAtom } =
+  const { id, type, titleAtom, loadingAtom, hiddenAtom, selectedAtom } =
     useAtomValue(layerAtom)
   const title = useAtomValue(titleAtom)
+  const loading = useAtomValue(loadingAtom)
   const hidden = useAtomValue(hiddenAtom)
   const selected = useAtomValue(selectedAtom)
   const Icon = layerIcons[type]
   return (
     <StyledListItem selected={selected} hidden={hidden}>
       <ListItemIcon>
-        <Icon fontSize='medium' />
+        {loading ? (
+          <AntIcon iconComponent={LoadingIcon} fontSize='medium' />
+        ) : (
+          <Icon fontSize='medium' />
+        )}
       </ListItemIcon>
       <StyledListItemText
         primary={title ?? '\u00a0'} // Reserve line height

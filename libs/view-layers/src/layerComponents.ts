@@ -1,26 +1,96 @@
 import { type PrimitiveAtom } from 'jotai'
+import { type FC } from 'react'
 
-import { type LayerComponents } from '@plateau/layers'
+import {
+  type LayerComponents,
+  type LayerProps,
+  type LayerType
+} from '@plateau/layers'
 
+import { BRIDGE_LAYER, BridgeLayer, type BridgeLayerModel } from './BridgeLayer'
 import {
   BUILDING_LAYER,
   BuildingLayer,
   type BuildingLayerModel
 } from './BuildingLayer'
 
+// TODO: Remove these when implemented.
+export const BORDER_LAYER = 'BORDER_LAYER'
+export const EMERGENCY_ROUTE_LAYER = 'EMERGENCY_ROUTE_LAYER'
+export const FACILITY_LAYER = 'FACILITY_LAYER'
+export const FLOOD_LAYER = 'FLOOD_LAYER'
+export const FURNITURE_LAYER = 'FURNITURE_LAYER'
+export const GENERIC_LAYER = 'GENERIC_LAYER'
+export const HIGHTIDE_LAYER = 'HIGHTIDE_LAYER'
+export const INLAND_FLOOD_LAYER = 'INLAND_FLOOD_LAYER'
+export const LANDMARK_LAYER = 'LANDMARK_LAYER'
+export const LANDSLIDE_LAYER = 'LANDSLIDE_LAYER'
+export const LANDUSE_LAYER = 'LANDUSE_LAYER'
+export const PARK_LAYER = 'PARK_LAYER'
+export const RAILWAY_LAYER = 'RAILWAY_LAYER'
+export const ROAD_LAYER = 'ROAD_LAYER'
+export const SHELTER_LAYER = 'SHELTER_LAYER'
+export const STATION_LAYER = 'STATION_LAYER'
+export const TSUNAMI_LAYER = 'TSUNAMI_LAYER'
+export const USE_CASE_LAYER = 'USE_CASE_LAYER'
+export const VEGETATION_LAYER = 'VEGETATION_LAYER'
+
 declare module '@plateau/layers' {
   interface LayerModel {
+    municipalityCode: string
     titleAtom: PrimitiveAtom<string | null>
-    readyAtom: PrimitiveAtom<boolean>
+    loadingAtom: PrimitiveAtom<boolean>
     hiddenAtom: PrimitiveAtom<boolean>
     selectedAtom: PrimitiveAtom<boolean>
   }
 
   interface LayerModelOverrides {
+    [BORDER_LAYER]: LayerModel
+    [BRIDGE_LAYER]: BridgeLayerModel
     [BUILDING_LAYER]: BuildingLayerModel
+    [EMERGENCY_ROUTE_LAYER]: LayerModel
+    [FACILITY_LAYER]: LayerModel
+    [FLOOD_LAYER]: LayerModel
+    [FURNITURE_LAYER]: LayerModel
+    [GENERIC_LAYER]: LayerModel
+    [HIGHTIDE_LAYER]: LayerModel
+    [INLAND_FLOOD_LAYER]: LayerModel
+    [LANDMARK_LAYER]: LayerModel
+    [LANDSLIDE_LAYER]: LayerModel
+    [LANDUSE_LAYER]: LayerModel
+    [PARK_LAYER]: LayerModel
+    [RAILWAY_LAYER]: LayerModel
+    [ROAD_LAYER]: LayerModel
+    [SHELTER_LAYER]: LayerModel
+    [STATION_LAYER]: LayerModel
+    [TSUNAMI_LAYER]: LayerModel
+    [USE_CASE_LAYER]: LayerModel
+    [VEGETATION_LAYER]: LayerModel
   }
 }
 
+const NullLayer: FC<LayerProps<LayerType>> = () => null
+
 export const layerComponents: LayerComponents = {
-  [BUILDING_LAYER]: BuildingLayer
+  [BUILDING_LAYER]: BuildingLayer,
+  [BRIDGE_LAYER]: BridgeLayer,
+  [BORDER_LAYER]: NullLayer,
+  [EMERGENCY_ROUTE_LAYER]: NullLayer,
+  [FACILITY_LAYER]: NullLayer,
+  [FLOOD_LAYER]: NullLayer,
+  [FURNITURE_LAYER]: NullLayer,
+  [GENERIC_LAYER]: NullLayer,
+  [HIGHTIDE_LAYER]: NullLayer,
+  [INLAND_FLOOD_LAYER]: NullLayer,
+  [LANDMARK_LAYER]: NullLayer,
+  [LANDSLIDE_LAYER]: NullLayer,
+  [LANDUSE_LAYER]: NullLayer,
+  [PARK_LAYER]: NullLayer,
+  [RAILWAY_LAYER]: NullLayer,
+  [ROAD_LAYER]: NullLayer,
+  [SHELTER_LAYER]: NullLayer,
+  [STATION_LAYER]: NullLayer,
+  [TSUNAMI_LAYER]: NullLayer,
+  [USE_CASE_LAYER]: NullLayer,
+  [VEGETATION_LAYER]: NullLayer
 }

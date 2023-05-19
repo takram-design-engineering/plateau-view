@@ -8,22 +8,22 @@ import {
 } from 'react'
 
 const Root = styled('span', {
-  shouldForwardProp: prop => prop !== 'size'
+  shouldForwardProp: prop => prop !== 'fontSize'
 })<{
-  size?: SvgIconProps['fontSize']
-}>(({ theme, size = 'medium' }) => ({
+  fontSize?: SvgIconProps['fontSize']
+}>(({ theme, fontSize = 'medium' }) => ({
   fontSize: {
     inherit: 'inherit',
     small: theme.typography.pxToRem(16),
-    medium: theme.typography.pxToRem(20),
+    medium: theme.typography.pxToRem(24),
     large: theme.typography.pxToRem(32)
-  }[size]
+  }[fontSize]
 }))
 
 export interface AntIconProps
-  extends Omit<ComponentPropsWithRef<typeof Root>, 'size'> {
+  extends Omit<ComponentPropsWithRef<typeof Root>, 'fontSize'> {
   iconComponent: ComponentType<ComponentProps<typeof Icon>>
-  size?: SvgIconProps['fontSize']
+  fontSize?: SvgIconProps['fontSize']
 }
 
 export const AntIcon = forwardRef<HTMLSpanElement, AntIconProps>(
