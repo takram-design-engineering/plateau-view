@@ -52,8 +52,6 @@ export const BridgeLayer: FC<LayerProps<typeof BRIDGE_LAYER>> = ({
     }
   }, [query, setTitle])
 
-  const variant = query.data?.municipality?.datasets[0]?.variants[0]
-
   const hidden = useAtomValue(hiddenAtom)
   const scene = useCesium(({ scene }) => scene)
   scene.requestRender()
@@ -66,6 +64,7 @@ export const BridgeLayer: FC<LayerProps<typeof BRIDGE_LAYER>> = ({
     }
   }, [scene])
 
+  const variant = query.data?.municipality?.datasets[0]?.variants[0]
   if (hidden || variant == null) {
     return null
   }

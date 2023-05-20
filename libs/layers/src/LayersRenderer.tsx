@@ -1,18 +1,27 @@
 import { useAtomValue, type PrimitiveAtom } from 'jotai'
-import { type FC, type ReactNode } from 'react'
+import { Suspense, type FC, type ReactNode } from 'react'
 
 import { type LayerComponents, type LayerModel } from './types'
 import { useLayers } from './useLayers'
 
 interface LayerRendererProps {
   components: LayerComponents
+  index: number
   layerAtom: PrimitiveAtom<LayerModel>
 }
 
-const LayerRenderer: FC<LayerRendererProps> = ({ components, layerAtom }) => {
+const LayerRenderer: FC<LayerRendererProps> = ({
+  components,
+  index,
+  layerAtom
+}) => {
   const layer = useAtomValue(layerAtom)
   const Component = components[layer.type]
-  return <Component {...layer} />
+  return (
+    <Suspense>
+      <Component {...layer} index={index} />
+    </Suspense>
+  )
 }
 
 export interface LayersRendererProps<T extends LayerComponents> {
@@ -32,6 +41,7 @@ export function LayersRenderer<T extends LayerComponents>({
         <LayerRenderer
           key={layerIds[index]}
           components={components}
+          index={index}
           layerAtom={layerAtom}
         />
       ))}

@@ -41,11 +41,11 @@ export const datasetTypeLayers: Record<
   [PlateauDatasetType.Hightide]: undefined, // HIGHTIDE_LAYER
   [PlateauDatasetType.InlandFlood]: undefined, // INLAND_FLOOD_LAYER
   [PlateauDatasetType.Landmark]: undefined, // LANDMARK_LAYER
-  [PlateauDatasetType.Landslide]: undefined, // LANDSLIDE_LAYER
-  [PlateauDatasetType.Landuse]: undefined, // LANDUSE_LAYER
+  [PlateauDatasetType.Landslide]: LANDSLIDE_LAYER,
+  [PlateauDatasetType.Landuse]: LANDUSE_LAYER,
   [PlateauDatasetType.Park]: undefined, // PARK_LAYER
   [PlateauDatasetType.Railway]: undefined, // RAILWAY_LAYER
-  [PlateauDatasetType.Road]: undefined, // ROAD_LAYER
+  [PlateauDatasetType.Road]: ROAD_LAYER,
   [PlateauDatasetType.Shelter]: undefined, // SHELTER_LAYER
   [PlateauDatasetType.Station]: undefined, // STATION_LAYER
   [PlateauDatasetType.Tsunami]: undefined, // TSUNAMI_LAYER

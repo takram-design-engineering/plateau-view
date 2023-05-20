@@ -103,6 +103,18 @@ export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
     }
   }, [query, setTitle])
 
+  const hidden = useAtomValue(hiddenAtom)
+  const scene = useCesium(({ scene }) => scene)
+  scene.requestRender()
+
+  useEffect(() => {
+    return () => {
+      if (!scene.isDestroyed()) {
+        scene.requestRender()
+      }
+    }
+  }, [scene])
+
   const [version, setVersion] = useAtom(versionAtom)
   const [lod, setLod] = useAtom(lodAtom)
   const [textured, setTextured] = useAtom(texturedAtom)
@@ -125,18 +137,6 @@ export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
     setLod(variant?.lod ?? null)
     setTextured(variant?.textured ?? null)
   }, [setVersion, setLod, setTextured, variant])
-
-  const hidden = useAtomValue(hiddenAtom)
-  const scene = useCesium(({ scene }) => scene)
-  scene.requestRender()
-
-  useEffect(() => {
-    return () => {
-      if (!scene.isDestroyed()) {
-        scene.requestRender()
-      }
-    }
-  }, [scene])
 
   if (hidden || variant == null) {
     return null
