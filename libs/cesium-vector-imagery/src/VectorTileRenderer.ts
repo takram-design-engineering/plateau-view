@@ -19,6 +19,7 @@ export interface VectorTileRendererOptions<
   labelRules: readonly LabelRule[]
   labelersCanvas: Canvas
   maximumZoom?: number
+  zoomDifference?: number
 }
 
 export class VectorTileRenderer<
@@ -38,7 +39,11 @@ export class VectorTileRenderer<
 
     const source = new ZxySource(options.url, false)
     const cache = new TileCache(source, 1024)
-    this.view = new View(cache, options.maximumZoom ?? 24, 2)
+    this.view = new View(
+      cache,
+      options.maximumZoom ?? 24,
+      options.zoomDifference ?? 2
+    )
 
     const labelersCanvasContext = options.labelersCanvas.getContext('2d')
     invariant(labelersCanvasContext != null)
@@ -67,10 +72,6 @@ export class VectorTileRenderer<
       canvas.width / this.internalSize,
       canvas.height / this.internalSize
     )
-    context.save()
-    context.fillStyle = '#f7f7f7'
-    context.fillRect(0, 0, this.internalSize, this.internalSize)
-    context.restore()
 
     const bbox = {
       minX: this.internalSize * coords.x - this.paddingSize,

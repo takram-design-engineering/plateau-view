@@ -6,7 +6,9 @@ import {
 } from '@cesium/engine'
 import { LRUCache } from 'lru-cache'
 import { type Zxy } from 'protomaps'
+import { Transfer } from 'threads'
 import invariant from 'tiny-invariant'
+import { type JsonObject } from 'type-fest'
 
 import { ImageryProviderBase } from '@plateau/cesium'
 
@@ -15,10 +17,11 @@ import { getWorkerPool } from './WorkerPool'
 
 export interface VectorImageryProviderOptions {
   url: string
-  styleUrl?: string
+  style?: string | JsonObject
   minimumZoom?: number
   maximumZoom?: number
   maximumNativeZoom?: number
+  zoomDifference?: number
   pixelRatio?: number
   rectangle?: Rectangle
   credit?: Credit | string
@@ -39,8 +42,9 @@ export class VectorImageryProvider extends ImageryProviderBase {
     this.pixelRatio = options.pixelRatio ?? 1
     this.tileRendererParams = {
       url: options.url,
-      styleUrl: options.styleUrl,
-      maximumZoom: options.maximumNativeZoom ?? this.maximumLevel
+      style: options.style,
+      maximumZoom: options.maximumNativeZoom ?? this.maximumLevel,
+      zoomDifference: options.zoomDifference
     }
 
     this.rectangle =
@@ -76,26 +80,26 @@ export class VectorImageryProvider extends ImageryProviderBase {
     const canvas = document.createElement('canvas')
     canvas.width = this.tileWidth * this.pixelRatio
     canvas.height = this.tileHeight * this.pixelRatio
+    const offscreen = canvas.transferControlToOffscreen()
     try {
-      await this.renderTile({ x, y, z: level }, canvas)
+      await this.renderTile({ x, y, z: level }, offscreen)
     } catch (error) {}
     this.tileCache?.set(cacheKey, canvas)
     return canvas
   }
 
-  async renderTile(coords: Zxy, canvas: HTMLCanvasElement): Promise<void> {
-    const result = await getWorkerPool().queue(
-      async task =>
-        await task.renderTile({
-          ...this.tileRendererParams,
-          coords,
-          canvasWidth: canvas.width,
-          canvasHeight: canvas.height
-        })
-    )
-    if (result.image != null) {
-      const renderer = canvas.getContext('bitmaprenderer')
-      renderer?.transferFromImageBitmap(result.image)
-    }
+  async renderTile(coords: Zxy, canvas: OffscreenCanvas): Promise<void> {
+    await getWorkerPool().queue(async task => {
+      await task.renderTile(
+        Transfer(
+          {
+            ...this.tileRendererParams,
+            coords,
+            canvas
+          },
+          [canvas]
+        )
+      )
+    })
   }
 }

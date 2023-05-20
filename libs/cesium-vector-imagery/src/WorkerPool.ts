@@ -13,7 +13,11 @@ export function getWorkerPool(): WorkerPool {
         await spawn<VectorTileRenderWorker>(
           new Worker(new URL('./VectorTileRenderWorker.ts', import.meta.url))
         ),
-      4 // TODO: Make configurable
+      // TODO: Make configurable
+      // Increasing this up to navigator.hardwareConcurrency technically speed
+      // up the rendering, but that affects the performance of the main thread
+      // and feels slower.
+      1
     )
   }
   return workerPool
