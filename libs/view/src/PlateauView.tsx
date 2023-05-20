@@ -6,7 +6,7 @@ import {
   type Cartesian2,
   type ScreenSpaceCameraController
 } from '@cesium/engine'
-import { List, Stack, styled, useTheme, type ListProps } from '@mui/material'
+import { List, styled, useTheme, type ListProps } from '@mui/material'
 import { useAtomValue, useSetAtom } from 'jotai'
 import {
   Suspense,
@@ -58,7 +58,6 @@ import { DeveloperPanels } from './developer/DeveloperPanels'
 import { useReverseGeocoder } from './hooks/useReverseGeocoder'
 import { LocationContextBar } from './panels/LocationContextBar'
 import { MainPanel } from './panels/MainPanel'
-import { SelectionPanel } from './panels/SelectionPanel'
 import { Toolbar } from './panels/Toolbar'
 import { addressAtom } from './states/address'
 import {
@@ -323,18 +322,15 @@ export const PlateauView: FC<PlateauViewProps> = () => {
         <SyncColorMode />
         <AppLayout
           main={
-            <Stack spacing={1}>
-              <MainPanel>
-                <LayerList
-                  component={LayerListComponent}
-                  itemComponent={ViewLayerListItem}
-                  unmountWhenEmpty
-                />
-              </MainPanel>
-            </Stack>
+            <MainPanel>
+              <LayerList
+                component={LayerListComponent}
+                itemComponent={ViewLayerListItem}
+                unmountWhenEmpty
+              />
+            </MainPanel>
           }
           context={<LocationContextBar />}
-          aside={<SelectionPanel />}
           bottomLeft={<Toolbar />}
           developer={<DeveloperPanels />}
         />
