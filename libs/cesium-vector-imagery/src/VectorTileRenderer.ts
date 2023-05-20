@@ -5,6 +5,7 @@ import {
   View,
   ZxySource,
   painter,
+  type Index,
   type LabelRule,
   type Rule as PaintRule,
   type PreparedTile,
@@ -39,8 +40,8 @@ export interface VectorTileRendererOptions<
 > {
   url: string
   paintRules: readonly PaintRule[]
-  labelRules: readonly LabelRule[]
-  labelersCanvas: Canvas
+  labelRules?: readonly LabelRule[]
+  labelersCanvas?: Canvas
   maximumZoom?: number
   zoomDifference?: number
 }
@@ -49,16 +50,18 @@ export class VectorTileRenderer<
   Canvas extends HTMLCanvasElement | OffscreenCanvas
 > {
   readonly paintRules: PaintRule[]
-  readonly labelRules: LabelRule[]
+  readonly labelRules: LabelRule[] | undefined
 
-  private readonly labelers: Labelers
+  private readonly labelers: Labelers | undefined
   private readonly view: View
   private readonly internalSize = 256
   private readonly paddingSize = 16
 
   constructor(options: VectorTileRendererOptions<Canvas>) {
     this.paintRules = [...options.paintRules]
-    this.labelRules = [...options.labelRules]
+    if (options.labelRules != null && options.labelRules.length > 0) {
+      this.labelRules = [...options.labelRules]
+    }
 
     const source = new ZxySource(options.url, false)
     const cache = new TileCache(source, 1024)
@@ -68,32 +71,39 @@ export class VectorTileRenderer<
       options.zoomDifference ?? 2
     )
 
-    const labelersCanvasContext = options.labelersCanvas.getContext('2d')
-    invariant(labelersCanvasContext != null)
-    this.labelers = new Labelers(
-      // Pretend OffscreenCanvasRenderingContext2D to be
-      // CanvasRenderingContext2D.
-      labelersCanvasContext as CanvasRenderingContext2D,
-      this.labelRules,
-      16, // maxLabeledTiles
-      () => {}
-    )
+    if (this.labelRules != null) {
+      invariant(options.labelersCanvas != null)
+      const labelersCanvasContext = options.labelersCanvas.getContext('2d')
+      invariant(labelersCanvasContext != null)
+      this.labelers = new Labelers(
+        // Pretend OffscreenCanvasRenderingContext2D to be
+        // CanvasRenderingContext2D.
+        labelersCanvasContext as CanvasRenderingContext2D,
+        this.labelRules,
+        16, // maxLabeledTiles
+        () => {}
+      )
+    }
+  }
+
+  clearCache(): void {
+    this.view.tileCache.cache.clear()
   }
 
   async renderTile(coords: Zxy, canvas: Canvas): Promise<void> {
     const preparedTile = await this.view.getDisplayTile(coords)
-
     // See the discussion above.
     correctAttributesProp(preparedTile)
-
     const preparedTileMap = new Map([['', [preparedTile]]])
-    this.labelers.add(coords.z, preparedTileMap)
-    const labelData = this.labelers.getIndex(preparedTile.z)
-    if (labelData == null) {
-      return
+
+    let labelData: Index | null = null
+    if (this.labelers != null) {
+      this.labelers.add(coords.z, preparedTileMap)
+      labelData = this.labelers.getIndex(preparedTile.z) ?? null
     }
 
-    const context = canvas.getContext('2d')
+    // Pretend OffscreenCanvasRenderingContext2D to be CanvasRenderingContext2D.
+    const context = canvas.getContext('2d') as CanvasRenderingContext2D
     invariant(context != null)
     context.scale(
       canvas.width / this.internalSize,
@@ -111,9 +121,7 @@ export class VectorTileRenderer<
       this.internalSize * coords.y
     )
     painter(
-      // Pretend OffscreenCanvasRenderingContext2D to be
-      // CanvasRenderingContext2D.
-      context as CanvasRenderingContext2D,
+      context,
       coords.z,
       preparedTileMap,
       labelData,

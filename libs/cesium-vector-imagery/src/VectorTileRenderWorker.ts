@@ -31,6 +31,7 @@ function createTileRenderKey({
   maximumZoom
 }: TileRendererParams): string {
   return `${url}:${
+    // TODO: Maybe require style ID in the parameters?
     typeof style === 'string' ? style : JSON.stringify(style)
   }:${maximumZoom}`
 }
@@ -52,13 +53,14 @@ async function getTileRenderer(
       paintRules = []
       labelRules = []
     }
-    const labelersCanvas = new OffscreenCanvas(1, 1)
     tileRenderer = new VectorTileRenderer({
       ...params,
       url,
       paintRules,
-      labelRules,
-      labelersCanvas
+      ...(labelRules.length > 0 && {
+        labelRules,
+        labelersCanvas: new OffscreenCanvas(1, 1)
+      })
     })
     tileRenderers.set(key, tileRenderer)
   }
@@ -75,6 +77,11 @@ expose({
     invariant(context != null)
     const tileRenderer = await getTileRenderer(tileRendererParams)
     await tileRenderer.renderTile(coords, canvas)
+
+    // Clear cache at the end of every rendering because the cache takes too
+    // much heap memory.
+    // TODO: Add some threshold.
+    tileRenderer.clearCache()
 
     // Although I could not find the documentation, it appears that we have to
     // wait for the next animation frame for the canvas to finish rendering.
