@@ -2,8 +2,9 @@ import { Field, ObjectType } from '@nestjs/graphql'
 
 import { isNotNullish } from '@takram/plateau-type-helpers'
 
+import { cleanseDatasetFormat } from '../helpers/cleanseDatasetFormat'
+import { cleanseDatasetName } from '../helpers/cleanseDatasetName'
 import { PlateauDataset, PlateauDatasetDatum } from './PlateauDataset'
-import { cleansePlateauDatasetFormat } from './PlateauDatasetFormat'
 
 @ObjectType({
   implements: [PlateauDatasetDatum]
@@ -28,18 +29,18 @@ export class PlateauDefaultDataset extends PlateauDataset {
         {
           format: this.catalog.data.format,
           url: this.catalog.data.url,
-          name: this.catalog.data.name
+          name: cleanseDatasetName(this.catalog.data.name, this.catalog)
         }
       ]
     }
     return this.catalog.data.config.data
       .map(data => {
-        const format = cleansePlateauDatasetFormat(data.type)
+        const format = cleanseDatasetFormat(data.type)
         return format != null
           ? {
               format,
               url: data.url,
-              name: data.name
+              name: cleanseDatasetName(data.name, this.catalog)
             }
           : undefined
       })
