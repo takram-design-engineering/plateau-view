@@ -3,13 +3,24 @@ import { atomWithReset, type RESET } from 'jotai/utils'
 
 import { AmbientOcclusionOutputType } from '@takram/plateau-cesium-hbao'
 
+import { environmentTypeAtom } from './app'
+
 export type AntialiasType = 'none' | 'fxaa' | 'msaa2x' | 'msaa4x' | 'msaa8x'
 
 export const nativeResolutionEnabledAtom = atomWithReset(false)
 export const explicitRenderingEnabledAtom = atomWithReset(true)
 export const antialiasTypeAtom = atomWithReset<AntialiasType>('msaa4x')
 
-export const shadowMapEnabledAtom = atomWithReset(true)
+const shadowMapEnabledPrimitiveAtom = atomWithReset(true)
+export const shadowMapEnabledAtom = atom(
+  get =>
+    get(environmentTypeAtom) === 'google-photorealistic'
+      ? false
+      : get(shadowMapEnabledPrimitiveAtom),
+  (get, set, value: SetStateAction<boolean> | typeof RESET) => {
+    set(shadowMapEnabledPrimitiveAtom, value)
+  }
+)
 export const shadowMapSizeAtom = atomWithReset(4096)
 export const shadowMapSoftShadowsAtom = atomWithReset(true)
 
