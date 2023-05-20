@@ -15,6 +15,8 @@ export type LayerType = keyof LayerModelOverrides
 
 export type LayerProps<T extends LayerType = LayerType> = {
   [K in keyof LayerModelOverrides[T]]: LayerModelOverrides[T][K]
+} & {
+  index: number
 }
 
 export type LayerComponents = {

@@ -98,6 +98,7 @@ export const LayerList = forwardRef<HTMLDivElement, LayerListProps>(
               // disagree with it.
               <LayerListItem
                 key={layerIds[index]}
+                index={index}
                 layerAtom={layerAtom}
                 itemComponent={itemComponent}
               />
