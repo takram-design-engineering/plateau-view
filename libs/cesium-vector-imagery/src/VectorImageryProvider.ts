@@ -13,7 +13,7 @@ import { type JsonObject } from 'type-fest'
 import { ImageryProviderBase } from '@plateau/cesium'
 
 import { type TileRendererParams } from './VectorTileRenderWorker'
-import { getWorkerPool } from './WorkerPool'
+import { canQueue, queue } from './WorkerPool'
 
 export interface VectorImageryProviderOptions {
   url: string
@@ -30,10 +30,14 @@ export interface VectorImageryProviderOptions {
 }
 
 export class VectorImageryProvider extends ImageryProviderBase {
+  static maximumTasks = 50
+  static maximumTasksPerImagery = 6
+
   readonly pixelRatio: number
 
   private readonly tileRendererParams: TileRendererParams
   private readonly tileCache: LRUCache<string, HTMLCanvasElement> | undefined
+  private taskCount = 0
 
   constructor(options: VectorImageryProviderOptions) {
     super()
@@ -65,32 +69,53 @@ export class VectorImageryProvider extends ImageryProviderBase {
     }
   }
 
-  override async requestImage(
+  override requestImage(
     x: number,
     y: number,
     level: number,
     request?: Request
-  ): Promise<ImageryTypes> {
+  ): Promise<ImageryTypes> | undefined {
+    if (
+      this.taskCount >= VectorImageryProvider.maximumTasksPerImagery ||
+      !canQueue(VectorImageryProvider.maximumTasks)
+    ) {
+      return
+    }
     const cacheKey = `${x}/${y}/${level}`
     if (this.tileCache?.has(cacheKey) === true) {
       const canvas = this.tileCache.get(cacheKey)
       invariant(canvas != null)
-      return canvas
+      return Promise.resolve(canvas)
     }
     const canvas = document.createElement('canvas')
     canvas.width = this.tileWidth * this.pixelRatio
     canvas.height = this.tileHeight * this.pixelRatio
     const offscreen = canvas.transferControlToOffscreen()
-    try {
-      await this.renderTile({ x, y, z: level }, offscreen)
-    } catch (error) {}
-    this.tileCache?.set(cacheKey, canvas)
-    return canvas
+
+    ++this.taskCount
+    return this.renderTile({ x, y, z: level }, offscreen)
+      .then(() => {
+        this.tileCache?.set(cacheKey, canvas)
+        return canvas
+      })
+      .catch(error => {
+        if (
+          error instanceof Error &&
+          error.message.startsWith('Unimplemented type')
+        ) {
+          // Ignore "unimplemented type" errors.
+          return canvas
+        }
+        throw error
+      })
+      .finally(() => {
+        --this.taskCount
+      })
   }
 
   async renderTile(coords: Zxy, canvas: OffscreenCanvas): Promise<void> {
     // TODO: Prioritize tiles in the current frustum.
-    await getWorkerPool().queue(async task => {
+    await queue(async task => {
       await task.renderTile(
         Transfer(
           {
