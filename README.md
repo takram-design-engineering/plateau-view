@@ -15,3 +15,41 @@ Nonetheless, it should be emphasized that the shift to a CMS-based system mainly
 This project aims to apply Takram’s design and development expertise to improve and enhance the user experience of PLATEAU VIEW. Furthermore, this open-source project allows everyone to access the design and technical specifics involved.
 
 The design and development process started on April 10, 2023, with our contribution to the 2023 PLATEAU project scheduled to conclude by September 10, 2023.
+
+## Structure
+
+This repository consists of the following apps and libraries. The README for each will be added later.
+
+### Apps
+
+| Name                                    | Description                                  |
+| --------------------------------------- | -------------------------------------------- |
+| [api](libs/api)                         | NestJS API server                            |
+| [app](libs/app)                         | Next.js frontend                             |
+| [data-converters](libs/data-converters) | Node.js script for converting data           |
+| [tiles](apps/tiles)                     | NestJS server for rendering vector map tiles |
+
+### Libraries
+
+| Name                                                  | Description                                                                                                                  |
+| ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| [cesium](libs/cesium)                                 | React components for Cesium                                                                                                  |
+| [cesium-hbao](libs/cesium-hbao)                       | Better HBAO implementation for Cesium                                                                                        |
+| [cesium-helpers](libs/cesium-helpers)                 | Helper functions for Cesium                                                                                                  |
+| [cesium-vector-imagery](libs/cesium-vector-imagery)   | [ImageryProvider](https://cesium.com/learn/cesiumjs/ref-doc/ImageryProvider.html) for drawing MVT                            |
+| [data-sources](libs/data-sources)                     | Several [DataSources](https://cesium.com/learn/cesiumjs/ref-doc/DataSource.html?classFilter=DataSource) used in PLATEAU VIEW |
+| [datasets](libs/datasets)                             | Classes and components that represents PLATEAU and other datasets                                                            |
+| [geocoder](libs/geocoder)                             | Simple geocoding functions                                                                                                   |
+| [graphql](libs/graphql)                               | Generated GraphQL types and hooks                                                                                            |
+| [layers](libs/layers)                                 | Abstract structure of layers                                                                                                 |
+| [nest-cesium](libs/nest-cesium)                       | Module for using Cesium in NestJS                                                                                            |
+| [nest-firestore](libs/nest-firestore)                 | Module for using Google Firestore in NestJS                                                                                  |
+| [nest-plateau](libs/nest-plateau)                     | NestJS module for PLATEAU datasets                                                                                           |
+| [nest-vector-tile](libs/nest-vector-tile)             | NestJS module for rendering map tiles                                                                                        |
+| [react-helpers](libs/react-helpers)                   | Helper functions and hooks for React                                                                                         |
+| [screen-space-selection](libs/screen-space-selection) | Screen-space selection for Cesium                                                                                            |
+| [sketch](libs/sketch)                                 | (Work in progress)                                                                                                           |
+| [type-helpers](libs/type-helpers)                     | Helper functions for TypeScript                                                                                              |
+| [ui-components](libs/ui-components)                   | UI components used inPLATEAU VIEW                                                                                            |
+| [view](libs/view)                                     | Providers for the PLATEAU VIEW                                                                                               |
+| [view-layers](libs/view-layers)                       | Implementation of [layers](libs/layers) for PLATEAU VIEW                                                                     |
