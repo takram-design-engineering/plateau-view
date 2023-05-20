@@ -80,7 +80,7 @@ export const RoadLayer: FC<LayerProps<typeof ROAD_LAYER>> = ({
       layers: metadata.sourceLayers.map(layer => ({
         'source-layer': layer.id,
         type: 'fill',
-        paint: { 'fill-color': '#000000' }
+        paint: { 'fill-color': '#808080' }
       }))
     }
   }, [metadata])

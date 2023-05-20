@@ -1,6 +1,6 @@
 import { schemeCategory10 } from 'd3'
-import { atom, useAtomValue, useSetAtom, type PrimitiveAtom } from 'jotai'
-import { useEffect, useMemo, type FC } from 'react'
+import { useAtomValue, useSetAtom } from 'jotai'
+import { useContext, useEffect, useMemo, type FC } from 'react'
 import { type SetOptional } from 'type-fest'
 
 import { useCesium } from '@takram/plateau-cesium'
@@ -11,18 +11,15 @@ import {
 } from '@takram/plateau-graphql'
 import { type LayerModel, type LayerProps } from '@takram/plateau-layers'
 
+import { ViewLayersContext } from './ViewLayersContext'
 import { createViewLayer, type ViewLayerModelParams } from './createViewLayer'
 import { useMVTMetadata } from './useMVTMetadata'
 
 export const LANDUSE_LAYER = 'LANDUSE_LAYER'
 
-export interface LanduseLayerModelParams extends ViewLayerModelParams {
-  pixelRatio?: number
-}
+export interface LanduseLayerModelParams extends ViewLayerModelParams {}
 
-export interface LanduseLayerModel extends LayerModel {
-  pixelRatioAtom: PrimitiveAtom<number | null>
-}
+export interface LanduseLayerModel extends LayerModel {}
 
 export function createLanduseLayer(
   params: LanduseLayerModelParams
@@ -30,8 +27,7 @@ export function createLanduseLayer(
   return {
     ...createViewLayer(params),
     type: LANDUSE_LAYER,
-    municipalityCode: params.municipalityCode,
-    pixelRatioAtom: atom(params.pixelRatio ?? null)
+    municipalityCode: params.municipalityCode
   }
 }
 
@@ -39,8 +35,7 @@ export function createLanduseLayer(
 export const LanduseLayer: FC<LayerProps<typeof LANDUSE_LAYER>> = ({
   municipalityCode,
   titleAtom,
-  hiddenAtom,
-  pixelRatioAtom
+  hiddenAtom
 }) => {
   const query = useMunicipalityDatasetsQuery({
     variables: {
@@ -75,7 +70,6 @@ export const LanduseLayer: FC<LayerProps<typeof LANDUSE_LAYER>> = ({
 
   const variant = query.data?.municipality?.datasets[0]?.variants[0]
   const metadata = useMVTMetadata(variant?.url)
-  const pixelRatio = useAtomValue(pixelRatioAtom) ?? 1
 
   const style = useMemo(() => {
     if (metadata == null) {
@@ -96,6 +90,9 @@ export const LanduseLayer: FC<LayerProps<typeof LANDUSE_LAYER>> = ({
       )
     }
   }, [metadata])
+
+  const { pixelRatioAtom } = useContext(ViewLayersContext)
+  const pixelRatio = useAtomValue(pixelRatioAtom)
 
   if (hidden || variant == null || metadata == null) {
     return null
