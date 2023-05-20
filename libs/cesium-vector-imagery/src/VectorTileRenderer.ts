@@ -7,9 +7,32 @@ import {
   painter,
   type LabelRule,
   type Rule as PaintRule,
+  type PreparedTile,
   type Zxy
 } from 'protomaps'
 import invariant from 'tiny-invariant'
+
+// WORKAROUND: The PLATEAU's MVTs don't use standard key-value structure but
+// JSON encoded string in "attributes" field, which makes it impossible to
+// filter features using standard MVT filters. I don't know why they did this,
+// and whether all of their MVTs are created like this.
+// Parse and expand it into the props here.
+function correctAttributesProp(preparedTile: PreparedTile): void {
+  for (const features of preparedTile.data.values()) {
+    for (const feature of features) {
+      if (
+        'attributes' in feature.props &&
+        // eslint-disable-next-line @typescript-eslint/dot-notation
+        typeof feature.props['attributes'] === 'string'
+      ) {
+        // eslint-disable-next-line @typescript-eslint/dot-notation
+        Object.assign(feature.props, JSON.parse(feature.props['attributes']))
+        // eslint-disable-next-line @typescript-eslint/dot-notation, @typescript-eslint/no-dynamic-delete
+        delete feature.props['attributes']
+      }
+    }
+  }
+}
 
 export interface VectorTileRendererOptions<
   Canvas extends HTMLCanvasElement | OffscreenCanvas
@@ -59,6 +82,10 @@ export class VectorTileRenderer<
 
   async renderTile(coords: Zxy, canvas: Canvas): Promise<void> {
     const preparedTile = await this.view.getDisplayTile(coords)
+
+    // See the discussion above.
+    correctAttributesProp(preparedTile)
+
     const preparedTileMap = new Map([['', [preparedTile]]])
     this.labelers.add(coords.z, preparedTileMap)
     const labelData = this.labelers.getIndex(preparedTile.z)
