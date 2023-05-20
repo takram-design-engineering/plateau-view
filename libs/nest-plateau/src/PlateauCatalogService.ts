@@ -94,6 +94,7 @@ export class PlateauCatalogService {
       if (params.excludeTypes != null) {
         query = query.where('data.type', 'not-in', params.excludeTypes)
       }
+      query = query.orderBy('data.type').orderBy('data.name')
       const snapshot = await query.get()
       return snapshot.docs
         .map(doc => this.createDataset(doc.data()))
@@ -119,6 +120,8 @@ export class PlateauCatalogService {
       cityQuery = cityQuery.where('data.type', 'not-in', params.excludeTypes)
       wardQuery = wardQuery.where('data.type', 'not-in', params.excludeTypes)
     }
+    cityQuery = cityQuery.orderBy('data.type').orderBy('data.name')
+    wardQuery = wardQuery.orderBy('data.type').orderBy('data.name')
     const [citySnapshot, wardSnapshot] = await Promise.all([
       cityQuery.get(),
       wardQuery.get()
