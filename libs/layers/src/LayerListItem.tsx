@@ -14,12 +14,13 @@ import { type LayerModel, type LayerProps } from './types'
 const Root = styled('div')({})
 
 export interface LayerListItemProps extends ComponentPropsWithRef<typeof Root> {
+  index: number
   layerAtom: PrimitiveAtom<LayerModel>
   itemComponent: ComponentType<LayerProps>
 }
 
 export const LayerListItem = forwardRef<HTMLDivElement, LayerListItemProps>(
-  ({ layerAtom, itemComponent, ...props }, forwardedRef) => {
+  ({ index, layerAtom, itemComponent, ...props }, forwardedRef) => {
     const layer = useAtomValue(layerAtom)
 
     const { attributes, listeners, setNodeRef, transform, transition } =
@@ -37,7 +38,7 @@ export const LayerListItem = forwardRef<HTMLDivElement, LayerListItemProps>(
         {...attributes}
         {...listeners}
       >
-        <ItemComponent layerAtom={layerAtom} />
+        <ItemComponent {...layer} index={index} />
       </Root>
     )
   }

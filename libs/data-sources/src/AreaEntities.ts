@@ -1,8 +1,11 @@
 import { type Color } from '@cesium/engine'
 import { forwardRef, useEffect } from 'react'
 
-import { useAsyncInstance, useCesium } from '@plateau/cesium'
-import { assignForwardedRef, withEphemerality } from '@plateau/react-helpers'
+import { useAsyncInstance, useCesium } from '@takram/plateau-cesium'
+import {
+  assignForwardedRef,
+  withEphemerality
+} from '@takram/plateau-react-helpers'
 
 import { AreaDataSource } from './AreaDataSource'
 

@@ -3,7 +3,7 @@ import {
   type ImageryProvider
 } from '@cesium/engine'
 
-import { withEphemerality } from '@plateau/react-helpers'
+import { withEphemerality } from '@takram/plateau-react-helpers'
 
 import { useCesium } from './useCesium'
 import { useInstance } from './useInstance'

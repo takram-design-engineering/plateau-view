@@ -8,10 +8,10 @@ import {
 import { useAtomValue, useSetAtom } from 'jotai'
 import { useCallback, useContext, type FC, type MouseEvent } from 'react'
 
-import { useCesium } from '@plateau/cesium'
-import { flyToArea } from '@plateau/data-sources'
-import type { Area } from '@plateau/geocoder'
-import { ScreenSpaceSelectionContext } from '@plateau/screen-space-selection'
+import { useCesium } from '@takram/plateau-cesium'
+import { flyToArea } from '@takram/plateau-data-sources'
+import type { Area } from '@takram/plateau-geocoder'
+import { ScreenSpaceSelectionContext } from '@takram/plateau-screen-space-selection'
 
 import { areaDataSourceAtom } from '../../states/address'
 

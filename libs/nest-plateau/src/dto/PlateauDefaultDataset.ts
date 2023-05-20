@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-import { isNotNullish } from '@plateau/type-helpers'
+import { isNotNullish } from '@takram/plateau-type-helpers'
 
 import { PlateauDataset, PlateauDatasetVariant } from './PlateauDataset'
 import { cleanPlateauDatasetFormat } from './PlateauDatasetFormat'

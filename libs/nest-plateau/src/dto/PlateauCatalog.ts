@@ -4,7 +4,7 @@ import {
 } from '@google-cloud/firestore'
 import { instanceToPlain, plainToInstance } from 'class-transformer'
 
-import { FirestoreCollection } from '@plateau/nest-firestore'
+import { FirestoreCollection } from '@takram/plateau-nest-firestore'
 
 import { type PlateauCatalog0 } from '../schemas/catalog'
 

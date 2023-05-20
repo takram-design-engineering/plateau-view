@@ -2,8 +2,11 @@ import { Cesium3DTileset, ShadowMode } from '@cesium/engine'
 import { useAtomValue } from 'jotai'
 import { useContext, type FC } from 'react'
 
-import { useAsyncInstance, useCesium } from '@plateau/cesium'
-import { withDeferredProps, withEphemerality } from '@plateau/react-helpers'
+import { useAsyncInstance, useCesium } from '@takram/plateau-cesium'
+import {
+  withDeferredProps,
+  withEphemerality
+} from '@takram/plateau-react-helpers'
 
 import { LambertDiffuseShader } from './LambertDiffuseShader'
 import { PlateauDatasetsContext } from './PlateauDatasetsContext'

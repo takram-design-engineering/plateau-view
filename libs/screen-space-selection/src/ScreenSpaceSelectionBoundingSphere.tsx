@@ -2,7 +2,7 @@ import { Cartesian3, Color } from '@cesium/engine'
 import { useAtomValue } from 'jotai'
 import { useContext, useMemo, type FC } from 'react'
 
-import { Entity, type EntityProps } from '@plateau/cesium'
+import { Entity, type EntityProps } from '@takram/plateau-cesium'
 
 import { ScreenSpaceSelectionContext } from './ScreenSpaceSelectionContext'
 

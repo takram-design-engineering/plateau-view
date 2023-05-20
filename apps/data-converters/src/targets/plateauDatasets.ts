@@ -50,8 +50,6 @@ export async function main(): Promise<void> {
       cwd
     })
   }
-  console.log(data)
-
   await writeFile(path.resolve('./data/plateau.json'), JSON.stringify(data))
   console.log('Done')
 }

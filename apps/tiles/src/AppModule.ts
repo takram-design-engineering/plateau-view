@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common'
 import path from 'path'
 
-import { VectorTileModule } from '@plateau/nest-vector-tile'
+import { VectorTileModule } from '@takram/plateau-nest-vector-tile'
 
 import { AppController } from './AppController'
 

@@ -1,35 +1,39 @@
 import { type LabelRule, type Rule as PaintRule, type Zxy } from 'protomaps'
 import { type TransferDescriptor } from 'threads'
-import { Transfer, expose } from 'threads/worker'
+import { expose } from 'threads/worker'
 import invariant from 'tiny-invariant'
+import { type JsonObject } from 'type-fest'
 
-import { VectorTileRenderer } from './VectorTileRenderer'
+import {
+  VectorTileRenderer,
+  type VectorTileRendererOptions
+} from './VectorTileRenderer'
 import { createStyleFromJSON } from './createStyleFromJSON'
 
-export interface TileRendererParams {
-  url: string
-  styleUrl?: string
-  maximumZoom?: number
+export interface TileRendererParams
+  extends Omit<
+    VectorTileRendererOptions<OffscreenCanvas>,
+    'paintRules' | 'labelRules' | 'labelersCanvas'
+  > {
+  style?: string | JsonObject
 }
 
 export interface RenderTileParams extends TileRendererParams {
   coords: Zxy
-  canvasWidth: number
-  canvasHeight: number
-}
-
-export interface RenderTileResult {
-  image?: ImageBitmap
+  canvas: OffscreenCanvas
 }
 
 const tileRenderers = new Map<string, VectorTileRenderer<OffscreenCanvas>>()
 
 function createTileRenderKey({
   url,
-  styleUrl,
+  style,
   maximumZoom
 }: TileRendererParams): string {
-  return `${url}:${styleUrl}:${maximumZoom}`
+  return `${url}:${
+    // TODO: Maybe require style ID in the parameters?
+    typeof style === 'string' ? style : JSON.stringify(style)
+  }:${maximumZoom}`
 }
 
 async function getTileRenderer(
@@ -38,23 +42,25 @@ async function getTileRenderer(
   const key = createTileRenderKey(params)
   let tileRenderer = tileRenderers.get(key)
   if (tileRenderer == null) {
-    const { url, styleUrl, maximumZoom } = params
+    const { url, style } = params
     let paintRules: PaintRule[]
     let labelRules: LabelRule[]
-    if (styleUrl != null) {
-      const style = await (await fetch(styleUrl)).json()
-      ;({ paintRules, labelRules } = createStyleFromJSON(style))
+    if (style != null) {
+      ;({ paintRules, labelRules } = createStyleFromJSON(
+        typeof style === 'string' ? await (await fetch(style)).json() : style
+      ))
     } else {
       paintRules = []
       labelRules = []
     }
-    const labelersCanvas = new OffscreenCanvas(1, 1)
     tileRenderer = new VectorTileRenderer({
+      ...params,
       url,
-      maximumZoom,
       paintRules,
-      labelRules,
-      labelersCanvas
+      ...(labelRules.length > 0 && {
+        labelRules,
+        labelersCanvas: new OffscreenCanvas(1, 1)
+      })
     })
     tileRenderers.set(key, tileRenderer)
   }
@@ -64,20 +70,27 @@ async function getTileRenderer(
 expose({
   renderTile: async ({
     coords,
-    canvasWidth,
-    canvasHeight,
+    canvas,
     ...tileRendererParams
-  }: RenderTileParams): Promise<TransferDescriptor<RenderTileResult>> => {
-    const canvas = new OffscreenCanvas(canvasWidth, canvasHeight)
+  }: RenderTileParams): Promise<void> => {
     const context = canvas.getContext('2d')
     invariant(context != null)
     const tileRenderer = await getTileRenderer(tileRendererParams)
     await tileRenderer.renderTile(coords, canvas)
-    const image = canvas.transferToImageBitmap()
-    return Transfer({ image }, [image])
+
+    // Clear cache at the end of every rendering because the cache takes too
+    // much heap memory.
+    // TODO: Add some threshold.
+    tileRenderer.clearCache()
+
+    // Although I could not find the documentation, it appears that we have to
+    // wait for the next animation frame for the canvas to finish rendering.
+    await new Promise(resolve => {
+      requestAnimationFrame(resolve)
+    })
   }
 })
 
 export type VectorTileRenderWorker = object & {
-  renderTile: (params: RenderTileParams) => RenderTileResult
+  renderTile: (params: TransferDescriptor<RenderTileParams>) => void
 }

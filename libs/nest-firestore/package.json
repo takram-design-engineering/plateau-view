@@ -1,5 +1,5 @@
 {
-  "name": "@plateau/nest-firestore",
+  "name": "@takram/plateau-nest-firestore",
   "version": "0.0.0",
   "type": "commonjs"
 }

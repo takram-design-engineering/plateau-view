@@ -10,7 +10,7 @@
   "tabWidth": 2,
   "trailingComma": "none",
   "useTabs": false,
-  "importOrder": ["^(@plateau)(/.*|$)", "^\\.", "^.+\\.[^/.]+$"],
+  "importOrder": ["^(@takram)(/.*|$)", "^\\.", "^.+\\.[^/.]+$"],
   "importOrderSeparation": true,
   "importOrderSortSpecifiers": true,
   "importOrderParserPlugins": [

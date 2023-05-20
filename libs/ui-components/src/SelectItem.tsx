@@ -21,7 +21,7 @@ const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
   [`& .${listItemIconClasses.root}`]: {
     marginRight: theme.spacing(0.5),
     [`& .${svgIconClasses.root}`]: {
-      fontSize: 18
+      fontSize: 16
     }
   }
 }))

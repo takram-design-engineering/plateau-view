@@ -2,7 +2,7 @@ import { CesiumTerrainProvider, IonResource } from '@cesium/engine'
 import { useEffect, type FC } from 'react'
 import invariant from 'tiny-invariant'
 
-import { useCesium, useSuspendInstance } from '@plateau/cesium'
+import { useCesium, useSuspendInstance } from '@takram/plateau-cesium'
 
 export interface PlateauTerrainProps {
   requestVertexNormals?: boolean

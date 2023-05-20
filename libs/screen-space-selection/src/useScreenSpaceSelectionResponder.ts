@@ -1,8 +1,8 @@
 import { useSetAtom } from 'jotai'
 import { useContext, useEffect, useRef } from 'react'
 
-import { useCesium } from '@plateau/cesium'
-import { useConstant } from '@plateau/react-helpers'
+import { useCesium } from '@takram/plateau-cesium'
+import { useConstant } from '@takram/plateau-react-helpers'
 
 import {
   ScreenSpaceSelectionContext,

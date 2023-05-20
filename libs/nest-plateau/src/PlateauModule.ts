@@ -3,7 +3,7 @@ import { Global, Module } from '@nestjs/common'
 import { readFile } from 'fs/promises'
 import path from 'path'
 
-import { FirestoreModule } from '@plateau/nest-firestore'
+import { FirestoreModule } from '@takram/plateau-nest-firestore'
 
 import { PlateauCatalogService } from './PlateauCatalogService'
 import { PlateauMunicipalityService } from './PlateauMunicipalityService'

@@ -20,7 +20,7 @@ import {
   PlateauSymbol,
   SelectItem,
   Shortcut
-} from '@plateau/ui-components'
+} from '@takram/plateau-ui-components'
 
 import { platformAtom, showDeveloperPanelsAtom } from '../../states/app'
 

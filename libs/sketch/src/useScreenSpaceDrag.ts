@@ -5,8 +5,8 @@ import {
   useCesium,
   useScreenSpaceEvent,
   useScreenSpaceEventHandler
-} from '@plateau/cesium'
-import { useConstant } from '@plateau/react-helpers'
+} from '@takram/plateau-cesium'
+import { useConstant } from '@takram/plateau-react-helpers'
 
 import { pickGround } from './pickGround'
 

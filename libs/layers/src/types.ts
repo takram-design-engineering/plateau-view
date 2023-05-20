@@ -1,11 +1,11 @@
-import { type PrimitiveAtom } from 'jotai'
 import { type ComponentType } from 'react'
 
 export interface LayerModel {
-  type: LayerType
   id: string
+  type: LayerType
 }
 
+// Must be an interface to be override.
 // eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
 export interface LayerModelOverrides {
   [type: string]: LayerModel
@@ -13,12 +13,12 @@ export interface LayerModelOverrides {
 
 export type LayerType = keyof LayerModelOverrides
 
-export type AnyLayerModel = LayerModelOverrides[LayerType]
-
-export interface LayerProps<T extends LayerType = LayerType> {
-  layerAtom: PrimitiveAtom<LayerModelOverrides[T]>
+export type LayerProps<T extends LayerType = LayerType> = {
+  [K in keyof LayerModelOverrides[T]]: LayerModelOverrides[T][K]
+} & {
+  index: number
 }
 
 export type LayerComponents = {
-  [T in LayerType]: ComponentType<LayerProps<any>> // TODO: Refine type
+  [T in keyof LayerModelOverrides]: ComponentType<LayerProps<T>>
 }

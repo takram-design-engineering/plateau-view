@@ -1,6 +1,6 @@
 import { Injectable, Logger, type OnApplicationBootstrap } from '@nestjs/common'
 
-import { PlateauCatalogService } from '@plateau/nest-plateau'
+import { PlateauCatalogService } from '@takram/plateau-nest-plateau'
 
 @Injectable()
 export class AppService implements OnApplicationBootstrap {

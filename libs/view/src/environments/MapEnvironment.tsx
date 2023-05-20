@@ -2,7 +2,7 @@ import { Cartesian3, Color } from '@cesium/engine'
 import { useAtomValue } from 'jotai'
 import { type FC } from 'react'
 
-import { Environment, type EnvironmentProps } from '@plateau/cesium'
+import { Environment, type EnvironmentProps } from '@takram/plateau-cesium'
 
 import { enableTerrainLightingAtom, type ColorMode } from '../states/app'
 

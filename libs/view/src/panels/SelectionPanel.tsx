@@ -2,8 +2,8 @@ import { Stack, Typography, styled } from '@mui/material'
 import { useAtomValue } from 'jotai'
 import { useContext, type FC } from 'react'
 
-import { ScreenSpaceSelectionContext } from '@plateau/screen-space-selection'
-import { FloatingPanel } from '@plateau/ui-components'
+import { ScreenSpaceSelectionContext } from '@takram/plateau-screen-space-selection'
+import { FloatingPanel } from '@takram/plateau-ui-components'
 
 const Root = styled(FloatingPanel)({
   width: 360

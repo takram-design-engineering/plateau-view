@@ -3,8 +3,8 @@ import { useTheme } from '@mui/material'
 import { useAtom, useAtomValue } from 'jotai'
 import { useMemo, type FC } from 'react'
 
-import { AreaEntities, type AreaEntity } from '@plateau/data-sources'
-import { useScreenSpaceSelectionResponder } from '@plateau/screen-space-selection'
+import { AreaEntities, type AreaEntity } from '@takram/plateau-data-sources'
+import { useScreenSpaceSelectionResponder } from '@takram/plateau-screen-space-selection'
 
 import { areaDataSourceAtom, prefectureAtom } from '../states/address'
 import { showAreaEntitiesAtom } from '../states/app'

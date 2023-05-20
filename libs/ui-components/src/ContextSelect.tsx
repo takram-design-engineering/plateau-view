@@ -35,6 +35,8 @@ const Badge = styled('div')(({ theme }) => ({
   justifyContent: 'center',
   width: 18,
   height: 18,
+  marginRight: -1,
+  marginLeft: -1,
   borderRadius: '999px',
   color: theme.palette.getContrastText(theme.palette.primary.dark),
   backgroundColor: theme.palette.primary.light,
@@ -43,7 +45,7 @@ const Badge = styled('div')(({ theme }) => ({
 }))
 
 const StyledAddIcon = styled(AddIcon)({
-  fontSize: 18
+  fontSize: 16
 })
 
 export interface ContextSelectProps extends SelectProps<string[]> {

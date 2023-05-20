@@ -13,7 +13,10 @@ import { mergeRefs } from 'react-merge-refs'
 import { useIsomorphicLayoutEffect } from 'react-use'
 import invariant from 'tiny-invariant'
 
-import { assignForwardedRef, assignPropertyProps } from '@plateau/react-helpers'
+import {
+  assignForwardedRef,
+  assignPropertyProps
+} from '@takram/plateau-react-helpers'
 
 import { CesiumContext } from './CesiumContext'
 import { CesiumRoot, type CesiumRootOptions } from './CesiumRoot'

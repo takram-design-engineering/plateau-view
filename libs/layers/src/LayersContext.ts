@@ -5,19 +5,19 @@ import { nanoid } from 'nanoid'
 import { createContext } from 'react'
 import { type SetOptional } from 'type-fest'
 
-import { type AnyLayerModel } from './types'
+import { type LayerModel } from './types'
 
-type AnyLayerPredicate = (layer: AnyLayerModel, get: Getter) => boolean
+type AnyLayerPredicate = (layer: LayerModel, get: Getter) => boolean
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export function createContextValue() {
-  const layersAtom = atomWithReset<AnyLayerModel[]>([])
+  const layersAtom = atomWithReset<LayerModel[]>([])
   const layerAtomsAtom = splitAtom(layersAtom)
   const layerIdsAtom = atom(get => get(layersAtom).map(({ id }) => id))
 
   const addAtom = atom(
     null,
-    (get, set, layer: SetOptional<AnyLayerModel, 'id'>) => {
+    (get, set, layer: SetOptional<LayerModel, 'id'>) => {
       const id = layer.id ?? nanoid()
       if (get(layerIdsAtom).includes(id)) {
         console.warn(`Layer already exits: ${id}`)
@@ -45,32 +45,38 @@ export function createContextValue() {
 
   const findAtom = atom(
     null,
-    (get, set, predicate: Partial<AnyLayerModel> | AnyLayerPredicate) => {
+    (
+      get,
+      set,
+      layers: readonly LayerModel[],
+      predicate: Partial<LayerModel> | AnyLayerPredicate
+    ) => {
       if (typeof predicate === 'function') {
-        return get(layersAtom).find(layerAtom => predicate(layerAtom, get))
+        return layers.find(layerAtom => predicate(layerAtom, get))
       }
       const keys = Object.entries(predicate)
         .filter(([, value]) => value !== undefined)
         .map(([key]) => key)
-      const layer = get(layersAtom).find(layer =>
-        isEqual(pick(layer, keys), predicate)
-      )
+      const layer = layers.find(layer => isEqual(pick(layer, keys), predicate))
       return layer != null ? layer : undefined
     }
   )
 
   const filterAtom = atom(
     null,
-    (get, set, predicate: Partial<AnyLayerModel> | AnyLayerPredicate) => {
+    (
+      get,
+      set,
+      layers: readonly LayerModel[],
+      predicate: Partial<LayerModel> | AnyLayerPredicate
+    ) => {
       if (typeof predicate === 'function') {
-        return get(layersAtom).filter(layer => predicate(layer, get))
+        return layers.filter(layer => predicate(layer, get))
       }
       const keys = Object.entries(predicate)
         .filter(([, value]) => value !== undefined)
         .map(([key]) => key)
-      return get(layersAtom).filter(layer =>
-        isEqual(pick(layer, keys), predicate)
-      )
+      return layers.filter(layer => isEqual(pick(layer, keys), predicate))
     }
   )
 

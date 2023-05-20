@@ -1,7 +1,7 @@
 import { atom, type SetStateAction } from 'jotai'
 
-import { type AreaDataSource } from '@plateau/data-sources'
-import type { Area, PrefectureArea } from '@plateau/geocoder'
+import { type AreaDataSource } from '@takram/plateau-data-sources'
+import type { Area, PrefectureArea } from '@takram/plateau-geocoder'
 
 import { type ReverseGeocoderResult } from '../hooks/useReverseGeocoder'
 

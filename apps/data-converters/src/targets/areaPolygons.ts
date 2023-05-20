@@ -11,7 +11,7 @@ import invariant from 'tiny-invariant'
 import { merge, mergeArcs } from 'topojson-client'
 import type TopoJSON from 'topojson-specification'
 
-import { isNotNullish } from '@plateau/type-helpers'
+import { isNotNullish } from '@takram/plateau-type-helpers'
 
 import { type Municipalities, type Prefectures } from './areaCodes'
 
@@ -155,7 +155,7 @@ async function convertToTopoJSON(params: {
   const cartesianScratch = new Cartesian3()
   const cartographicScratch = new Cartographic()
 
-  // TODO: We can't import @plateau/datasets right now.
+  // TODO: We can't import @takram/plateau-datasets right now.
   // See libs/datasets/src/JapanSeaLevelEllipsoid.ts
   const a = 6378137
   const f = 1 / 298.257222101

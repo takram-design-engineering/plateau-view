@@ -9,8 +9,8 @@ import axios from 'axios'
 import { validate, type Schema } from 'jtd'
 import { type Constructor } from 'type-fest'
 
-import { FIRESTORE } from '@plateau/nest-firestore'
-import { isNotNullish } from '@plateau/type-helpers'
+import { FIRESTORE } from '@takram/plateau-nest-firestore'
+import { isNotNullish } from '@takram/plateau-type-helpers'
 
 import { PlateauStorageService } from './PlateauStorageService'
 import schema from './assets/plateau-2022.jtd.json'

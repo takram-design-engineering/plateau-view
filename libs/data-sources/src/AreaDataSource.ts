@@ -14,8 +14,8 @@ import { feature } from 'topojson-client'
 import type TopoJSON from 'topojson-specification'
 import { type SetRequired } from 'type-fest'
 
-import { convertPolygonToHierarchyArray } from '@plateau/cesium-helpers'
-import { JapanSeaLevelEllipsoid } from '@plateau/datasets'
+import { convertPolygonToHierarchyArray } from '@takram/plateau-cesium-helpers'
+import { JapanSeaLevelEllipsoid } from '@takram/plateau-datasets'
 
 export interface AreaProperties {
   prefectureCode: string

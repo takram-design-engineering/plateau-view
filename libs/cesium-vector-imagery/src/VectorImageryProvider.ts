@@ -6,19 +6,22 @@ import {
 } from '@cesium/engine'
 import { LRUCache } from 'lru-cache'
 import { type Zxy } from 'protomaps'
+import { Transfer } from 'threads'
 import invariant from 'tiny-invariant'
+import { type JsonObject } from 'type-fest'
 
-import { ImageryProviderBase } from '@plateau/cesium'
+import { ImageryProviderBase } from '@takram/plateau-cesium'
 
 import { type TileRendererParams } from './VectorTileRenderWorker'
-import { getWorkerPool } from './WorkerPool'
+import { canQueue, queue } from './workerPool'
 
 export interface VectorImageryProviderOptions {
   url: string
-  styleUrl?: string
+  style?: string | JsonObject
   minimumZoom?: number
   maximumZoom?: number
-  maximumNativeZoom?: number
+  maximumDataZoom?: number
+  zoomDifference?: number
   pixelRatio?: number
   rectangle?: Rectangle
   credit?: Credit | string
@@ -27,10 +30,14 @@ export interface VectorImageryProviderOptions {
 }
 
 export class VectorImageryProvider extends ImageryProviderBase {
+  static maximumTasks = 50
+  static maximumTasksPerImagery = 6
+
   readonly pixelRatio: number
 
   private readonly tileRendererParams: TileRendererParams
   private readonly tileCache: LRUCache<string, HTMLCanvasElement> | undefined
+  private taskCount = 0
 
   constructor(options: VectorImageryProviderOptions) {
     super()
@@ -39,8 +46,9 @@ export class VectorImageryProvider extends ImageryProviderBase {
     this.pixelRatio = options.pixelRatio ?? 1
     this.tileRendererParams = {
       url: options.url,
-      styleUrl: options.styleUrl,
-      maximumZoom: options.maximumNativeZoom ?? this.maximumLevel
+      style: options.style,
+      maximumZoom: options.maximumDataZoom ?? this.maximumLevel,
+      zoomDifference: options.zoomDifference
     }
 
     this.rectangle =
@@ -61,41 +69,63 @@ export class VectorImageryProvider extends ImageryProviderBase {
     }
   }
 
-  override async requestImage(
+  override requestImage(
     x: number,
     y: number,
     level: number,
     request?: Request
-  ): Promise<ImageryTypes> {
+  ): Promise<ImageryTypes> | undefined {
+    if (
+      this.taskCount >= VectorImageryProvider.maximumTasksPerImagery ||
+      !canQueue(VectorImageryProvider.maximumTasks)
+    ) {
+      return
+    }
     const cacheKey = `${x}/${y}/${level}`
     if (this.tileCache?.has(cacheKey) === true) {
       const canvas = this.tileCache.get(cacheKey)
       invariant(canvas != null)
-      return canvas
+      return Promise.resolve(canvas)
     }
     const canvas = document.createElement('canvas')
     canvas.width = this.tileWidth * this.pixelRatio
     canvas.height = this.tileHeight * this.pixelRatio
-    try {
-      await this.renderTile({ x, y, z: level }, canvas)
-    } catch (error) {}
-    this.tileCache?.set(cacheKey, canvas)
-    return canvas
+    const offscreen = canvas.transferControlToOffscreen()
+
+    ++this.taskCount
+    return this.renderTile({ x, y, z: level }, offscreen)
+      .then(() => {
+        this.tileCache?.set(cacheKey, canvas)
+        return canvas
+      })
+      .catch(error => {
+        if (
+          error instanceof Error &&
+          error.message.startsWith('Unimplemented type')
+        ) {
+          // Ignore "unimplemented type" errors.
+          return canvas
+        }
+        throw error
+      })
+      .finally(() => {
+        --this.taskCount
+      })
   }
 
-  async renderTile(coords: Zxy, canvas: HTMLCanvasElement): Promise<void> {
-    const result = await getWorkerPool().queue(
-      async task =>
-        await task.renderTile({
-          ...this.tileRendererParams,
-          coords,
-          canvasWidth: canvas.width,
-          canvasHeight: canvas.height
-        })
-    )
-    if (result.image != null) {
-      const renderer = canvas.getContext('bitmaprenderer')
-      renderer?.transferFromImageBitmap(result.image)
-    }
+  async renderTile(coords: Zxy, canvas: OffscreenCanvas): Promise<void> {
+    // TODO: Prioritize tiles in the current frustum.
+    await queue(async task => {
+      await task.renderTile(
+        Transfer(
+          {
+            ...this.tileRendererParams,
+            coords,
+            canvas
+          },
+          [canvas]
+        )
+      )
+    })
   }
 }

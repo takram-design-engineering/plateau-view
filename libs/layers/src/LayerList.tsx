@@ -34,11 +34,21 @@ export type LayerListProps<C extends ElementType = typeof Root> =
   ComponentPropsWithRef<C> & {
     component?: C
     itemComponent: ComponentType<LayerProps>
+    unmountWhenEmpty?: boolean
     minimumDragDistance?: number
   }
 
 export const LayerList = forwardRef<HTMLDivElement, LayerListProps>(
-  ({ minimumDragDistance = 5, component, itemComponent, ...props }, ref) => {
+  (
+    {
+      unmountWhenEmpty = false,
+      minimumDragDistance = 5,
+      component,
+      itemComponent,
+      ...props
+    },
+    ref
+  ) => {
     const sensors = useSensors(
       useSensor(PointerSensor, {
         activationConstraint: {
@@ -67,6 +77,9 @@ export const LayerList = forwardRef<HTMLDivElement, LayerListProps>(
       [move]
     )
 
+    if (unmountWhenEmpty && layerAtoms.length === 0) {
+      return null
+    }
     const Component = component ?? Root
     return (
       <Component ref={ref} {...props}>
@@ -85,6 +98,7 @@ export const LayerList = forwardRef<HTMLDivElement, LayerListProps>(
               // disagree with it.
               <LayerListItem
                 key={layerIds[index]}
+                index={index}
                 layerAtom={layerAtom}
                 itemComponent={itemComponent}
               />

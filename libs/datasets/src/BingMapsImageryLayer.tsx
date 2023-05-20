@@ -5,7 +5,7 @@ import {
   ImageryLayer,
   useSuspendInstance,
   type ImageryLayerProps
-} from '@plateau/cesium'
+} from '@takram/plateau-cesium'
 
 export interface BingMapsImageryLayerProps
   extends Omit<ImageryLayerProps, 'imageryProvider'> {

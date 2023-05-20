@@ -4,7 +4,7 @@ import path from 'path'
 import invariant from 'tiny-invariant'
 import type TopoJSON from 'topojson-specification'
 
-import { isNotNullish } from '@plateau/type-helpers'
+import { isNotNullish } from '@takram/plateau-type-helpers'
 
 import { type Municipalities, type Prefectures } from './areaCodes'
 import { type AreaGeometry } from './areaPolygons'

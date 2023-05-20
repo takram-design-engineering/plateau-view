@@ -6,7 +6,7 @@ import {
   type Cartesian2,
   type ScreenSpaceCameraController
 } from '@cesium/engine'
-import { List, Stack, styled, useTheme, type ListProps } from '@mui/material'
+import { List, styled, useTheme, type ListProps } from '@mui/material'
 import { useAtomValue, useSetAtom } from 'jotai'
 import {
   Suspense,
@@ -24,25 +24,30 @@ import {
   useCesium,
   useScreenSpaceEvent,
   useScreenSpaceEventHandler
-} from '@plateau/cesium'
-import { SuspendUntilTilesLoaded } from '@plateau/cesium-helpers'
+} from '@takram/plateau-cesium'
+import { SuspendUntilTilesLoaded } from '@takram/plateau-cesium-helpers'
 import {
   GooglePhotorealisticTileset,
   PlateauDatasetsContext
-} from '@plateau/datasets'
+} from '@takram/plateau-datasets'
 import {
   LayerList,
   LayersProvider,
   LayersRenderer,
   useAddLayer
-} from '@plateau/layers'
-import { useWindowEvent } from '@plateau/react-helpers'
+} from '@takram/plateau-layers'
+import { useWindowEvent } from '@takram/plateau-react-helpers'
 import {
   ScreenSpaceSelectionBoundingSphere,
   ScreenSpaceSelectionContext
-} from '@plateau/screen-space-selection'
-import { AppLayout, LayerListItem } from '@plateau/ui-components'
-import { createBuildingLayer, layerComponents } from '@plateau/view-layers'
+} from '@takram/plateau-screen-space-selection'
+import { AppLayout } from '@takram/plateau-ui-components'
+import {
+  BUILDING_LAYER,
+  ViewLayerListItem,
+  createViewLayer,
+  layerComponents
+} from '@takram/plateau-view-layers'
 
 import { Areas } from './containers/Areas'
 import { Canvas } from './containers/Canvas'
@@ -54,7 +59,6 @@ import { DeveloperPanels } from './developer/DeveloperPanels'
 import { useReverseGeocoder } from './hooks/useReverseGeocoder'
 import { LocationContextBar } from './panels/LocationContextBar'
 import { MainPanel } from './panels/MainPanel'
-import { SelectionPanel } from './panels/SelectionPanel'
 import { Toolbar } from './panels/Toolbar'
 import { addressAtom } from './states/address'
 import {
@@ -239,20 +243,22 @@ const SelectionBoundingSphere: FC = () => {
 
 // TODO: Just for temporary.
 const Layers: FC = () => {
-  const add = useAddLayer()
+  const addLayer = useAddLayer()
 
   useEffect(() => {
     const remove = [
-      add(
-        createBuildingLayer({
+      addLayer(
+        createViewLayer({
+          type: BUILDING_LAYER,
           municipalityCode: '13101',
           version: '2020',
           lod: 2,
           textured: false
         })
       ),
-      add(
-        createBuildingLayer({
+      addLayer(
+        createViewLayer({
+          type: BUILDING_LAYER,
           municipalityCode: '13102',
           version: '2020',
           lod: 2,
@@ -265,7 +271,7 @@ const Layers: FC = () => {
         remove()
       })
     }
-  }, [add])
+  }, [addLayer])
 
   return null
 }
@@ -319,17 +325,15 @@ export const PlateauView: FC<PlateauViewProps> = () => {
         <SyncColorMode />
         <AppLayout
           main={
-            <Stack spacing={1}>
-              <MainPanel>
-                <LayerList
-                  component={LayerListComponent}
-                  itemComponent={LayerListItem}
-                />
-              </MainPanel>
-            </Stack>
+            <MainPanel>
+              <LayerList
+                component={LayerListComponent}
+                itemComponent={ViewLayerListItem}
+                unmountWhenEmpty
+              />
+            </MainPanel>
           }
           context={<LocationContextBar />}
-          aside={<SelectionPanel />}
           bottomLeft={<Toolbar />}
           developer={<DeveloperPanels />}
         />
