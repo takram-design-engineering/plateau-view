@@ -2,14 +2,14 @@ import { Field, ObjectType } from '@nestjs/graphql'
 import { groupBy } from 'lodash'
 import format from 'string-template'
 
-import { PlateauDataset, PlateauDatasetVariant } from './PlateauDataset'
+import { PlateauDataset, PlateauDatasetDatum } from './PlateauDataset'
 import { PlateauDatasetFormatEnum } from './PlateauDatasetFormat'
 import { type PlateauDatasetTypeEnum } from './PlateauDatasetType'
 
 @ObjectType({
-  implements: [PlateauDatasetVariant]
+  implements: [PlateauDatasetDatum]
 })
-class PlateauBuildingDatasetVariant extends PlateauDatasetVariant {
+class PlateauBuildingDatasetDatum extends PlateauDatasetDatum {
   @Field()
   version!: string
 
@@ -24,27 +24,26 @@ class PlateauBuildingDatasetVariant extends PlateauDatasetVariant {
   implements: [PlateauDataset]
 })
 export class PlateauBuildingDataset extends PlateauDataset<PlateauDatasetTypeEnum.Building> {
-  private getVariants2022(): PlateauBuildingDatasetVariant[] {
-    // Strangely, when a LOD doesn't have a variant with non-textured suffix,
-    // the only variant of the LOD is *not* textured, which forces me to
-    // traverse all the variants first.
+  private getData2022(): PlateauBuildingDatasetDatum[] {
+    // Strangely, when a LOD doesn't have a datum with non-textured suffix,
+    // the only datum of the LOD is *not* textured, which forces me to
+    // traverse all the data first.
     const groups = groupBy(
-      this.catalog.data.config.data.map(variant => ({
-        lod: +variant.name.slice(3, 4),
-        variant
+      this.catalog.data.config.data.map(datum => ({
+        lod: +datum.name.slice(3, 4),
+        datum
       })),
       'lod'
     )
-    return Object.values(groups).flatMap(variants =>
-      variants
-        .map(({ lod, variant }) => ({
+    return Object.values(groups).flatMap(data =>
+      data
+        .map(({ lod, datum }) => ({
           format: PlateauDatasetFormatEnum.Cesium3DTiles,
-          url: variant.url,
+          url: datum.url,
           name: '',
           version: '2022',
           lod,
-          textured:
-            variants.length > 1 && !variant.name.includes('テクスチャなし')
+          textured: data.length > 1 && !datum.name.includes('テクスチャなし')
         }))
         .sort((a, b) =>
           `${a.lod}-${a.textured ? 1 : 0}`.localeCompare(
@@ -54,11 +53,11 @@ export class PlateauBuildingDataset extends PlateauDataset<PlateauDatasetTypeEnu
     )
   }
 
-  private getVariants2020(): PlateauBuildingDatasetVariant[] {
+  private getData2020(): PlateauBuildingDatasetDatum[] {
     // Frustratingly, when there are no files with "low_resolution" suffix, the
     // LOD of the files *without* "low_resolution" suffix is 1, otherwise the
     // LOD of the files *with* "low_resolution" suffix is 1. This also forces me
-    // to traverse all the variants first.
+    // to traverse all the data first.
     const files = this.storageService.match({
       pattern: format('01_building/{code}_*_2020_bldg_*/tileset.json', {
         code: this.catalog.data.ward_code ?? this.catalog.data.city_code
@@ -83,8 +82,8 @@ export class PlateauBuildingDataset extends PlateauDataset<PlateauDatasetTypeEnu
       )
   }
 
-  @Field(() => [PlateauBuildingDatasetVariant])
-  get variants(): PlateauBuildingDatasetVariant[] {
-    return [...this.getVariants2020(), ...this.getVariants2022()]
+  @Field(() => [PlateauBuildingDatasetDatum])
+  get data(): PlateauBuildingDatasetDatum[] {
+    return [...this.getData2020(), ...this.getData2022()]
   }
 }

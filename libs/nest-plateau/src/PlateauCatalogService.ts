@@ -72,7 +72,7 @@ export class PlateauCatalogService {
       return
     }
     const dataset = new constructor(catalog, this.storageService)
-    if (dataset.variants.length === 0) {
+    if (dataset.data.length === 0) {
       return // Useless dataset
     }
     return dataset

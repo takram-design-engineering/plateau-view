@@ -40,7 +40,7 @@ export const LocationContextBar: FC = () => {
                       municipalityCode={municipalityCode}
                     />
                   ) : null
-                ) : dataset.variants.length === 1 ? (
+                ) : dataset.data.length === 1 ? (
                   municipalityCode != null ? (
                     <DefaultDatasetButton
                       key={dataset.id}

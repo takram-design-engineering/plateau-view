@@ -14,7 +14,7 @@ import {
   PlateauDatasetType,
   useMunicipalityDatasetsQuery,
   type PlateauBuildingDataset,
-  type PlateauBuildingDatasetVariant
+  type PlateauBuildingDatasetDatum
 } from '@takram/plateau-graphql'
 import { type LayerModel, type LayerProps } from '@takram/plateau-layers'
 
@@ -49,18 +49,18 @@ export function createBuildingLayer(
   }
 }
 
-function matchVariant(
-  variants: readonly PlateauBuildingDatasetVariant[],
+function matchDatum(
+  data: readonly PlateauBuildingDatasetDatum[],
   predicate: {
     version: string | null
     lod: number | null
     textured: boolean | null
   }
-): PlateauBuildingDatasetVariant | undefined {
+): PlateauBuildingDatasetDatum | undefined {
   const version = predicate.version ?? '2020'
   const lod = predicate.lod ?? 2
   const textured = predicate.textured ?? false
-  const sorted = [...variants].sort((a, b) =>
+  const sorted = [...data].sort((a, b) =>
     a.version !== b.version
       ? a.version === version
         ? -1
@@ -120,14 +120,14 @@ export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
   const [version, setVersion] = useAtom(versionAtom)
   const [lod, setLod] = useAtom(lodAtom)
   const [textured, setTextured] = useAtom(texturedAtom)
-  const variant = useMemo(() => {
-    const variants = (
+  const data = useMemo(() => {
+    const data = (
       query.data?.municipality?.datasets as PlateauBuildingDataset[] | undefined
-    )?.flatMap(({ variants }) => variants)
-    if (variants == null || variants.length === 0) {
+    )?.flatMap(({ data }) => data)
+    if (data == null || data.length === 0) {
       return
     }
-    return matchVariant(variants, {
+    return matchDatum(data, {
       version,
       lod,
       textured
@@ -135,13 +135,13 @@ export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
   }, [version, lod, textured, query.data])
 
   useEffect(() => {
-    setVersion(variant?.version ?? null)
-    setLod(variant?.lod ?? null)
-    setTextured(variant?.textured ?? null)
-  }, [setVersion, setLod, setTextured, variant])
+    setVersion(data?.version ?? null)
+    setLod(data?.lod ?? null)
+    setTextured(data?.textured ?? null)
+  }, [setVersion, setLod, setTextured, data])
 
-  if (hidden || variant == null) {
+  if (hidden || data == null) {
     return null
   }
-  return <PlateauTileset url={variant.url} />
+  return <PlateauTileset url={data.url} />
 }

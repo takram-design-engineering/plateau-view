@@ -19,7 +19,7 @@ registerEnumType(PlateauDatasetFormatEnum, {
   name: 'PlateauDatasetFormat'
 })
 
-export function cleanPlateauDatasetFormat(
+export function cleansePlateauDatasetFormat(
   value: string
 ): PlateauDatasetFormat | undefined {
   const cleansed = value.replace(/\s/g, '').toLowerCase()

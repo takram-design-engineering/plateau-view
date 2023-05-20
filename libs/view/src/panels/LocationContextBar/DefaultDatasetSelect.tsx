@@ -21,9 +21,9 @@ export const DefaultDatasetSelect: FC<DefaultDatasetSelectProps> = ({
       value={[] as string[]}
       disabled={disabled}
     >
-      {dataset.variants.map(variant => (
-        <SelectItem key={variant.url} value={variant.url}>
-          <Typography variant='body2'>{variant.name}</Typography>
+      {dataset.data.map(datum => (
+        <SelectItem key={datum.url} value={datum.url}>
+          <Typography variant='body2'>{datum.name}</Typography>
         </SelectItem>
       ))}
     </ContextSelect>

@@ -12,7 +12,7 @@ import {
 } from './PlateauDatasetType'
 
 @InterfaceType()
-export abstract class PlateauDatasetVariant {
+export abstract class PlateauDatasetDatum {
   @Field(() => PlateauDatasetFormatEnum)
   format!: PlateauDatasetFormat
 
@@ -57,6 +57,6 @@ export abstract class PlateauDataset<
     return this.catalog.data.desc
   }
 
-  @Field(() => [PlateauDatasetVariant])
-  abstract readonly variants: PlateauDatasetVariant[]
+  @Field(() => [PlateauDatasetDatum])
+  abstract readonly data: PlateauDatasetDatum[]
 }

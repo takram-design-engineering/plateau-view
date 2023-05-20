@@ -14,11 +14,11 @@ fragment PlateauDataset on PlateauDataset {
   type
   typeName
   name
-  variants {
+  data {
     format
     url
     name
-    ... on PlateauBuildingDatasetVariant {
+    ... on PlateauBuildingDatasetDatum {
       version
       lod
       textured

@@ -11,7 +11,7 @@ import { pick, uniqWith } from 'lodash'
 import { useCallback, useMemo, type FC } from 'react'
 
 import {
-  type PlateauBuildingDatasetVariant,
+  type PlateauBuildingDatasetDatum,
   type PlateauDatasetFragment
 } from '@takram/plateau-graphql'
 import { useAddLayer, useFindLayer, useLayers } from '@takram/plateau-layers'
@@ -123,14 +123,14 @@ export const BuildingDatasetButtonSelect: FC<
     [setParams]
   )
 
-  // Remove textured variants from our menu.
-  const variants = uniqWith(
-    dataset.variants as PlateauBuildingDatasetVariant[],
+  // Remove textured data from our menu.
+  const data = uniqWith(
+    dataset.data as PlateauBuildingDatasetDatum[],
     (a, b) => a.version === b.version && a.lod === b.lod
   )
 
-  if (variants.length === 0) {
-    console.warn('Dataset must include at least 1 variant.')
+  if (data.length === 0) {
+    console.warn('Dataset must include at least 1 datum.')
     return null
   }
   return (
@@ -141,14 +141,14 @@ export const BuildingDatasetButtonSelect: FC<
       onClick={handleClick}
       onChange={handleChange}
     >
-      {variants.map(variant => {
-        const value = serializeParams(variant)
+      {data.map(datum => {
+        const value = serializeParams(datum)
         return (
           <SelectItem key={value} value={value}>
             <Stack>
-              <Typography variant='body2'>LOD {variant.lod}</Typography>
+              <Typography variant='body2'>LOD {datum.lod}</Typography>
               <Typography variant='caption' color='text.secondary'>
-                {variant.version}年度
+                {datum.version}年度
               </Typography>
             </Stack>
           </SelectItem>

@@ -66,9 +66,9 @@ export const BridgeLayer: FC<LayerProps<typeof BRIDGE_LAYER>> = ({
     }
   }, [scene])
 
-  const variant = query.data?.municipality?.datasets[0]?.variants[0]
-  if (hidden || variant == null) {
+  const datum = query.data?.municipality?.datasets[0]?.data[0]
+  if (hidden || datum == null) {
     return null
   }
-  return <PlateauTileset url={variant.url} />
+  return <PlateauTileset url={datum.url} />
 }

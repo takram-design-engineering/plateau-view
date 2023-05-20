@@ -16,16 +16,16 @@ enum PlateauAreaType {
 }
 
 type PlateauBuildingDataset implements PlateauDataset {
+  data: [PlateauBuildingDatasetDatum!]!
   description: String
   id: String!
   municipality: PlateauMunicipality
   name: String!
   type: PlateauDatasetType!
   typeName: String!
-  variants: [PlateauBuildingDatasetVariant!]!
 }
 
-type PlateauBuildingDatasetVariant implements PlateauDatasetVariant {
+type PlateauBuildingDatasetDatum implements PlateauDatasetDatum {
   format: PlateauDatasetFormat!
   lod: Float!
   name: String!
@@ -35,13 +35,19 @@ type PlateauBuildingDatasetVariant implements PlateauDatasetVariant {
 }
 
 interface PlateauDataset {
+  data: [PlateauDatasetDatum!]!
   description: String
   id: String!
   municipality: PlateauMunicipality
   name: String!
   type: PlateauDatasetType!
   typeName: String!
-  variants: [PlateauDatasetVariant!]!
+}
+
+interface PlateauDatasetDatum {
+  format: PlateauDatasetFormat!
+  name: String!
+  url: String!
 }
 
 enum PlateauDatasetFormat {
@@ -81,23 +87,17 @@ enum PlateauDatasetType {
   Vegetation
 }
 
-interface PlateauDatasetVariant {
-  format: PlateauDatasetFormat!
-  name: String!
-  url: String!
-}
-
 type PlateauDefaultDataset implements PlateauDataset {
+  data: [PlateauDefaultDatasetDatum!]!
   description: String
   id: String!
   municipality: PlateauMunicipality
   name: String!
   type: PlateauDatasetType!
   typeName: String!
-  variants: [PlateauDefaultDatasetVariant!]!
 }
 
-type PlateauDefaultDatasetVariant implements PlateauDatasetVariant {
+type PlateauDefaultDatasetDatum implements PlateauDatasetDatum {
   format: PlateauDatasetFormat!
   name: String!
   url: String!
@@ -105,7 +105,10 @@ type PlateauDefaultDatasetVariant implements PlateauDatasetVariant {
 
 type PlateauMunicipality implements PlateauArea {
   code: String!
-  datasets(excludeTypes: [PlateauDatasetType!], includeTypes: [PlateauDatasetType!]): [PlateauDataset!]!
+  datasets(
+    excludeTypes: [PlateauDatasetType!]
+    includeTypes: [PlateauDatasetType!]
+  ): [PlateauDataset!]!
   id: ID!
   name: String!
   parents: [PlateauArea!]!

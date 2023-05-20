@@ -70,8 +70,8 @@ export const LandslideLayer: FC<LayerProps<typeof LANDSLIDE_LAYER>> = ({
     }
   }, [scene])
 
-  const variant = query.data?.municipality?.datasets[0]?.variants[0]
-  const metadata = useMVTMetadata(variant?.url)
+  const datum = query.data?.municipality?.datasets[0]?.data[0]
+  const metadata = useMVTMetadata(datum?.url)
 
   const style = useMemo(() => {
     if (metadata == null) {
@@ -96,12 +96,12 @@ export const LandslideLayer: FC<LayerProps<typeof LANDSLIDE_LAYER>> = ({
   const { pixelRatioAtom } = useContext(ViewLayersContext)
   const pixelRatio = useAtomValue(pixelRatioAtom)
 
-  if (hidden || variant == null || metadata == null) {
+  if (hidden || datum == null || metadata == null) {
     return null
   }
   return (
     <VectorImageryLayer
-      url={variant.url}
+      url={datum.url}
       style={style}
       pixelRatio={pixelRatio}
       rectangle={metadata.rectangle}
