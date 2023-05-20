@@ -31,25 +31,25 @@ This repository consists of the following apps and libraries. The README for eac
 
 ### Libraries
 
-| Name                                                  | Description                                                                                                                  |
-| ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| [cesium](libs/cesium)                                 | React components for Cesium                                                                                                  |
-| [cesium-hbao](libs/cesium-hbao)                       | Better HBAO implementation for Cesium                                                                                        |
-| [cesium-helpers](libs/cesium-helpers)                 | Helper functions for Cesium                                                                                                  |
-| [cesium-vector-imagery](libs/cesium-vector-imagery)   | [ImageryProvider](https://cesium.com/learn/cesiumjs/ref-doc/ImageryProvider.html) for drawing MVT                            |
-| [data-sources](libs/data-sources)                     | Several [DataSources](https://cesium.com/learn/cesiumjs/ref-doc/DataSource.html?classFilter=DataSource) used in PLATEAU VIEW |
-| [datasets](libs/datasets)                             | Classes and components that represents PLATEAU and other datasets                                                            |
-| [geocoder](libs/geocoder)                             | Simple geocoding functions                                                                                                   |
-| [graphql](libs/graphql)                               | Generated GraphQL types and hooks                                                                                            |
-| [layers](libs/layers)                                 | Abstract structure of layers                                                                                                 |
-| [nest-cesium](libs/nest-cesium)                       | Module for using Cesium in NestJS                                                                                            |
-| [nest-firestore](libs/nest-firestore)                 | Module for using Google Firestore in NestJS                                                                                  |
-| [nest-plateau](libs/nest-plateau)                     | NestJS module for PLATEAU datasets                                                                                           |
-| [nest-vector-tile](libs/nest-vector-tile)             | NestJS module for rendering map tiles                                                                                        |
-| [react-helpers](libs/react-helpers)                   | Helper functions and hooks for React                                                                                         |
-| [screen-space-selection](libs/screen-space-selection) | Screen-space selection for Cesium                                                                                            |
-| [sketch](libs/sketch)                                 | (Work in progress)                                                                                                           |
-| [type-helpers](libs/type-helpers)                     | Helper functions for TypeScript                                                                                              |
-| [ui-components](libs/ui-components)                   | UI components used inPLATEAU VIEW                                                                                            |
-| [view](libs/view)                                     | Providers for the PLATEAU VIEW                                                                                               |
-| [view-layers](libs/view-layers)                       | Implementation of [layers](libs/layers) for PLATEAU VIEW                                                                     |
+| Name                                                  | Description                                                                                           |
+| ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| [cesium](libs/cesium)                                 | React components for Cesium                                                                           |
+| [cesium-hbao](libs/cesium-hbao)                       | Better HBAO implementation for Cesium                                                                 |
+| [cesium-helpers](libs/cesium-helpers)                 | Helper functions for Cesium                                                                           |
+| [cesium-vector-imagery](libs/cesium-vector-imagery)   | [ImageryProvider](https://cesium.com/learn/cesiumjs/ref-doc/ImageryProvider.html) for drawing MVT     |
+| [data-sources](libs/data-sources)                     | Several [DataSources](https://cesium.com/learn/cesiumjs/ref-doc/DataSource.html) used in PLATEAU VIEW |
+| [datasets](libs/datasets)                             | Classes and components that represents PLATEAU and other datasets                                     |
+| [geocoder](libs/geocoder)                             | Simple geocoding functions                                                                            |
+| [graphql](libs/graphql)                               | Generated GraphQL types and hooks                                                                     |
+| [layers](libs/layers)                                 | Abstract structure of layers                                                                          |
+| [nest-cesium](libs/nest-cesium)                       | Module for using Cesium in NestJS                                                                     |
+| [nest-firestore](libs/nest-firestore)                 | Module for using Google Firestore in NestJS                                                           |
+| [nest-plateau](libs/nest-plateau)                     | NestJS module for PLATEAU datasets                                                                    |
+| [nest-vector-tile](libs/nest-vector-tile)             | NestJS module for rendering map tiles                                                                 |
+| [react-helpers](libs/react-helpers)                   | Helper functions and hooks for React                                                                  |
+| [screen-space-selection](libs/screen-space-selection) | Screen-space selection for Cesium                                                                     |
+| [sketch](libs/sketch)                                 | Work in progress                                                                                      |
+| [type-helpers](libs/type-helpers)                     | Helper functions for TypeScript                                                                       |
+| [ui-components](libs/ui-components)                   | UI components used in PLATEAU VIEW                                                                    |
+| [view](libs/view)                                     | Provides for the main component                                                                       |
+| [view-layers](libs/view-layers)                       | Implementation of [layers](libs/layers) for PLATEAU VIEW                                              |
