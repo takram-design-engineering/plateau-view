@@ -13,7 +13,7 @@ import { type JsonObject } from 'type-fest'
 import { ImageryProviderBase } from '@plateau/cesium'
 
 import { type TileRendererParams } from './VectorTileRenderWorker'
-import { canQueue, queue } from './WorkerPool'
+import { canQueue, queue } from './workerPool'
 
 export interface VectorImageryProviderOptions {
   url: string
