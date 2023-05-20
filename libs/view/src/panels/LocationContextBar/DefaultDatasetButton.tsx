@@ -100,7 +100,7 @@ export const DefaultDatasetButton: FC<DefaultDatasetButtonProps> = ({
       disabled={disabled || layerType == null}
       onClick={handleClick}
     >
-      {datasetTypeNames[dataset.type]} ({variant.format})
+      {datasetTypeNames[dataset.type]}
     </ContextButton>
   )
 }
