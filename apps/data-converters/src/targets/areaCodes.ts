@@ -60,7 +60,7 @@ export async function main(): Promise<void> {
         // Append the parent code for designated city wards, with exception of
         // Tokyo 23 wards.
         if (municipalityCode === '13100') {
-          return [municipalityCode, '東京23区']
+          return [municipalityCode, '東京都23区']
         }
         if (/^131\d{2}$/.test(municipalityCode)) {
           return [municipalityCode, [municipalityName, '13100']]
