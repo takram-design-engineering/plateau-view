@@ -20,7 +20,7 @@ export interface VectorImageryProviderOptions {
   style?: string | JsonObject
   minimumZoom?: number
   maximumZoom?: number
-  maximumNativeZoom?: number
+  maximumDataZoom?: number
   zoomDifference?: number
   pixelRatio?: number
   rectangle?: Rectangle
@@ -43,7 +43,7 @@ export class VectorImageryProvider extends ImageryProviderBase {
     this.tileRendererParams = {
       url: options.url,
       style: options.style,
-      maximumZoom: options.maximumNativeZoom ?? this.maximumLevel,
+      maximumZoom: options.maximumDataZoom ?? this.maximumLevel,
       zoomDifference: options.zoomDifference
     }
 
