@@ -1,5 +1,5 @@
 # tiles
 
 ```
-nx generate @nx/nest:application api
+nx generate @nx/nest:application tiles
 ```
