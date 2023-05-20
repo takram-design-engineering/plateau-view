@@ -24,9 +24,9 @@ This repository consists of the following apps and libraries. The README for eac
 
 | Name                                    | Description                                  |
 | --------------------------------------- | -------------------------------------------- |
-| [api](libs/api)                         | NestJS API server                            |
-| [app](libs/app)                         | Next.js frontend                             |
-| [data-converters](libs/data-converters) | Node.js script for converting data           |
+| [api](apps/api)                         | NestJS API server                            |
+| [app](apps/app)                         | Next.js frontend                             |
+| [data-converters](apps/data-converters) | Node.js script for converting data           |
 | [tiles](apps/tiles)                     | NestJS server for rendering vector map tiles |
 
 ### Libraries
