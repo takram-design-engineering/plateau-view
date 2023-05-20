@@ -18,12 +18,12 @@ export default meta
 type Story = StoryObj<typeof ContextBar>
 
 const ButtonComponent: FC = () => {
-  const [active, setActive] = useState(false)
+  const [selected, setSelected] = useState(false)
   const handleClick = useCallback(() => {
-    setActive(value => !value)
+    setSelected(value => !value)
   }, [])
   return (
-    <ContextButton active={active} onClick={handleClick}>
+    <ContextButton selected={selected} onClick={handleClick}>
       Single Button
     </ContextButton>
   )

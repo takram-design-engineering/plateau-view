@@ -1,3 +1,4 @@
+import { svgIconClasses } from '@mui/material'
 import {
   darken,
   lighten,
@@ -24,6 +25,16 @@ export const MuiButton: Components<Theme>['MuiButton'] = {
         theme.palette.mode === 'light'
           ? darken(theme.palette.primary.main, 0.1)
           : lighten(theme.palette.primary.main, 0.1)
-    })
+    }),
+    startIcon: {
+      [`& .${svgIconClasses.root}`]: {
+        fontSize: 16
+      }
+    },
+    endIcon: {
+      [`& .${svgIconClasses.root}`]: {
+        fontSize: 16
+      }
+    }
   }
 }
