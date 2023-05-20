@@ -4,10 +4,20 @@ import { useCallback, useMemo, type FC } from 'react'
 import { type PlateauDatasetFragment } from '@plateau/graphql'
 import { useAddLayer, useFindLayer, useLayers } from '@plateau/layers'
 import { ContextButton } from '@plateau/ui-components'
-import { BRIDGE_LAYER, createBridgeLayer } from '@plateau/view-layers'
+import {
+  BRIDGE_LAYER,
+  LANDSLIDE_LAYER,
+  LANDUSE_LAYER,
+  ROAD_LAYER,
+  createBridgeLayer,
+  createLandslideLayer,
+  createLanduseLayer,
+  createRoadLayer
+} from '@plateau/view-layers'
 
 import { datasetTypeLayers } from '../../constants/datasetTypeLayers'
 import { datasetTypeNames } from '../../constants/datasetTypeNames'
+import { nativeResolutionEnabledAtom } from '../../states/graphics'
 
 export interface DefaultDatasetButtonProps {
   dataset: PlateauDatasetFragment
@@ -51,6 +61,27 @@ export const DefaultDatasetButton: FC<DefaultDatasetButtonProps> = ({
             })
           )
           break
+        case ROAD_LAYER:
+          addLayer(
+            createRoadLayer({
+              municipalityCode
+            })
+          )
+          break
+        case LANDUSE_LAYER:
+          addLayer(
+            createLanduseLayer({
+              municipalityCode
+            })
+          )
+          break
+        case LANDSLIDE_LAYER:
+          addLayer(
+            createLandslideLayer({
+              municipalityCode
+            })
+          )
+          break
         default:
           break
       }
@@ -70,7 +101,7 @@ export const DefaultDatasetButton: FC<DefaultDatasetButtonProps> = ({
       disabled={disabled || layerType == null}
       onClick={handleClick}
     >
-      {datasetTypeNames[dataset.type]}
+      {datasetTypeNames[dataset.type]} ({variant.format})
     </ContextButton>
   )
 }

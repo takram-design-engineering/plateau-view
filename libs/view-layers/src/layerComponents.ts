@@ -13,6 +13,17 @@ import {
   BuildingLayer,
   type BuildingLayerModel
 } from './BuildingLayer'
+import {
+  LANDSLIDE_LAYER,
+  LandslideLayer,
+  type LandslideLayerModel
+} from './LandslideLayer'
+import {
+  LANDUSE_LAYER,
+  LanduseLayer,
+  type LanduseLayerModel
+} from './LanduseLayer'
+import { ROAD_LAYER, RoadLayer, type RoadLayerModel } from './RoadLayer'
 
 // TODO: Remove these after all the layers are implemented.
 export const BORDER_LAYER = 'BORDER_LAYER'
@@ -24,11 +35,8 @@ export const GENERIC_LAYER = 'GENERIC_LAYER'
 export const HIGHTIDE_LAYER = 'HIGHTIDE_LAYER'
 export const INLAND_FLOOD_LAYER = 'INLAND_FLOOD_LAYER'
 export const LANDMARK_LAYER = 'LANDMARK_LAYER'
-export const LANDSLIDE_LAYER = 'LANDSLIDE_LAYER'
-export const LANDUSE_LAYER = 'LANDUSE_LAYER'
 export const PARK_LAYER = 'PARK_LAYER'
 export const RAILWAY_LAYER = 'RAILWAY_LAYER'
-export const ROAD_LAYER = 'ROAD_LAYER'
 export const SHELTER_LAYER = 'SHELTER_LAYER'
 export const STATION_LAYER = 'STATION_LAYER'
 export const TSUNAMI_LAYER = 'TSUNAMI_LAYER'
@@ -56,11 +64,11 @@ declare module '@plateau/layers' {
     [HIGHTIDE_LAYER]: LayerModel
     [INLAND_FLOOD_LAYER]: LayerModel
     [LANDMARK_LAYER]: LayerModel
-    [LANDSLIDE_LAYER]: LayerModel
-    [LANDUSE_LAYER]: LayerModel
+    [LANDSLIDE_LAYER]: LandslideLayerModel
+    [LANDUSE_LAYER]: LanduseLayerModel
     [PARK_LAYER]: LayerModel
     [RAILWAY_LAYER]: LayerModel
-    [ROAD_LAYER]: LayerModel
+    [ROAD_LAYER]: RoadLayerModel
     [SHELTER_LAYER]: LayerModel
     [STATION_LAYER]: LayerModel
     [TSUNAMI_LAYER]: LayerModel
@@ -84,11 +92,11 @@ export const layerComponents = {
   [HIGHTIDE_LAYER]: NullLayer,
   [INLAND_FLOOD_LAYER]: NullLayer,
   [LANDMARK_LAYER]: NullLayer,
-  [LANDSLIDE_LAYER]: NullLayer,
-  [LANDUSE_LAYER]: NullLayer,
+  [LANDSLIDE_LAYER]: LandslideLayer,
+  [LANDUSE_LAYER]: LanduseLayer,
   [PARK_LAYER]: NullLayer,
   [RAILWAY_LAYER]: NullLayer,
-  [ROAD_LAYER]: NullLayer,
+  [ROAD_LAYER]: RoadLayer,
   [SHELTER_LAYER]: NullLayer,
   [STATION_LAYER]: NullLayer,
   [TSUNAMI_LAYER]: NullLayer,
