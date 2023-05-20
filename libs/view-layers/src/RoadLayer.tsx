@@ -11,12 +11,14 @@ import {
 import { type LayerModel, type LayerProps } from '@takram/plateau-layers'
 
 import { ViewLayersContext } from './ViewLayersContext'
-import { createViewLayer, type ViewLayerModelParams } from './createViewLayer'
+import {
+  createViewLayerBase,
+  type ViewLayerBaseModelParams
+} from './createViewLayerBase'
+import { ROAD_LAYER } from './layerTypes'
 import { useMVTMetadata } from './useMVTMetadata'
 
-export const ROAD_LAYER = 'ROAD_LAYER'
-
-export interface RoadLayerModelParams extends ViewLayerModelParams {}
+export interface RoadLayerModelParams extends ViewLayerBaseModelParams {}
 
 export interface RoadLayerModel extends LayerModel {}
 
@@ -24,7 +26,7 @@ export function createRoadLayer(
   params: RoadLayerModelParams
 ): SetOptional<RoadLayerModel, 'id'> {
   return {
-    ...createViewLayer(params),
+    ...createViewLayerBase(params),
     type: ROAD_LAYER,
     municipalityCode: params.municipalityCode
   }

@@ -27,7 +27,7 @@ import {
   TSUNAMI_LAYER,
   USE_CASE_LAYER,
   VEGETATION_LAYER
-} from '.'
+} from './layerTypes'
 
 const layerTypeIcons: Record<LayerType, ComponentType<SvgIconProps>> = {
   [BORDER_LAYER]: LayerIcon,

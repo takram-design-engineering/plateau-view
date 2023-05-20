@@ -16,10 +16,7 @@ import {
 } from '@takram/plateau-graphql'
 import { useAddLayer, useFindLayer, useLayers } from '@takram/plateau-layers'
 import { ContextButtonSelect, SelectItem } from '@takram/plateau-ui-components'
-import {
-  BUILDING_LAYER,
-  createBuildingLayer
-} from '@takram/plateau-view-layers'
+import { BUILDING_LAYER, createViewLayer } from '@takram/plateau-view-layers'
 
 import { datasetTypeNames } from '../../constants/datasetTypeNames'
 
@@ -69,7 +66,8 @@ export const BuildingDatasetButtonSelect: FC<
           return
         }
         addLayer(
-          createBuildingLayer({
+          createViewLayer({
+            type: BUILDING_LAYER,
             municipalityCode,
             version: nextParams.version ?? undefined,
             lod: nextParams.lod ?? undefined

@@ -10,11 +10,13 @@ import {
 } from '@takram/plateau-graphql'
 import { type LayerModel, type LayerProps } from '@takram/plateau-layers'
 
-import { createViewLayer, type ViewLayerModelParams } from './createViewLayer'
+import {
+  createViewLayerBase,
+  type ViewLayerBaseModelParams
+} from './createViewLayerBase'
+import { BRIDGE_LAYER } from './layerTypes'
 
-export const BRIDGE_LAYER = 'BRIDGE_LAYER'
-
-export interface BridgeLayerModelParams extends ViewLayerModelParams {}
+export interface BridgeLayerModelParams extends ViewLayerBaseModelParams {}
 
 export interface BridgeLayerModel extends LayerModel {}
 
@@ -22,7 +24,7 @@ export function createBridgeLayer(
   params: BridgeLayerModelParams
 ): SetOptional<BridgeLayerModel, 'id'> {
   return {
-    ...createViewLayer(params),
+    ...createViewLayerBase(params),
     type: BRIDGE_LAYER,
     municipalityCode: params.municipalityCode
   }

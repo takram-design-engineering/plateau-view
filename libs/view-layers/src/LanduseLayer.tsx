@@ -12,12 +12,14 @@ import {
 import { type LayerModel, type LayerProps } from '@takram/plateau-layers'
 
 import { ViewLayersContext } from './ViewLayersContext'
-import { createViewLayer, type ViewLayerModelParams } from './createViewLayer'
+import {
+  createViewLayerBase,
+  type ViewLayerBaseModelParams
+} from './createViewLayerBase'
+import { LANDUSE_LAYER } from './layerTypes'
 import { useMVTMetadata } from './useMVTMetadata'
 
-export const LANDUSE_LAYER = 'LANDUSE_LAYER'
-
-export interface LanduseLayerModelParams extends ViewLayerModelParams {}
+export interface LanduseLayerModelParams extends ViewLayerBaseModelParams {}
 
 export interface LanduseLayerModel extends LayerModel {}
 
@@ -25,7 +27,7 @@ export function createLanduseLayer(
   params: LanduseLayerModelParams
 ): SetOptional<LanduseLayerModel, 'id'> {
   return {
-    ...createViewLayer(params),
+    ...createViewLayerBase(params),
     type: LANDUSE_LAYER,
     municipalityCode: params.municipalityCode
   }

@@ -43,8 +43,9 @@ import {
 } from '@takram/plateau-screen-space-selection'
 import { AppLayout } from '@takram/plateau-ui-components'
 import {
+  BUILDING_LAYER,
   ViewLayerListItem,
-  createBuildingLayer,
+  createViewLayer,
   layerComponents
 } from '@takram/plateau-view-layers'
 
@@ -247,7 +248,8 @@ const Layers: FC = () => {
   useEffect(() => {
     const remove = [
       addLayer(
-        createBuildingLayer({
+        createViewLayer({
+          type: BUILDING_LAYER,
           municipalityCode: '13101',
           version: '2020',
           lod: 2,
@@ -255,7 +257,8 @@ const Layers: FC = () => {
         })
       ),
       addLayer(
-        createBuildingLayer({
+        createViewLayer({
+          type: BUILDING_LAYER,
           municipalityCode: '13102',
           version: '2020',
           lod: 2,

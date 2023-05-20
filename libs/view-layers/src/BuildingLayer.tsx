@@ -18,11 +18,13 @@ import {
 } from '@takram/plateau-graphql'
 import { type LayerModel, type LayerProps } from '@takram/plateau-layers'
 
-import { createViewLayer, type ViewLayerModelParams } from './createViewLayer'
+import {
+  createViewLayerBase,
+  type ViewLayerBaseModelParams
+} from './createViewLayerBase'
+import { BUILDING_LAYER } from './layerTypes'
 
-export const BUILDING_LAYER = 'BUILDING_LAYER'
-
-export interface BuildingLayerModelParams extends ViewLayerModelParams {
+export interface BuildingLayerModelParams extends ViewLayerBaseModelParams {
   version?: string
   lod?: number
   textured?: boolean
@@ -38,7 +40,7 @@ export function createBuildingLayer(
   params: BuildingLayerModelParams
 ): SetOptional<BuildingLayerModel, 'id'> {
   return {
-    ...createViewLayer(params),
+    ...createViewLayerBase(params),
     type: BUILDING_LAYER,
     municipalityCode: params.municipalityCode,
     versionAtom: atom(params.version ?? null),

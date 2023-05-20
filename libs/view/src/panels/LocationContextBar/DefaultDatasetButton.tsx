@@ -9,10 +9,7 @@ import {
   LANDSLIDE_LAYER,
   LANDUSE_LAYER,
   ROAD_LAYER,
-  createBridgeLayer,
-  createLandslideLayer,
-  createLanduseLayer,
-  createRoadLayer
+  createViewLayer
 } from '@takram/plateau-view-layers'
 
 import { datasetTypeLayers } from '../../constants/datasetTypeLayers'
@@ -54,29 +51,12 @@ export const DefaultDatasetButton: FC<DefaultDatasetButtonProps> = ({
     if (layer == null) {
       switch (layerType) {
         case BRIDGE_LAYER:
-          addLayer(
-            createBridgeLayer({
-              municipalityCode
-            })
-          )
-          break
         case ROAD_LAYER:
-          addLayer(
-            createRoadLayer({
-              municipalityCode
-            })
-          )
-          break
         case LANDUSE_LAYER:
-          addLayer(
-            createLanduseLayer({
-              municipalityCode
-            })
-          )
-          break
         case LANDSLIDE_LAYER:
           addLayer(
-            createLandslideLayer({
+            createViewLayer({
+              type: layerType,
               municipalityCode
             })
           )

@@ -12,12 +12,14 @@ import {
 import { type LayerModel, type LayerProps } from '@takram/plateau-layers'
 
 import { ViewLayersContext } from './ViewLayersContext'
-import { createViewLayer, type ViewLayerModelParams } from './createViewLayer'
+import {
+  createViewLayerBase,
+  type ViewLayerBaseModelParams
+} from './createViewLayerBase'
+import { LANDSLIDE_LAYER } from './layerTypes'
 import { useMVTMetadata } from './useMVTMetadata'
 
-export const LANDSLIDE_LAYER = 'LANDSLIDE_LAYER'
-
-export interface LandslideLayerModelParams extends ViewLayerModelParams {}
+export interface LandslideLayerModelParams extends ViewLayerBaseModelParams {}
 
 export interface LandslideLayerModel extends LayerModel {}
 
@@ -25,7 +27,7 @@ export function createLandslideLayer(
   params: LandslideLayerModelParams
 ): SetOptional<LandslideLayerModel, 'id'> {
   return {
-    ...createViewLayer(params),
+    ...createViewLayerBase(params),
     type: LANDSLIDE_LAYER,
     municipalityCode: params.municipalityCode
   }
