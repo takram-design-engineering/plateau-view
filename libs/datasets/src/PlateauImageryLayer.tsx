@@ -1,8 +1,8 @@
 import { UrlTemplateImageryProvider } from '@cesium/engine'
 import { type FC } from 'react'
 
-import { ImageryLayer, type ImageryLayerProps } from '@plateau/cesium'
-import { useConstant } from '@plateau/react-helpers'
+import { ImageryLayer, type ImageryLayerProps } from '@takram/plateau-cesium'
+import { useConstant } from '@takram/plateau-react-helpers'
 
 export interface PlateauImageryLayerProps
   extends Omit<ImageryLayerProps, 'imageryProvider'> {}

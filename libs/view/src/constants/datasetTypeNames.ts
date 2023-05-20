@@ -1,4 +1,4 @@
-import { PlateauDatasetType } from '@plateau/graphql'
+import { PlateauDatasetType } from '@takram/plateau-graphql'
 
 export const datasetTypeNames: Record<PlateauDatasetType, string> = {
   [PlateauDatasetType.Border]: '行政界',

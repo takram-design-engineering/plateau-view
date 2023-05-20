@@ -7,7 +7,7 @@ import {
 } from '@apollo/client'
 import invariant from 'tiny-invariant'
 
-import { introspectionResult } from '@plateau/graphql'
+import { introspectionResult } from '@takram/plateau-graphql'
 
 export function createApolloClient(): ApolloClient<NormalizedCacheObject> {
   invariant(

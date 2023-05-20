@@ -1,7 +1,7 @@
 import { atom } from 'jotai'
 import { type SetOptional } from 'type-fest'
 
-import { type LayerModel } from '@plateau/layers'
+import { type LayerModel } from '@takram/plateau-layers'
 
 export interface ViewLayerModelParams {
   municipalityCode: string

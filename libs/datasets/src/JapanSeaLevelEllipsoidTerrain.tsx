@@ -1,8 +1,8 @@
 import { EllipsoidTerrainProvider } from '@cesium/engine'
 import { useEffect, type FC } from 'react'
 
-import { useCesium } from '@plateau/cesium'
-import { useConstant } from '@plateau/react-helpers'
+import { useCesium } from '@takram/plateau-cesium'
+import { useConstant } from '@takram/plateau-react-helpers'
 
 import { JapanSeaLevelEllipsoid } from './JapanSeaLevelEllipsoid'
 

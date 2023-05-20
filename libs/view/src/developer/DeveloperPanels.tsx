@@ -9,8 +9,8 @@ import {
 import { useAtom, useAtomValue } from 'jotai'
 import { useCallback, type FC } from 'react'
 
-import { useWindowEvent } from '@plateau/react-helpers'
-import { Shortcut } from '@plateau/ui-components'
+import { useWindowEvent } from '@takram/plateau-react-helpers'
+import { Shortcut } from '@takram/plateau-ui-components'
 
 import { platformAtom, showDeveloperPanelsAtom } from '../states/app'
 import { AppPanel } from './AppPanel'

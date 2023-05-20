@@ -1,8 +1,8 @@
 import { atom } from 'jotai'
 import { atomWithReset } from 'jotai/utils'
 
-import { type CesiumRoot } from '@plateau/cesium'
-import { type Platform } from '@plateau/ui-components'
+import { type CesiumRoot } from '@takram/plateau-cesium'
+import { type Platform } from '@takram/plateau-ui-components'
 
 import { type EnvironmentType } from '../containers/Environments'
 import { type TerrainType } from '../containers/Terrains'

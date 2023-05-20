@@ -6,8 +6,8 @@ import {
 import { type Feature, type MultiPolygon, type Polygon } from 'geojson'
 import { useEffect, useMemo, type FC } from 'react'
 
-import { Entity, useCesium, type EntityProps } from '@plateau/cesium'
-import { convertPolygonToHierarchyArray } from '@plateau/cesium-helpers'
+import { Entity, useCesium, type EntityProps } from '@takram/plateau-cesium'
+import { convertPolygonToHierarchyArray } from '@takram/plateau-cesium-helpers'
 
 export interface PolygonEntityProps {
   feature: Feature<Polygon | MultiPolygon>

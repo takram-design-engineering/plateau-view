@@ -20,7 +20,7 @@ import {
   StoryToolIcon,
   TimelineIcon,
   type ShortcutTooltipProps
-} from '@plateau/ui-components'
+} from '@takram/plateau-ui-components'
 
 import { platformAtom } from '../states/app'
 import { toolAtom, toolMachineAtom, type Tool } from '../states/tool'

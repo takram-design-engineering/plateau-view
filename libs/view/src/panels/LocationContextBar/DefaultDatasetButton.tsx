@@ -1,9 +1,9 @@
 import { useAtomValue, useSetAtom } from 'jotai'
 import { useCallback, useMemo, type FC } from 'react'
 
-import { type PlateauDatasetFragment } from '@plateau/graphql'
-import { useAddLayer, useFindLayer, useLayers } from '@plateau/layers'
-import { ContextButton } from '@plateau/ui-components'
+import { type PlateauDatasetFragment } from '@takram/plateau-graphql'
+import { useAddLayer, useFindLayer, useLayers } from '@takram/plateau-layers'
+import { ContextButton } from '@takram/plateau-ui-components'
 import {
   BRIDGE_LAYER,
   LANDSLIDE_LAYER,
@@ -13,11 +13,10 @@ import {
   createLandslideLayer,
   createLanduseLayer,
   createRoadLayer
-} from '@plateau/view-layers'
+} from '@takram/plateau-view-layers'
 
 import { datasetTypeLayers } from '../../constants/datasetTypeLayers'
 import { datasetTypeNames } from '../../constants/datasetTypeNames'
-import { nativeResolutionEnabledAtom } from '../../states/graphics'
 
 export interface DefaultDatasetButtonProps {
   dataset: PlateauDatasetFragment

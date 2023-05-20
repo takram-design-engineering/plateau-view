@@ -3,7 +3,7 @@ import { type Meta, type StoryObj } from '@storybook/react'
 import { atom } from 'jotai'
 import { useMemo, type FC } from 'react'
 
-import { type LayerModel } from '@plateau/layers'
+import { type LayerModel } from '@takram/plateau-layers'
 
 import { FloatingPanel } from './FloatingPanel'
 import { LayerListItem } from './LayerListItem'

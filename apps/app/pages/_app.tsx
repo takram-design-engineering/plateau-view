@@ -6,7 +6,7 @@ import Head from 'next/head'
 import { type ComponentProps, type ComponentType } from 'react'
 import invariant from 'tiny-invariant'
 
-import { CssBaseline, lightTheme } from '@plateau/ui-components'
+import { CssBaseline, lightTheme } from '@takram/plateau-ui-components'
 
 import { createApolloClient } from '../src/createApolloClient'
 import { createEmotionCache } from '../src/createEmotionCache'

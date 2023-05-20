@@ -1,5 +1,5 @@
 {
-  "name": "@plateau/layers",
+  "name": "@takram/plateau-layers",
   "version": "0.0.0",
   "sideEffects": false,
   "exports": {

@@ -1,8 +1,8 @@
 import { Typography } from '@mui/material'
 import { type FC } from 'react'
 
-import { type PlateauDatasetFragment } from '@plateau/graphql'
-import { ContextSelect, SelectItem } from '@plateau/ui-components'
+import { type PlateauDatasetFragment } from '@takram/plateau-graphql'
+import { ContextSelect, SelectItem } from '@takram/plateau-ui-components'
 
 import { datasetTypeNames } from '../../constants/datasetTypeNames'
 

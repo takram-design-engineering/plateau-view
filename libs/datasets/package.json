@@ -1,5 +1,5 @@
 {
-  "name": "@plateau/datasets",
+  "name": "@takram/plateau-datasets",
   "version": "0.0.0",
   "sideEffects": false,
   "exports": {

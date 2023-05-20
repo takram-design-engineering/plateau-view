@@ -1,7 +1,7 @@
 import { BoundingSphere, Cartesian3, type Scene } from '@cesium/engine'
 
-import { flyToBoundingSphere } from '@plateau/cesium-helpers'
-import { JapanSeaLevelEllipsoid } from '@plateau/datasets'
+import { flyToBoundingSphere } from '@takram/plateau-cesium-helpers'
+import { JapanSeaLevelEllipsoid } from '@takram/plateau-datasets'
 
 import { type AreaDataSource } from './AreaDataSource'
 

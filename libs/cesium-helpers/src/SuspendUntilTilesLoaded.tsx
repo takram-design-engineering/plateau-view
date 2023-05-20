@@ -1,7 +1,7 @@
 import { useEffect, type FC, type ReactNode } from 'react'
 import { suspend } from 'suspend-react'
 
-import { useCesium } from '@plateau/cesium'
+import { useCesium } from '@takram/plateau-cesium'
 
 import {
   waitUntilTilesLoaded,

@@ -13,10 +13,13 @@ import { useCallback, useMemo, type FC } from 'react'
 import {
   type PlateauBuildingDatasetVariant,
   type PlateauDatasetFragment
-} from '@plateau/graphql'
-import { useAddLayer, useFindLayer, useLayers } from '@plateau/layers'
-import { ContextButtonSelect, SelectItem } from '@plateau/ui-components'
-import { BUILDING_LAYER, createBuildingLayer } from '@plateau/view-layers'
+} from '@takram/plateau-graphql'
+import { useAddLayer, useFindLayer, useLayers } from '@takram/plateau-layers'
+import { ContextButtonSelect, SelectItem } from '@takram/plateau-ui-components'
+import {
+  BUILDING_LAYER,
+  createBuildingLayer
+} from '@takram/plateau-view-layers'
 
 import { datasetTypeNames } from '../../constants/datasetTypeNames'
 

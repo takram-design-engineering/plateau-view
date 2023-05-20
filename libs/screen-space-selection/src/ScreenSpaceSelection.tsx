@@ -2,8 +2,8 @@ import { Cartesian2 } from '@cesium/engine'
 import { useSetAtom } from 'jotai'
 import { useCallback, useContext, useEffect, useMemo, type FC } from 'react'
 
-import { useCesium } from '@plateau/cesium'
-import { assignPropertyProps } from '@plateau/react-helpers'
+import { useCesium } from '@takram/plateau-cesium'
+import { assignPropertyProps } from '@takram/plateau-react-helpers'
 
 import { Marquee } from './Marquee'
 import { ScreenSpaceSelectionContext } from './ScreenSpaceSelectionContext'

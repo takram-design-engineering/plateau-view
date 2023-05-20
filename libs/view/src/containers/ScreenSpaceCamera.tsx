@@ -4,7 +4,7 @@ import { type FC } from 'react'
 import {
   ScreenSpaceCamera as CesiumScreenSpaceCamera,
   type ScreenSpaceCameraProps as CesiumScreenSpaceCameraProps
-} from '@plateau/cesium'
+} from '@takram/plateau-cesium'
 
 import { toolAtom } from '../states/tool'
 

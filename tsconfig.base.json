@@ -16,35 +16,41 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@plateau/cesium": ["libs/cesium/src/index.ts"],
-      "@plateau/cesium-hbao": ["libs/cesium-hbao/src/index.ts"],
-      "@plateau/cesium-helpers": ["libs/cesium-helpers/src/index.ts"],
-      "@plateau/cesium-vector-imagery": [
+      "@takram/plateau-cesium": ["libs/cesium/src/index.ts"],
+      "@takram/plateau-cesium-hbao": ["libs/cesium-hbao/src/index.ts"],
+      "@takram/plateau-cesium-helpers": ["libs/cesium-helpers/src/index.ts"],
+      "@takram/plateau-cesium-vector-imagery": [
         "libs/cesium-vector-imagery/src/index.ts"
       ],
-      "@plateau/data-sources": ["libs/data-sources/src/index.ts"],
-      "@plateau/datasets": ["libs/datasets/src/index.ts"],
-      "@plateau/geocoder": ["libs/geocoder/src/index.ts"],
-      "@plateau/graphql": ["libs/graphql/index.ts"],
-      "@plateau/layers": ["libs/layers/src/index.ts"],
-      "@plateau/nest-cesium": ["libs/nest-cesium/src/index.ts"],
-      "@plateau/nest-firestore": ["libs/nest-firestore/src/index.ts"],
-      "@plateau/nest-plateau": ["libs/nest-plateau/src/index.ts"],
-      "@plateau/nest-vector-tile": ["libs/nest-vector-tile/src/index.ts"],
-      "@plateau/react-helpers": ["libs/react-helpers/src/index.ts"],
-      "@plateau/screen-space-selection": [
+      "@takram/plateau-data-sources": ["libs/data-sources/src/index.ts"],
+      "@takram/plateau-datasets": ["libs/datasets/src/index.ts"],
+      "@takram/plateau-geocoder": ["libs/geocoder/src/index.ts"],
+      "@takram/plateau-graphql": ["libs/graphql/index.ts"],
+      "@takram/plateau-layers": ["libs/layers/src/index.ts"],
+      "@takram/plateau-nest-cesium": ["libs/nest-cesium/src/index.ts"],
+      "@takram/plateau-nest-firestore": ["libs/nest-firestore/src/index.ts"],
+      "@takram/plateau-nest-plateau": ["libs/nest-plateau/src/index.ts"],
+      "@takram/plateau-nest-vector-tile": [
+        "libs/nest-vector-tile/src/index.ts"
+      ],
+      "@takram/plateau-react-helpers": ["libs/react-helpers/src/index.ts"],
+      "@takram/plateau-screen-space-selection": [
         "libs/screen-space-selection/src/index.ts"
       ],
-      "@plateau/sketch": ["libs/sketch/src/index.ts"],
-      "@plateau/type-helpers": ["libs/type-helpers/src/index.ts"],
-      "@plateau/ui-components": ["libs/ui-components/src/index.ts"],
-      "@plateau/ui-components/icons": ["libs/ui-components/src/icons/index.ts"],
-      "@plateau/ui-components/styles": [
+      "@takram/plateau-sketch": ["libs/sketch/src/index.ts"],
+      "@takram/plateau-type-helpers": ["libs/type-helpers/src/index.ts"],
+      "@takram/plateau-ui-components": ["libs/ui-components/src/index.ts"],
+      "@takram/plateau-ui-components/icons": [
+        "libs/ui-components/src/icons/index.ts"
+      ],
+      "@takram/plateau-ui-components/styles": [
         "libs/ui-components/src/styles/index.ts"
       ],
-      "@plateau/ui-components/theme": ["libs/ui-components/src/theme/index.ts"],
-      "@plateau/view": ["libs/view/src/index.ts"],
-      "@plateau/view-layers": ["libs/view-layers/src/index.ts"]
+      "@takram/plateau-ui-components/theme": [
+        "libs/ui-components/src/theme/index.ts"
+      ],
+      "@takram/plateau-view": ["libs/view/src/index.ts"],
+      "@takram/plateau-view-layers": ["libs/view-layers/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

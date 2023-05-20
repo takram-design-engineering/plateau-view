@@ -6,7 +6,7 @@ import { createRequire } from 'node:module'
 import path from 'path'
 import invariant from 'tiny-invariant'
 
-import { isNotFalse } from '@plateau/type-helpers'
+import { isNotFalse } from '@takram/plateau-type-helpers'
 
 const assets = [
   { as: 'fetch', file: 'approximateTerrainHeights.json' },

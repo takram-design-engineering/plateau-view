@@ -1,5 +1,5 @@
 {
-  "name": "@plateau/data-sources",
+  "name": "@takram/plateau-data-sources",
   "version": "0.0.0",
   "sideEffects": false,
   "exports": {

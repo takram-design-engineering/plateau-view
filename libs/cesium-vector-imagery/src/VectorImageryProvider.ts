@@ -10,7 +10,7 @@ import { Transfer } from 'threads'
 import invariant from 'tiny-invariant'
 import { type JsonObject } from 'type-fest'
 
-import { ImageryProviderBase } from '@plateau/cesium'
+import { ImageryProviderBase } from '@takram/plateau-cesium'
 
 import { type TileRendererParams } from './VectorTileRenderWorker'
 import { canQueue, queue } from './workerPool'

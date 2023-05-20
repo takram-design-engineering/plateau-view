@@ -4,7 +4,7 @@ import sharp, { type Sharp } from 'sharp'
 import { type Readable } from 'stream'
 import invariant from 'tiny-invariant'
 
-import { CESIUM, type Cesium } from '@plateau/nest-cesium'
+import { CESIUM, type Cesium } from '@takram/plateau-nest-cesium'
 
 import {
   VECTOR_TILE_CACHE,

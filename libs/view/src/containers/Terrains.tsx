@@ -1,11 +1,11 @@
 import { useAtomValue } from 'jotai'
 import { type FC } from 'react'
 
-import { WorldTerrain } from '@plateau/cesium'
+import { WorldTerrain } from '@takram/plateau-cesium'
 import {
   JapanSeaLevelEllipsoidTerrain,
   PlateauTerrain
-} from '@plateau/datasets'
+} from '@takram/plateau-datasets'
 
 import { enableTerrainLightingAtom, terrainTypeAtom } from '../states/app'
 

@@ -10,14 +10,14 @@ import {
   useCesium,
   type CanvasProps as CesiumCanvasProps,
   type ShadowMapProps
-} from '@plateau/cesium'
+} from '@takram/plateau-cesium'
 import {
   AmbientOcclusion,
   type AmbientOcclusionProps
-} from '@plateau/cesium-hbao'
-import { JapanSeaLevelEllipsoid } from '@plateau/datasets'
-import { withDeferredProps } from '@plateau/react-helpers'
-import { isNotNullish } from '@plateau/type-helpers'
+} from '@takram/plateau-cesium-hbao'
+import { JapanSeaLevelEllipsoid } from '@takram/plateau-datasets'
+import { withDeferredProps } from '@takram/plateau-react-helpers'
+import { isNotNullish } from '@takram/plateau-type-helpers'
 
 import { cesiumAtom, readyAtom } from '../states/app'
 import {

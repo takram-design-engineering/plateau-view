@@ -1,7 +1,7 @@
 import { atom, type SetStateAction } from 'jotai'
 import { atomWithReset, type RESET } from 'jotai/utils'
 
-import { AmbientOcclusionOutputType } from '@plateau/cesium-hbao'
+import { AmbientOcclusionOutputType } from '@takram/plateau-cesium-hbao'
 
 export type AntialiasType = 'none' | 'fxaa' | 'msaa2x' | 'msaa4x' | 'msaa8x'
 

@@ -1,7 +1,7 @@
 import { Divider, Stack } from '@mui/material'
 import { useMemo, type FC } from 'react'
 
-import { ContextBar } from '@plateau/ui-components'
+import { ContextBar } from '@takram/plateau-ui-components'
 
 import { useLocationContextState } from '../hooks/useLocationContextState'
 import { BuildingDatasetButtonSelect } from './LocationContextBar/BuildingDatasetButtonSelect'

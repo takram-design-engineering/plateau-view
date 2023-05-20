@@ -1,7 +1,10 @@
 import { type ShadowMap as CesiumShadowMap } from '@cesium/engine'
 import { type Primitive } from 'type-fest'
 
-import { assignPropertyProps, withDeferredProps } from '@plateau/react-helpers'
+import {
+  assignPropertyProps,
+  withDeferredProps
+} from '@takram/plateau-react-helpers'
 
 import { useCesium } from './useCesium'
 

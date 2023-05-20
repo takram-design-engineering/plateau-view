@@ -5,7 +5,7 @@ import {
   type LayerComponents,
   type LayerProps,
   type LayerType
-} from '@plateau/layers'
+} from '@takram/plateau-layers'
 
 import { BRIDGE_LAYER, BridgeLayer, type BridgeLayerModel } from './BridgeLayer'
 import {
@@ -43,7 +43,7 @@ export const TSUNAMI_LAYER = 'TSUNAMI_LAYER'
 export const USE_CASE_LAYER = 'USE_CASE_LAYER'
 export const VEGETATION_LAYER = 'VEGETATION_LAYER'
 
-declare module '@plateau/layers' {
+declare module '@takram/plateau-layers' {
   interface LayerModel {
     municipalityCode: string
     titleAtom: PrimitiveAtom<string | null>

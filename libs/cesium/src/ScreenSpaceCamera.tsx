@@ -1,7 +1,7 @@
 import { CameraEventType, KeyboardEventModifier } from '@cesium/engine'
 import { useEffect, type FC } from 'react'
 
-import { assignPropertyProps } from '@plateau/react-helpers'
+import { assignPropertyProps } from '@takram/plateau-react-helpers'
 
 import { useCesium } from './useCesium'
 

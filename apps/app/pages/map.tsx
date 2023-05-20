@@ -11,8 +11,8 @@ import {
 } from 'react-map-gl'
 import invariant from 'tiny-invariant'
 
-import { Canvas, type CesiumRoot } from '@plateau/cesium'
-import { VectorMapImageryLayer } from '@plateau/datasets'
+import { Canvas, type CesiumRoot } from '@takram/plateau-cesium'
+import { VectorMapImageryLayer } from '@takram/plateau-datasets'
 
 import mapStyle from '../public/assets/mapStyles/light.json'
 

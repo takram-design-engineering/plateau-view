@@ -2,7 +2,7 @@ import { Entity as CesiumEntity, type EntityCollection } from '@cesium/engine'
 import { omit } from 'lodash'
 import { forwardRef, memo, useEffect, useState } from 'react'
 
-import { assignForwardedRef } from '@plateau/react-helpers'
+import { assignForwardedRef } from '@takram/plateau-react-helpers'
 
 import { useCesium } from './useCesium'
 

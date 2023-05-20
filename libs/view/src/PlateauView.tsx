@@ -24,29 +24,29 @@ import {
   useCesium,
   useScreenSpaceEvent,
   useScreenSpaceEventHandler
-} from '@plateau/cesium'
-import { SuspendUntilTilesLoaded } from '@plateau/cesium-helpers'
+} from '@takram/plateau-cesium'
+import { SuspendUntilTilesLoaded } from '@takram/plateau-cesium-helpers'
 import {
   GooglePhotorealisticTileset,
   PlateauDatasetsContext
-} from '@plateau/datasets'
+} from '@takram/plateau-datasets'
 import {
   LayerList,
   LayersProvider,
   LayersRenderer,
   useAddLayer
-} from '@plateau/layers'
-import { useWindowEvent } from '@plateau/react-helpers'
+} from '@takram/plateau-layers'
+import { useWindowEvent } from '@takram/plateau-react-helpers'
 import {
   ScreenSpaceSelectionBoundingSphere,
   ScreenSpaceSelectionContext
-} from '@plateau/screen-space-selection'
-import { AppLayout } from '@plateau/ui-components'
+} from '@takram/plateau-screen-space-selection'
+import { AppLayout } from '@takram/plateau-ui-components'
 import {
   ViewLayerListItem,
   createBuildingLayer,
   layerComponents
-} from '@plateau/view-layers'
+} from '@takram/plateau-view-layers'
 
 import { Areas } from './containers/Areas'
 import { Canvas } from './containers/Canvas'

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import { PlateauDatasetType } from '@plateau/graphql'
-import { type LayerType } from '@plateau/layers'
+import { PlateauDatasetType } from '@takram/plateau-graphql'
+import { type LayerType } from '@takram/plateau-layers'
 import {
   BORDER_LAYER,
   BRIDGE_LAYER,
@@ -24,7 +24,7 @@ import {
   TSUNAMI_LAYER,
   USE_CASE_LAYER,
   VEGETATION_LAYER
-} from '@plateau/view-layers'
+} from '@takram/plateau-view-layers'
 
 export const datasetTypeLayers: Record<
   PlateauDatasetType,

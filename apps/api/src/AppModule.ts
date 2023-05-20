@@ -5,8 +5,8 @@ import { ServeStaticModule } from '@nestjs/serve-static'
 import * as envalid from 'envalid'
 import path from 'path'
 
-import { FirestoreModule } from '@plateau/nest-firestore'
-import { PlateauModule } from '@plateau/nest-plateau'
+import { FirestoreModule } from '@takram/plateau-nest-firestore'
+import { PlateauModule } from '@takram/plateau-nest-plateau'
 
 import { AppController } from './AppController'
 import { AppService } from './AppService'

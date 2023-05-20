@@ -5,8 +5,8 @@ import { useContext } from 'react'
 import {
   useScreenSpaceEvent,
   useScreenSpaceEventHandler
-} from '@plateau/cesium'
-import { useWindowEvent } from '@plateau/react-helpers'
+} from '@takram/plateau-cesium'
+import { useWindowEvent } from '@takram/plateau-react-helpers'
 
 import { SketchContext } from './SketchProvider'
 

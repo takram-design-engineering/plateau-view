@@ -3,15 +3,15 @@ import { useAtomValue } from 'jotai'
 import { useResetAtom } from 'jotai/utils'
 import { useContext, useMemo, type FC } from 'react'
 
-import { PlateauDatasetsContext } from '@plateau/datasets'
-import { ScreenSpaceSelectionContext } from '@plateau/screen-space-selection'
+import { PlateauDatasetsContext } from '@takram/plateau-datasets'
+import { ScreenSpaceSelectionContext } from '@takram/plateau-screen-space-selection'
 import {
   DeveloperPanel,
   ParameterList,
   SelectParameterItem,
   SwitchParameterItem,
   ValueParameterItem
-} from '@plateau/ui-components'
+} from '@takram/plateau-ui-components'
 
 import {
   colorModeAtom,

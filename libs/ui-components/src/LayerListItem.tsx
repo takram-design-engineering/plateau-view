@@ -19,7 +19,7 @@ import {
   type SyntheticEvent
 } from 'react'
 
-import { useLayers, type LayerProps } from '@plateau/layers'
+import { useLayers, type LayerProps } from '@takram/plateau-layers'
 
 import { AntIcon } from './AntIcon'
 import { ItemLocationIcon } from './icons/ItemLocationIcon'

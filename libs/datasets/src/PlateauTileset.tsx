@@ -12,13 +12,13 @@ import { useTheme } from '@mui/material'
 import { useAtomValue } from 'jotai'
 import { forwardRef, useContext, useEffect, useMemo } from 'react'
 
-import { useAsyncInstance, useCesium } from '@plateau/cesium'
+import { useAsyncInstance, useCesium } from '@takram/plateau-cesium'
 import {
   assignForwardedRef,
   withDeferredProps,
   withEphemerality
-} from '@plateau/react-helpers'
-import { useScreenSpaceSelectionResponder } from '@plateau/screen-space-selection'
+} from '@takram/plateau-react-helpers'
+import { useScreenSpaceSelectionResponder } from '@takram/plateau-screen-space-selection'
 
 import { LambertDiffuseShader } from './LambertDiffuseShader'
 import { PlateauDatasetsContext } from './PlateauDatasetsContext'

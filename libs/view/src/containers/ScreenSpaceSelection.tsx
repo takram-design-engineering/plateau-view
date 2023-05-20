@@ -4,7 +4,7 @@ import { type FC } from 'react'
 import {
   ScreenSpaceSelection as PlateauScreenSpaceSelection,
   type ScreenSpaceSelectionProps as PlateauScreenSpaceSelectionProps
-} from '@plateau/screen-space-selection'
+} from '@takram/plateau-screen-space-selection'
 
 import { toolAtom } from '../states/tool'
 

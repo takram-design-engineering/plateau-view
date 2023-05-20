@@ -3,14 +3,14 @@ import { atom, useAtomValue, type SetStateAction } from 'jotai'
 import { useResetAtom } from 'jotai/utils'
 import { type FC } from 'react'
 
-import { AmbientOcclusionOutputType } from '@plateau/cesium-hbao'
+import { AmbientOcclusionOutputType } from '@takram/plateau-cesium-hbao'
 import {
   DeveloperPanel,
   ParameterList,
   SelectParameterItem,
   SliderParameterItem,
   SwitchParameterItem
-} from '@plateau/ui-components'
+} from '@takram/plateau-ui-components'
 
 import { atomWithResettableAtoms } from '../states/atomWithResettableAtoms'
 import {

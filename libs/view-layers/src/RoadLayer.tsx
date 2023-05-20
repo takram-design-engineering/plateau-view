@@ -2,13 +2,13 @@ import { useAtomValue, useSetAtom } from 'jotai'
 import { useContext, useEffect, useMemo, type FC } from 'react'
 import { type SetOptional } from 'type-fest'
 
-import { useCesium } from '@plateau/cesium'
-import { VectorImageryLayer } from '@plateau/datasets'
+import { useCesium } from '@takram/plateau-cesium'
+import { VectorImageryLayer } from '@takram/plateau-datasets'
 import {
   PlateauDatasetType,
   useMunicipalityDatasetsQuery
-} from '@plateau/graphql'
-import { type LayerModel, type LayerProps } from '@plateau/layers'
+} from '@takram/plateau-graphql'
+import { type LayerModel, type LayerProps } from '@takram/plateau-layers'
 
 import { ViewLayersContext } from './ViewLayersContext'
 import { createViewLayer, type ViewLayerModelParams } from './createViewLayer'

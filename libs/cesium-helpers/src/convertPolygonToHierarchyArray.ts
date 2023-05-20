@@ -1,7 +1,7 @@
 import { Cartesian3, type PolygonHierarchy } from '@cesium/engine'
 import { type MultiPolygon, type Polygon, type Position } from 'geojson'
 
-import { isNotNullish } from '@plateau/type-helpers'
+import { isNotNullish } from '@takram/plateau-type-helpers'
 
 function coordinatesToHierarchy(
   coordinates: readonly Position[][]

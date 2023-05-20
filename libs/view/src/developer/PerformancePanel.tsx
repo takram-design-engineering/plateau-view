@@ -6,14 +6,14 @@ import { sumBy } from 'lodash'
 import { useContext, useMemo, useRef, type FC } from 'react'
 import invariant from 'tiny-invariant'
 
-import { useCesium, useInstance, usePreRender } from '@plateau/cesium'
-import { PlateauDatasetsContext } from '@plateau/datasets'
+import { useCesium, useInstance, usePreRender } from '@takram/plateau-cesium'
+import { PlateauDatasetsContext } from '@takram/plateau-datasets'
 import {
   DeveloperPanel,
   ParameterItem,
   ParameterList,
   SwitchParameterItem
-} from '@plateau/ui-components'
+} from '@takram/plateau-ui-components'
 
 import { atomWithResettableAtoms } from '../states/atomWithResettableAtoms'
 import { showGlobeWireframeAtom } from '../states/performance'

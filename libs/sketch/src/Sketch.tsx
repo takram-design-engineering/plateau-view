@@ -3,7 +3,7 @@ import { useTheme } from '@mui/material'
 import { useAtomValue } from 'jotai'
 import { useContext, type FC } from 'react'
 
-import { Entity } from '@plateau/cesium'
+import { Entity } from '@takram/plateau-cesium'
 
 import { PolygonEntity } from './PolygonEntity'
 import { PolylineEntity } from './PolylineEntity'

@@ -2,7 +2,10 @@ import { useAtomValue } from 'jotai'
 import { type FC } from 'react'
 import invariant from 'tiny-invariant'
 
-import { BingMapsImageryLayer, VectorMapImageryLayer } from '@plateau/datasets'
+import {
+  BingMapsImageryLayer,
+  VectorMapImageryLayer
+} from '@takram/plateau-datasets'
 
 import { GooglePhotorealisticEnvironment } from '../environments/GooglePhotorealisticEnvironment'
 import { MapEnvironment } from '../environments/MapEnvironment'

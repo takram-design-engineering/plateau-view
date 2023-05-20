@@ -1,9 +1,9 @@
 import { type SvgIconProps } from '@mui/material'
 import { type ComponentType, type FC } from 'react'
 
-import { type LayerProps, type LayerType } from '@plateau/layers'
-import { LayerListItem } from '@plateau/ui-components'
-import { BuildingIcon, LayerIcon } from '@plateau/ui-components/icons'
+import { type LayerProps, type LayerType } from '@takram/plateau-layers'
+import { LayerListItem } from '@takram/plateau-ui-components'
+import { BuildingIcon, LayerIcon } from '@takram/plateau-ui-components/icons'
 
 import {
   BORDER_LAYER,

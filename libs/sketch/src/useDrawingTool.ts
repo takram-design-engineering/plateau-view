@@ -11,12 +11,12 @@ import { useContext, useEffect, useRef } from 'react'
 import invariant from 'tiny-invariant'
 import { type SetOptional } from 'type-fest'
 
-import { useCesium } from '@plateau/cesium'
+import { useCesium } from '@takram/plateau-cesium'
 import {
   convertPolygonToHierarchyArray,
   convertPolygonToPositionsArray
-} from '@plateau/cesium-helpers'
-import { useConstant } from '@plateau/react-helpers'
+} from '@takram/plateau-cesium-helpers'
+import { useConstant } from '@takram/plateau-react-helpers'
 
 import { SketchContext, type GeometryFeature } from './SketchProvider'
 import { useScreenSpaceDrag } from './useScreenSpaceDrag'

@@ -1,7 +1,7 @@
 import { isEqual, omit } from 'lodash'
 import invariant from 'tiny-invariant'
 
-import { isNotNullish } from '@plateau/type-helpers'
+import { isNotNullish } from '@takram/plateau-type-helpers'
 
 import { type PlateauCatalogData } from '../dto/PlateauCatalog'
 import { type PlateauMunicipality } from '../dto/PlateauMunicipality'

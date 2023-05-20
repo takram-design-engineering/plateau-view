@@ -1,5 +1,5 @@
 {
-  "name": "plateau",
+  "name": "@takram/plateau",
   "version": "0.0.0",
   "private": true,
   "scripts": {

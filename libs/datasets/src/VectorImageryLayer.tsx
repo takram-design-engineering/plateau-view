@@ -4,11 +4,11 @@ import {
   ImageryLayer,
   useInstance,
   type ImageryLayerProps
-} from '@plateau/cesium'
+} from '@takram/plateau-cesium'
 import {
   VectorImageryProvider,
   type VectorImageryProviderOptions
-} from '@plateau/cesium-vector-imagery'
+} from '@takram/plateau-cesium-vector-imagery'
 
 export interface VectorImageryLayerProps
   extends VectorImageryProviderOptions,

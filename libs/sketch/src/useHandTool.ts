@@ -1,7 +1,7 @@
 import { useAtomValue } from 'jotai'
 import { useContext } from 'react'
 
-import { useCesium } from '@plateau/cesium'
+import { useCesium } from '@takram/plateau-cesium'
 
 import { SketchContext } from './SketchProvider'
 

@@ -12,7 +12,7 @@ import Cesium3DTilePass from '@cesium/engine/Source/Scene/Cesium3DTilePass'
 import Cesium3DTilePassState from '@cesium/engine/Source/Scene/Cesium3DTilePassState'
 import invariant from 'tiny-invariant'
 
-import { getPixelRatio } from '@plateau/cesium-helpers'
+import { getPixelRatio } from '@takram/plateau-cesium-helpers'
 
 declare module '@cesium/engine' {
   // eslint-disable-next-line @typescript-eslint/no-namespace
