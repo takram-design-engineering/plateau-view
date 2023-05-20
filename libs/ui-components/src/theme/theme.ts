@@ -1,4 +1,4 @@
-import { createTheme, type ThemeOptions } from '@mui/material'
+import { alpha, createTheme, type ThemeOptions } from '@mui/material'
 import { cyan, grey } from '@mui/material/colors'
 import { type Shadows } from '@mui/material/styles/shadows'
 import { merge } from 'lodash'
@@ -115,6 +115,9 @@ export const lightThemeOptions = merge<unknown, unknown, ThemeOptions>(
       mode: 'light',
       background: {
         default: '#ffffff'
+      },
+      text: {
+        secondary: alpha(theme.palette.text.primary, 0.5)
       }
     }
   }
@@ -128,6 +131,9 @@ export const darkThemeOptions = merge<unknown, unknown, ThemeOptions>(
       mode: 'dark',
       background: {
         default: grey[900]
+      },
+      text: {
+        secondary: alpha(theme.palette.text.primary, 0.5)
       }
     }
   }
