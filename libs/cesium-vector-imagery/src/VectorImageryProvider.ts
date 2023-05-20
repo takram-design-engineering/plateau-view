@@ -89,6 +89,7 @@ export class VectorImageryProvider extends ImageryProviderBase {
   }
 
   async renderTile(coords: Zxy, canvas: OffscreenCanvas): Promise<void> {
+    // TODO: Prioritize tiles in the current frustum.
     await getWorkerPool().queue(async task => {
       await task.renderTile(
         Transfer(
