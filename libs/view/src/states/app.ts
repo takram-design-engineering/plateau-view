@@ -24,6 +24,7 @@ export const debugSphericalHarmonicsAtom = atomWithReset(false)
 export type PlateauDataSource = '2020' | '2022' | 'cms'
 
 export const plateauDataSourceAtom = atomWithReset<PlateauDataSource>('2020')
+export const showDataFormatsAtom = atomWithReset(false)
 export const showAreaEntitiesAtom = atomWithReset(false)
 
 export const showSelectionBoundingSphereAtom = atomWithReset(false)
