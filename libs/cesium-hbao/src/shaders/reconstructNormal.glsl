@@ -58,16 +58,16 @@ vec3 reconstructNormalAccurate(
   vec2 ddy = vec2(0.0, pixelSize.y);
 
   vec4 H = vec4(
-    czm_readDepth(depthTexture, uv - ddx),
-    czm_readDepth(depthTexture, uv + ddx),
-    czm_readDepth(depthTexture, ddx * -2.0 + uv),
-    czm_readDepth(depthTexture, ddx * 2.0 + uv)
+    readDepth(depthTexture, uv - ddx),
+    readDepth(depthTexture, uv + ddx),
+    readDepth(depthTexture, ddx * -2.0 + uv),
+    readDepth(depthTexture, ddx * 2.0 + uv)
   );
   vec4 V = vec4(
-    czm_readDepth(depthTexture, uv - ddy),
-    czm_readDepth(depthTexture, uv + ddy),
-    czm_readDepth(depthTexture, ddy * -2.0 + uv),
-    czm_readDepth(depthTexture, ddy * 2.0 + uv)
+    readDepth(depthTexture, uv - ddy),
+    readDepth(depthTexture, uv + ddy),
+    readDepth(depthTexture, ddy * -2.0 + uv),
+    readDepth(depthTexture, ddy * 2.0 + uv)
   );
 
   dPdx = readMinDiff(depthTexture, uv, position, depth, H, ddx);

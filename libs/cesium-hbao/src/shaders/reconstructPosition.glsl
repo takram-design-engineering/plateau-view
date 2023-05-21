@@ -6,5 +6,5 @@ vec3 reconstructPosition(const vec2 uv, const float depth) {
 }
 
 vec3 readPosition(const sampler2D depthTexture, const vec2 uv) {
-  return reconstructPosition(uv, czm_readDepth(depthTexture, uv));
+  return reconstructPosition(uv, readDepth(depthTexture, uv));
 }
