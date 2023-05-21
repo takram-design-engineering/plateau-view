@@ -164,6 +164,19 @@ export const DefaultDatasetSelect: FC<DefaultDatasetSelectProps> = ({
     >
       {datasets.flatMap((dataset, index) => {
         if (dataset.data.length > 1) {
+          if (dataset.name === '') {
+            return dataset.data.map(datum => (
+              <SelectItem
+                key={datum.id}
+                value={serializeParams({
+                  datasetId: dataset.id,
+                  datumId: datum.id
+                })}
+              >
+                <Typography variant='body2'>{datum.name}</Typography>
+              </SelectItem>
+            ))
+          }
           return [
             <SelectGroupItem key={index} size='small'>
               {dataset.name}
