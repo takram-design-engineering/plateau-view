@@ -1,3 +1,4 @@
+import { useTheme } from '@mui/material'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { useEffect, type FC } from 'react'
 import { type SetOptional } from 'type-fest'
@@ -15,23 +16,23 @@ import {
   type DatasetLayerModel,
   type DatasetLayerModelParams
 } from './createDatasetLayerBase'
-import { BRIDGE_LAYER } from './layerTypes'
+import { FLOOD_LAYER } from './layerTypes'
 import { useDatum } from './useDatum'
 
-export interface BridgeLayerModelParams extends DatasetLayerModelParams {}
+export interface FloodLayerModelParams extends DatasetLayerModelParams {}
 
-export interface BridgeLayerModel extends DatasetLayerModel {}
+export interface FloodLayerModel extends DatasetLayerModel {}
 
-export function createBridgeLayer(
-  params: BridgeLayerModelParams
-): SetOptional<BridgeLayerModel, 'id'> {
+export function createFloodLayer(
+  params: FloodLayerModelParams
+): SetOptional<FloodLayerModel, 'id'> {
   return {
     ...createDatasetLayerBase(params),
-    type: BRIDGE_LAYER
+    type: FLOOD_LAYER
   }
 }
 
-export const BridgeLayer: FC<LayerProps<typeof BRIDGE_LAYER>> = ({
+export const FloodLayer: FC<LayerProps<typeof FLOOD_LAYER>> = ({
   titleAtom,
   hiddenAtom,
   municipalityCode,
@@ -40,7 +41,7 @@ export const BridgeLayer: FC<LayerProps<typeof BRIDGE_LAYER>> = ({
   const query = useMunicipalityDatasetsQuery({
     variables: {
       municipalityCode,
-      includeTypes: [PlateauDatasetType.Bridge]
+      includeTypes: [PlateauDatasetType.Flood]
     }
   })
 
@@ -69,8 +70,16 @@ export const BridgeLayer: FC<LayerProps<typeof BRIDGE_LAYER>> = ({
   }, [scene])
 
   const datum = useDatum(datumIdAtom, query.data?.municipality?.datasets)
+  const theme = useTheme()
   if (hidden || datum == null) {
     return null
   }
-  return <PlateauTileset url={datum.url} />
+  return (
+    <PlateauTileset
+      url={datum.url}
+      color={theme.palette.primary.main}
+      opacity={0.5}
+      disableShadow
+    />
+  )
 }

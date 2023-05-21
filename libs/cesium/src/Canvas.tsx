@@ -127,7 +127,7 @@ export const Canvas = forwardRef<HTMLDivElement, CanvasProps>(
             ]),
 
             // This option is deprecated, but Cesium tries to access their
-            // endpoint without this, which slows down first view.
+            // endpoint without this, which slows down the first view.
             imageryProvider: new DefaultImageryProvider(),
 
             // TODO: Reroute credits

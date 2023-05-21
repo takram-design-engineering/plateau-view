@@ -8,6 +8,8 @@ import {
 
 import { BridgeLayer } from './BridgeLayer'
 import { BuildingLayer } from './BuildingLayer'
+import { FacilityLayer } from './FacilityLayer'
+import { FloodLayer } from './FloodLayer'
 import { LandslideLayer } from './LandslideLayer'
 import { LanduseLayer } from './LanduseLayer'
 import { RoadLayer } from './RoadLayer'
@@ -43,8 +45,8 @@ export const layerComponents = {
   [BRIDGE_LAYER]: BridgeLayer,
   [BUILDING_LAYER]: BuildingLayer,
   [EMERGENCY_ROUTE_LAYER]: NullLayer,
-  [FACILITY_LAYER]: NullLayer,
-  [FLOOD_LAYER]: NullLayer,
+  [FACILITY_LAYER]: FacilityLayer,
+  [FLOOD_LAYER]: FloodLayer,
   [FURNITURE_LAYER]: NullLayer,
   [GENERIC_LAYER]: NullLayer,
   [HIGHTIDE_LAYER]: NullLayer,

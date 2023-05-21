@@ -2,6 +2,8 @@ import { type PrimitiveAtom } from 'jotai'
 
 import { type BridgeLayerModel } from './BridgeLayer'
 import { type BuildingLayerModel } from './BuildingLayer'
+import { type FacilityLayerModel } from './FacilityLayer'
+import { type FloodLayerModel } from './FloodLayer'
 import { type LandslideLayerModel } from './LandslideLayer'
 import { type LanduseLayerModel } from './LanduseLayer'
 import { type RoadLayerModel } from './RoadLayer'
@@ -31,7 +33,6 @@ import {
 
 declare module '@takram/plateau-layers' {
   interface LayerModel {
-    municipalityCode: string
     titleAtom: PrimitiveAtom<string | null>
     loadingAtom: PrimitiveAtom<boolean>
     hiddenAtom: PrimitiveAtom<boolean>
@@ -43,8 +44,8 @@ declare module '@takram/plateau-layers' {
     [BRIDGE_LAYER]: BridgeLayerModel
     [BUILDING_LAYER]: BuildingLayerModel
     [EMERGENCY_ROUTE_LAYER]: never // EmergencyRouteLayerModel
-    [FACILITY_LAYER]: never // FacilityLayerModel
-    [FLOOD_LAYER]: never // FloodLayerModel
+    [FACILITY_LAYER]: FacilityLayerModel
+    [FLOOD_LAYER]: FloodLayerModel
     [FURNITURE_LAYER]: never // FurnitureLayerModel
     [GENERIC_LAYER]: never // GenericLayerModel
     [HIGHTIDE_LAYER]: never // HightideLayerModel

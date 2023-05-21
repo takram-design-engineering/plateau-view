@@ -12,6 +12,11 @@ import {
   type BuildingLayerModelParams
 } from './BuildingLayer'
 import {
+  createFacilityLayer,
+  type FacilityLayerModelParams
+} from './FacilityLayer'
+import { createFloodLayer, type FloodLayerModelParams } from './FloodLayer'
+import {
   createLandslideLayer,
   type LandslideLayerModelParams
 } from './LandslideLayer'
@@ -50,8 +55,8 @@ type ViewLayerModelParams<T extends LayerType> =
   T extends typeof BRIDGE_LAYER ? BridgeLayerModelParams :
   T extends typeof BUILDING_LAYER ? BuildingLayerModelParams :
   T extends typeof EMERGENCY_ROUTE_LAYER ? never : // EmergencyRouteLayerModelParams
-  T extends typeof FACILITY_LAYER ? never : // FacilityLayerModelParams
-  T extends typeof FLOOD_LAYER ? never : // FloodLayerModelParams
+  T extends typeof FACILITY_LAYER ? FacilityLayerModelParams :
+  T extends typeof FLOOD_LAYER ? FloodLayerModelParams :
   T extends typeof FURNITURE_LAYER ? never : // FurnitureLayerModelParams
   T extends typeof GENERIC_LAYER ? never : // GenericLayerModelParams
   T extends typeof HIGHTIDE_LAYER ? never : // HightideLayerModelParams
@@ -73,6 +78,7 @@ export function createViewLayer<T extends LayerType>(
   params: ViewLayerModelParams<T> & { type: T }
 ): SetOptional<LayerModelOverrides[T], 'id'>
 
+// TODO: Refine types
 export function createViewLayer<T extends LayerType>(
   params: ViewLayerModelParams<T> & { type: T }
 ): SetOptional<LayerModel, 'id'> | undefined {
@@ -80,15 +86,15 @@ export function createViewLayer<T extends LayerType>(
     case BORDER_LAYER:
       return undefined // createBorderLayer(params)
     case BRIDGE_LAYER:
-      return createBridgeLayer(params)
+      return createBridgeLayer(params as BridgeLayerModelParams)
     case BUILDING_LAYER:
       return createBuildingLayer(params)
     case EMERGENCY_ROUTE_LAYER:
       return undefined // createEmergencyRouteLayer(params)
     case FACILITY_LAYER:
-      return undefined // createFacilityLayer(params)
+      return createFacilityLayer(params as FacilityLayerModelParams)
     case FLOOD_LAYER:
-      return undefined // createFloodLayer(params)
+      return createFloodLayer(params as FloodLayerModelParams)
     case FURNITURE_LAYER:
       return undefined // createFurnitureLayer(params)
     case GENERIC_LAYER:
@@ -100,15 +106,15 @@ export function createViewLayer<T extends LayerType>(
     case LANDMARK_LAYER:
       return undefined // createLandmarkLayer(params)
     case LANDSLIDE_LAYER:
-      return createLandslideLayer(params)
+      return createLandslideLayer(params as LandslideLayerModelParams)
     case LANDUSE_LAYER:
-      return createLanduseLayer(params)
+      return createLanduseLayer(params as LanduseLayerModelParams)
     case PARK_LAYER:
       return undefined // createParkLayer(params)
     case RAILWAY_LAYER:
       return undefined // createRailwayLayer(params)
     case ROAD_LAYER:
-      return createRoadLayer(params)
+      return createRoadLayer(params as RoadLayerModelParams)
     case SHELTER_LAYER:
       return undefined // createShelterLayer(params)
     case STATION_LAYER:

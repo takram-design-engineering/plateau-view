@@ -57,7 +57,8 @@ export const DefaultDatasetButton: FC<DefaultDatasetButtonProps> = ({
           addLayer(
             createViewLayer({
               type: layerType,
-              municipalityCode
+              municipalityCode,
+              datasetId: dataset.id
             })
           )
           break
@@ -67,11 +68,11 @@ export const DefaultDatasetButton: FC<DefaultDatasetButtonProps> = ({
     } else {
       removeLayer(layer.id)
     }
-  }, [municipalityCode, layer, layerType, addLayer, removeLayer])
+  }, [dataset, municipalityCode, layer, layerType, addLayer, removeLayer])
 
-  const variant = dataset.variants[0]
-  if (variant == null) {
-    console.warn('Dataset must include at least 1 variant.')
+  const datum = dataset.data[0]
+  if (datum == null) {
+    console.warn('Dataset must include at least 1 datum.')
     return null
   }
   return (

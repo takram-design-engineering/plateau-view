@@ -1,5 +1,6 @@
 import { Map, MapOptions } from '@maplibre/maplibre-gl-native'
 import { Inject, Injectable } from '@nestjs/common'
+import { type CustomLayerInterface, type Style } from 'mapbox-gl'
 import sharp, { type Sharp } from 'sharp'
 import { type Readable } from 'stream'
 import invariant from 'tiny-invariant'
@@ -27,10 +28,8 @@ interface RenderOptions {
   classes?: string[]
 }
 
-interface MapStyle {
-  layers: Array<{
-    id: string
-  }>
+type MapStyle = Omit<Style, 'layers'> & {
+  layers: Array<Exclude<Style['layers'][number], CustomLayerInterface>>
 }
 
 interface RenderTileOptions {

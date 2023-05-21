@@ -26,16 +26,13 @@ import {
   VEGETATION_LAYER
 } from '@takram/plateau-view-layers'
 
-export const datasetTypeLayers: Record<
-  PlateauDatasetType,
-  LayerType | undefined
-> = {
+export const datasetTypeLayers = {
   [PlateauDatasetType.Border]: undefined, // BORDER_LAYER
   [PlateauDatasetType.Bridge]: BRIDGE_LAYER,
   [PlateauDatasetType.Building]: BUILDING_LAYER,
   [PlateauDatasetType.EmergencyRoute]: undefined, // EMERGENCY_ROUTE_LAYER
-  [PlateauDatasetType.Facility]: undefined, // FACILITY_LAYER
-  [PlateauDatasetType.Flood]: undefined, // FLOOD_LAYER
+  [PlateauDatasetType.Facility]: FACILITY_LAYER,
+  [PlateauDatasetType.Flood]: FLOOD_LAYER,
   [PlateauDatasetType.Furniture]: undefined, // FURNITURE_LAYER
   [PlateauDatasetType.Generic]: undefined, // GENERIC_LAYER
   [PlateauDatasetType.Hightide]: undefined, // HIGHTIDE_LAYER
@@ -51,4 +48,4 @@ export const datasetTypeLayers: Record<
   [PlateauDatasetType.Tsunami]: undefined, // TSUNAMI_LAYER
   [PlateauDatasetType.UseCase]: undefined, // USE_CASE_LAYER
   [PlateauDatasetType.Vegetation]: undefined // VEGETATION_LAYER
-}
+} as const satisfies Record<PlateauDatasetType, LayerType | undefined>

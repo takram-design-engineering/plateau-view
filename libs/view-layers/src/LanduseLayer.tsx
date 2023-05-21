@@ -9,35 +9,37 @@ import {
   PlateauDatasetType,
   useMunicipalityDatasetsQuery
 } from '@takram/plateau-graphql'
-import { type LayerModel, type LayerProps } from '@takram/plateau-layers'
+import { type LayerProps } from '@takram/plateau-layers'
 
 import { ViewLayersContext } from './ViewLayersContext'
 import {
-  createViewLayerBase,
-  type ViewLayerBaseModelParams
-} from './createViewLayerBase'
+  createDatasetLayerBase,
+  type DatasetLayerModel,
+  type DatasetLayerModelParams
+} from './createDatasetLayerBase'
 import { LANDUSE_LAYER } from './layerTypes'
+import { useDatum } from './useDatum'
 import { useMVTMetadata } from './useMVTMetadata'
 
-export interface LanduseLayerModelParams extends ViewLayerBaseModelParams {}
+export interface LanduseLayerModelParams extends DatasetLayerModelParams {}
 
-export interface LanduseLayerModel extends LayerModel {}
+export interface LanduseLayerModel extends DatasetLayerModel {}
 
 export function createLanduseLayer(
   params: LanduseLayerModelParams
 ): SetOptional<LanduseLayerModel, 'id'> {
   return {
-    ...createViewLayerBase(params),
-    type: LANDUSE_LAYER,
-    municipalityCode: params.municipalityCode
+    ...createDatasetLayerBase(params),
+    type: LANDUSE_LAYER
   }
 }
 
 // TODO: Abstraction of MVT
 export const LanduseLayer: FC<LayerProps<typeof LANDUSE_LAYER>> = ({
-  municipalityCode,
   titleAtom,
-  hiddenAtom
+  hiddenAtom,
+  municipalityCode,
+  datumIdAtom
 }) => {
   const query = useMunicipalityDatasetsQuery({
     variables: {
@@ -70,8 +72,8 @@ export const LanduseLayer: FC<LayerProps<typeof LANDUSE_LAYER>> = ({
     }
   }, [scene])
 
-  const variant = query.data?.municipality?.datasets[0]?.variants[0]
-  const metadata = useMVTMetadata(variant?.url)
+  const datum = useDatum(datumIdAtom, query.data?.municipality?.datasets)
+  const metadata = useMVTMetadata(datum?.url)
 
   const style = useMemo(() => {
     if (metadata == null) {
@@ -96,12 +98,12 @@ export const LanduseLayer: FC<LayerProps<typeof LANDUSE_LAYER>> = ({
   const { pixelRatioAtom } = useContext(ViewLayersContext)
   const pixelRatio = useAtomValue(pixelRatioAtom)
 
-  if (hidden || variant == null || metadata == null) {
+  if (hidden || datum == null || metadata == null) {
     return null
   }
   return (
     <VectorImageryLayer
-      url={variant.url}
+      url={datum.url}
       style={style}
       pixelRatio={pixelRatio}
       rectangle={metadata.rectangle}
@@ -110,7 +112,7 @@ export const LanduseLayer: FC<LayerProps<typeof LANDUSE_LAYER>> = ({
   )
 }
 
-// Separate definition.
+// TODO: Separate definition.
 const values = [
   '田',
   '畑（畑、樹園地、採草地、養鶏（牛・豚）場）',

@@ -9,35 +9,37 @@ import {
   PlateauDatasetType,
   useMunicipalityDatasetsQuery
 } from '@takram/plateau-graphql'
-import { type LayerModel, type LayerProps } from '@takram/plateau-layers'
+import { type LayerProps } from '@takram/plateau-layers'
 
 import { ViewLayersContext } from './ViewLayersContext'
 import {
-  createViewLayerBase,
-  type ViewLayerBaseModelParams
-} from './createViewLayerBase'
+  createDatasetLayerBase,
+  type DatasetLayerModel,
+  type DatasetLayerModelParams
+} from './createDatasetLayerBase'
 import { LANDSLIDE_LAYER } from './layerTypes'
+import { useDatum } from './useDatum'
 import { useMVTMetadata } from './useMVTMetadata'
 
-export interface LandslideLayerModelParams extends ViewLayerBaseModelParams {}
+export interface LandslideLayerModelParams extends DatasetLayerModelParams {}
 
-export interface LandslideLayerModel extends LayerModel {}
+export interface LandslideLayerModel extends DatasetLayerModel {}
 
 export function createLandslideLayer(
   params: LandslideLayerModelParams
 ): SetOptional<LandslideLayerModel, 'id'> {
   return {
-    ...createViewLayerBase(params),
-    type: LANDSLIDE_LAYER,
-    municipalityCode: params.municipalityCode
+    ...createDatasetLayerBase(params),
+    type: LANDSLIDE_LAYER
   }
 }
 
 // TODO: Abstraction of MVT
 export const LandslideLayer: FC<LayerProps<typeof LANDSLIDE_LAYER>> = ({
-  municipalityCode,
   titleAtom,
-  hiddenAtom
+  hiddenAtom,
+  municipalityCode,
+  datumIdAtom
 }) => {
   const query = useMunicipalityDatasetsQuery({
     variables: {
@@ -70,8 +72,8 @@ export const LandslideLayer: FC<LayerProps<typeof LANDSLIDE_LAYER>> = ({
     }
   }, [scene])
 
-  const variant = query.data?.municipality?.datasets[0]?.variants[0]
-  const metadata = useMVTMetadata(variant?.url)
+  const datum = useDatum(datumIdAtom, query.data?.municipality?.datasets)
+  const metadata = useMVTMetadata(datum?.url)
 
   const style = useMemo(() => {
     if (metadata == null) {
@@ -96,12 +98,12 @@ export const LandslideLayer: FC<LayerProps<typeof LANDSLIDE_LAYER>> = ({
   const { pixelRatioAtom } = useContext(ViewLayersContext)
   const pixelRatio = useAtomValue(pixelRatioAtom)
 
-  if (hidden || variant == null || metadata == null) {
+  if (hidden || datum == null || metadata == null) {
     return null
   }
   return (
     <VectorImageryLayer
-      url={variant.url}
+      url={datum.url}
       style={style}
       pixelRatio={pixelRatio}
       rectangle={metadata.rectangle}
@@ -110,5 +112,5 @@ export const LandslideLayer: FC<LayerProps<typeof LANDSLIDE_LAYER>> = ({
   )
 }
 
-// Separate definition.
+// TODO: Separate definition.
 const values = ['土砂災害警戒区域（指定済）', '土砂災害特別警戒区域（指定済）']
