@@ -1,4 +1,5 @@
 import { useAtomValue } from 'jotai'
+import { groupBy } from 'lodash'
 import { useEffect, useMemo, useState } from 'react'
 
 import type { Area } from '@takram/plateau-geocoder'
@@ -7,6 +8,7 @@ import {
   useMunicipalityDatasetsQuery,
   type PlateauDatasetFragment
 } from '@takram/plateau-graphql'
+import { isNotNullish } from '@takram/plateau-type-helpers'
 
 import { areasAtom } from '../states/address'
 
@@ -34,7 +36,7 @@ const datasetTypeOrder = [
 
 export interface LocationContextStateState {
   areas?: readonly Area[]
-  datasets?: PlateauDatasetFragment[]
+  datasetGroups?: PlateauDatasetFragment[][]
 }
 
 export function useLocationContextState(): LocationContextStateState {
@@ -53,24 +55,24 @@ export function useLocationContextState(): LocationContextStateState {
     skip: areas == null
   })
 
-  const datasets = useMemo(() => {
+  const datasetGroups = useMemo(() => {
     const datasets = data?.municipality?.datasets
     if (datasets == null) {
       return
     }
-    // TODO: Address multiple datasets of the same type.
+    const groups = Object.entries(groupBy(datasets, 'type'))
     return datasetTypeOrder
-      .map(type => datasets.filter(dataset => dataset.type === type))
-      .filter(datasets => datasets.length === 1)
-      .flat()
+      .map(orderedType => groups.find(([type]) => type === orderedType))
+      .filter(isNotNullish)
+      .map(([, datasets]) => datasets)
   }, [data])
 
   const [state, setState] = useState<LocationContextStateState>({})
   useEffect(() => {
     if (!loading) {
-      setState({ areas: areas ?? undefined, datasets })
+      setState({ areas: areas ?? undefined, datasetGroups })
     }
-  }, [areas, loading, datasets])
+  }, [areas, loading, datasetGroups])
 
   return state
 }
