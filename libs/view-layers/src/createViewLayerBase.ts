@@ -3,16 +3,16 @@ import { type SetOptional } from 'type-fest'
 
 import { type LayerModel } from '@takram/plateau-layers'
 
-export interface ViewLayerBaseModelParams {
-  municipalityCode: string
+export interface ViewLayerModelParams {
   title?: string
 }
 
+export interface ViewLayerModel extends LayerModel {}
+
 export function createViewLayerBase(
-  params: ViewLayerBaseModelParams
-): Omit<SetOptional<LayerModel, 'id'>, 'type'> {
+  params: ViewLayerModelParams
+): Omit<SetOptional<ViewLayerModel, 'id'>, 'type'> {
   return {
-    municipalityCode: params.municipalityCode,
     titleAtom: atom<string | null>(params.title ?? null),
     loadingAtom: atom(false),
     hiddenAtom: atom(false),

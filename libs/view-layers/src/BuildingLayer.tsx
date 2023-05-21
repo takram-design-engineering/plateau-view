@@ -16,21 +16,25 @@ import {
   type PlateauBuildingDataset,
   type PlateauBuildingDatasetDatum
 } from '@takram/plateau-graphql'
-import { type LayerModel, type LayerProps } from '@takram/plateau-layers'
+import { type LayerProps } from '@takram/plateau-layers'
 
 import {
   createViewLayerBase,
-  type ViewLayerBaseModelParams
+  type ViewLayerModel,
+  type ViewLayerModelParams
 } from './createViewLayerBase'
 import { BUILDING_LAYER } from './layerTypes'
 
-export interface BuildingLayerModelParams extends ViewLayerBaseModelParams {
+export interface BuildingLayerModelParams
+  extends Omit<ViewLayerModelParams, 'datumId'> {
+  municipalityCode: string
   version?: string
   lod?: number
   textured?: boolean
 }
 
-export interface BuildingLayerModel extends LayerModel {
+export interface BuildingLayerModel extends ViewLayerModel {
+  municipalityCode: string
   versionAtom: PrimitiveAtom<string | null>
   lodAtom: PrimitiveAtom<number | null>
   texturedAtom: PrimitiveAtom<boolean | null>

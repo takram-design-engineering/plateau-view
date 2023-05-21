@@ -1,4 +1,12 @@
 export * from './createViewLayer'
+export type {
+  DatasetLayerModelParams,
+  DatasetLayerModel
+} from './createDatasetLayerBase'
+export type {
+  ViewLayerModel,
+  ViewLayerModelParams
+} from './createViewLayerBase'
 export * from './layerComponents'
 export * from './layerTypes'
 export * from './types'
