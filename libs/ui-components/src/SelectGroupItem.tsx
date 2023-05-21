@@ -1,6 +1,5 @@
 import {
   ListSubheader,
-  Typography,
   styled,
   type ListSubheaderProps,
   type ListSubheaderTypeMap
@@ -13,18 +12,31 @@ export type SelectGroupItemProps<
   size?: 'small' | 'medium'
 }
 
-const StyledListSubheader = styled(ListSubheader)(({ theme }) => ({
-  padding: `6px ${theme.spacing(1.5)}`
+const StyledListSubheader = styled(ListSubheader, {
+  shouldForwardProp: prop => prop !== 'size'
+})<{
+  size: 'small' | 'medium'
+}>(({ theme, size }) => ({
+  paddingTop: 6,
+  paddingBottom: 6,
+  paddingRight: theme.spacing(1.5),
+  paddingLeft: `calc(${theme.spacing(1.5)} + 16px)`,
+  ...(size === 'small' && {
+    ...theme.typography.subtitle2,
+    lineHeight: theme.typography.body2.lineHeight
+  }),
+  ...(size === 'medium' && {
+    ...theme.typography.subtitle1,
+    lineHeight: theme.typography.body1.lineHeight
+  })
 }))
 
 export const SelectGroupItem = forwardRef<
   HTMLElementTagNameMap[ListSubheaderTypeMap['defaultComponent']],
   SelectGroupItemProps
 >(({ size = 'medium', children, ...props }, ref) => (
-  <StyledListSubheader ref={ref} {...props}>
-    <Typography variant={size === 'medium' ? 'subtitle1' : 'subtitle2'}>
-      {children}
-    </Typography>
+  <StyledListSubheader ref={ref} {...props} size={size}>
+    {children}
   </StyledListSubheader>
 )) as <C extends ElementType = ListSubheaderTypeMap['defaultComponent']>(
   props: SelectGroupItemProps<C>

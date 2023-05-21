@@ -33,8 +33,14 @@ const Selects: FC<SelectProps> = props => {
         <SelectItem value={0}>Select Item</SelectItem>
         <SelectItem value={1}>Select Item</SelectItem>
         <SelectGroupItem>Group</SelectGroupItem>
-        <SelectItem value={2}>Select Item</SelectItem>
-        <SelectItem value={3}>Select Item</SelectItem>
+        <SelectItem value={2} indent={1}>
+          Select Item
+        </SelectItem>
+        <SelectItem value={3} indent={1}>
+          Select Item
+        </SelectItem>
+        <SelectItem value={4}>Select Item</SelectItem>
+        <SelectItem value={5}>Select Item</SelectItem>
       </Select>
       <Select {...props} size='small' value={value} onChange={handleChange}>
         <SelectItem value={0}>
@@ -44,10 +50,16 @@ const Selects: FC<SelectProps> = props => {
           <Typography variant='body2'>Select Item</Typography>
         </SelectItem>
         <SelectGroupItem size='small'>Group</SelectGroupItem>
-        <SelectItem value={2}>
+        <SelectItem value={2} indent={1}>
           <Typography variant='body2'>Select Item</Typography>
         </SelectItem>
-        <SelectItem value={3}>
+        <SelectItem value={3} indent={1}>
+          <Typography variant='body2'>Select Item</Typography>
+        </SelectItem>
+        <SelectItem value={4}>
+          <Typography variant='body2'>Select Item</Typography>
+        </SelectItem>
+        <SelectItem value={5}>
           <Typography variant='body2'>Select Item</Typography>
         </SelectItem>
       </Select>
