@@ -117,7 +117,7 @@ export const lightThemeOptions = merge<unknown, unknown, ThemeOptions>(
         default: '#ffffff'
       },
       text: {
-        secondary: alpha(theme.palette.text.primary, 0.5)
+        secondary: alpha(theme.palette.common.black, 0.45)
       }
     }
   }
@@ -133,7 +133,7 @@ export const darkThemeOptions = merge<unknown, unknown, ThemeOptions>(
         default: grey[900]
       },
       text: {
-        secondary: alpha(theme.palette.text.primary, 0.5)
+        secondary: alpha(theme.palette.common.white, 0.45)
       }
     }
   }
