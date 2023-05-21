@@ -7,9 +7,9 @@ const result: PossibleTypesResultData = {
   possibleTypes: {
     PlateauArea: ['PlateauMunicipality', 'PlateauPrefecture'],
     PlateauDataset: ['PlateauBuildingDataset', 'PlateauDefaultDataset'],
-    PlateauDatasetVariant: [
-      'PlateauBuildingDatasetVariant',
-      'PlateauDefaultDatasetVariant'
+    PlateauDatasetDatum: [
+      'PlateauBuildingDatasetDatum',
+      'PlateauDefaultDatasetDatum'
     ]
   }
 }

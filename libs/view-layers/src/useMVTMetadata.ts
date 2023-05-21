@@ -32,16 +32,20 @@ export function useMVTMetadata(url?: string): MVTMetadata | undefined {
       return
     }
     // TODO: Is there any documentation of this JSON structure?
-    const bounds = data.bounds
-      .split(',')
-      .map((value: string) => CesiumMath.toRadians(+value))
-    const rectangle = new Rectangle(...bounds)
-    const json = JSON.parse(data.json)
-    return {
-      minimumZoom: data.minzoom,
-      maximumZoom: data.maxzoom,
-      rectangle,
-      sourceLayers: json.vector_layers
+    try {
+      const bounds = data.bounds
+        .split(',')
+        .map((value: string) => CesiumMath.toRadians(+value))
+      const rectangle = new Rectangle(...bounds)
+      const json = JSON.parse(data.json)
+      return {
+        minimumZoom: data.minzoom,
+        maximumZoom: data.maxzoom,
+        rectangle,
+        sourceLayers: json.vector_layers
+      }
+    } catch (error) {
+      console.error('Failed to parse MVT metadata:', data)
     }
   }, [data])
 }

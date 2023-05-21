@@ -6,7 +6,8 @@ import {
   Cesium3DTileset,
   Math as CesiumMath,
   Color,
-  ShadowMode
+  ShadowMode,
+  type ClassificationType
 } from '@cesium/engine'
 import { useTheme } from '@mui/material'
 import { useAtomValue } from 'jotai'
@@ -30,6 +31,9 @@ interface PlateauTilesetContentProps
   extends TilesetPrimitiveConstructorOptions {
   url: string
   color?: string
+  opacity?: number
+  disableShadow?: boolean
+  classificationType?: ClassificationType
   showWireframe?: boolean
   showBoundingVolume?: boolean
 }
@@ -41,7 +45,10 @@ const PlateauTilesetContent = withEphemerality(
     (
       {
         url,
-        color,
+        color = '#ffffff',
+        opacity = 1,
+        disableShadow = false,
+        classificationType,
         showWireframe = false,
         showBoundingVolume = false,
         ...props
@@ -51,14 +58,18 @@ const PlateauTilesetContent = withEphemerality(
       const scene = useCesium(({ scene }) => scene)
       const tileset = useAsyncInstance({
         owner: scene.primitives,
-        keys: [url, scene],
+        keys: [url, scene, classificationType],
         create: async () =>
           await Cesium3DTileset.fromUrl(url, {
             // @ts-expect-error missing type
             customShader: LambertDiffuseShader,
+            shadows:
+              disableShadow || showWireframe
+                ? ShadowMode.DISABLED
+                : ShadowMode.ENABLED,
+            classificationType,
             debugWireframe: showWireframe,
-            debugShowBoundingVolume: showBoundingVolume,
-            shadows: showWireframe ? ShadowMode.DISABLED : ShadowMode.ENABLED
+            debugShowBoundingVolume: showBoundingVolume
           }),
         transferOwnership: (tileset, primitives) => {
           primitives.add(tileset)
@@ -68,7 +79,20 @@ const PlateauTilesetContent = withEphemerality(
         }
       })
 
+      const style = useMemo(
+        () =>
+          new Cesium3DTileStyle({
+            color: `color("${color}", ${opacity})`
+          }),
+        [color, opacity]
+      )
+
       if (tileset != null) {
+        tileset.style = style
+        tileset.shadows =
+          disableShadow || showWireframe
+            ? ShadowMode.DISABLED
+            : ShadowMode.ENABLED
         tileset.debugWireframe = showWireframe
         tileset.debugShowBoundingVolume = showBoundingVolume
         Object.assign(tileset, props)
@@ -77,17 +101,6 @@ const PlateauTilesetContent = withEphemerality(
       useEffect(() => {
         assignForwardedRef(forwardedRef, tileset ?? null)
       }, [forwardedRef, tileset])
-
-      useEffect(() => {
-        if (tileset == null) {
-          return
-        }
-        if (tileset.style != null) {
-          tileset.style = new Cesium3DTileStyle({
-            color: `color("${color}")`
-          })
-        }
-      }, [color, tileset])
 
       const theme = useTheme()
       const selectionColor = useMemo(
@@ -113,7 +126,7 @@ const PlateauTilesetContent = withEphemerality(
           features.forEach(feature => {
             try {
               // When color is white, the feature's color is not changed.
-              feature.color = Color.WHITE
+              feature.color = style.color.evaluateColor(feature)
             } catch (error) {
               if (process.env.NODE_ENV !== 'production') {
                 // TODO: Remove features in unloaded tiles. This happens only

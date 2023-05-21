@@ -16,17 +16,18 @@ enum PlateauAreaType {
 }
 
 type PlateauBuildingDataset implements PlateauDataset {
+  data: [PlateauBuildingDatasetDatum!]!
   description: String
-  id: String!
+  id: ID!
   municipality: PlateauMunicipality
   name: String!
   type: PlateauDatasetType!
   typeName: String!
-  variants: [PlateauBuildingDatasetVariant!]!
 }
 
-type PlateauBuildingDatasetVariant implements PlateauDatasetVariant {
+type PlateauBuildingDatasetDatum implements PlateauDatasetDatum {
   format: PlateauDatasetFormat!
+  id: ID!
   lod: Float!
   name: String!
   textured: Boolean!
@@ -35,13 +36,20 @@ type PlateauBuildingDatasetVariant implements PlateauDatasetVariant {
 }
 
 interface PlateauDataset {
+  data: [PlateauDatasetDatum!]!
   description: String
-  id: String!
+  id: ID!
   municipality: PlateauMunicipality
   name: String!
   type: PlateauDatasetType!
   typeName: String!
-  variants: [PlateauDatasetVariant!]!
+}
+
+interface PlateauDatasetDatum {
+  format: PlateauDatasetFormat!
+  id: ID!
+  name: String!
+  url: String!
 }
 
 enum PlateauDatasetFormat {
@@ -81,24 +89,19 @@ enum PlateauDatasetType {
   Vegetation
 }
 
-interface PlateauDatasetVariant {
-  format: PlateauDatasetFormat!
-  name: String!
-  url: String!
-}
-
 type PlateauDefaultDataset implements PlateauDataset {
+  data: [PlateauDefaultDatasetDatum!]!
   description: String
-  id: String!
+  id: ID!
   municipality: PlateauMunicipality
   name: String!
   type: PlateauDatasetType!
   typeName: String!
-  variants: [PlateauDefaultDatasetVariant!]!
 }
 
-type PlateauDefaultDatasetVariant implements PlateauDatasetVariant {
+type PlateauDefaultDatasetDatum implements PlateauDatasetDatum {
   format: PlateauDatasetFormat!
+  id: ID!
   name: String!
   url: String!
 }

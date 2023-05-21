@@ -7812,6 +7812,7 @@ __metadata:
     "@types/mapbox__point-geometry": ^0.1.2
     "@types/minimist": ^1.2.2
     "@types/node": 18.16.0
+    "@types/object-hash": ^3.0.2
     "@types/offscreencanvas": ^2019.7.0
     "@types/polylabel": ^1.0.5
     "@types/react": 18.0.38
@@ -7865,7 +7866,6 @@ __metadata:
     jotai: ^2.1.0
     jotai-xstate: ^0.3.0
     jsdom: ~20.0.3
-    json-stable-stringify: ^1.0.2
     jtd: ^0.1.1
     lodash: ^4.17.21
     lru-cache: ^9.1.1
@@ -7879,6 +7879,7 @@ __metadata:
     nanoid: ^4.0.2
     next: 13.3.0
     nx: 16.2.1
+    object-hash: ^3.0.0
     overlayscrollbars: ^2.1.1
     overlayscrollbars-react: ^0.5.0
     polylabel: ^1.1.0
@@ -10287,6 +10288,13 @@ __metadata:
   version: 4.1.4
   resolution: "@types/npmlog@npm:4.1.4"
   checksum: 740f7431ccfc0e127aa8d162fe05c6ce8aa71290be020d179b2824806d19bd2c706c7e0c9a3c9963cefcdf2ceacb1dec6988c394c3694451387759dafe0aa927
+  languageName: node
+  linkType: hard
+
+"@types/object-hash@npm:^3.0.2":
+  version: 3.0.2
+  resolution: "@types/object-hash@npm:3.0.2"
+  checksum: 0332e59074e7df2e74c093a7419c05c1e1c5ae1e12d3779f3240b3031835ff045b4ac591362be0b411ace24d3b5e760386b434761c33af25904f7a3645cb3785
   languageName: node
   linkType: hard
 
@@ -20096,7 +20104,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"json-stable-stringify@npm:^1.0.1, json-stable-stringify@npm:^1.0.2":
+"json-stable-stringify@npm:^1.0.1":
   version: 1.0.2
   resolution: "json-stable-stringify@npm:1.0.2"
   dependencies:

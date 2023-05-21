@@ -1,3 +1,4 @@
+import { schemeCategory10 } from 'd3'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { useContext, useEffect, useMemo, type FC } from 'react'
 import { type SetOptional } from 'type-fest'
@@ -16,25 +17,25 @@ import {
   type DatasetLayerModel,
   type DatasetLayerModelParams
 } from './createDatasetLayerBase'
-import { ROAD_LAYER } from './layerTypes'
+import { FACILITY_LAYER } from './layerTypes'
 import { useDatum } from './useDatum'
 import { useMVTMetadata } from './useMVTMetadata'
 
-export interface RoadLayerModelParams extends DatasetLayerModelParams {}
+export interface FacilityLayerModelParams extends DatasetLayerModelParams {}
 
-export interface RoadLayerModel extends DatasetLayerModel {}
+export interface FacilityLayerModel extends DatasetLayerModel {}
 
-export function createRoadLayer(
-  params: RoadLayerModelParams
-): SetOptional<RoadLayerModel, 'id'> {
+export function createFacilityLayer(
+  params: FacilityLayerModelParams
+): SetOptional<FacilityLayerModel, 'id'> {
   return {
     ...createDatasetLayerBase(params),
-    type: ROAD_LAYER
+    type: FACILITY_LAYER
   }
 }
 
 // TODO: Abstraction of MVT
-export const RoadLayer: FC<LayerProps<typeof ROAD_LAYER>> = ({
+export const FacilityLayer: FC<LayerProps<typeof FACILITY_LAYER>> = ({
   titleAtom,
   hiddenAtom,
   municipalityCode,
@@ -43,7 +44,7 @@ export const RoadLayer: FC<LayerProps<typeof ROAD_LAYER>> = ({
   const query = useMunicipalityDatasetsQuery({
     variables: {
       municipalityCode,
-      includeTypes: [PlateauDatasetType.Road]
+      includeTypes: [PlateauDatasetType.Facility]
     }
   })
 
@@ -81,11 +82,16 @@ export const RoadLayer: FC<LayerProps<typeof ROAD_LAYER>> = ({
     // TODO: Make it configurable.
     return {
       version: 8,
-      layers: metadata.sourceLayers.map(layer => ({
-        'source-layer': layer.id,
-        type: 'fill',
-        paint: { 'fill-color': '#808080' }
-      }))
+      layers: metadata.sourceLayers.flatMap(layer =>
+        values.map((value, index) => ({
+          'source-layer': layer.id,
+          filter: ['all', ['==', 'function', value]],
+          type: 'fill',
+          paint: {
+            'fill-color': schemeCategory10[index % schemeCategory10.length]
+          }
+        }))
+      )
     }
   }, [metadata])
 
@@ -107,16 +113,20 @@ export const RoadLayer: FC<LayerProps<typeof ROAD_LAYER>> = ({
 }
 
 // TODO: Separate definition.
-// TODO: Their MVT does not appear to have fields for these values.
-// const values = [
-//   '道路',
-//   '島',
-//   '交通島',
-//   '分離帯',
-//   '植栽',
-//   '植樹帯',
-//   '植樹ます',
-//   '自転車歩行者道',
-//   '歩道',
-//   '自転車道'
-// ]
+const values = [
+  '第1種低層住居専用地域',
+  '第2種低層住居専用地域',
+  '第1種中高層住居専用地域',
+  '第2種中高層住居専用地域',
+  '第1種住居地域',
+  '第2種住居地域',
+  '準住居地域',
+  '近隣商業地域',
+  '商業地域',
+  '準工業地域',
+  '工業地域',
+  '工業専用地域',
+  '高度地区',
+  '防火地域',
+  '準防火地域'
+]
