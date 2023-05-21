@@ -1,15 +1,57 @@
-import { Typography } from '@mui/material'
-import { type FC } from 'react'
+import { Typography, type SelectChangeEvent } from '@mui/material'
+import {
+  atom,
+  useAtom,
+  useAtomValue,
+  useSetAtom,
+  type Getter,
+  type SetStateAction
+} from 'jotai'
+import { differenceBy } from 'lodash'
+import { useCallback, useMemo, type FC } from 'react'
 import invariant from 'tiny-invariant'
 
 import { type PlateauDatasetFragment } from '@takram/plateau-graphql'
+import { useAddLayer, useFilterLayers, useLayers } from '@takram/plateau-layers'
+import { isNotNullish } from '@takram/plateau-type-helpers'
 import {
   ContextSelect,
   SelectGroupItem,
   SelectItem
 } from '@takram/plateau-ui-components'
+import {
+  createViewLayer,
+  type DatasetLayerModel
+} from '@takram/plateau-view-layers'
 
+import { datasetTypeLayers } from '../../constants/datasetTypeLayers'
 import { datasetTypeNames } from '../../constants/datasetTypeNames'
+
+interface Params {
+  datasetId: string
+  datumId: string
+}
+
+function createParamsArray(
+  get: Getter,
+  layers: readonly DatasetLayerModel[]
+): Params[] {
+  return layers
+    .map(({ datasetId, datumIdAtom }) => {
+      const datumId = get(datumIdAtom)
+      return datumId != null ? { datasetId, datumId } : undefined
+    })
+    .filter(isNotNullish)
+}
+
+function serializeParams({ datasetId, datumId }: Params): string {
+  return JSON.stringify([datasetId, datumId])
+}
+
+function parseParams(value: string): Params {
+  const [datasetId, datumId] = JSON.parse(value)
+  return { datasetId, datumId }
+}
 
 export interface DefaultDatasetSelectProps {
   datasets: PlateauDatasetFragment[]
@@ -22,10 +64,102 @@ export const DefaultDatasetSelect: FC<DefaultDatasetSelectProps> = ({
   municipalityCode,
   disabled
 }) => {
+  invariant(datasets.length > 0)
+  const { layersAtom, removeAtom } = useLayers()
+  const layers = useAtomValue(layersAtom)
+  // Assume that all the datasets share the same type.
+  const layerType = datasetTypeLayers[datasets[0].type]
+  invariant(layerType !== 'BUILDING_LAYER', 'Building layer is not supported.')
+  const filterLayers = useFilterLayers()
+  const filteredLayers = useMemo(
+    () =>
+      layerType != null
+        ? filterLayers(layers, {
+            type: layerType,
+            municipalityCode
+          })
+        : [],
+    [municipalityCode, layers, layerType, filterLayers]
+  )
+
+  const addLayer = useAddLayer()
+  const removeLayer = useSetAtom(removeAtom)
+  const paramsAtom = useMemo(() => {
+    if (layerType == null) {
+      return atom(null, (get, set, params: SetStateAction<Params[]>) => {})
+    }
+
+    return atom(
+      get => createParamsArray(get, filteredLayers),
+      (get, set, dataIds: SetStateAction<Params[]>) => {
+        const prevParams = createParamsArray(get, filteredLayers)
+        const nextParams =
+          typeof dataIds === 'function' ? dataIds(prevParams) : dataIds
+
+        const paramsToRemove = differenceBy(
+          prevParams,
+          nextParams,
+          ({ datasetId }) => datasetId
+        )
+        const paramsToAdd = differenceBy(
+          nextParams,
+          prevParams,
+          ({ datasetId }) => datasetId
+        )
+        const paramsToUpdate = nextParams.filter(({ datasetId, datumId }) =>
+          prevParams.some(
+            params =>
+              params.datasetId === datasetId && params.datumId !== datumId
+          )
+        )
+        paramsToRemove.forEach(({ datumId }) => {
+          const layer = filteredLayers.find(
+            ({ datumIdAtom }) => get(datumIdAtom) === datumId
+          )
+          invariant(layer != null)
+          removeLayer(layer.id)
+        })
+        paramsToAdd.forEach(({ datasetId, datumId }) => {
+          addLayer(
+            createViewLayer({
+              type: layerType,
+              municipalityCode,
+              datasetId,
+              datumId
+            })
+          )
+        })
+        paramsToUpdate.forEach(({ datasetId, datumId }) => {
+          const layer = filteredLayers.find(
+            layer => layer.datasetId === datasetId
+          )
+          invariant(layer != null)
+          set(layer.datumIdAtom, datumId)
+        })
+      }
+    )
+  }, [municipalityCode, filteredLayers, layerType, addLayer, removeLayer])
+
+  const [params, setParams] = useAtom(paramsAtom)
+
+  const handleChange = useCallback(
+    (event: SelectChangeEvent<string[]>) => {
+      invariant(Array.isArray(event.target.value))
+      setParams(event.target.value.map(value => parseParams(value)))
+    },
+    [setParams]
+  )
+
+  const value = useMemo(
+    () => (params != null ? params.map(params => serializeParams(params)) : []),
+    [params]
+  )
+
   return (
     <ContextSelect
       label={datasetTypeNames[datasets[0].type]}
-      value={[] as string[]}
+      value={value}
+      onChange={handleChange}
       disabled={disabled}
     >
       {datasets.flatMap((dataset, index) => {
@@ -35,7 +169,14 @@ export const DefaultDatasetSelect: FC<DefaultDatasetSelectProps> = ({
               {dataset.name}
             </SelectGroupItem>,
             ...dataset.data.map(datum => (
-              <SelectItem key={datum.url} indent={1} value={datum.url}>
+              <SelectItem
+                key={datum.id}
+                indent={1}
+                value={serializeParams({
+                  datasetId: dataset.id,
+                  datumId: datum.id
+                })}
+              >
                 <Typography variant='body2'>{datum.name}</Typography>
               </SelectItem>
             ))
@@ -44,7 +185,13 @@ export const DefaultDatasetSelect: FC<DefaultDatasetSelectProps> = ({
         invariant(dataset.data.length === 1)
         const [datum] = dataset.data
         return (
-          <SelectItem key={datum.url} value={datum.url}>
+          <SelectItem
+            key={datum.id}
+            value={serializeParams({
+              datasetId: dataset.id,
+              datumId: datum.id
+            })}
+          >
             <Typography variant='body2'>{dataset.name}</Typography>
           </SelectItem>
         )

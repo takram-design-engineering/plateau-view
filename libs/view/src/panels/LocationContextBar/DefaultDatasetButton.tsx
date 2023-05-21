@@ -57,7 +57,8 @@ export const DefaultDatasetButton: FC<DefaultDatasetButtonProps> = ({
           addLayer(
             createViewLayer({
               type: layerType,
-              municipalityCode
+              municipalityCode,
+              datasetId: dataset.id
             })
           )
           break
@@ -67,7 +68,7 @@ export const DefaultDatasetButton: FC<DefaultDatasetButtonProps> = ({
     } else {
       removeLayer(layer.id)
     }
-  }, [municipalityCode, layer, layerType, addLayer, removeLayer])
+  }, [dataset, municipalityCode, layer, layerType, addLayer, removeLayer])
 
   const datum = dataset.data[0]
   if (datum == null) {
