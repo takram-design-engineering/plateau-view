@@ -18,7 +18,7 @@ enum PlateauAreaType {
 type PlateauBuildingDataset implements PlateauDataset {
   data: [PlateauBuildingDatasetDatum!]!
   description: String
-  id: String!
+  id: ID!
   municipality: PlateauMunicipality
   name: String!
   type: PlateauDatasetType!
@@ -27,6 +27,7 @@ type PlateauBuildingDataset implements PlateauDataset {
 
 type PlateauBuildingDatasetDatum implements PlateauDatasetDatum {
   format: PlateauDatasetFormat!
+  id: ID!
   lod: Float!
   name: String!
   textured: Boolean!
@@ -37,7 +38,7 @@ type PlateauBuildingDatasetDatum implements PlateauDatasetDatum {
 interface PlateauDataset {
   data: [PlateauDatasetDatum!]!
   description: String
-  id: String!
+  id: ID!
   municipality: PlateauMunicipality
   name: String!
   type: PlateauDatasetType!
@@ -46,6 +47,7 @@ interface PlateauDataset {
 
 interface PlateauDatasetDatum {
   format: PlateauDatasetFormat!
+  id: ID!
   name: String!
   url: String!
 }
@@ -90,7 +92,7 @@ enum PlateauDatasetType {
 type PlateauDefaultDataset implements PlateauDataset {
   data: [PlateauDefaultDatasetDatum!]!
   description: String
-  id: String!
+  id: ID!
   municipality: PlateauMunicipality
   name: String!
   type: PlateauDatasetType!
@@ -99,6 +101,7 @@ type PlateauDefaultDataset implements PlateauDataset {
 
 type PlateauDefaultDatasetDatum implements PlateauDatasetDatum {
   format: PlateauDatasetFormat!
+  id: ID!
   name: String!
   url: String!
 }

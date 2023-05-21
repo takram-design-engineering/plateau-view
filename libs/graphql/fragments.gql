@@ -15,6 +15,7 @@ fragment PlateauDataset on PlateauDataset {
   typeName
   name
   data {
+    id
     format
     url
     name

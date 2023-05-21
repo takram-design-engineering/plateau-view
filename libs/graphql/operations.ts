@@ -39,7 +39,7 @@ export type PlateauBuildingDataset = PlateauDataset & {
   __typename?: 'PlateauBuildingDataset'
   data: Array<PlateauBuildingDatasetDatum>
   description?: Maybe<Scalars['String']>
-  id: Scalars['String']
+  id: Scalars['ID']
   municipality?: Maybe<PlateauMunicipality>
   name: Scalars['String']
   type: PlateauDatasetType
@@ -49,6 +49,7 @@ export type PlateauBuildingDataset = PlateauDataset & {
 export type PlateauBuildingDatasetDatum = PlateauDatasetDatum & {
   __typename?: 'PlateauBuildingDatasetDatum'
   format: PlateauDatasetFormat
+  id: Scalars['ID']
   lod: Scalars['Float']
   name: Scalars['String']
   textured: Scalars['Boolean']
@@ -59,7 +60,7 @@ export type PlateauBuildingDatasetDatum = PlateauDatasetDatum & {
 export type PlateauDataset = {
   data: Array<PlateauDatasetDatum>
   description?: Maybe<Scalars['String']>
-  id: Scalars['String']
+  id: Scalars['ID']
   municipality?: Maybe<PlateauMunicipality>
   name: Scalars['String']
   type: PlateauDatasetType
@@ -68,6 +69,7 @@ export type PlateauDataset = {
 
 export type PlateauDatasetDatum = {
   format: PlateauDatasetFormat
+  id: Scalars['ID']
   name: Scalars['String']
   url: Scalars['String']
 }
@@ -113,7 +115,7 @@ export type PlateauDefaultDataset = PlateauDataset & {
   __typename?: 'PlateauDefaultDataset'
   data: Array<PlateauDefaultDatasetDatum>
   description?: Maybe<Scalars['String']>
-  id: Scalars['String']
+  id: Scalars['ID']
   municipality?: Maybe<PlateauMunicipality>
   name: Scalars['String']
   type: PlateauDatasetType
@@ -123,6 +125,7 @@ export type PlateauDefaultDataset = PlateauDataset & {
 export type PlateauDefaultDatasetDatum = PlateauDatasetDatum & {
   __typename?: 'PlateauDefaultDatasetDatum'
   format: PlateauDatasetFormat
+  id: Scalars['ID']
   name: Scalars['String']
   url: Scalars['String']
 }
@@ -197,6 +200,7 @@ type PlateauDataset_PlateauBuildingDataset_Fragment = {
     version: string
     lod: number
     textured: boolean
+    id: string
     format: PlateauDatasetFormat
     url: string
     name: string
@@ -211,6 +215,7 @@ type PlateauDataset_PlateauDefaultDataset_Fragment = {
   name: string
   data: Array<{
     __typename?: 'PlateauDefaultDatasetDatum'
+    id: string
     format: PlateauDatasetFormat
     url: string
     name: string
@@ -246,6 +251,7 @@ export type MunicipalityDatasetsQuery = {
             version: string
             lod: number
             textured: boolean
+            id: string
             format: PlateauDatasetFormat
             url: string
             name: string
@@ -259,6 +265,7 @@ export type MunicipalityDatasetsQuery = {
           name: string
           data: Array<{
             __typename?: 'PlateauDefaultDatasetDatum'
+            id: string
             format: PlateauDatasetFormat
             url: string
             name: string
@@ -293,6 +300,7 @@ export const PlateauDatasetFragmentDoc = gql`
     typeName
     name
     data {
+      id
       format
       url
       name

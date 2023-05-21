@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+import objectHash from 'object-hash'
 
 import { isNotNullish } from '@takram/plateau-type-helpers'
 
@@ -27,6 +28,7 @@ export class PlateauDefaultDataset extends PlateauDataset {
       }
       return [
         {
+          id: objectHash(this.catalog.data.url),
           format: this.catalog.data.format,
           url: this.catalog.data.url,
           name: cleanseDatasetName(this.catalog.data.name, this.catalog)
@@ -38,6 +40,7 @@ export class PlateauDefaultDataset extends PlateauDataset {
         const format = cleanseDatasetFormat(data.type)
         return format != null
           ? {
+              id: objectHash(data.url),
               format,
               url: data.url,
               name: cleanseDatasetName(data.name, this.catalog)

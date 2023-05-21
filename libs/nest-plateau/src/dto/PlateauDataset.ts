@@ -1,4 +1,4 @@
-import { Field, InterfaceType } from '@nestjs/graphql'
+import { Field, ID, InterfaceType } from '@nestjs/graphql'
 
 import { type PlateauStorageService } from '../PlateauStorageService'
 import { cleanseDatasetName } from '../helpers/cleanseDatasetName'
@@ -14,6 +14,9 @@ import {
 
 @InterfaceType()
 export abstract class PlateauDatasetDatum {
+  @Field(() => ID)
+  id!: string
+
   @Field(() => PlateauDatasetFormatEnum)
   format!: PlateauDatasetFormat
 
@@ -33,7 +36,7 @@ export abstract class PlateauDataset<
     readonly storageService: PlateauStorageService
   ) {}
 
-  @Field()
+  @Field(() => ID)
   get id(): string {
     return this.catalog.data.id
   }

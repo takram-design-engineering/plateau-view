@@ -1,5 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { groupBy } from 'lodash'
+import objectHash from 'object-hash'
 import format from 'string-template'
 
 import { PlateauDataset, PlateauDatasetDatum } from './PlateauDataset'
@@ -38,6 +39,7 @@ export class PlateauBuildingDataset extends PlateauDataset<PlateauDatasetTypeEnu
     return Object.values(groups).flatMap(data =>
       data
         .map(({ lod, datum }) => ({
+          id: objectHash(datum.url),
           format: PlateauDatasetFormatEnum.Cesium3DTiles,
           url: datum.url,
           name: '',
@@ -68,6 +70,7 @@ export class PlateauBuildingDataset extends PlateauDataset<PlateauDatasetTypeEnu
     const lod = files.some(file => file.includes('_low_resolution')) ? 2 : 1
     return files
       .map(file => ({
+        id: objectHash(file),
         format: PlateauDatasetFormatEnum.Cesium3DTiles,
         url: file,
         name: '',
