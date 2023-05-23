@@ -1,6 +1,6 @@
-import { useAtomValue } from 'jotai'
+import { atom, useAtom, useAtomValue } from 'jotai'
 import { groupBy } from 'lodash'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import type { Area } from '@takram/plateau-geocoder'
 import {
@@ -37,6 +37,8 @@ const datasetTypeOrder = [
 export interface LocationContextStateState {
   areas?: readonly Area[]
   datasetGroups?: PlateauDatasetFragment[][]
+  preventChanges: () => void
+  approveChanges: () => void
 }
 
 export function useLocationContextState(): LocationContextStateState {
@@ -67,12 +69,30 @@ export function useLocationContextState(): LocationContextStateState {
       .map(([, datasets]) => datasets)
   }, [data])
 
-  const [state, setState] = useState<LocationContextStateState>({})
+  const changesPreventedAtom = useMemo(() => atom(false), [])
+  const [changesPrevented, setChangesPrevented] = useAtom(changesPreventedAtom)
+  const preventChanges = useCallback(() => {
+    setChangesPrevented(true)
+  }, [setChangesPrevented])
+  const approveChanges = useCallback(() => {
+    setChangesPrevented(false)
+  }, [setChangesPrevented])
+
+  const [state, setState] = useState<LocationContextStateState>({
+    preventChanges,
+    approveChanges
+  })
+
   useEffect(() => {
-    if (!loading) {
-      setState({ areas: areas ?? undefined, datasetGroups })
+    if (loading || changesPrevented) {
+      return
     }
-  }, [areas, loading, datasetGroups])
+    setState(prevState => ({
+      ...prevState,
+      areas: areas ?? undefined,
+      datasetGroups
+    }))
+  }, [areas, loading, datasetGroups, changesPrevented])
 
   return state
 }

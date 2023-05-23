@@ -3,9 +3,16 @@ import { forwardRef, type ComponentPropsWithRef, type ReactNode } from 'react'
 
 import { FloatingPanel } from './FloatingPanel'
 
-const Root = styled(FloatingPanel)({
-  minWidth: 0
-})
+const Root = styled(FloatingPanel, {
+  shouldForwardProp: prop => prop !== 'hidden'
+})<{
+  hidden?: boolean
+}>(({ hidden = false }) => ({
+  minWidth: 0,
+  ...(hidden && {
+    visibility: 'hidden'
+  })
+}))
 
 const RoundedBox = styled('div')(({ theme }) => ({
   ...theme.typography.body2,
