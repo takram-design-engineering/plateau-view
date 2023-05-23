@@ -76,13 +76,11 @@ export function useLocationContextState(): LocationContextState {
     }
   }, [areas, focusedAreaCode, setFocusedAreaCode])
 
-  const area = useMemo(
-    () =>
-      focusedAreaCode != null
-        ? areas?.find(area => area.code === focusedAreaCode)
-        : areas?.[0],
-    [areas, focusedAreaCode]
-  )
+  const area =
+    focusedAreaCode != null
+      ? areas?.find(area => area.code === focusedAreaCode)
+      : areas?.[0]
+
   const query = useMunicipalityDatasetsQuery({
     variables:
       area != null
