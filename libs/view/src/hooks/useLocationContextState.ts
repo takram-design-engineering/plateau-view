@@ -78,7 +78,7 @@ export function useLocationContextState(): LocationContextState {
 
   const area =
     focusedAreaCode != null
-      ? areas?.find(area => area.code === focusedAreaCode)
+      ? areas?.find(area => area.code === focusedAreaCode) ?? areas?.[0]
       : areas?.[0]
 
   const query = useMunicipalityDatasetsQuery({
@@ -113,7 +113,7 @@ export function useLocationContextState(): LocationContextState {
   })
 
   useEffect(() => {
-    if (query.loading || datasetGroups == null || changesPrevented) {
+    if (query.loading || changesPrevented) {
       return
     }
     setState({
