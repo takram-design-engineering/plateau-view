@@ -18,6 +18,7 @@ import {
   type DatasetLayerModelParams
 } from './createDatasetLayerBase'
 import { FACILITY_LAYER } from './layerTypes'
+import { useDatasetLayerTitle } from './useDatasetLayerTitle'
 import { useDatum } from './useDatum'
 import { useMVTMetadata } from './useMVTMetadata'
 
@@ -47,18 +48,18 @@ export const FacilityLayer: FC<LayerProps<typeof FACILITY_LAYER>> = ({
       includeTypes: [PlateauDatasetType.Facility]
     }
   })
+  const municipality = query.data?.municipality
+  const datum = useDatum(datumIdAtom, municipality?.datasets)
 
+  const title = useDatasetLayerTitle({
+    layerType: FACILITY_LAYER,
+    municipality,
+    datum
+  })
   const setTitle = useSetAtom(titleAtom)
   useEffect(() => {
-    if (query.data?.municipality?.name != null) {
-      setTitle(
-        [
-          query.data.municipality.prefecture.name,
-          query.data.municipality.name
-        ].join(' ')
-      )
-    }
-  }, [query, setTitle])
+    setTitle(title ?? null)
+  }, [title, setTitle])
 
   const hidden = useAtomValue(hiddenAtom)
   const scene = useCesium(({ scene }) => scene)
@@ -72,9 +73,7 @@ export const FacilityLayer: FC<LayerProps<typeof FACILITY_LAYER>> = ({
     }
   }, [scene])
 
-  const datum = useDatum(datumIdAtom, query.data?.municipality?.datasets)
   const metadata = useMVTMetadata(datum?.url)
-
   const style = useMemo(() => {
     if (metadata == null) {
       return

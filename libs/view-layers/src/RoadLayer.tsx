@@ -17,6 +17,7 @@ import {
   type DatasetLayerModelParams
 } from './createDatasetLayerBase'
 import { ROAD_LAYER } from './layerTypes'
+import { useDatasetLayerTitle } from './useDatasetLayerTitle'
 import { useDatum } from './useDatum'
 import { useMVTMetadata } from './useMVTMetadata'
 
@@ -46,18 +47,18 @@ export const RoadLayer: FC<LayerProps<typeof ROAD_LAYER>> = ({
       includeTypes: [PlateauDatasetType.Road]
     }
   })
+  const municipality = query.data?.municipality
+  const datum = useDatum(datumIdAtom, municipality?.datasets)
 
+  const title = useDatasetLayerTitle({
+    layerType: ROAD_LAYER,
+    municipality,
+    datum
+  })
   const setTitle = useSetAtom(titleAtom)
   useEffect(() => {
-    if (query.data?.municipality?.name != null) {
-      setTitle(
-        [
-          query.data.municipality.prefecture.name,
-          query.data.municipality.name
-        ].join(' ')
-      )
-    }
-  }, [query, setTitle])
+    setTitle(title ?? null)
+  }, [title, setTitle])
 
   const hidden = useAtomValue(hiddenAtom)
   const scene = useCesium(({ scene }) => scene)
@@ -71,9 +72,7 @@ export const RoadLayer: FC<LayerProps<typeof ROAD_LAYER>> = ({
     }
   }, [scene])
 
-  const datum = useDatum(datumIdAtom, query.data?.municipality?.datasets)
   const metadata = useMVTMetadata(datum?.url)
-
   const style = useMemo(() => {
     if (metadata == null) {
       return

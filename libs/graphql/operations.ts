@@ -189,6 +189,29 @@ export type PlateauMunicipalityFragment = {
   }
 }
 
+type PlateauDatasetDatum_PlateauBuildingDatasetDatum_Fragment = {
+  __typename?: 'PlateauBuildingDatasetDatum'
+  version: string
+  lod: number
+  textured: boolean
+  id: string
+  format: PlateauDatasetFormat
+  url: string
+  name: string
+}
+
+type PlateauDatasetDatum_PlateauDefaultDatasetDatum_Fragment = {
+  __typename?: 'PlateauDefaultDatasetDatum'
+  id: string
+  format: PlateauDatasetFormat
+  url: string
+  name: string
+}
+
+export type PlateauDatasetDatumFragment =
+  | PlateauDatasetDatum_PlateauBuildingDatasetDatum_Fragment
+  | PlateauDatasetDatum_PlateauDefaultDatasetDatum_Fragment
+
 type PlateauDataset_PlateauBuildingDataset_Fragment = {
   __typename?: 'PlateauBuildingDataset'
   id: string
@@ -293,6 +316,19 @@ export const PlateauMunicipalityFragmentDoc = gql`
     }
   }
 `
+export const PlateauDatasetDatumFragmentDoc = gql`
+  fragment PlateauDatasetDatum on PlateauDatasetDatum {
+    id
+    format
+    url
+    name
+    ... on PlateauBuildingDatasetDatum {
+      version
+      lod
+      textured
+    }
+  }
+`
 export const PlateauDatasetFragmentDoc = gql`
   fragment PlateauDataset on PlateauDataset {
     id
@@ -300,17 +336,10 @@ export const PlateauDatasetFragmentDoc = gql`
     typeName
     name
     data {
-      id
-      format
-      url
-      name
-      ... on PlateauBuildingDatasetDatum {
-        version
-        lod
-        textured
-      }
+      ...PlateauDatasetDatum
     }
   }
+  ${PlateauDatasetDatumFragmentDoc}
 `
 export const MunicipalityDatasetsDocument = gql`
   query municipalityDatasets(

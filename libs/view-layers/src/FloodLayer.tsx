@@ -17,6 +17,7 @@ import {
   type DatasetLayerModelParams
 } from './createDatasetLayerBase'
 import { FLOOD_LAYER } from './layerTypes'
+import { useDatasetLayerTitle } from './useDatasetLayerTitle'
 import { useDatum } from './useDatum'
 
 export interface FloodLayerModelParams extends DatasetLayerModelParams {}
@@ -44,18 +45,18 @@ export const FloodLayer: FC<LayerProps<typeof FLOOD_LAYER>> = ({
       includeTypes: [PlateauDatasetType.Flood]
     }
   })
+  const municipality = query.data?.municipality
+  const datum = useDatum(datumIdAtom, municipality?.datasets)
 
+  const title = useDatasetLayerTitle({
+    layerType: FLOOD_LAYER,
+    municipality,
+    datum
+  })
   const setTitle = useSetAtom(titleAtom)
   useEffect(() => {
-    if (query.data?.municipality?.name != null) {
-      setTitle(
-        [
-          query.data.municipality.prefecture.name,
-          query.data.municipality.name
-        ].join(' ')
-      )
-    }
-  }, [query, setTitle])
+    setTitle(title ?? null)
+  }, [title, setTitle])
 
   const hidden = useAtomValue(hiddenAtom)
   const scene = useCesium(({ scene }) => scene)
@@ -69,7 +70,6 @@ export const FloodLayer: FC<LayerProps<typeof FLOOD_LAYER>> = ({
     }
   }, [scene])
 
-  const datum = useDatum(datumIdAtom, query.data?.municipality?.datasets)
   const theme = useTheme()
   if (hidden || datum == null) {
     return null
