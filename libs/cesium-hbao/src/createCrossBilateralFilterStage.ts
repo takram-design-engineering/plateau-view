@@ -8,8 +8,14 @@ import { defaults } from 'lodash'
 import { type AmbientOcclusionOutputType } from './AmbientOcclusionOutputType'
 import { createUniforms } from './createUniforms'
 import crossBilateralFilter from './shaders/crossBilateralFilter.glsl?raw'
+import depth from './shaders/depth.glsl?raw'
+import globeDepth from './shaders/globeDepth.glsl?raw'
 import packing from './shaders/packing.glsl?raw'
 import reconstructPosition from './shaders/reconstructPosition.glsl?raw'
+
+interface PrivatePostProcessStage extends PostProcessStage {
+  _depthTexture: unknown
+}
 
 export interface CrossBilateralFilterStageUniforms {
   textureScale: number
@@ -28,12 +34,16 @@ const defaultUniforms: CrossBilateralFilterStageUniforms = {
 export interface CrossBilateralFilterStageOptions {
   prefix?: string
   outputType?: AmbientOcclusionOutputType | null
+  useGlobeDepth?: boolean
+  getGlobeDepthTexture?: () => unknown | undefined
   uniforms?: Partial<CrossBilateralFilterStageUniforms>
 }
 
 export function createBilateralFilterStage({
   prefix = 'plateau',
   outputType = null,
+  useGlobeDepth = false,
+  getGlobeDepthTexture,
   uniforms: uniformsOption
 }: CrossBilateralFilterStageOptions): PostProcessStageComposite {
   const uniforms = defaults({}, uniformsOption, defaultUniforms)
@@ -43,11 +53,17 @@ export function createBilateralFilterStage({
     fragmentShader: `
       #define DIRECTION (0)
       ${outputType != null ? `#define OUTPUT_TYPE (${outputType})` : ''}
+      ${useGlobeDepth ? globeDepth : depth}
       ${packing}
       ${reconstructPosition}
       ${crossBilateralFilter}
     `,
-    uniforms,
+    uniforms: {
+      ...uniforms,
+      globeDepthTexture: () =>
+        getGlobeDepthTexture?.() ??
+        (blurX as PrivatePostProcessStage)._depthTexture
+    },
     sampleMode: PostProcessStageSampleMode.LINEAR
   })
 
@@ -56,11 +72,17 @@ export function createBilateralFilterStage({
     fragmentShader: `
       #define DIRECTION (1)
       ${outputType != null ? `#define OUTPUT_TYPE (${outputType})` : ''}
+      ${useGlobeDepth ? globeDepth : depth}
       ${packing}
       ${reconstructPosition}
       ${crossBilateralFilter}
     `,
-    uniforms,
+    uniforms: {
+      ...uniforms,
+      globeDepthTexture: () =>
+        getGlobeDepthTexture?.() ??
+        (blurY as PrivatePostProcessStage)._depthTexture
+    },
     sampleMode: PostProcessStageSampleMode.LINEAR
   })
 

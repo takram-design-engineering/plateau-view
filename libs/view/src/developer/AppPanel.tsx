@@ -20,6 +20,7 @@ import {
   environmentTypeAtom,
   plateauDataSourceAtom,
   showAreaEntitiesAtom,
+  showDataFormatsAtom,
   showSelectionBoundingSphereAtom,
   terrainTypeAtom
 } from '../states/app'
@@ -40,6 +41,7 @@ export const AppPanel: FC = () => {
         environmentTypeAtom,
         plateauDataSourceAtom,
         showAreaEntitiesAtom,
+        showDataFormatsAtom,
         showSelectionBoundingSphereAtom,
         showTexturesAtom,
         terrainTypeAtom
@@ -103,6 +105,10 @@ export const AppPanel: FC = () => {
               ['2022', 'Hosted 2022'],
               ['cms', 'CMS Assets']
             ]}
+          />
+          <SwitchParameterItem
+            label='Show Data Formats'
+            atom={showDataFormatsAtom}
           />
           <SwitchParameterItem
             label='Show Area Entities'

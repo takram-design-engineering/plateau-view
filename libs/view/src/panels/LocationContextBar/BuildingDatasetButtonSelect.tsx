@@ -24,6 +24,7 @@ import { ContextButtonSelect, SelectItem } from '@takram/plateau-ui-components'
 import { BUILDING_LAYER, createViewLayer } from '@takram/plateau-view-layers'
 
 import { datasetTypeNames } from '../../constants/datasetTypeNames'
+import { showDataFormatsAtom } from '../../states/app'
 
 interface Params {
   version: string | null
@@ -144,6 +145,8 @@ export const BuildingDatasetButtonSelect: FC<
     [params]
   )
 
+  const showDataFormats = useAtomValue(showDataFormatsAtom)
+
   if (data.length === 0) {
     console.warn('Dataset must include at least 1 datum.')
     return null
@@ -160,7 +163,10 @@ export const BuildingDatasetButtonSelect: FC<
       {data.map(datum => (
         <SelectItem key={datum.id} value={serializeParams(datum)}>
           <Stack>
-            <Typography variant='body2'>LOD {datum.lod}</Typography>
+            <Typography variant='body2'>
+              LOD {datum.lod}
+              {showDataFormats ? ` (${datum.format})` : null}
+            </Typography>
             <Typography variant='caption' color='text.secondary'>
               {datum.version}年度
             </Typography>

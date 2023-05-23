@@ -11,11 +11,17 @@ import { createBilateralFilterStage } from './createCrossBilateralFilterStage'
 import { createUniforms } from './createUniforms'
 import ambientOcclusionGenerate from './shaders/ambientOcclusionGenerate.glsl?raw'
 import ambientOcclusionModulate from './shaders/ambientOcclusionModulate.glsl?raw'
+import depth from './shaders/depth.glsl?raw'
+import globeDepth from './shaders/globeDepth.glsl?raw'
 import highPassRandom from './shaders/highPassRandom.glsl?raw'
 import packing from './shaders/packing.glsl?raw'
 import reconstructNormal from './shaders/reconstructNormal.glsl?raw'
 import reconstructPosition from './shaders/reconstructPosition.glsl?raw'
 import turboColorMap from './shaders/turboColorMap.glsl?raw'
+
+interface PrivatePostProcessStage extends PostProcessStage {
+  _depthTexture: unknown
+}
 
 export interface AmbientOcclusionStageUniforms {
   intensity: number
@@ -28,7 +34,10 @@ export interface AmbientOcclusionStageUniforms {
   depthExponent?: number
 }
 
-const defaultUniforms: AmbientOcclusionStageUniforms = {
+const defaultUniforms: Omit<
+  AmbientOcclusionStageUniforms,
+  'globeDepthTexture'
+> = {
   intensity: 50,
   color: Color.BLACK,
   maxRadius: 30,
@@ -45,6 +54,8 @@ export interface AmbientOcclusionStageOptions {
   denoise?: boolean
   accurateNormalReconstruction?: boolean
   outputType?: AmbientOcclusionOutputType | null
+  useGlobeDepth?: boolean
+  getGlobeDepthTexture?: () => unknown | undefined
   uniforms?: Partial<AmbientOcclusionStageUniforms>
 }
 
@@ -56,8 +67,10 @@ export function createAmbientOcclusionStage({
   denoise = false,
   accurateNormalReconstruction = true,
   outputType = null,
-  uniforms: uniformsOption
-}: AmbientOcclusionStageOptions = {}): PostProcessStageComposite {
+  useGlobeDepth = false,
+  getGlobeDepthTexture,
+  uniforms: uniformsOption = {}
+}: AmbientOcclusionStageOptions): PostProcessStageComposite {
   const uniforms = defaults({}, uniformsOption, defaultUniforms)
 
   const generate = new PostProcessStage({
@@ -67,6 +80,7 @@ export function createAmbientOcclusionStage({
       ${steps != null ? `#define NUM_STEPS (${steps})` : ''}
       ${accurateNormalReconstruction ? '#define USE_ACCURATE_NORMAL' : ''}
       ${outputType != null ? `#define OUTPUT_TYPE (${outputType})` : ''}
+      ${useGlobeDepth ? globeDepth : depth}
       ${packing}
       ${highPassRandom}
       ${reconstructPosition}
@@ -82,7 +96,13 @@ export function createAmbientOcclusionStage({
         'bias',
         'frustumLength',
         'focalLength'
-      ])
+      ]),
+      globeDepthTexture: () => {
+        return (
+          getGlobeDepthTexture?.() ??
+          (generate as PrivatePostProcessStage)._depthTexture
+        )
+      }
     }
   })
 
@@ -90,18 +110,26 @@ export function createAmbientOcclusionStage({
     name: `${prefix}_ambient_occlusion_modulate`,
     fragmentShader: `
       ${outputType != null ? `#define OUTPUT_TYPE (${outputType})` : ''}
+      ${useGlobeDepth ? globeDepth : depth}
       ${packing}
       ${reconstructPosition}
       ${turboColorMap}
       ${ambientOcclusionModulate}
     `,
-    uniforms: pick(uniforms, ['color', 'frustumLength'])
+    uniforms: {
+      ...pick(uniforms, ['color', 'frustumLength']),
+      globeDepthTexture: () =>
+        getGlobeDepthTexture?.() ??
+        (modulate as PrivatePostProcessStage)._depthTexture
+    }
   })
 
   if (denoise) {
     const filter = createBilateralFilterStage({
       prefix,
       outputType,
+      useGlobeDepth,
+      getGlobeDepthTexture,
       uniforms: {
         textureScale,
         ...pick(uniforms, ['frustumLength', 'normalExponent', 'depthExponent'])

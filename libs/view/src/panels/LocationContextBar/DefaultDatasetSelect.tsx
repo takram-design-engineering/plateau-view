@@ -26,6 +26,7 @@ import {
 
 import { datasetTypeLayers } from '../../constants/datasetTypeLayers'
 import { datasetTypeNames } from '../../constants/datasetTypeNames'
+import { showDataFormatsAtom } from '../../states/app'
 
 interface Params {
   datasetId: string
@@ -155,6 +156,7 @@ export const DefaultDatasetSelect: FC<DefaultDatasetSelectProps> = ({
     [params]
   )
 
+  const showDataFormats = useAtomValue(showDataFormatsAtom)
   return (
     <ContextSelect
       label={datasetTypeNames[datasets[0].type]}
@@ -173,7 +175,10 @@ export const DefaultDatasetSelect: FC<DefaultDatasetSelectProps> = ({
                   datumId: datum.id
                 })}
               >
-                <Typography variant='body2'>{datum.name}</Typography>
+                <Typography variant='body2'>
+                  {datum.name}
+                  {showDataFormats ? ` (${datum.format})` : null}
+                </Typography>
               </SelectItem>
             ))
           }
@@ -190,7 +195,10 @@ export const DefaultDatasetSelect: FC<DefaultDatasetSelectProps> = ({
                   datumId: datum.id
                 })}
               >
-                <Typography variant='body2'>{datum.name}</Typography>
+                <Typography variant='body2'>
+                  {datum.name}
+                  {showDataFormats ? ` (${datum.format})` : null}
+                </Typography>
               </SelectItem>
             ))
           ]
@@ -205,7 +213,10 @@ export const DefaultDatasetSelect: FC<DefaultDatasetSelectProps> = ({
               datumId: datum.id
             })}
           >
-            <Typography variant='body2'>{dataset.name}</Typography>
+            <Typography variant='body2'>
+              {dataset.name}
+              {showDataFormats ? ` (${datum.format})` : null}
+            </Typography>
           </SelectItem>
         )
       })}

@@ -14,6 +14,7 @@ import {
 
 import { datasetTypeLayers } from '../../constants/datasetTypeLayers'
 import { datasetTypeNames } from '../../constants/datasetTypeNames'
+import { showDataFormatsAtom } from '../../states/app'
 
 export interface DefaultDatasetButtonProps {
   dataset: PlateauDatasetFragment
@@ -71,6 +72,7 @@ export const DefaultDatasetButton: FC<DefaultDatasetButtonProps> = ({
   }, [dataset, municipalityCode, layer, layerType, addLayer, removeLayer])
 
   const datum = dataset.data[0]
+  const showDataFormats = useAtomValue(showDataFormatsAtom)
   if (datum == null) {
     console.warn('Dataset must include at least 1 datum.')
     return null
@@ -82,6 +84,7 @@ export const DefaultDatasetButton: FC<DefaultDatasetButtonProps> = ({
       onClick={handleClick}
     >
       {datasetTypeNames[dataset.type]}
+      {showDataFormats ? ` (${datum.format})` : null}
     </ContextButton>
   )
 }

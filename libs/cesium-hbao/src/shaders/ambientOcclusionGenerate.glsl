@@ -71,7 +71,7 @@ float computeOcclusion(
   for (int i = 0; i < NUM_STEPS; ++i) {
     uv += deltaUV;
 
-    float sampleDepth = czm_readDepth(depthTexture, uv);
+    float sampleDepth = readDepth(depthTexture, uv);
     vec3 samplePosition = reconstructPosition(uv, sampleDepth);
     vec3 view = samplePosition - position;
     float len = length(view);
@@ -90,7 +90,7 @@ float computeOcclusion(
 
 void main() {
   vec2 uv = v_textureCoordinates;
-  float depth = czm_readDepth(depthTexture, uv);
+  float depth = readDepth(depthTexture, uv);
   vec3 position = reconstructPosition(uv, depth);
 
   #if OUTPUT_TYPE != 1

@@ -1,4 +1,5 @@
-import { PerspectiveFrustum } from '@cesium/engine'
+import { PerspectiveFrustum, type Scene } from '@cesium/engine'
+import { useState, type FC } from 'react'
 import invariant from 'tiny-invariant'
 
 import { useCesium, useInstance, usePreRender } from '@takram/plateau-cesium'
@@ -16,7 +17,7 @@ export interface AmbientOcclusionProps
   enabled?: boolean
 }
 
-export const AmbientOcclusion = withEphemerality(
+export const AmbientOcclusionStage = withEphemerality(
   () => useCesium(({ scene }) => scene).postProcessStages,
   [],
   ({
@@ -27,6 +28,7 @@ export const AmbientOcclusion = withEphemerality(
     denoise,
     accurateNormalReconstruction,
     outputType,
+    useGlobeDepth,
     ...uniforms
   }: AmbientOcclusionProps) => {
     const scene = useCesium(({ scene }) => scene)
@@ -38,7 +40,8 @@ export const AmbientOcclusion = withEphemerality(
         directions,
         denoise,
         accurateNormalReconstruction,
-        outputType
+        outputType,
+        useGlobeDepth
       ],
       create: () => {
         const stage = createAmbientOcclusionStage({
@@ -48,6 +51,21 @@ export const AmbientOcclusion = withEphemerality(
           denoise,
           accurateNormalReconstruction,
           outputType,
+          useGlobeDepth,
+          // It's tricky to bind globe's depth texture to postprocess stage,
+          // because it is undefined for the first several frames, or when
+          // terrain is being reconstructed. Functional uniform value is invoked
+          // when this stage is actually being rendered.
+          getGlobeDepthTexture: () =>
+            (
+              scene as Scene & {
+                context: {
+                  uniformState: {
+                    globeDepthTexture?: unknown
+                  }
+                }
+              }
+            ).context.uniformState.globeDepthTexture,
           uniforms
         })
         stage.enabled = enabled
@@ -75,3 +93,12 @@ export const AmbientOcclusion = withEphemerality(
     return null
   }
 )
+
+export const AmbientOcclusion: FC<AmbientOcclusionProps> = props => {
+  const scene = useCesium(({ scene }) => scene)
+  const [useGlobeDepth, setUseGlobeDepth] = useState(false)
+  usePreRender(() => {
+    setUseGlobeDepth(!scene.globe.depthTestAgainstTerrain)
+  })
+  return <AmbientOcclusionStage {...props} useGlobeDepth={useGlobeDepth} />
+}

@@ -96,7 +96,7 @@ export const Environment: FC<EnvironmentProps> = ({
 
   cloneColor(backgroundColor, scene.backgroundColor)
   scene.globe.baseColor = cloneColor(globeBaseColor)
-  scene.globe.depthTestAgainstTerrain = true
+  scene.globe.depthTestAgainstTerrain = false
   scene.globe.show = showGlobe
   scene.globe.enableLighting = enableGlobeLighting
 
