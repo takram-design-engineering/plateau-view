@@ -33,7 +33,7 @@ const StyledListItem = styled(ListItemButton, {
   hidden?: boolean
 }>(({ theme, hidden = false }) => ({
   alignItems: 'center',
-  minHeight: theme.spacing(6),
+  minHeight: theme.spacing(5),
   cursor: 'default',
   ...(hidden && {
     opacity: theme.palette.action.disabledOpacity
@@ -76,6 +76,8 @@ const ListItemIcon = styled('div')(({ theme }) => ({
 }))
 
 const StyledListItemText = styled(ListItemText)(({ theme }) => ({
+  marginTop: 4,
+  marginBottom: 4,
   [`& .${listItemTextClasses.primary}`]: {
     overflow: 'hidden',
     whiteSpace: 'nowrap',
