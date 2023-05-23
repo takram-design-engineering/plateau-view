@@ -84,7 +84,7 @@ export const LandslideLayer: FC<LayerProps<typeof LANDSLIDE_LAYER>> = ({
       layers: metadata.sourceLayers.flatMap(layer =>
         values.map((value, index) => ({
           'source-layer': layer.id,
-          filter: ['all', ['==', 'urf:areaType', value]],
+          filter: ['all', ['==', 'urf:areaType_code', value]],
           type: 'fill',
           paint: {
             'fill-color': schemeCategory10[index % schemeCategory10.length]
@@ -112,4 +112,10 @@ export const LandslideLayer: FC<LayerProps<typeof LANDSLIDE_LAYER>> = ({
 }
 
 // TODO: Separate definition.
-const values = ['土砂災害警戒区域（指定済）', '土砂災害特別警戒区域（指定済）']
+// https://www.mlit.go.jp/plateaudocument/#toc4_09_04
+const values = [
+  '1', // 土砂災害警戒区域（指定済）
+  '2', // 土砂災害特別警戒区域（指定済）
+  '3', // 土砂災害警戒区域（指定前）
+  '4' // 土砂災害特別警戒区域（指定前）
+]
