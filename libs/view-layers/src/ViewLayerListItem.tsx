@@ -1,5 +1,5 @@
 import { type SvgIconProps } from '@mui/material'
-import { type ComponentType, type FC } from 'react'
+import { memo, type ComponentType, type FC } from 'react'
 
 import { type LayerProps, type LayerType } from '@takram/plateau-layers'
 import { LayerListItem } from '@takram/plateau-ui-components'
@@ -79,10 +79,10 @@ const layerTypeNames: Record<LayerType, string> = {
 
 export interface ViewLayerListItemProps extends LayerProps {}
 
-export const ViewLayerListItem: FC<ViewLayerListItemProps> = props => (
+export const ViewLayerListItem: FC<ViewLayerListItemProps> = memo(props => (
   <LayerListItem
     {...props}
     typeName={layerTypeNames[props.type]}
     iconComponent={layerTypeIcons[props.type]}
   />
-)
+))
