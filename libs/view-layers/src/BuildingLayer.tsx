@@ -24,6 +24,7 @@ import {
   type ViewLayerModelParams
 } from './createViewLayerBase'
 import { BUILDING_LAYER } from './layerTypes'
+import { useMunicipalityName } from './useMunicipalityName'
 
 export interface BuildingLayerModelParams
   extends Omit<ViewLayerModelParams, 'datumId'> {
@@ -96,18 +97,12 @@ export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
       includeTypes: [PlateauDatasetType.Building]
     }
   })
-
+  const municipality = query.data?.municipality
+  const municipalityName = useMunicipalityName(municipality)
   const setTitle = useSetAtom(titleAtom)
   useEffect(() => {
-    if (query.data?.municipality?.name != null) {
-      setTitle(
-        [
-          query.data.municipality.prefecture.name,
-          query.data.municipality.name
-        ].join(' ')
-      )
-    }
-  }, [query, setTitle])
+    setTitle(municipalityName ?? null)
+  }, [municipalityName, setTitle])
 
   const hidden = useAtomValue(hiddenAtom)
   const scene = useCesium(({ scene }) => scene)

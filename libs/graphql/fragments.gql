@@ -1,11 +1,21 @@
+fragment PlateauPrefecture on PlateauPrefecture {
+  id
+  code
+  name
+}
+
 fragment PlateauMunicipality on PlateauMunicipality {
   id
   code
   name
-  prefecture {
+  parents {
     id
+    type
     code
     name
+  }
+  prefecture {
+    ...PlateauPrefecture
   }
 }
 

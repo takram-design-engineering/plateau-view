@@ -11,16 +11,16 @@ import {
 } from '@takram/plateau-graphql'
 import { type LayerProps } from '@takram/plateau-layers'
 
+import { ViewLayersContext } from './ViewLayersContext'
 import {
   createDatasetLayerBase,
   type DatasetLayerModel,
   type DatasetLayerModelParams
 } from './createDatasetLayerBase'
 import { LANDSLIDE_LAYER } from './layerTypes'
+import { useDatasetDatum } from './useDatasetDatum'
 import { useDatasetLayerTitle } from './useDatasetLayerTitle'
-import { useDatum } from './useDatum'
 import { useMVTMetadata } from './useMVTMetadata'
-import { ViewLayersContext } from './ViewLayersContext'
 
 export interface LandslideLayerModelParams extends DatasetLayerModelParams {}
 
@@ -49,7 +49,7 @@ export const LandslideLayer: FC<LayerProps<typeof LANDSLIDE_LAYER>> = ({
     }
   })
   const municipality = query.data?.municipality
-  const datum = useDatum(datumIdAtom, municipality?.datasets)
+  const datum = useDatasetDatum(datumIdAtom, municipality?.datasets)
 
   const title = useDatasetLayerTitle({
     layerType: LANDSLIDE_LAYER,

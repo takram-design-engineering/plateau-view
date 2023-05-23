@@ -18,8 +18,8 @@ import {
   type DatasetLayerModelParams
 } from './createDatasetLayerBase'
 import { LANDUSE_LAYER } from './layerTypes'
+import { useDatasetDatum } from './useDatasetDatum'
 import { useDatasetLayerTitle } from './useDatasetLayerTitle'
-import { useDatum } from './useDatum'
 import { useMVTMetadata } from './useMVTMetadata'
 
 export interface LanduseLayerModelParams extends DatasetLayerModelParams {}
@@ -49,7 +49,7 @@ export const LanduseLayer: FC<LayerProps<typeof LANDUSE_LAYER>> = ({
     }
   })
   const municipality = query.data?.municipality
-  const datum = useDatum(datumIdAtom, municipality?.datasets)
+  const datum = useDatasetDatum(datumIdAtom, municipality?.datasets)
 
   const title = useDatasetLayerTitle({
     layerType: LANDUSE_LAYER,

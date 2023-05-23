@@ -18,8 +18,8 @@ import {
   type DatasetLayerModelParams
 } from './createDatasetLayerBase'
 import { FACILITY_LAYER } from './layerTypes'
+import { useDatasetDatum } from './useDatasetDatum'
 import { useDatasetLayerTitle } from './useDatasetLayerTitle'
-import { useDatum } from './useDatum'
 import { useMVTMetadata } from './useMVTMetadata'
 
 export interface FacilityLayerModelParams extends DatasetLayerModelParams {}
@@ -49,7 +49,7 @@ export const FacilityLayer: FC<LayerProps<typeof FACILITY_LAYER>> = ({
     }
   })
   const municipality = query.data?.municipality
-  const datum = useDatum(datumIdAtom, municipality?.datasets)
+  const datum = useDatasetDatum(datumIdAtom, municipality?.datasets)
 
   const title = useDatasetLayerTitle({
     layerType: FACILITY_LAYER,

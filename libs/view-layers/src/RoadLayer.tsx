@@ -17,8 +17,8 @@ import {
   type DatasetLayerModelParams
 } from './createDatasetLayerBase'
 import { ROAD_LAYER } from './layerTypes'
+import { useDatasetDatum } from './useDatasetDatum'
 import { useDatasetLayerTitle } from './useDatasetLayerTitle'
-import { useDatum } from './useDatum'
 import { useMVTMetadata } from './useMVTMetadata'
 
 export interface RoadLayerModelParams extends DatasetLayerModelParams {}
@@ -48,7 +48,7 @@ export const RoadLayer: FC<LayerProps<typeof ROAD_LAYER>> = ({
     }
   })
   const municipality = query.data?.municipality
-  const datum = useDatum(datumIdAtom, municipality?.datasets)
+  const datum = useDatasetDatum(datumIdAtom, municipality?.datasets)
 
   const title = useDatasetLayerTitle({
     layerType: ROAD_LAYER,

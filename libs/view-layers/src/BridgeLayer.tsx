@@ -16,7 +16,8 @@ import {
   type DatasetLayerModelParams
 } from './createDatasetLayerBase'
 import { BRIDGE_LAYER } from './layerTypes'
-import { useDatum } from './useDatum'
+import { useDatasetDatum } from './useDatasetDatum'
+import { useMunicipalityName } from './useMunicipalityName'
 
 export interface BridgeLayerModelParams extends DatasetLayerModelParams {}
 
@@ -43,18 +44,12 @@ export const BridgeLayer: FC<LayerProps<typeof BRIDGE_LAYER>> = ({
       includeTypes: [PlateauDatasetType.Bridge]
     }
   })
-
+  const municipality = query.data?.municipality
+  const municipalityName = useMunicipalityName(municipality)
   const setTitle = useSetAtom(titleAtom)
   useEffect(() => {
-    if (query.data?.municipality?.name != null) {
-      setTitle(
-        [
-          query.data.municipality.prefecture.name,
-          query.data.municipality.name
-        ].join(' ')
-      )
-    }
-  }, [query, setTitle])
+    setTitle(municipalityName ?? null)
+  }, [municipalityName, setTitle])
 
   const hidden = useAtomValue(hiddenAtom)
   const scene = useCesium(({ scene }) => scene)
@@ -68,7 +63,7 @@ export const BridgeLayer: FC<LayerProps<typeof BRIDGE_LAYER>> = ({
     }
   }, [scene])
 
-  const datum = useDatum(datumIdAtom, query.data?.municipality?.datasets)
+  const datum = useDatasetDatum(datumIdAtom, query.data?.municipality?.datasets)
   if (hidden || datum == null) {
     return null
   }

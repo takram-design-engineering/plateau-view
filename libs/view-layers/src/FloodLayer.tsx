@@ -17,8 +17,8 @@ import {
   type DatasetLayerModelParams
 } from './createDatasetLayerBase'
 import { FLOOD_LAYER } from './layerTypes'
+import { useDatasetDatum } from './useDatasetDatum'
 import { useDatasetLayerTitle } from './useDatasetLayerTitle'
-import { useDatum } from './useDatum'
 
 export interface FloodLayerModelParams extends DatasetLayerModelParams {}
 
@@ -46,7 +46,7 @@ export const FloodLayer: FC<LayerProps<typeof FLOOD_LAYER>> = ({
     }
   })
   const municipality = query.data?.municipality
-  const datum = useDatum(datumIdAtom, municipality?.datasets)
+  const datum = useDatasetDatum(datumIdAtom, municipality?.datasets)
 
   const title = useDatasetLayerTitle({
     layerType: FLOOD_LAYER,

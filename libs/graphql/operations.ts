@@ -176,11 +176,34 @@ export type QueryPrefectureArgs = {
   code: Scalars['String']
 }
 
+export type PlateauPrefectureFragment = {
+  __typename?: 'PlateauPrefecture'
+  id: string
+  code: string
+  name: string
+}
+
 export type PlateauMunicipalityFragment = {
   __typename?: 'PlateauMunicipality'
   id: string
   code: string
   name: string
+  parents: Array<
+    | {
+        __typename?: 'PlateauMunicipality'
+        id: string
+        type: PlateauAreaType
+        code: string
+        name: string
+      }
+    | {
+        __typename?: 'PlateauPrefecture'
+        id: string
+        type: PlateauAreaType
+        code: string
+        name: string
+      }
+  >
   prefecture: {
     __typename?: 'PlateauPrefecture'
     id: string
@@ -295,6 +318,22 @@ export type MunicipalityDatasetsQuery = {
           }>
         }
     >
+    parents: Array<
+      | {
+          __typename?: 'PlateauMunicipality'
+          id: string
+          type: PlateauAreaType
+          code: string
+          name: string
+        }
+      | {
+          __typename?: 'PlateauPrefecture'
+          id: string
+          type: PlateauAreaType
+          code: string
+          name: string
+        }
+    >
     prefecture: {
       __typename?: 'PlateauPrefecture'
       id: string
@@ -304,17 +343,29 @@ export type MunicipalityDatasetsQuery = {
   } | null
 }
 
+export const PlateauPrefectureFragmentDoc = gql`
+  fragment PlateauPrefecture on PlateauPrefecture {
+    id
+    code
+    name
+  }
+`
 export const PlateauMunicipalityFragmentDoc = gql`
   fragment PlateauMunicipality on PlateauMunicipality {
     id
     code
     name
-    prefecture {
+    parents {
       id
+      type
       code
       name
     }
+    prefecture {
+      ...PlateauPrefecture
+    }
   }
+  ${PlateauPrefectureFragmentDoc}
 `
 export const PlateauDatasetDatumFragmentDoc = gql`
   fragment PlateauDatasetDatum on PlateauDatasetDatum {
