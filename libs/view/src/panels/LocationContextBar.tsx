@@ -11,12 +11,22 @@ import { DefaultDatasetSelect } from './LocationContextBar/DefaultDatasetSelect'
 import { LocationBreadcrumbs } from './LocationContextBar/LocationBreadcrumbs'
 
 export const LocationContextBar: FC = () => {
-  const { areas, datasetGroups, preventChanges, approveChanges } =
-    useLocationContextState()
+  const {
+    areas,
+    datasetGroups,
+    focusedAreaCode,
+    focusArea,
+    preventChanges,
+    approveChanges
+  } = useLocationContextState()
+
   const municipalityCode = useMemo(
-    () => areas?.find(({ type }) => type === 'municipality')?.code,
-    [areas]
+    () =>
+      focusedAreaCode ??
+      areas?.find(({ type }) => type === 'municipality')?.code,
+    [areas, focusedAreaCode]
   )
+
   return (
     <ContextBar
       hidden={areas == null}
@@ -24,7 +34,13 @@ export const LocationContextBar: FC = () => {
       onMouseLeave={approveChanges}
     >
       <Stack direction='row' spacing={1} alignItems='center' height='100%'>
-        {areas != null && <LocationBreadcrumbs areas={areas} />}
+        {areas != null && (
+          <LocationBreadcrumbs
+            areas={areas}
+            focusedAreaCode={focusedAreaCode}
+            focusArea={focusArea}
+          />
+        )}
         {datasetGroups != null && municipalityCode != null && (
           <>
             <Divider orientation='vertical' light />

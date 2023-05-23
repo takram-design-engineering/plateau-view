@@ -1,4 +1,4 @@
-import { atom, useAtom, useAtomValue } from 'jotai'
+import { useAtomValue } from 'jotai'
 import { groupBy } from 'lodash'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
@@ -34,31 +34,71 @@ const datasetTypeOrder = [
   PlateauDatasetType.Vegetation
 ]
 
-export interface LocationContextStateState {
+export interface LocationContextState {
   areas?: readonly Area[]
   datasetGroups?: PlateauDatasetFragment[][]
+  focusedAreaCode?: string
+  focusArea: (areaCode?: string) => void
   preventChanges: () => void
   approveChanges: () => void
 }
 
-export function useLocationContextState(): LocationContextStateState {
+// TODO: It's too complex and I'm not sure all the state are synchronized.
+// Refactor or write tests.
+export function useLocationContextState(): LocationContextState {
   const areas = useAtomValue(areasAtom)
-  const { data, loading } = useMunicipalityDatasetsQuery({
+
+  // Prevents changes in location state when the user is about to click the
+  // buttons on the context bar. Commits the pending change when it's approved.
+  const [changesPrevented, setChangesPrevented] = useState(false)
+  const preventChanges = useCallback(() => {
+    setChangesPrevented(true)
+  }, [])
+  const approveChanges = useCallback(() => {
+    setChangesPrevented(false)
+  }, [])
+
+  const [focusedAreaCode, setFocusedAreaCode] = useState<string>()
+  const focusArea = useCallback((areaCode?: string) => {
+    setFocusedAreaCode(areaCode)
+    // It's safe to approve changes because the user must have interacted with
+    // context bar.
+    setChangesPrevented(false)
+  }, [])
+
+  // Clear focused area when it's outside of the hierarchy.
+  useEffect(() => {
+    if (
+      focusedAreaCode != null &&
+      areas?.some(area => area.code === focusedAreaCode) === false
+    ) {
+      setFocusedAreaCode(undefined)
+    }
+  }, [areas, focusedAreaCode, setFocusedAreaCode])
+
+  const area = useMemo(
+    () =>
+      focusedAreaCode != null
+        ? areas?.find(area => area.code === focusedAreaCode)
+        : areas?.[0],
+    [areas, focusedAreaCode]
+  )
+  const query = useMunicipalityDatasetsQuery({
     variables:
-      areas != null
+      area != null
         ? {
-            municipalityCode: areas?.[0].code,
+            municipalityCode: area.code,
             excludeTypes: [
               PlateauDatasetType.UseCase,
               PlateauDatasetType.Generic
             ]
           }
         : undefined,
-    skip: areas == null
+    skip: area == null
   })
 
   const datasetGroups = useMemo(() => {
-    const datasets = data?.municipality?.datasets
+    const datasets = query.data?.municipality?.datasets
     if (datasets == null) {
       return
     }
@@ -67,32 +107,28 @@ export function useLocationContextState(): LocationContextStateState {
       .map(orderedType => groups.find(([type]) => type === orderedType))
       .filter(isNotNullish)
       .map(([, datasets]) => datasets)
-  }, [data])
+  }, [query.data])
 
-  const changesPreventedAtom = useMemo(() => atom(false), [])
-  const [changesPrevented, setChangesPrevented] = useAtom(changesPreventedAtom)
-  const preventChanges = useCallback(() => {
-    setChangesPrevented(true)
-  }, [setChangesPrevented])
-  const approveChanges = useCallback(() => {
-    setChangesPrevented(false)
-  }, [setChangesPrevented])
-
-  const [state, setState] = useState<LocationContextStateState>({
-    preventChanges,
-    approveChanges
+  const [state, setState] = useState({
+    areas: areas ?? undefined,
+    datasetGroups
   })
 
   useEffect(() => {
-    if (loading || changesPrevented) {
+    if (query.loading || datasetGroups == null || changesPrevented) {
       return
     }
-    setState(prevState => ({
-      ...prevState,
+    setState({
       areas: areas ?? undefined,
       datasetGroups
-    }))
-  }, [areas, loading, datasetGroups, changesPrevented])
+    })
+  }, [areas, query.loading, datasetGroups, changesPrevented])
 
-  return state
+  return {
+    ...state,
+    focusedAreaCode: focusedAreaCode ?? undefined,
+    focusArea,
+    preventChanges,
+    approveChanges
+  }
 }
