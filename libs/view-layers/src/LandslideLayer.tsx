@@ -18,7 +18,8 @@ import {
   type DatasetLayerModelParams
 } from './createDatasetLayerBase'
 import { LANDSLIDE_LAYER } from './layerTypes'
-import { useDatum } from './useDatum'
+import { useDatasetDatum } from './useDatasetDatum'
+import { useDatasetLayerTitle } from './useDatasetLayerTitle'
 import { useMVTMetadata } from './useMVTMetadata'
 
 export interface LandslideLayerModelParams extends DatasetLayerModelParams {}
@@ -47,18 +48,18 @@ export const LandslideLayer: FC<LayerProps<typeof LANDSLIDE_LAYER>> = ({
       includeTypes: [PlateauDatasetType.Landslide]
     }
   })
+  const municipality = query.data?.municipality
+  const datum = useDatasetDatum(datumIdAtom, municipality?.datasets)
 
+  const title = useDatasetLayerTitle({
+    layerType: LANDSLIDE_LAYER,
+    municipality,
+    datum
+  })
   const setTitle = useSetAtom(titleAtom)
   useEffect(() => {
-    if (query.data?.municipality?.name != null) {
-      setTitle(
-        [
-          query.data.municipality.prefecture.name,
-          query.data.municipality.name
-        ].join(' ')
-      )
-    }
-  }, [query, setTitle])
+    setTitle(title ?? null)
+  }, [title, setTitle])
 
   const hidden = useAtomValue(hiddenAtom)
   const scene = useCesium(({ scene }) => scene)
@@ -72,9 +73,7 @@ export const LandslideLayer: FC<LayerProps<typeof LANDSLIDE_LAYER>> = ({
     }
   }, [scene])
 
-  const datum = useDatum(datumIdAtom, query.data?.municipality?.datasets)
   const metadata = useMVTMetadata(datum?.url)
-
   const style = useMemo(() => {
     if (metadata == null) {
       return

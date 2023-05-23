@@ -9,6 +9,7 @@ import {
   listItemSecondaryActionClasses,
   listItemTextClasses,
   styled,
+  svgIconClasses,
   type SvgIconProps
 } from '@mui/material'
 import { useAtom, useAtomValue, useSetAtom, type PrimitiveAtom } from 'jotai'
@@ -31,7 +32,8 @@ const StyledListItem = styled(ListItemButton, {
 })<{
   hidden?: boolean
 }>(({ theme, hidden = false }) => ({
-  height: theme.spacing(7),
+  alignItems: 'center',
+  minHeight: theme.spacing(5),
   cursor: 'default',
   ...(hidden && {
     opacity: theme.palette.action.disabledOpacity
@@ -66,18 +68,37 @@ const StyledListItem = styled(ListItemButton, {
   }
 }))
 
-const ListItemIcon = styled('span')(({ theme }) => ({
-  marginRight: theme.spacing(1.5)
+const ListItemIcon = styled('div')(({ theme }) => ({
+  marginRight: theme.spacing(1.5),
+  [`& .${svgIconClasses.root}`]: {
+    display: 'block'
+  }
 }))
 
 const StyledListItemText = styled(ListItemText)(({ theme }) => ({
+  marginTop: 4,
+  marginBottom: 4,
+  [`& .${listItemTextClasses.primary}`]: {
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis'
+  },
   [`& .${listItemTextClasses.secondary}`]: {
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
     marginTop: theme.spacing(0.25)
   }
 }))
 
 const HoverMenuRoot = styled(ListItemSecondaryAction)(({ theme }) => ({
-  right: theme.spacing(1)
+  position: 'relative',
+  inset: 0,
+  transform: 'none',
+  flexShrink: 0,
+  flexGrow: 0,
+  marginRight: theme.spacing(-0.5),
+  marginLeft: theme.spacing(0.5)
 }))
 
 function stopPropagation(event: SyntheticEvent): void {
@@ -135,13 +156,11 @@ const HoverMenu: FC<HoverMenuProps> = ({ id, hiddenAtom }) => {
 }
 
 export interface LayerListItemProps extends LayerProps {
-  typeName: string
   iconComponent: ComponentType<SvgIconProps>
 }
 
 export const LayerListItem: FC<LayerListItemProps> = ({
   id,
-  typeName,
   iconComponent,
   titleAtom,
   loadingAtom,
@@ -163,8 +182,8 @@ export const LayerListItem: FC<LayerListItemProps> = ({
         )}
       </ListItemIcon>
       <StyledListItemText
-        primary={title ?? '\u00a0'} // Reserve line height
-        secondary={typeName}
+        primary={typeof title === 'object' ? title?.primary : title}
+        secondary={typeof title === 'object' ? title?.secondary : undefined}
         primaryTypographyProps={{
           variant: 'body2'
         }}

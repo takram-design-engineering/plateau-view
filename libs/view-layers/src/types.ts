@@ -31,9 +31,16 @@ import {
   type VEGETATION_LAYER
 } from './layerTypes'
 
+export type LayerTitle =
+  | string
+  | {
+      primary: string
+      secondary?: string
+    }
+
 declare module '@takram/plateau-layers' {
   interface LayerModel {
-    titleAtom: PrimitiveAtom<string | null>
+    titleAtom: PrimitiveAtom<LayerTitle | null>
     loadingAtom: PrimitiveAtom<boolean>
     hiddenAtom: PrimitiveAtom<boolean>
     selectedAtom: PrimitiveAtom<boolean>

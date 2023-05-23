@@ -8,7 +8,7 @@ import {
   type SetStateAction
 } from 'jotai'
 import { uniqWith } from 'lodash'
-import { useCallback, useMemo, type FC } from 'react'
+import { memo, useCallback, useMemo, type FC } from 'react'
 
 import {
   type PlateauBuildingDatasetDatum,
@@ -58,121 +58,124 @@ export interface BuildingDatasetButtonSelectProps {
   disabled?: boolean
 }
 
-export const BuildingDatasetButtonSelect: FC<
-  BuildingDatasetButtonSelectProps
-> = ({ dataset, municipalityCode, disabled }) => {
-  const { layersAtom, removeAtom } = useLayers()
-  const layers = useAtomValue(layersAtom)
-  const findLayer = useFindLayer()
-  const layer = useMemo(
-    () =>
-      findLayer(layers, {
-        type: BUILDING_LAYER,
-        municipalityCode
-      }),
-    [municipalityCode, layers, findLayer]
-  )
-
-  const addLayer = useAddLayer()
-  const removeLayer = useSetAtom(removeAtom)
-  const paramsAtom = useMemo(() => {
-    if (layer == null) {
-      return atom(null, (get, set, params?: SetStateAction<Params | null>) => {
-        const nextParams = typeof params === 'function' ? params(null) : params
-        if (nextParams == null) {
-          return
-        }
-        addLayer(
-          createViewLayer({
-            type: BUILDING_LAYER,
-            municipalityCode,
-            version: nextParams.version ?? undefined,
-            lod: nextParams.lod ?? undefined
-          })
-        )
-      })
-    }
-
-    return atom(
-      get => createParams(get, layer),
-      (get, set, params?: SetStateAction<Params | null>) => {
-        const prevParams = createParams(get, layer)
-        const nextParams =
-          typeof params === 'function' ? params(prevParams) : params
-
-        if (nextParams == null) {
-          removeLayer(layer.id)
-        } else {
-          set(layer.versionAtom, nextParams.version)
-          set(layer.lodAtom, nextParams.lod)
-        }
-      }
+export const BuildingDatasetButtonSelect: FC<BuildingDatasetButtonSelectProps> =
+  memo(({ dataset, municipalityCode, disabled }) => {
+    const { layersAtom, removeAtom } = useLayers()
+    const layers = useAtomValue(layersAtom)
+    const findLayer = useFindLayer()
+    const layer = useMemo(
+      () =>
+        findLayer(layers, {
+          type: BUILDING_LAYER,
+          municipalityCode
+        }),
+      [municipalityCode, layers, findLayer]
     )
-  }, [municipalityCode, layer, addLayer, removeLayer])
 
-  const [params, setParams] = useAtom(paramsAtom)
-
-  const handleClick = useCallback(() => {
-    if (layer == null) {
-      setParams({
-        version: null,
-        lod: null
-      })
-    } else {
-      setParams(null)
-    }
-  }, [layer, setParams])
-
-  const handleChange = useCallback(
-    (event: SelectChangeEvent<string>) => {
-      if (event.target.value === '') {
-        setParams()
-      } else {
-        setParams(parseParams(event.target.value))
+    const addLayer = useAddLayer()
+    const removeLayer = useSetAtom(removeAtom)
+    const paramsAtom = useMemo(() => {
+      if (layer == null) {
+        return atom(
+          null,
+          (get, set, params?: SetStateAction<Params | null>) => {
+            const nextParams =
+              typeof params === 'function' ? params(null) : params
+            if (nextParams == null) {
+              return
+            }
+            addLayer(
+              createViewLayer({
+                type: BUILDING_LAYER,
+                municipalityCode,
+                version: nextParams.version ?? undefined,
+                lod: nextParams.lod ?? undefined
+              })
+            )
+          }
+        )
       }
-    },
-    [setParams]
-  )
 
-  // Remove textured data from our menu.
-  const data = uniqWith(
-    dataset.data as PlateauBuildingDatasetDatum[],
-    (a, b) => a.version === b.version && a.lod === b.lod
-  )
+      return atom(
+        get => createParams(get, layer),
+        (get, set, params?: SetStateAction<Params | null>) => {
+          const prevParams = createParams(get, layer)
+          const nextParams =
+            typeof params === 'function' ? params(prevParams) : params
 
-  const value = useMemo(
-    () => (params != null ? serializeParams(params) : ''),
-    [params]
-  )
+          if (nextParams == null) {
+            removeLayer(layer.id)
+          } else {
+            set(layer.versionAtom, nextParams.version)
+            set(layer.lodAtom, nextParams.lod)
+          }
+        }
+      )
+    }, [municipalityCode, layer, addLayer, removeLayer])
 
-  const showDataFormats = useAtomValue(showDataFormatsAtom)
+    const [params, setParams] = useAtom(paramsAtom)
 
-  if (data.length === 0) {
-    console.warn('Dataset must include at least 1 datum.')
-    return null
-  }
+    const handleClick = useCallback(() => {
+      if (layer == null) {
+        setParams({
+          version: null,
+          lod: null
+        })
+      } else {
+        setParams(null)
+      }
+    }, [layer, setParams])
 
-  return (
-    <ContextButtonSelect
-      label={datasetTypeNames[dataset.type]}
-      value={value}
-      disabled={disabled}
-      onClick={handleClick}
-      onChange={handleChange}
-    >
-      {data.map(datum => (
-        <SelectItem key={datum.id} value={serializeParams(datum)}>
-          <Stack>
-            <Typography variant='body2'>
-              LOD {datum.lod}
-              {showDataFormats ? ` (${datum.format})` : null}
-            </Typography>
-            <Typography variant='caption' color='text.secondary'>
-              {datum.version}年度
-            </Typography>
-          </Stack>
-        </SelectItem>
-      ))}
-    </ContextButtonSelect>
-  )
-}
+    const handleChange = useCallback(
+      (event: SelectChangeEvent<string>) => {
+        if (event.target.value === '') {
+          setParams()
+        } else {
+          setParams(parseParams(event.target.value))
+        }
+      },
+      [setParams]
+    )
+
+    // Remove textured data from our menu.
+    const data = uniqWith(
+      dataset.data as PlateauBuildingDatasetDatum[],
+      (a, b) => a.version === b.version && a.lod === b.lod
+    )
+
+    const value = useMemo(
+      () => (params != null ? serializeParams(params) : ''),
+      [params]
+    )
+
+    const showDataFormats = useAtomValue(showDataFormatsAtom)
+
+    if (data.length === 0) {
+      console.warn('Dataset must include at least 1 datum.')
+      return null
+    }
+
+    return (
+      <ContextButtonSelect
+        label={datasetTypeNames[dataset.type]}
+        value={value}
+        disabled={disabled}
+        onClick={handleClick}
+        onChange={handleChange}
+      >
+        {data.map(datum => (
+          <SelectItem key={datum.id} value={serializeParams(datum)}>
+            <Stack>
+              <Typography variant='body2'>
+                LOD {datum.lod}
+                {showDataFormats ? ` (${datum.format})` : null}
+              </Typography>
+              <Typography variant='caption' color='text.secondary'>
+                {datum.version}年度
+              </Typography>
+            </Stack>
+          </SelectItem>
+        ))}
+      </ContextButtonSelect>
+    )
+  })

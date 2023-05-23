@@ -3,6 +3,8 @@ import { type SetOptional } from 'type-fest'
 
 import { type LayerModel } from '@takram/plateau-layers'
 
+import { type LayerTitle } from './types'
+
 export interface ViewLayerModelParams {
   title?: string
 }
@@ -13,7 +15,7 @@ export function createViewLayerBase(
   params: ViewLayerModelParams
 ): Omit<SetOptional<ViewLayerModel, 'id'>, 'type'> {
   return {
-    titleAtom: atom<string | null>(params.title ?? null),
+    titleAtom: atom<LayerTitle | null>(params.title ?? null),
     loadingAtom: atom(false),
     hiddenAtom: atom(false),
     selectedAtom: atom(false)

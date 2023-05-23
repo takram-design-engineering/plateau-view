@@ -1,11 +1,33 @@
+fragment PlateauPrefecture on PlateauPrefecture {
+  id
+  code
+  name
+}
+
 fragment PlateauMunicipality on PlateauMunicipality {
   id
   code
   name
-  prefecture {
+  parents {
     id
+    type
     code
     name
+  }
+  prefecture {
+    ...PlateauPrefecture
+  }
+}
+
+fragment PlateauDatasetDatum on PlateauDatasetDatum {
+  id
+  format
+  url
+  name
+  ... on PlateauBuildingDatasetDatum {
+    version
+    lod
+    textured
   }
 }
 
@@ -15,14 +37,6 @@ fragment PlateauDataset on PlateauDataset {
   typeName
   name
   data {
-    id
-    format
-    url
-    name
-    ... on PlateauBuildingDatasetDatum {
-      version
-      lod
-      textured
-    }
+    ...PlateauDatasetDatum
   }
 }
