@@ -24,7 +24,7 @@ export interface ScreenSpaceCameraProps extends ScreenSpaceCameraOptions {
 
 export const ScreenSpaceCamera: FC<ScreenSpaceCameraProps> = ({
   tiltByRightButton = false,
-  minimumZoomDistance = 1,
+  minimumZoomDistance = 0,
   maximumZoomDistance = Infinity,
   ...options
 }) => {
