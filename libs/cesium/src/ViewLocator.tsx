@@ -1,4 +1,8 @@
-import { type Cartesian3, type Rectangle } from '@cesium/engine'
+import {
+  HeadingPitchRoll,
+  type Cartesian3,
+  type Rectangle
+} from '@cesium/engine'
 import { useEffect, useRef, type FC } from 'react'
 
 import { useCesium } from './useCesium'
@@ -16,7 +20,10 @@ export const ViewLocator: FC<ViewLocatorProps> = ({ initialView }) => {
     if (initialViewRef.current == null) {
       return
     }
-    camera.setView({ destination: initialViewRef.current })
+    camera.setView({
+      destination: initialViewRef.current,
+      orientation: new HeadingPitchRoll(0, -Math.PI / 2, 0)
+    })
   }, [camera])
 
   return null
