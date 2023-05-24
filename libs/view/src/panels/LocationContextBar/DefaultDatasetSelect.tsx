@@ -8,7 +8,7 @@ import {
   type SetStateAction
 } from 'jotai'
 import { differenceBy } from 'lodash'
-import { useCallback, useMemo, type FC } from 'react'
+import { memo, useCallback, useMemo, type FC } from 'react'
 import invariant from 'tiny-invariant'
 
 import { type PlateauDatasetFragment } from '@takram/plateau-graphql'
@@ -60,166 +60,168 @@ export interface DefaultDatasetSelectProps {
   disabled?: boolean
 }
 
-export const DefaultDatasetSelect: FC<DefaultDatasetSelectProps> = ({
-  datasets,
-  municipalityCode,
-  disabled
-}) => {
-  invariant(datasets.length > 0)
-  const { layersAtom, removeAtom } = useLayers()
-  const layers = useAtomValue(layersAtom)
-  // Assume that all the datasets share the same type.
-  const layerType = datasetTypeLayers[datasets[0].type]
-  invariant(layerType !== 'BUILDING_LAYER', 'Building layer is not supported.')
-  const filterLayers = useFilterLayers()
-  const filteredLayers = useMemo(
-    () =>
-      layerType != null
-        ? filterLayers(layers, {
-            type: layerType,
-            municipalityCode
-          })
-        : [],
-    [municipalityCode, layers, layerType, filterLayers]
-  )
-
-  const addLayer = useAddLayer()
-  const removeLayer = useSetAtom(removeAtom)
-  const paramsAtom = useMemo(() => {
-    if (layerType == null) {
-      return atom(null, (get, set, params: SetStateAction<Params[]>) => {})
-    }
-
-    return atom(
-      get => createParamsArray(get, filteredLayers),
-      (get, set, dataIds: SetStateAction<Params[]>) => {
-        const prevParams = createParamsArray(get, filteredLayers)
-        const nextParams =
-          typeof dataIds === 'function' ? dataIds(prevParams) : dataIds
-
-        const paramsToRemove = differenceBy(
-          prevParams,
-          nextParams,
-          ({ datasetId }) => datasetId
-        )
-        const paramsToAdd = differenceBy(
-          nextParams,
-          prevParams,
-          ({ datasetId }) => datasetId
-        )
-        const paramsToUpdate = nextParams.filter(({ datasetId, datumId }) =>
-          prevParams.some(
-            params =>
-              params.datasetId === datasetId && params.datumId !== datumId
-          )
-        )
-        paramsToRemove.forEach(({ datumId }) => {
-          const layer = filteredLayers.find(
-            ({ datumIdAtom }) => get(datumIdAtom) === datumId
-          )
-          invariant(layer != null)
-          removeLayer(layer.id)
-        })
-        paramsToAdd.forEach(({ datasetId, datumId }) => {
-          addLayer(
-            createViewLayer({
-              type: layerType,
-              municipalityCode,
-              datasetId,
-              datumId
-            })
-          )
-        })
-        paramsToUpdate.forEach(({ datasetId, datumId }) => {
-          const layer = filteredLayers.find(
-            layer => layer.datasetId === datasetId
-          )
-          invariant(layer != null)
-          set(layer.datumIdAtom, datumId)
-        })
-      }
+export const DefaultDatasetSelect: FC<DefaultDatasetSelectProps> = memo(
+  ({ datasets, municipalityCode, disabled }) => {
+    invariant(datasets.length > 0)
+    const { layersAtom, removeAtom } = useLayers()
+    const layers = useAtomValue(layersAtom)
+    // Assume that all the datasets share the same type.
+    const layerType = datasetTypeLayers[datasets[0].type]
+    invariant(
+      layerType !== 'BUILDING_LAYER',
+      'Building layer is not supported.'
     )
-  }, [municipalityCode, filteredLayers, layerType, addLayer, removeLayer])
+    const filterLayers = useFilterLayers()
+    const filteredLayers = useMemo(
+      () =>
+        layerType != null
+          ? filterLayers(layers, {
+              type: layerType,
+              municipalityCode
+            })
+          : [],
+      [municipalityCode, layers, layerType, filterLayers]
+    )
 
-  const [params, setParams] = useAtom(paramsAtom)
+    const addLayer = useAddLayer()
+    const removeLayer = useSetAtom(removeAtom)
+    const paramsAtom = useMemo(() => {
+      if (layerType == null) {
+        return atom(null, (get, set, params: SetStateAction<Params[]>) => {})
+      }
 
-  const handleChange = useCallback(
-    (event: SelectChangeEvent<string[]>) => {
-      invariant(Array.isArray(event.target.value))
-      setParams(event.target.value.map(value => parseParams(value)))
-    },
-    [setParams]
-  )
+      return atom(
+        get => createParamsArray(get, filteredLayers),
+        (get, set, dataIds: SetStateAction<Params[]>) => {
+          const prevParams = createParamsArray(get, filteredLayers)
+          const nextParams =
+            typeof dataIds === 'function' ? dataIds(prevParams) : dataIds
 
-  const value = useMemo(
-    () => (params != null ? params.map(params => serializeParams(params)) : []),
-    [params]
-  )
-
-  const showDataFormats = useAtomValue(showDataFormatsAtom)
-  return (
-    <ContextSelect
-      label={datasetTypeNames[datasets[0].type]}
-      value={value}
-      onChange={handleChange}
-      disabled={disabled}
-    >
-      {datasets.flatMap((dataset, index) => {
-        if (dataset.data.length > 1) {
-          if (dataset.name === '') {
-            return dataset.data.map(datum => (
-              <SelectItem
-                key={datum.id}
-                value={serializeParams({
-                  datasetId: dataset.id,
-                  datumId: datum.id
-                })}
-              >
-                <Typography variant='body2'>
-                  {datum.name}
-                  {showDataFormats ? ` (${datum.format})` : null}
-                </Typography>
-              </SelectItem>
-            ))
-          }
-          return [
-            <SelectGroupItem key={index} size='small'>
-              {dataset.name}
-            </SelectGroupItem>,
-            ...dataset.data.map(datum => (
-              <SelectItem
-                key={datum.id}
-                indent={1}
-                value={serializeParams({
-                  datasetId: dataset.id,
-                  datumId: datum.id
-                })}
-              >
-                <Typography variant='body2'>
-                  {datum.name}
-                  {showDataFormats ? ` (${datum.format})` : null}
-                </Typography>
-              </SelectItem>
-            ))
-          ]
+          const paramsToRemove = differenceBy(
+            prevParams,
+            nextParams,
+            ({ datasetId }) => datasetId
+          )
+          const paramsToAdd = differenceBy(
+            nextParams,
+            prevParams,
+            ({ datasetId }) => datasetId
+          )
+          const paramsToUpdate = nextParams.filter(({ datasetId, datumId }) =>
+            prevParams.some(
+              params =>
+                params.datasetId === datasetId && params.datumId !== datumId
+            )
+          )
+          paramsToRemove.forEach(({ datumId }) => {
+            const layer = filteredLayers.find(
+              ({ datumIdAtom }) => get(datumIdAtom) === datumId
+            )
+            invariant(layer != null)
+            removeLayer(layer.id)
+          })
+          paramsToAdd.forEach(({ datasetId, datumId }) => {
+            addLayer(
+              createViewLayer({
+                type: layerType,
+                municipalityCode,
+                datasetId,
+                datumId
+              })
+            )
+          })
+          paramsToUpdate.forEach(({ datasetId, datumId }) => {
+            const layer = filteredLayers.find(
+              layer => layer.datasetId === datasetId
+            )
+            invariant(layer != null)
+            set(layer.datumIdAtom, datumId)
+          })
         }
-        invariant(dataset.data.length === 1)
-        const [datum] = dataset.data
-        return (
-          <SelectItem
-            key={datum.id}
-            value={serializeParams({
-              datasetId: dataset.id,
-              datumId: datum.id
-            })}
-          >
-            <Typography variant='body2'>
-              {dataset.name}
-              {showDataFormats ? ` (${datum.format})` : null}
-            </Typography>
-          </SelectItem>
-        )
-      })}
-    </ContextSelect>
-  )
-}
+      )
+    }, [municipalityCode, filteredLayers, layerType, addLayer, removeLayer])
+
+    const [params, setParams] = useAtom(paramsAtom)
+
+    const handleChange = useCallback(
+      (event: SelectChangeEvent<string[]>) => {
+        invariant(Array.isArray(event.target.value))
+        setParams(event.target.value.map(value => parseParams(value)))
+      },
+      [setParams]
+    )
+
+    const value = useMemo(
+      () =>
+        params != null ? params.map(params => serializeParams(params)) : [],
+      [params]
+    )
+
+    const showDataFormats = useAtomValue(showDataFormatsAtom)
+    return (
+      <ContextSelect
+        label={datasetTypeNames[datasets[0].type]}
+        value={value}
+        onChange={handleChange}
+        disabled={disabled}
+      >
+        {datasets.flatMap((dataset, index) => {
+          if (dataset.data.length > 1) {
+            if (dataset.name === '') {
+              return dataset.data.map(datum => (
+                <SelectItem
+                  key={datum.id}
+                  value={serializeParams({
+                    datasetId: dataset.id,
+                    datumId: datum.id
+                  })}
+                >
+                  <Typography variant='body2'>
+                    {datum.name}
+                    {showDataFormats ? ` (${datum.format})` : null}
+                  </Typography>
+                </SelectItem>
+              ))
+            }
+            return [
+              <SelectGroupItem key={index} size='small'>
+                {dataset.name}
+              </SelectGroupItem>,
+              ...dataset.data.map(datum => (
+                <SelectItem
+                  key={datum.id}
+                  indent={1}
+                  value={serializeParams({
+                    datasetId: dataset.id,
+                    datumId: datum.id
+                  })}
+                >
+                  <Typography variant='body2'>
+                    {datum.name}
+                    {showDataFormats ? ` (${datum.format})` : null}
+                  </Typography>
+                </SelectItem>
+              ))
+            ]
+          }
+          invariant(dataset.data.length === 1)
+          const [datum] = dataset.data
+          return (
+            <SelectItem
+              key={datum.id}
+              value={serializeParams({
+                datasetId: dataset.id,
+                datumId: datum.id
+              })}
+            >
+              <Typography variant='body2'>
+                {dataset.name}
+                {showDataFormats ? ` (${datum.format})` : null}
+              </Typography>
+            </SelectItem>
+          )
+        })}
+      </ContextSelect>
+    )
+  }
+)

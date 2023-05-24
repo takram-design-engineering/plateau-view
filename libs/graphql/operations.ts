@@ -176,11 +176,34 @@ export type QueryPrefectureArgs = {
   code: Scalars['String']
 }
 
+export type PlateauPrefectureFragment = {
+  __typename?: 'PlateauPrefecture'
+  id: string
+  code: string
+  name: string
+}
+
 export type PlateauMunicipalityFragment = {
   __typename?: 'PlateauMunicipality'
   id: string
   code: string
   name: string
+  parents: Array<
+    | {
+        __typename?: 'PlateauMunicipality'
+        id: string
+        type: PlateauAreaType
+        code: string
+        name: string
+      }
+    | {
+        __typename?: 'PlateauPrefecture'
+        id: string
+        type: PlateauAreaType
+        code: string
+        name: string
+      }
+  >
   prefecture: {
     __typename?: 'PlateauPrefecture'
     id: string
@@ -188,6 +211,29 @@ export type PlateauMunicipalityFragment = {
     name: string
   }
 }
+
+type PlateauDatasetDatum_PlateauBuildingDatasetDatum_Fragment = {
+  __typename?: 'PlateauBuildingDatasetDatum'
+  version: string
+  lod: number
+  textured: boolean
+  id: string
+  format: PlateauDatasetFormat
+  url: string
+  name: string
+}
+
+type PlateauDatasetDatum_PlateauDefaultDatasetDatum_Fragment = {
+  __typename?: 'PlateauDefaultDatasetDatum'
+  id: string
+  format: PlateauDatasetFormat
+  url: string
+  name: string
+}
+
+export type PlateauDatasetDatumFragment =
+  | PlateauDatasetDatum_PlateauBuildingDatasetDatum_Fragment
+  | PlateauDatasetDatum_PlateauDefaultDatasetDatum_Fragment
 
 type PlateauDataset_PlateauBuildingDataset_Fragment = {
   __typename?: 'PlateauBuildingDataset'
@@ -272,6 +318,22 @@ export type MunicipalityDatasetsQuery = {
           }>
         }
     >
+    parents: Array<
+      | {
+          __typename?: 'PlateauMunicipality'
+          id: string
+          type: PlateauAreaType
+          code: string
+          name: string
+        }
+      | {
+          __typename?: 'PlateauPrefecture'
+          id: string
+          type: PlateauAreaType
+          code: string
+          name: string
+        }
+    >
     prefecture: {
       __typename?: 'PlateauPrefecture'
       id: string
@@ -281,15 +343,40 @@ export type MunicipalityDatasetsQuery = {
   } | null
 }
 
+export const PlateauPrefectureFragmentDoc = gql`
+  fragment PlateauPrefecture on PlateauPrefecture {
+    id
+    code
+    name
+  }
+`
 export const PlateauMunicipalityFragmentDoc = gql`
   fragment PlateauMunicipality on PlateauMunicipality {
     id
     code
     name
-    prefecture {
+    parents {
       id
+      type
       code
       name
+    }
+    prefecture {
+      ...PlateauPrefecture
+    }
+  }
+  ${PlateauPrefectureFragmentDoc}
+`
+export const PlateauDatasetDatumFragmentDoc = gql`
+  fragment PlateauDatasetDatum on PlateauDatasetDatum {
+    id
+    format
+    url
+    name
+    ... on PlateauBuildingDatasetDatum {
+      version
+      lod
+      textured
     }
   }
 `
@@ -300,17 +387,10 @@ export const PlateauDatasetFragmentDoc = gql`
     typeName
     name
     data {
-      id
-      format
-      url
-      name
-      ... on PlateauBuildingDatasetDatum {
-        version
-        lod
-        textured
-      }
+      ...PlateauDatasetDatum
     }
   }
+  ${PlateauDatasetDatumFragmentDoc}
 `
 export const MunicipalityDatasetsDocument = gql`
   query municipalityDatasets(

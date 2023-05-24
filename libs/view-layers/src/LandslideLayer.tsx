@@ -18,7 +18,8 @@ import {
   type DatasetLayerModelParams
 } from './createDatasetLayerBase'
 import { LANDSLIDE_LAYER } from './layerTypes'
-import { useDatum } from './useDatum'
+import { useDatasetDatum } from './useDatasetDatum'
+import { useDatasetLayerTitle } from './useDatasetLayerTitle'
 import { useMVTMetadata } from './useMVTMetadata'
 
 export interface LandslideLayerModelParams extends DatasetLayerModelParams {}
@@ -47,18 +48,18 @@ export const LandslideLayer: FC<LayerProps<typeof LANDSLIDE_LAYER>> = ({
       includeTypes: [PlateauDatasetType.Landslide]
     }
   })
+  const municipality = query.data?.municipality
+  const datum = useDatasetDatum(datumIdAtom, municipality?.datasets)
 
+  const title = useDatasetLayerTitle({
+    layerType: LANDSLIDE_LAYER,
+    municipality,
+    datum
+  })
   const setTitle = useSetAtom(titleAtom)
   useEffect(() => {
-    if (query.data?.municipality?.name != null) {
-      setTitle(
-        [
-          query.data.municipality.prefecture.name,
-          query.data.municipality.name
-        ].join(' ')
-      )
-    }
-  }, [query, setTitle])
+    setTitle(title ?? null)
+  }, [title, setTitle])
 
   const hidden = useAtomValue(hiddenAtom)
   const scene = useCesium(({ scene }) => scene)
@@ -72,9 +73,7 @@ export const LandslideLayer: FC<LayerProps<typeof LANDSLIDE_LAYER>> = ({
     }
   }, [scene])
 
-  const datum = useDatum(datumIdAtom, query.data?.municipality?.datasets)
   const metadata = useMVTMetadata(datum?.url)
-
   const style = useMemo(() => {
     if (metadata == null) {
       return
@@ -85,7 +84,7 @@ export const LandslideLayer: FC<LayerProps<typeof LANDSLIDE_LAYER>> = ({
       layers: metadata.sourceLayers.flatMap(layer =>
         values.map((value, index) => ({
           'source-layer': layer.id,
-          filter: ['all', ['==', 'urf:areaType', value]],
+          filter: ['all', ['==', 'urf:areaType_code', value]],
           type: 'fill',
           paint: {
             'fill-color': schemeCategory10[index % schemeCategory10.length]
@@ -113,4 +112,10 @@ export const LandslideLayer: FC<LayerProps<typeof LANDSLIDE_LAYER>> = ({
 }
 
 // TODO: Separate definition.
-const values = ['土砂災害警戒区域（指定済）', '土砂災害特別警戒区域（指定済）']
+// https://www.mlit.go.jp/plateaudocument/#toc4_09_04
+const values = [
+  '1', // 土砂災害警戒区域（指定済）
+  '2', // 土砂災害特別警戒区域（指定済）
+  '3', // 土砂災害警戒区域（指定前）
+  '4' // 土砂災害特別警戒区域（指定前）
+]

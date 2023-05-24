@@ -1,5 +1,5 @@
 import { useAtomValue, useSetAtom } from 'jotai'
-import { useCallback, useMemo, type FC } from 'react'
+import { memo, useCallback, useMemo, type FC } from 'react'
 
 import { type PlateauDatasetFragment } from '@takram/plateau-graphql'
 import { useAddLayer, useFindLayer, useLayers } from '@takram/plateau-layers'
@@ -22,69 +22,67 @@ export interface DefaultDatasetButtonProps {
   disabled?: boolean
 }
 
-export const DefaultDatasetButton: FC<DefaultDatasetButtonProps> = ({
-  dataset,
-  municipalityCode,
-  disabled = false
-}) => {
-  const { layersAtom, removeAtom } = useLayers()
-  const layers = useAtomValue(layersAtom)
-  const layerType = datasetTypeLayers[dataset.type]
-  const findLayer = useFindLayer()
-  const layer = useMemo(
-    () =>
-      layerType != null
-        ? findLayer(layers, {
-            type: layerType,
-            municipalityCode
-          })
-        : undefined,
-    [municipalityCode, layers, layerType, findLayer]
-  )
-
-  const addLayer = useAddLayer()
-  const removeLayer = useSetAtom(removeAtom)
-
-  const handleClick = useCallback(() => {
-    if (layerType == null) {
-      return
-    }
-    if (layer == null) {
-      switch (layerType) {
-        case BRIDGE_LAYER:
-        case ROAD_LAYER:
-        case LANDUSE_LAYER:
-        case LANDSLIDE_LAYER:
-          addLayer(
-            createViewLayer({
+export const DefaultDatasetButton: FC<DefaultDatasetButtonProps> = memo(
+  ({ dataset, municipalityCode, disabled = false }) => {
+    const { layersAtom, removeAtom } = useLayers()
+    const layers = useAtomValue(layersAtom)
+    const layerType = datasetTypeLayers[dataset.type]
+    const findLayer = useFindLayer()
+    const layer = useMemo(
+      () =>
+        layerType != null
+          ? findLayer(layers, {
               type: layerType,
-              municipalityCode,
-              datasetId: dataset.id
+              municipalityCode
             })
-          )
-          break
-        default:
-          break
-      }
-    } else {
-      removeLayer(layer.id)
-    }
-  }, [dataset, municipalityCode, layer, layerType, addLayer, removeLayer])
+          : undefined,
+      [municipalityCode, layers, layerType, findLayer]
+    )
 
-  const datum = dataset.data[0]
-  const showDataFormats = useAtomValue(showDataFormatsAtom)
-  if (datum == null) {
-    console.warn('Dataset must include at least 1 datum.')
-    return null
+    const addLayer = useAddLayer()
+    const removeLayer = useSetAtom(removeAtom)
+
+    const handleClick = useCallback(() => {
+      if (layerType == null) {
+        return
+      }
+      if (layer == null) {
+        switch (layerType) {
+          case BRIDGE_LAYER:
+          case ROAD_LAYER:
+          case LANDUSE_LAYER:
+          case LANDSLIDE_LAYER:
+            addLayer(
+              createViewLayer({
+                type: layerType,
+                municipalityCode,
+                datasetId: dataset.id
+              })
+            )
+            break
+          default:
+            break
+        }
+      } else {
+        removeLayer(layer.id)
+      }
+    }, [dataset, municipalityCode, layer, layerType, addLayer, removeLayer])
+
+    const datum = dataset.data[0]
+    const showDataFormats = useAtomValue(showDataFormatsAtom)
+    if (datum == null) {
+      console.warn('Dataset must include at least 1 datum.')
+      return null
+    }
+    return (
+      <ContextButton
+        selected={layer != null}
+        disabled={disabled || layerType == null}
+        onClick={handleClick}
+      >
+        {datasetTypeNames[dataset.type]}
+        {showDataFormats ? ` (${datum.format})` : null}
+      </ContextButton>
+    )
   }
-  return (
-    <ContextButton
-      selected={layer != null}
-      disabled={disabled || layerType == null}
-      onClick={handleClick}
-    >
-      {datasetTypeNames[dataset.type]}
-      {showDataFormats ? ` (${datum.format})` : null}
-    </ContextButton>
-  )
-}
+)

@@ -17,7 +17,8 @@ import {
   type DatasetLayerModelParams
 } from './createDatasetLayerBase'
 import { ROAD_LAYER } from './layerTypes'
-import { useDatum } from './useDatum'
+import { useDatasetDatum } from './useDatasetDatum'
+import { useDatasetLayerTitle } from './useDatasetLayerTitle'
 import { useMVTMetadata } from './useMVTMetadata'
 
 export interface RoadLayerModelParams extends DatasetLayerModelParams {}
@@ -46,18 +47,18 @@ export const RoadLayer: FC<LayerProps<typeof ROAD_LAYER>> = ({
       includeTypes: [PlateauDatasetType.Road]
     }
   })
+  const municipality = query.data?.municipality
+  const datum = useDatasetDatum(datumIdAtom, municipality?.datasets)
 
+  const title = useDatasetLayerTitle({
+    layerType: ROAD_LAYER,
+    municipality,
+    datum
+  })
   const setTitle = useSetAtom(titleAtom)
   useEffect(() => {
-    if (query.data?.municipality?.name != null) {
-      setTitle(
-        [
-          query.data.municipality.prefecture.name,
-          query.data.municipality.name
-        ].join(' ')
-      )
-    }
-  }, [query, setTitle])
+    setTitle(title ?? null)
+  }, [title, setTitle])
 
   const hidden = useAtomValue(hiddenAtom)
   const scene = useCesium(({ scene }) => scene)
@@ -71,9 +72,7 @@ export const RoadLayer: FC<LayerProps<typeof ROAD_LAYER>> = ({
     }
   }, [scene])
 
-  const datum = useDatum(datumIdAtom, query.data?.municipality?.datasets)
   const metadata = useMVTMetadata(datum?.url)
-
   const style = useMemo(() => {
     if (metadata == null) {
       return
@@ -107,16 +106,19 @@ export const RoadLayer: FC<LayerProps<typeof ROAD_LAYER>> = ({
 }
 
 // TODO: Separate definition.
-// TODO: Their MVT does not appear to have fields for these values.
+// https://www.mlit.go.jp/plateaudocument/#toc4_03_04
 // const values = [
-//   '道路',
-//   '島',
-//   '交通島',
-//   '分離帯',
-//   '植栽',
-//   '植樹帯',
-//   '植樹ます',
-//   '自転車歩行者道',
-//   '歩道',
-//   '自転車道'
+//   '1', // 高速自動車国道
+//   '2', // 一般国道
+//   '3', // 都道府県道
+//   '4', // 市町村道
+//   '10', // 建築基準法第42条1項2号道路
+//   '11', // 建築基準法第42条1項3号道路
+//   '12', // 建築基準法第42条1項4号道路
+//   '13', // 建築基準法第42条1項5号道路
+//   '14', // 建築基準法第42条2項道路
+//   '15', // 建築基準法第43条2項ただし書きの適用を受けたことがある道
+//   '9000', // 未調査
+//   '9010', // 対象外
+//   '9020' // 不明
 // ]

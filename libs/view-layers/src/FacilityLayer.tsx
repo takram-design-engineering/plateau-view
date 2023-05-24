@@ -18,7 +18,8 @@ import {
   type DatasetLayerModelParams
 } from './createDatasetLayerBase'
 import { FACILITY_LAYER } from './layerTypes'
-import { useDatum } from './useDatum'
+import { useDatasetDatum } from './useDatasetDatum'
+import { useDatasetLayerTitle } from './useDatasetLayerTitle'
 import { useMVTMetadata } from './useMVTMetadata'
 
 export interface FacilityLayerModelParams extends DatasetLayerModelParams {}
@@ -47,18 +48,18 @@ export const FacilityLayer: FC<LayerProps<typeof FACILITY_LAYER>> = ({
       includeTypes: [PlateauDatasetType.Facility]
     }
   })
+  const municipality = query.data?.municipality
+  const datum = useDatasetDatum(datumIdAtom, municipality?.datasets)
 
+  const title = useDatasetLayerTitle({
+    layerType: FACILITY_LAYER,
+    municipality,
+    datum
+  })
   const setTitle = useSetAtom(titleAtom)
   useEffect(() => {
-    if (query.data?.municipality?.name != null) {
-      setTitle(
-        [
-          query.data.municipality.prefecture.name,
-          query.data.municipality.name
-        ].join(' ')
-      )
-    }
-  }, [query, setTitle])
+    setTitle(title ?? null)
+  }, [title, setTitle])
 
   const hidden = useAtomValue(hiddenAtom)
   const scene = useCesium(({ scene }) => scene)
@@ -72,9 +73,7 @@ export const FacilityLayer: FC<LayerProps<typeof FACILITY_LAYER>> = ({
     }
   }, [scene])
 
-  const datum = useDatum(datumIdAtom, query.data?.municipality?.datasets)
   const metadata = useMVTMetadata(datum?.url)
-
   const style = useMemo(() => {
     if (metadata == null) {
       return
@@ -85,7 +84,9 @@ export const FacilityLayer: FC<LayerProps<typeof FACILITY_LAYER>> = ({
       layers: metadata.sourceLayers.flatMap(layer =>
         values.map((value, index) => ({
           'source-layer': layer.id,
-          filter: ['all', ['==', 'function', value]],
+          // TODO: I cannot find documentation about this field. Value type
+          // differs from "urf:function_code" in "attributes" field.
+          filter: ['all', ['==', 'function_code', value]],
           type: 'fill',
           paint: {
             'fill-color': schemeCategory10[index % schemeCategory10.length]
@@ -113,20 +114,50 @@ export const FacilityLayer: FC<LayerProps<typeof FACILITY_LAYER>> = ({
 }
 
 // TODO: Separate definition.
+// TODO: It's just for Common_districtAndZonesType.xml
+// https://www.mlit.go.jp/plateaudocument/#toc4_10_04
 const values = [
-  '第1種低層住居専用地域',
-  '第2種低層住居専用地域',
-  '第1種中高層住居専用地域',
-  '第2種中高層住居専用地域',
-  '第1種住居地域',
-  '第2種住居地域',
-  '準住居地域',
-  '近隣商業地域',
-  '商業地域',
-  '準工業地域',
-  '工業地域',
-  '工業専用地域',
-  '高度地区',
-  '防火地域',
-  '準防火地域'
+  0, // 用途地域の指定をしない区域
+  1, // 第1種低層住居専用地域
+  2, // 第2種低層住居専用地域
+  3, // 第1種中高層住居専用地域
+  4, // 第2種中高層住居専用地域
+  5, // 第1種住居地域
+  6, // 第2種住居地域
+  7, // 準住居地域
+  8, // 田園住居地域
+  9, // 近隣商業地域
+  10, // 商業地域
+  11, // 準工業地域
+  12, // 工業地域
+  13, // 工業専用地域
+  14, // 特別用途地区
+  15, // 特定用途制限地域
+  16, // 特例容積率適用地区
+  17, // 高層住居誘導地区
+  18, // 高度地区
+  19, // 高度利用地区
+  20, // 特定街区
+  21, // 都市再生特別地区
+  22, // 居住調整地域
+  23, // 特定用途誘導地区
+  24, // 防火地域
+  25, // 準防火地域
+  26, // 特定防災街区整備地区
+  27, // 景観地区
+  28, // 風致地区
+  29, // 駐車場整備地区
+  30, // 臨港地区
+  31, // 歴史的風土特別保存地区
+  32, // 第1種歴史的風土保存地区
+  33, // 第2種歴史的風土保存地区
+  34, // 緑地保全地域
+  35, // 特別緑地保全地区
+  36, // 緑化地域
+  37, // 流通業務地区
+  38, // 生産緑地地区
+  39, // 伝統的建造物群保存地区
+  40, // 航空機騒音障害防止地区
+  41, // 航空機騒音障害防止特別地区
+  42 // 居住環境向上用途誘導地区
 ]
