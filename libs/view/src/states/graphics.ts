@@ -58,3 +58,7 @@ export const ambientOcclusionAccurateNormalReconstructionAtom =
   atomWithReset(true)
 export const ambientOcclusionOutputTypeAtom =
   atomWithReset<AmbientOcclusionOutputType | null>(null)
+
+export const ambientOcclusionBlackPointAtom = atomWithReset(0.25)
+export const ambientOcclusionWhitePointAtom = atomWithReset(0.9)
+export const ambientOcclusionGammaAtom = atomWithReset(1)

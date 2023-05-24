@@ -81,6 +81,7 @@ export const AmbientOcclusionStage = withEphemerality(
 
     stage.enabled = enabled
     Object.assign(stage.uniforms, uniforms)
+    scene.requestRender()
 
     usePreRender(() => {
       const frustum = scene.camera.frustum
