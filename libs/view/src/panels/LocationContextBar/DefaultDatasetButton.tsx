@@ -1,8 +1,12 @@
 import { useAtomValue, useSetAtom } from 'jotai'
-import { memo, useCallback, useMemo, type FC } from 'react'
+import { memo, useCallback, useContext, useMemo, type FC } from 'react'
 
 import { type PlateauDatasetFragment } from '@takram/plateau-graphql'
-import { useAddLayer, useFindLayer, useLayers } from '@takram/plateau-layers'
+import {
+  LayersContext,
+  useAddLayer,
+  useFindLayer
+} from '@takram/plateau-layers'
 import { ContextButton } from '@takram/plateau-ui-components'
 import {
   BRIDGE_LAYER,
@@ -24,7 +28,7 @@ export interface DefaultDatasetButtonProps {
 
 export const DefaultDatasetButton: FC<DefaultDatasetButtonProps> = memo(
   ({ dataset, municipalityCode, disabled = false }) => {
-    const { layersAtom, removeAtom } = useLayers()
+    const { layersAtom, removeAtom } = useContext(LayersContext)
     const layers = useAtomValue(layersAtom)
     const layerType = datasetTypeLayers[dataset.type]
     const findLayer = useFindLayer()

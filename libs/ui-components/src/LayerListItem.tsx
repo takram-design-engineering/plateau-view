@@ -15,12 +15,13 @@ import {
 import { useAtom, useAtomValue, useSetAtom, type PrimitiveAtom } from 'jotai'
 import {
   useCallback,
+  useContext,
   type ComponentType,
   type FC,
   type SyntheticEvent
 } from 'react'
 
-import { useLayers, type LayerProps } from '@takram/plateau-layers'
+import { LayersContext, type LayerProps } from '@takram/plateau-layers'
 
 import { AntIcon } from './AntIcon'
 import { ItemLocationIcon } from './icons/ItemLocationIcon'
@@ -116,7 +117,7 @@ const HoverMenu: FC<HoverMenuProps> = ({ id, hiddenAtom }) => {
     setHidden(value => !value)
   }, [setHidden])
 
-  const { removeAtom } = useLayers()
+  const { removeAtom } = useContext(LayersContext)
   const remove = useSetAtom(removeAtom)
   const handleRemoveClick = useCallback(() => {
     remove(id)

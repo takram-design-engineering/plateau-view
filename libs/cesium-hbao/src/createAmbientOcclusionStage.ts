@@ -30,6 +30,9 @@ export interface AmbientOcclusionStageUniforms {
   frustumLength: number
   bias: number
   focalLength: Cartesian2
+  blackPoint: number
+  whitePoint: number
+  gamma: number
   normalExponent?: number
   depthExponent?: number
 }
@@ -43,7 +46,10 @@ const defaultUniforms: Omit<
   maxRadius: 30,
   bias: 0.1,
   frustumLength: 1e5,
-  focalLength: new Cartesian2()
+  focalLength: new Cartesian2(),
+  blackPoint: 0.25,
+  whitePoint: 0.9,
+  gamma: 1
 }
 
 export interface AmbientOcclusionStageOptions {
@@ -117,7 +123,13 @@ export function createAmbientOcclusionStage({
       ${ambientOcclusionModulate}
     `,
     uniforms: {
-      ...pick(uniforms, ['color', 'frustumLength']),
+      ...pick(uniforms, [
+        'color',
+        'frustumLength',
+        'blackPoint',
+        'whitePoint',
+        'gamma'
+      ]),
       globeDepthTexture: () =>
         getGlobeDepthTexture?.() ??
         (modulate as PrivatePostProcessStage)._depthTexture
@@ -164,7 +176,7 @@ export function createAmbientOcclusionStage({
         },
         {
           stage: modulate,
-          uniforms: ['color']
+          uniforms: ['color', 'blackPoint', 'whitePoint', 'gamma']
         }
       ])
     })
@@ -188,7 +200,7 @@ export function createAmbientOcclusionStage({
         },
         {
           stage: modulate,
-          uniforms: ['color']
+          uniforms: ['color', 'blackPoint', 'whitePoint', 'gamma']
         }
       ])
     })

@@ -8,11 +8,15 @@ import {
   type SetStateAction
 } from 'jotai'
 import { differenceBy } from 'lodash'
-import { memo, useCallback, useMemo, type FC } from 'react'
+import { memo, useCallback, useContext, useMemo, type FC } from 'react'
 import invariant from 'tiny-invariant'
 
 import { type PlateauDatasetFragment } from '@takram/plateau-graphql'
-import { useAddLayer, useFilterLayers, useLayers } from '@takram/plateau-layers'
+import {
+  LayersContext,
+  useAddLayer,
+  useFilterLayers
+} from '@takram/plateau-layers'
 import { isNotNullish } from '@takram/plateau-type-helpers'
 import {
   ContextSelect,
@@ -63,7 +67,7 @@ export interface DefaultDatasetSelectProps {
 export const DefaultDatasetSelect: FC<DefaultDatasetSelectProps> = memo(
   ({ datasets, municipalityCode, disabled }) => {
     invariant(datasets.length > 0)
-    const { layersAtom, removeAtom } = useLayers()
+    const { layersAtom, removeAtom } = useContext(LayersContext)
     const layers = useAtomValue(layersAtom)
     // Assume that all the datasets share the same type.
     const layerType = datasetTypeLayers[datasets[0].type]
