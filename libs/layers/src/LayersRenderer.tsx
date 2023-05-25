@@ -1,8 +1,8 @@
 import { useAtomValue, type PrimitiveAtom } from 'jotai'
-import { Suspense, type FC, type ReactNode } from 'react'
+import { Suspense, useContext, type FC, type ReactNode } from 'react'
 
+import { LayersContext } from './LayersContext'
 import { type LayerComponents, type LayerModel } from './types'
-import { useLayers } from './useLayers'
 
 interface LayerRendererProps {
   components: LayerComponents
@@ -32,7 +32,7 @@ export interface LayersRendererProps<T extends LayerComponents> {
 export function LayersRenderer<T extends LayerComponents>({
   components
 }: LayersRendererProps<T>): JSX.Element {
-  const { layerAtomsAtom, layerIdsAtom } = useLayers()
+  const { layerAtomsAtom, layerIdsAtom } = useContext(LayersContext)
   const layerAtoms = useAtomValue(layerAtomsAtom)
   const layerIds = useAtomValue(layerIdsAtom)
   return (
