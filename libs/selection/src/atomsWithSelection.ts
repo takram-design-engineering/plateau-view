@@ -16,7 +16,6 @@ export function atomsWithSelection<T extends object>({
   onUpdate
 }: SelectionAtomsOptions<T> = {}) {
   const selectionPrimitiveAtom = atom<T[]>([])
-  const selectionAtom = atom(get => get(selectionPrimitiveAtom))
 
   const updateSelectionAtom = atom(
     null,
@@ -29,25 +28,28 @@ export function atomsWithSelection<T extends object>({
     }
   )
 
-  const replaceAtom = atom(null, (get, set, objects: readonly T[]) => {
-    set(updateSelectionAtom, prevSelection => {
-      // Assume that the cost of deriving difference here is smaller than
-      // triggering state update.
-      const maybeObjectsToRemove = difference(prevSelection, objects)
-      const maybeObjectsToAdd = difference(objects, prevSelection)
-      let objectsToRemove: readonly T[] = []
-      let objectsToAdd: readonly T[] = []
-      if (maybeObjectsToRemove.length > 0) {
-        objectsToRemove = onDeselect(maybeObjectsToRemove)
-      }
-      if (maybeObjectsToAdd.length > 0) {
-        objectsToAdd = onSelect(maybeObjectsToAdd)
-      }
-      return objectsToRemove.length > 0 || objectsToAdd.length > 0
-        ? [...without(prevSelection, ...objectsToRemove), ...objectsToAdd]
-        : prevSelection
-    })
-  })
+  const selectionAtom = atom(
+    get => get(selectionPrimitiveAtom),
+    (get, set, objects: readonly T[]) => {
+      set(updateSelectionAtom, prevSelection => {
+        // Assume that the cost of deriving difference here is smaller than
+        // triggering state update.
+        const maybeObjectsToRemove = difference(prevSelection, objects)
+        const maybeObjectsToAdd = difference(objects, prevSelection)
+        let objectsToRemove: readonly T[] = []
+        let objectsToAdd: readonly T[] = []
+        if (maybeObjectsToRemove.length > 0) {
+          objectsToRemove = onDeselect(maybeObjectsToRemove)
+        }
+        if (maybeObjectsToAdd.length > 0) {
+          objectsToAdd = onSelect(maybeObjectsToAdd)
+        }
+        return objectsToRemove.length > 0 || objectsToAdd.length > 0
+          ? [...without(prevSelection, ...objectsToRemove), ...objectsToAdd]
+          : prevSelection
+      })
+    }
+  )
 
   const addAtom = atom(null, (get, set, objects: readonly T[]) => {
     set(updateSelectionAtom, prevSelection => {
@@ -95,7 +97,6 @@ export function atomsWithSelection<T extends object>({
 
   return {
     selectionAtom,
-    replaceAtom,
     addAtom,
     removeAtom,
     clearAtom

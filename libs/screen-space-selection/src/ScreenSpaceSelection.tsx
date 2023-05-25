@@ -35,7 +35,7 @@ export const ScreenSpaceSelection: FC<ScreenSpaceSelectionProps> = ({
     assignPropertyProps(handler, options, defaultOptions)
   }
 
-  const { handlerAtom, replaceAtom, addAtom, removeAtom } = useContext(
+  const { handlerAtom, selectionAtom, addAtom, removeAtom } = useContext(
     ScreenSpaceSelectionContext
   )
   const setHandler = useSetAtom(handlerAtom)
@@ -44,7 +44,7 @@ export const ScreenSpaceSelection: FC<ScreenSpaceSelectionProps> = ({
   }, [handler, setHandler])
 
   // Move to context perhaps?
-  const replace = useSetAtom(replaceAtom)
+  const replace = useSetAtom(selectionAtom)
   const add = useSetAtom(addAtom)
   const remove = useSetAtom(removeAtom)
   const handleEvent: ScreenSpaceSelectionEventHandler = useCallback(

@@ -44,8 +44,8 @@ export const LocationBreadcrumbs: FC<LocationBreadcrumbsProps> = ({
   const scene = useCesium(({ scene }) => scene, { indirect: true })
   const dataSource = useAtomValue(areaDataSourceAtom)
 
-  const { replaceAtom } = useContext(ScreenSpaceSelectionContext)
-  const replace = useSetAtom(replaceAtom)
+  const { selectionAtom } = useContext(ScreenSpaceSelectionContext)
+  const replace = useSetAtom(selectionAtom)
 
   // TODO: Handle in atoms and make them declarative.
   const handleClick = useCallback(
