@@ -33,10 +33,10 @@ This repository consists of the following apps and libraries. The README for eac
 
 | Name                                                  | Description                                                                                           |
 | ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| [cesium](libs/cesium)                                 | React components for Cesium                                                                           |
 | [cesium-hbao](libs/cesium-hbao)                       | Better HBAO implementation for Cesium                                                                 |
 | [cesium-helpers](libs/cesium-helpers)                 | Helper functions for Cesium                                                                           |
 | [cesium-vector-imagery](libs/cesium-vector-imagery)   | [ImageryProvider](https://cesium.com/learn/cesiumjs/ref-doc/ImageryProvider.html) for drawing MVT     |
+| [cesium](libs/cesium)                                 | React components for Cesium                                                                           |
 | [data-sources](libs/data-sources)                     | Several [DataSources](https://cesium.com/learn/cesiumjs/ref-doc/DataSource.html) used in PLATEAU VIEW |
 | [datasets](libs/datasets)                             | Classes and components that represent PLATEAU and other datasets                                      |
 | [geocoder](libs/geocoder)                             | Simple geocoding functions                                                                            |
@@ -48,8 +48,9 @@ This repository consists of the following apps and libraries. The README for eac
 | [nest-vector-tile](libs/nest-vector-tile)             | NestJS module for rendering vector map tiles                                                          |
 | [react-helpers](libs/react-helpers)                   | Helper functions and hooks for React                                                                  |
 | [screen-space-selection](libs/screen-space-selection) | Screen-space selection for Cesium                                                                     |
+| [selection](libs/selection)                           | Abstract structure of selection                                                                       |
 | [sketch](libs/sketch)                                 | Work in progress                                                                                      |
 | [type-helpers](libs/type-helpers)                     | Helper functions for TypeScript                                                                       |
 | [ui-components](libs/ui-components)                   | UI components used in PLATEAU VIEW                                                                    |
-| [view](libs/view)                                     | Provides the main component                                                                           |
 | [view-layers](libs/view-layers)                       | Implementation of [layers](libs/layers) for PLATEAU VIEW                                              |
+| [view](libs/view)                                     | Provides the main component                                                                           |
