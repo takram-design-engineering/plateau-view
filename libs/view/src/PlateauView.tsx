@@ -1,6 +1,7 @@
 import {
   Cartesian3,
   Color,
+  HeadingPitchRoll,
   ScreenSpaceEventType,
   type CameraEventAggregator,
   type Cartesian2,
@@ -69,7 +70,8 @@ import {
 } from './states/app'
 import { toolAtom, toolMachineAtom } from './states/tool'
 
-const initialView = Cartesian3.fromDegrees(139.765, 35.68, 8000)
+const initialDestination = Cartesian3.fromDegrees(139.755, 35.675, 1000)
+const initialOrientation = new HeadingPitchRoll(Math.PI * 0.4, -Math.PI * 0.2)
 
 const Root = styled('div')({
   touchAction: 'none' // TODO: Don't disable globally
@@ -292,7 +294,10 @@ export const PlateauView: FC<PlateauViewProps> = () => {
         <Canvas>
           <ScreenSpaceCamera tiltByRightButton />
           <CurrentTime hours={7} />
-          <ViewLocator initialView={initialView} />
+          <ViewLocator
+            initialDestination={initialDestination}
+            initialOrientation={initialOrientation}
+          />
           <Suspense>
             <Environments />
           </Suspense>
