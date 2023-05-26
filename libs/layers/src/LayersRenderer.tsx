@@ -16,10 +16,16 @@ const LayerRenderer: FC<LayerRendererProps> = ({
   layerAtom
 }) => {
   const layer = useAtomValue(layerAtom)
+  const { selectionAtom } = useContext(LayersContext)
+  const selection = useAtomValue(selectionAtom)
   const Component = components[layer.type]
   return (
     <Suspense>
-      <Component {...layer} index={index} />
+      <Component
+        {...layer}
+        index={index}
+        selected={selection.includes(layer.id)}
+      />
     </Suspense>
   )
 }
