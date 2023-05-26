@@ -17,9 +17,6 @@ export function useFilterLayers(): <T extends LayerType>(
     | ((layer: LayerModelOverrides[T], get: Getter) => boolean)
 ) => Array<LayerModelOverrides[T]> {
   const context = useContext(LayersContext)
-  if (context == null) {
-    throw new Error('useAddLayer must be used inside LayersProvider.')
-  }
   const { filterAtom } = context
   return useSetAtom(filterAtom)
 }

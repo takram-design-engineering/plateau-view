@@ -134,4 +134,4 @@ export function createContextValue() {
 
 export type LayersContextValue = ReturnType<typeof createContextValue>
 
-export const LayersContext = createContext<LayersContextValue | null>(null)
+export const LayersContext = createContext(createContextValue())

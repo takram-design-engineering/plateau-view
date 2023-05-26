@@ -1,7 +1,7 @@
 import {
-  Cartesian3,
   IntersectionTests,
   Ray,
+  type Cartesian3,
   type Ellipsoid
 } from '@cesium/engine'
 
@@ -11,11 +11,10 @@ export function getRayEllipsoidIntersection(
   result?: Cartesian3
 ): Cartesian3 {
   const intersection = IntersectionTests.rayEllipsoid(ray, ellipsoid)
-  const cartesian = result ?? new Cartesian3()
   if (intersection == null) {
     // Point along the ray which is nearest to the ellipsoid.
-    IntersectionTests.grazingAltitudeLocation(ray, ellipsoid).clone(cartesian)
+    const cartesian = IntersectionTests.grazingAltitudeLocation(ray, ellipsoid)
+    return result != null ? cartesian.clone(result) : cartesian
   }
-  Ray.getPoint(ray, intersection.start, cartesian)
-  return cartesian
+  return Ray.getPoint(ray, intersection.start, result)
 }

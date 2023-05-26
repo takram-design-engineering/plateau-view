@@ -49,7 +49,8 @@ export function createVectorTileController(options: VectorTileOptions): Type {
         return
       }
       res.set({
-        'Content-Type': `image/${format}`
+        'Content-Type': `image/${format}`,
+        'Cache-Control': 'public, max-age=31536000' // 1 year
       })
       return new StreamableFile(result)
     }

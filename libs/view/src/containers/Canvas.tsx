@@ -22,14 +22,17 @@ import { isNotNullish } from '@takram/plateau-type-helpers'
 import { cesiumAtom, readyAtom } from '../states/app'
 import {
   ambientOcclusionAccurateNormalReconstructionAtom,
+  ambientOcclusionBlackPointAtom,
   ambientOcclusionDenoiseAtom,
   ambientOcclusionDirectionsAtom,
   ambientOcclusionEnabledAtom,
+  ambientOcclusionGammaAtom,
   ambientOcclusionIntensityAtom,
   ambientOcclusionMaxRadiusAtom,
   ambientOcclusionOutputTypeAtom,
   ambientOcclusionStepsAtom,
   ambientOcclusionTextureScaleAtom,
+  ambientOcclusionWhitePointAtom,
   antialiasTypeAtom,
   explicitRenderingEnabledAtom,
   nativeResolutionEnabledAtom,
@@ -93,6 +96,9 @@ const ambientOcclusionPropsAtom = atom(
     maxRadius: get(ambientOcclusionMaxRadiusAtom),
     directions: get(ambientOcclusionDirectionsAtom),
     steps: get(ambientOcclusionStepsAtom),
+    blackPoint: get(ambientOcclusionBlackPointAtom),
+    whitePoint: get(ambientOcclusionWhitePointAtom),
+    gamma: get(ambientOcclusionGammaAtom),
     textureScale: get(ambientOcclusionTextureScaleAtom),
     denoise: get(ambientOcclusionDenoiseAtom),
     accurateNormalReconstruction: get(

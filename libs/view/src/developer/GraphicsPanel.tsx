@@ -16,14 +16,17 @@ import { environmentTypeAtom } from '../states/app'
 import { atomWithResettableAtoms } from '../states/atomWithResettableAtoms'
 import {
   ambientOcclusionAccurateNormalReconstructionAtom,
+  ambientOcclusionBlackPointAtom,
   ambientOcclusionDenoiseAtom,
   ambientOcclusionDirectionsAtom,
   ambientOcclusionEnabledAtom,
+  ambientOcclusionGammaAtom,
   ambientOcclusionIntensityAtom,
   ambientOcclusionMaxRadiusAtom,
   ambientOcclusionOutputTypeAtom,
   ambientOcclusionStepsAtom,
   ambientOcclusionTextureScaleAtom,
+  ambientOcclusionWhitePointAtom,
   antialiasTypeAtom,
   explicitRenderingEnabledAtom,
   nativeResolutionEnabledAtom,
@@ -50,14 +53,17 @@ const ambientOcclusionReduceScaleAtom = atom(
 
 const resetAtom = atomWithResettableAtoms([
   ambientOcclusionAccurateNormalReconstructionAtom,
+  ambientOcclusionBlackPointAtom,
   ambientOcclusionDenoiseAtom,
   ambientOcclusionDirectionsAtom,
   ambientOcclusionEnabledAtom,
+  ambientOcclusionGammaAtom,
   ambientOcclusionIntensityAtom,
   ambientOcclusionMaxRadiusAtom,
   ambientOcclusionOutputTypeAtom,
   ambientOcclusionStepsAtom,
   ambientOcclusionTextureScaleAtom,
+  ambientOcclusionWhitePointAtom,
   antialiasTypeAtom,
   explicitRenderingEnabledAtom,
   nativeResolutionEnabledAtom,
@@ -195,6 +201,30 @@ export const GraphicsPanel: FC = () => {
             decimalPlaces={0}
             disabled={!ambientOcclusionEnabled}
             atom={ambientOcclusionStepsAtom}
+          />
+          <SliderParameterItem
+            label='Shade Black Point'
+            min={0}
+            max={1}
+            decimalPlaces={2}
+            disabled={!ambientOcclusionEnabled}
+            atom={ambientOcclusionBlackPointAtom}
+          />
+          <SliderParameterItem
+            label='Shade White Point'
+            min={0}
+            max={1}
+            decimalPlaces={2}
+            disabled={!ambientOcclusionEnabled}
+            atom={ambientOcclusionWhitePointAtom}
+          />
+          <SliderParameterItem
+            label='Shade Gamma'
+            min={1}
+            max={3}
+            decimalPlaces={2}
+            disabled={!ambientOcclusionEnabled}
+            atom={ambientOcclusionGammaAtom}
           />
         </ParameterList>
       </Stack>

@@ -1,6 +1,7 @@
 import {
   Cartesian3,
   Color,
+  HeadingPitchRoll,
   ScreenSpaceEventType,
   type CameraEventAggregator,
   type Cartesian2,
@@ -30,12 +31,7 @@ import {
   GooglePhotorealisticTileset,
   PlateauDatasetsContext
 } from '@takram/plateau-datasets'
-import {
-  LayerList,
-  LayersProvider,
-  LayersRenderer,
-  useAddLayer
-} from '@takram/plateau-layers'
+import { LayerList, LayersRenderer, useAddLayer } from '@takram/plateau-layers'
 import { useWindowEvent } from '@takram/plateau-react-helpers'
 import {
   ScreenSpaceSelectionBoundingSphere,
@@ -69,7 +65,8 @@ import {
 } from './states/app'
 import { toolAtom, toolMachineAtom } from './states/tool'
 
-const initialView = Cartesian3.fromDegrees(139.765, 35.68, 8000)
+const initialDestination = Cartesian3.fromDegrees(139.755, 35.675, 1000)
+const initialOrientation = new HeadingPitchRoll(Math.PI * 0.4, -Math.PI * 0.2)
 
 const Root = styled('div')({
   touchAction: 'none' // TODO: Don't disable globally
@@ -288,57 +285,58 @@ export const PlateauView: FC<PlateauViewProps> = () => {
 
   return (
     <Root>
-      <LayersProvider>
-        <Canvas>
-          <ScreenSpaceCamera tiltByRightButton />
-          <CurrentTime hours={7} />
-          <ViewLocator initialView={initialView} />
-          <Suspense>
-            <Environments />
-          </Suspense>
-          <Suspense>
-            <Terrains />
-          </Suspense>
-          {environmentType !== 'google-photorealistic' ? (
-            <Suspense>
-              <SuspendUntilTilesLoaded
-                initialTileCount={40}
-                remainingTileCount={25}
-                onComplete={handleTilesLoadComplete}
-              >
-                <LayersRenderer components={layerComponents} />
-              </SuspendUntilTilesLoaded>
-            </Suspense>
-          ) : (
-            <GooglePhotorealisticTileset
-              apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAP_TILES_API_KEY}
-            />
-          )}
-          <Areas />
-          <Events />
-          <CanvasPointer />
-          <KeyBindings />
-          <ReverseGeocoder />
-          <SelectionBoundingSphere />
-        </Canvas>
-        <ScreenSpaceSelection />
-        <SyncColorMode />
-        <AppLayout
-          main={
-            <MainPanel>
-              <LayerList
-                component={LayerListComponent}
-                itemComponent={ViewLayerListItem}
-                unmountWhenEmpty
-              />
-            </MainPanel>
-          }
-          context={<LocationContextBar />}
-          bottomLeft={<Toolbar />}
-          developer={<DeveloperPanels />}
+      <Canvas>
+        <ScreenSpaceCamera tiltByRightButton />
+        <CurrentTime hours={7} />
+        <ViewLocator
+          initialDestination={initialDestination}
+          initialOrientation={initialOrientation}
         />
-        <Layers />
-      </LayersProvider>
+        <Suspense>
+          <Environments />
+        </Suspense>
+        <Suspense>
+          <Terrains />
+        </Suspense>
+        {environmentType !== 'google-photorealistic' ? (
+          <Suspense>
+            <SuspendUntilTilesLoaded
+              initialTileCount={40}
+              remainingTileCount={25}
+              onComplete={handleTilesLoadComplete}
+            >
+              <LayersRenderer components={layerComponents} />
+            </SuspendUntilTilesLoaded>
+          </Suspense>
+        ) : (
+          <GooglePhotorealisticTileset
+            apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAP_TILES_API_KEY}
+          />
+        )}
+        <Areas />
+        <Events />
+        <CanvasPointer />
+        <KeyBindings />
+        <ReverseGeocoder />
+        <SelectionBoundingSphere />
+      </Canvas>
+      <ScreenSpaceSelection />
+      <SyncColorMode />
+      <AppLayout
+        main={
+          <MainPanel>
+            <LayerList
+              component={LayerListComponent}
+              itemComponent={ViewLayerListItem}
+              unmountWhenEmpty
+            />
+          </MainPanel>
+        }
+        context={<LocationContextBar />}
+        bottomLeft={<Toolbar />}
+        developer={<DeveloperPanels />}
+      />
+      <Layers />
     </Root>
   )
 }

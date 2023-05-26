@@ -12,9 +12,6 @@ export function useAddLayer(): <T extends LayerType>(
   } & Omit<LayerModelOverrides[T], 'type' | 'id'>
 ) => ReturnType<LayersContextValue['addAtom']['write']> {
   const context = useContext(LayersContext)
-  if (context == null) {
-    throw new Error('useAddLayer must be used inside LayersProvider.')
-  }
   const { addAtom } = context
   return useSetAtom(addAtom)
 }
