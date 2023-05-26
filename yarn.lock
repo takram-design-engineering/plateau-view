@@ -7684,6 +7684,7 @@ __metadata:
     date-fns: ^2.30.0
     envalid: ^7.3.1
     esbuild: ^0.17.17
+    escape-string-regexp: ^5.0.0
     eslint: ^8.39.0
     eslint-config-next: 13.3.0
     eslint-config-prettier: ^8.8.0
