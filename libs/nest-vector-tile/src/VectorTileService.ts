@@ -1,5 +1,10 @@
-import { Map, MapOptions } from '@maplibre/maplibre-gl-native'
+import {
+  Map,
+  type MapOptions,
+  type ResourceKind
+} from '@maplibre/maplibre-gl-native'
 import { Inject, Injectable } from '@nestjs/common'
+import axios, { isAxiosError } from 'axios'
 import { type CustomLayerInterface, type Style } from 'mapbox-gl'
 import sharp, { type Sharp } from 'sharp'
 import { type Readable } from 'stream'
@@ -9,7 +14,6 @@ import { CESIUM, type Cesium } from '@takram/plateau-nest-cesium'
 
 import {
   VECTOR_TILE_CACHE,
-  VECTOR_TILE_MAP_OPTIONS,
   VECTOR_TILE_MAP_STYLE,
   VECTOR_TILE_OPTIONS
 } from './constants'
@@ -17,6 +21,11 @@ import { type Coordinates } from './interfaces/Coordinates'
 import { type VectorTileCache } from './interfaces/VectorTileCache'
 import { type VectorTileRenderFormat } from './interfaces/VectorTileFormat'
 import { VectorTileOptions } from './interfaces/VectorTileOptions'
+
+interface MapRequest {
+  url: string
+  kind: ResourceKind
+}
 
 interface RenderOptions {
   zoom: number
@@ -47,16 +56,44 @@ export class VectorTileService {
     private readonly cache: VectorTileCache | undefined,
     @Inject(VECTOR_TILE_OPTIONS)
     private readonly options: VectorTileOptions,
-    @Inject(VECTOR_TILE_MAP_OPTIONS)
-    private readonly mapOptions: MapOptions,
     @Inject(VECTOR_TILE_MAP_STYLE)
     private readonly mapStyle: MapStyle,
     @Inject(CESIUM)
     private readonly cesium: Cesium
   ) {}
 
+  private request(
+    req: MapRequest,
+    callback: Parameters<MapOptions['request']>[1]
+  ): void {
+    ;(async () => {
+      try {
+        const { data: arrayBuffer } = await axios<ArrayBuffer>(req.url, {
+          responseType: 'arraybuffer'
+        })
+        callback(undefined, {
+          data: Buffer.from(arrayBuffer)
+        })
+      } catch (error) {
+        if (isAxiosError(error) && error.response?.status === 404) {
+          callback(undefined, {
+            data: Buffer.alloc(0)
+          })
+        } else if (error instanceof Error) {
+          callback(error)
+        } else {
+          callback(new Error('Unknown error'))
+        }
+      }
+    })().catch(error => {
+      callback(error)
+    })
+  }
+
   private async render(options: RenderOptions): Promise<Uint8Array> {
-    const map = new Map(this.mapOptions)
+    const map = new Map({
+      request: this.request.bind(this)
+    })
     map.load(this.mapStyle)
 
     // Render upto the maximum level using the native maximum level as data.
