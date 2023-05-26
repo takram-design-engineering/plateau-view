@@ -1,6 +1,7 @@
 import { Cartesian3, Color } from '@cesium/engine'
 import { useMemo, type FC } from 'react'
 
+import { GlobeShader } from './GlobeShader'
 import { useCesium } from './useCesium'
 
 function cloneColor(value: Color | string | number, result?: Color): Color {
@@ -46,6 +47,7 @@ export interface EnvironmentProps {
   globeBaseColor?: Color | string | number
   showGlobe?: boolean
   enableGlobeLighting?: boolean
+  globeImageBasedLightingFactor?: number
   lightColor?: Color | string | number
   lightIntensity?: number
   shadowDarkness?: number
@@ -72,6 +74,7 @@ export const Environment: FC<EnvironmentProps> = ({
   globeBaseColor = Color.BLACK,
   showGlobe = true,
   enableGlobeLighting = false,
+  globeImageBasedLightingFactor = 0.3,
   lightColor = Color.WHITE,
   lightIntensity = 2,
   shadowDarkness = 0.3,
@@ -99,6 +102,9 @@ export const Environment: FC<EnvironmentProps> = ({
   scene.globe.depthTestAgainstTerrain = false
   scene.globe.show = showGlobe
   scene.globe.enableLighting = enableGlobeLighting
+  // This uniform is used as the factor of IBL, so that I don't have to create
+  // and bind a new uniform.
+  scene.globe.vertexShadowDarkness = globeImageBasedLightingFactor
 
   // Light and shadow
   cloneColor(lightColor, scene.light.color)
@@ -150,5 +156,13 @@ export const Environment: FC<EnvironmentProps> = ({
 
   scene.requestRender()
 
-  return null
+  return (
+    <GlobeShader
+      sphericalHarmonicCoefficients={
+        debugSphericalHarmonics
+          ? debugSphericalHarmonicCoefficients
+          : scaledSphericalHarmonicCoefficients ?? []
+      }
+    />
+  )
 }
