@@ -16,7 +16,7 @@ in vec2 v_textureCoordinates;
 
 vec3 shade(vec3 color, float a, float b, float p) {
   return clamp(
-    b * pow(color - a, vec3(p)) / pow(1.0 - a, p),
+    b * pow(max(color - a, 0.0), vec3(p)) / pow(1.0 - a, p),
     vec3(0.0),
     vec3(1.0)
   );
