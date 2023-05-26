@@ -5,6 +5,8 @@ import { nanoid } from 'nanoid'
 import { createContext } from 'react'
 import { type SetOptional } from 'type-fest'
 
+import { atomsWithSelection } from '@takram/plateau-selection'
+
 import { type LayerModel } from './types'
 
 type AnyLayerPredicate = (layer: LayerModel, get: Getter) => boolean
@@ -14,6 +16,13 @@ export function createContextValue() {
   const layersAtom = atomWithReset<LayerModel[]>([])
   const layerAtomsAtom = splitAtom(layersAtom)
   const layerIdsAtom = atom(get => get(layersAtom).map(({ id }) => id))
+
+  const {
+    selectionAtom,
+    addAtom: addSelectionAtom,
+    removeAtom: removeSelectionAtom,
+    clearAtom: clearSelectionAtom
+  } = atomsWithSelection<string>()
 
   const addAtom = atom(
     null,
@@ -88,6 +97,7 @@ export function createContextValue() {
       console.warn(`Layer does not exit: ${id}`)
       return
     }
+    set(removeSelectionAtom, [id])
     set(layerAtomsAtom, {
       type: 'remove',
       atom: layerAtom
@@ -124,6 +134,10 @@ export function createContextValue() {
     layersAtom,
     layerIdsAtom,
     layerAtomsAtom,
+    selectionAtom,
+    addSelectionAtom,
+    removeSelectionAtom,
+    clearSelectionAtom,
     addAtom,
     findAtom,
     filterAtom,

@@ -35,6 +35,7 @@ const StyledListItem = styled(ListItemButton, {
 }>(({ theme, hidden = false }) => ({
   alignItems: 'center',
   minHeight: theme.spacing(5),
+  transition: 'none',
   cursor: 'default',
   ...(hidden && {
     opacity: theme.palette.action.disabledOpacity
@@ -162,19 +163,19 @@ export interface LayerListItemProps extends LayerProps {
 
 export const LayerListItem: FC<LayerListItemProps> = ({
   id,
+  selected,
   iconComponent,
   titleAtom,
   loadingAtom,
   hiddenAtom,
-  selectedAtom
+  itemProps
 }) => {
   const title = useAtomValue(titleAtom)
   const loading = useAtomValue(loadingAtom)
   const hidden = useAtomValue(hiddenAtom)
-  const selected = useAtomValue(selectedAtom)
   const Icon = iconComponent
   return (
-    <StyledListItem selected={selected} hidden={hidden}>
+    <StyledListItem {...itemProps} selected={selected} hidden={hidden}>
       <ListItemIcon>
         {loading ? (
           <AntIcon iconComponent={LoadingIcon} fontSize='medium' />

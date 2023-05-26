@@ -43,7 +43,6 @@ declare module '@takram/plateau-layers' {
     titleAtom: PrimitiveAtom<LayerTitle | null>
     loadingAtom: PrimitiveAtom<boolean>
     hiddenAtom: PrimitiveAtom<boolean>
-    selectedAtom: PrimitiveAtom<boolean>
   }
 
   interface LayerModelOverrides {

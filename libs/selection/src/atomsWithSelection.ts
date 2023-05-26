@@ -1,7 +1,7 @@
 import { atom, type Getter, type SetStateAction, type Setter } from 'jotai'
 import { difference, intersection, without } from 'lodash'
 
-export interface SelectionAtomsOptions<T extends object> {
+export interface SelectionAtomsOptions<T> {
   onSelect?: (objects: readonly T[]) => readonly T[]
   onDeselect?: (objects: readonly T[]) => readonly T[]
   onUpdate?: (get: Getter, set: Setter, objects: readonly T[]) => void
@@ -10,7 +10,7 @@ export interface SelectionAtomsOptions<T extends object> {
 export type SelectionAtoms = ReturnType<typeof atomsWithSelection>
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-export function atomsWithSelection<T extends object>({
+export function atomsWithSelection<T>({
   onSelect = objects => objects,
   onDeselect = objects => objects,
   onUpdate
