@@ -29,12 +29,19 @@ export function useReverseGeocoder(): ReverseGeocoderResult | undefined {
       return
     }
     promiseRef.current?.cancel()
-    getCameraEllipsoidIntersection(scene, cartesian)
-    const ellipsoid = scene.globe.ellipsoid
-    Cartographic.fromCartesian(cartesian, ellipsoid, cartographic)
-    const coords = {
-      longitude: CesiumMath.toDegrees(cartographic.longitude),
-      latitude: CesiumMath.toDegrees(cartographic.latitude)
+
+    let coords
+    try {
+      getCameraEllipsoidIntersection(scene, cartesian)
+      const ellipsoid = scene.globe.ellipsoid
+      Cartographic.fromCartesian(cartesian, ellipsoid, cartographic)
+      coords = {
+        longitude: CesiumMath.toDegrees(cartographic.longitude),
+        latitude: CesiumMath.toDegrees(cartographic.latitude)
+      }
+    } catch (error) {
+      console.error(error)
+      return
     }
 
     // Define area radii threshold based on frustum radius at the intersection
