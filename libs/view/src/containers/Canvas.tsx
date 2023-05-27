@@ -20,6 +20,7 @@ import { withDeferredProps } from '@takram/plateau-react-helpers'
 import { readyAtom } from '../states/app'
 import {
   ambientOcclusionAccurateNormalReconstructionAtom,
+  ambientOcclusionBiasAtom,
   ambientOcclusionBlackPointAtom,
   ambientOcclusionDenoiseAtom,
   ambientOcclusionDirectionsAtom,
@@ -93,6 +94,7 @@ const ambientOcclusionPropsAtom = atom(
     enabled: get(ambientOcclusionEnabledAtom),
     intensity: get(ambientOcclusionIntensityAtom),
     maxRadius: get(ambientOcclusionMaxRadiusAtom),
+    bias: get(ambientOcclusionBiasAtom),
     directions: get(ambientOcclusionDirectionsAtom),
     steps: get(ambientOcclusionStepsAtom),
     blackPoint: get(ambientOcclusionBlackPointAtom),

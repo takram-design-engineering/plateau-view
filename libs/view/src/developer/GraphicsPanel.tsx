@@ -16,6 +16,7 @@ import {
 import { environmentTypeAtom } from '../states/app'
 import {
   ambientOcclusionAccurateNormalReconstructionAtom,
+  ambientOcclusionBiasAtom,
   ambientOcclusionBlackPointAtom,
   ambientOcclusionDenoiseAtom,
   ambientOcclusionDirectionsAtom,
@@ -53,6 +54,7 @@ const ambientOcclusionReduceScaleAtom = atom(
 
 const resetAtom = atomWithResettableAtoms([
   ambientOcclusionAccurateNormalReconstructionAtom,
+  ambientOcclusionBiasAtom,
   ambientOcclusionBlackPointAtom,
   ambientOcclusionDenoiseAtom,
   ambientOcclusionDirectionsAtom,
@@ -150,6 +152,14 @@ export const GraphicsPanel: FC = () => {
             decimalPlaces={0}
             disabled={!ambientOcclusionEnabled}
             atom={ambientOcclusionMaxRadiusAtom}
+          />
+          <SliderParameterItem
+            label='Bias'
+            min={0}
+            max={1}
+            decimalPlaces={2}
+            disabled={!ambientOcclusionEnabled}
+            atom={ambientOcclusionBiasAtom}
           />
           <SwitchParameterItem
             label='Reduce Resolution'

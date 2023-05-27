@@ -91,6 +91,9 @@ function modifyGlobeShaderSource(
   })
 
   return () => {
+    if (globe.isDestroyed()) {
+      return
+    }
     // Invoke the internal makeShadersDirty() by setting a material to globe to
     // reset surface shader source to the initial state.
     globe.material = Material.fromType('Color')

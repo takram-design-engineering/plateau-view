@@ -41,15 +41,15 @@ const defaultUniforms: Omit<
   AmbientOcclusionStageUniforms,
   'globeDepthTexture'
 > = {
-  intensity: 50,
+  intensity: 100,
   color: Color.BLACK,
   maxRadius: 30,
   bias: 0.1,
   frustumLength: 1e5,
   focalLength: new Cartesian2(),
-  blackPoint: 0.25,
+  blackPoint: 0.05,
   whitePoint: 0.9,
-  gamma: 1
+  gamma: 2.5
 }
 
 export interface AmbientOcclusionStageOptions {
