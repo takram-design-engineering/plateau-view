@@ -19,6 +19,7 @@ vec3 imageBasedLightingStage(
      0.0,  0.0, -1.0,
      0.0,  1.0,  0.0
   );
+  // Reference frame matrix can be computed only by world position and normal.
   mat3 referenceFrameMatrix = czm_transpose(
     czm_eastNorthUpToEyeCoordinates(v_positionMC, normalEC)
   );
