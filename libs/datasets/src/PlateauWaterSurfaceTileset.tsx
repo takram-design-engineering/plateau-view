@@ -4,12 +4,12 @@ import { forwardRef, useMemo } from 'react'
 
 import { PlateauTileset, type PlateauTilesetProps } from './PlateauTileset'
 
-export interface PlateauFloodTilesetProps
+export interface PlateauWaterSurfaceTilesetProps
   extends Omit<PlateauTilesetProps, 'style' | 'selectionColor'> {}
 
-export const PlateauFloodTileset = forwardRef<
+export const PlateauWaterSurfaceTileset = forwardRef<
   Cesium3DTileset,
-  PlateauFloodTilesetProps
+  PlateauWaterSurfaceTilesetProps
 >((props, forwardedRef) => {
   const theme = useTheme()
   const style = useMemo(

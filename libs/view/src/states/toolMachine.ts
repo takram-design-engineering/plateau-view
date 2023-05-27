@@ -86,7 +86,7 @@ export function createToolMachine() {
             },
             on: {
               WINDOW_BLUR: 'modal.history',
-              WINDOW_FOCUS: "modal.history"
+              WINDOW_FOCUS: 'modal.history'
             }
           }
         }
@@ -118,8 +118,8 @@ export function createToolMachine() {
           }
         },
         on: {
-          WINDOW_BLUR: "selectedTool.modal.history",
-          WINDOW_FOCUS: "selectedTool.modal.history"
+          WINDOW_BLUR: 'selectedTool.modal.history',
+          WINDOW_FOCUS: 'selectedTool.modal.history'
         }
       }
     },

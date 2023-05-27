@@ -3,7 +3,7 @@ import { useEffect, type FC } from 'react'
 import { type SetOptional } from 'type-fest'
 
 import { useCesium } from '@takram/plateau-cesium'
-import { PlateauFloodTileset } from '@takram/plateau-datasets'
+import { PlateauWaterSurfaceTileset } from '@takram/plateau-datasets'
 import {
   PlateauDatasetType,
   useMunicipalityDatasetsQuery
@@ -70,5 +70,5 @@ export const RiverFloodingRiskLayer: FC<
   if (hidden || datum == null) {
     return null
   }
-  return <PlateauFloodTileset url={datum.url} />
+  return <PlateauWaterSurfaceTileset url={datum.url} />
 }
