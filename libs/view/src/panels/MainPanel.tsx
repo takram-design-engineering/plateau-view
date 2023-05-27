@@ -3,13 +3,13 @@ import { useAtomValue } from 'jotai'
 import { useCallback, useRef, useState, type FC, type ReactNode } from 'react'
 
 import { useWindowEvent } from '@takram/plateau-react-helpers'
+import { platformAtom } from '@takram/plateau-shared-states'
 import {
   FloatingPanel,
   SearchField,
   Shortcut
 } from '@takram/plateau-ui-components'
 
-import { platformAtom } from '../states/app'
 import { MainMenuButton } from './MainPanel/MainMenuButton'
 
 const Search = styled('div', {

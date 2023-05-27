@@ -6,15 +6,12 @@ import {
   BingMapsImageryLayer,
   VectorMapImageryLayer
 } from '@takram/plateau-datasets'
+import { colorModeAtom } from '@takram/plateau-shared-states'
 
 import { GooglePhotorealisticEnvironment } from '../environments/GooglePhotorealisticEnvironment'
 import { MapEnvironment } from '../environments/MapEnvironment'
 import { SatelliteEnvironment } from '../environments/SatelliteEnvironment'
-import {
-  colorModeAtom,
-  debugSphericalHarmonicsAtom,
-  environmentTypeAtom
-} from '../states/app'
+import { debugSphericalHarmonicsAtom, environmentTypeAtom } from '../states/app'
 
 export type EnvironmentType = 'map' | 'satellite' | 'google-photorealistic'
 

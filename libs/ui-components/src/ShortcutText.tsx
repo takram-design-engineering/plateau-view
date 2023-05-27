@@ -1,6 +1,6 @@
 import { type FC } from 'react'
 
-import { type Platform } from './types'
+import { type Platform } from '@takram/plateau-shared-states'
 
 export interface ShortcutTextProps {
   platform?: Platform | null

@@ -5,6 +5,7 @@ import { useContext, useMemo, type FC } from 'react'
 
 import { PlateauDatasetsContext } from '@takram/plateau-datasets'
 import { ScreenSpaceSelectionContext } from '@takram/plateau-screen-space-selection'
+import { colorModeAtom } from '@takram/plateau-shared-states'
 import {
   DeveloperPanel,
   ParameterList,
@@ -14,7 +15,6 @@ import {
 } from '@takram/plateau-ui-components'
 
 import {
-  colorModeAtom,
   debugSphericalHarmonicsAtom,
   enableTerrainLightingAtom,
   environmentTypeAtom,

@@ -2,6 +2,8 @@ import { alpha, styled } from '@mui/material'
 import { useAtomValue } from 'jotai'
 import { useContext, useEffect, useRef, type FC } from 'react'
 
+import { colorModeAtom } from '@takram/plateau-shared-states'
+
 import { ScreenSpaceSelectionContext } from './ScreenSpaceSelectionContext'
 
 const Root = styled('div', {
@@ -23,7 +25,7 @@ const Root = styled('div', {
 export const Marquee: FC = () => {
   const ref = useRef<HTMLDivElement>(null)
 
-  const { colorModeAtom, handlerAtom } = useContext(ScreenSpaceSelectionContext)
+  const { handlerAtom } = useContext(ScreenSpaceSelectionContext)
   const handler = useAtomValue(handlerAtom)
 
   useEffect(() => {

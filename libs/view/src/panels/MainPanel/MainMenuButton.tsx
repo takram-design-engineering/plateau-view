@@ -15,6 +15,7 @@ import {
 } from 'material-ui-popup-state/hooks'
 import { forwardRef, useCallback, useId, useRef, type MouseEvent } from 'react'
 
+import { platformAtom } from '@takram/plateau-shared-states'
 import {
   PlateauLogotype,
   PlateauSymbol,
@@ -22,7 +23,7 @@ import {
   Shortcut
 } from '@takram/plateau-ui-components'
 
-import { platformAtom, showDeveloperPanelsAtom } from '../../states/app'
+import { showDeveloperPanelsAtom } from '../../states/app'
 
 const StyledIconButton = styled(IconButton)(({ theme }) => ({
   width: theme.spacing(6.5),

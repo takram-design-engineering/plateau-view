@@ -20,8 +20,6 @@ export interface ScreenSpaceSelectionResponder<T extends object = object> {
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export function createContextValue() {
-  const colorModeAtom = atom<'light' | 'dark'>('light')
-
   const responders = new Set<ScreenSpaceSelectionResponder>()
 
   function becomeResponder<T extends object>(
@@ -111,7 +109,6 @@ export function createContextValue() {
 
   return {
     ...selectionAtoms,
-    colorModeAtom,
     becomeResponder,
     resignResponder,
     boundingSphereAtom,
