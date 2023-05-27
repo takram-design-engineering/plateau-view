@@ -3,7 +3,7 @@ import { useEffect, type FC } from 'react'
 import { type SetOptional } from 'type-fest'
 
 import { useCesium } from '@takram/plateau-cesium'
-import { PlateauTileset } from '@takram/plateau-datasets'
+import { PlateauBridgeTileset } from '@takram/plateau-datasets'
 import {
   PlateauDatasetType,
   useMunicipalityDatasetsQuery
@@ -67,5 +67,5 @@ export const BridgeLayer: FC<LayerProps<typeof BRIDGE_LAYER>> = ({
   if (hidden || datum == null) {
     return null
   }
-  return <PlateauTileset url={datum.url} />
+  return <PlateauBridgeTileset url={datum.url} />
 }

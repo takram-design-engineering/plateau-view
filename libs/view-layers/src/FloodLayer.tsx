@@ -1,10 +1,9 @@
-import { useTheme } from '@mui/material'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { useEffect, type FC } from 'react'
 import { type SetOptional } from 'type-fest'
 
 import { useCesium } from '@takram/plateau-cesium'
-import { PlateauTileset } from '@takram/plateau-datasets'
+import { PlateauFloodTileset } from '@takram/plateau-datasets'
 import {
   PlateauDatasetType,
   useMunicipalityDatasetsQuery
@@ -70,16 +69,8 @@ export const FloodLayer: FC<LayerProps<typeof FLOOD_LAYER>> = ({
     }
   }, [scene])
 
-  const theme = useTheme()
   if (hidden || datum == null) {
     return null
   }
-  return (
-    <PlateauTileset
-      url={datum.url}
-      color={theme.palette.primary.main}
-      opacity={0.5}
-      disableShadow
-    />
-  )
+  return <PlateauFloodTileset url={datum.url} />
 }

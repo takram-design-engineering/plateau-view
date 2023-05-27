@@ -2,16 +2,15 @@ import {
   BoundingSphere,
   Cartographic,
   Cesium3DTileFeature,
-  Cesium3DTileStyle,
   Cesium3DTileset,
   Math as CesiumMath,
-  Color,
   ShadowMode,
-  type ClassificationType
+  type Cesium3DTileStyle,
+  type ClassificationType,
+  type Color
 } from '@cesium/engine'
-import { useTheme } from '@mui/material'
 import { useAtomValue } from 'jotai'
-import { forwardRef, useEffect, useMemo } from 'react'
+import { forwardRef, useEffect } from 'react'
 
 import { useAsyncInstance, useCesium } from '@takram/plateau-cesium'
 import {
@@ -33,8 +32,8 @@ const cartographicScratch = new Cartographic()
 interface PlateauTilesetContentProps
   extends TilesetPrimitiveConstructorOptions {
   url: string
-  color?: string
-  opacity?: number
+  style?: Cesium3DTileStyle
+  selectionColor?: Color
   disableShadow?: boolean
   classificationType?: ClassificationType
   showWireframe?: boolean
@@ -48,8 +47,8 @@ const PlateauTilesetContent = withEphemerality(
     (
       {
         url,
-        color = '#ffffff',
-        opacity = 1,
+        style,
+        selectionColor,
         disableShadow = false,
         classificationType,
         showWireframe = false,
@@ -82,14 +81,6 @@ const PlateauTilesetContent = withEphemerality(
         }
       })
 
-      const style = useMemo(
-        () =>
-          new Cesium3DTileStyle({
-            color: `color("${color}", ${opacity})`
-          }),
-        [color, opacity]
-      )
-
       if (tileset != null) {
         tileset.style = style
         tileset.shadows =
@@ -105,12 +96,6 @@ const PlateauTilesetContent = withEphemerality(
         assignForwardedRef(forwardedRef, tileset ?? null)
       }, [forwardedRef, tileset])
 
-      const theme = useTheme()
-      const selectionColor = useMemo(
-        () => Color.fromCssColorString(theme.palette.primary.main),
-        [theme]
-      )
-
       useScreenSpaceSelectionResponder({
         predicate: (object): object is Cesium3DTileFeature => {
           return (
@@ -118,12 +103,18 @@ const PlateauTilesetContent = withEphemerality(
           )
         },
         onSelect: features => {
+          if (selectionColor == null) {
+            return
+          }
           features.forEach(feature => {
             feature.color = selectionColor
           })
         },
         onDeselect: features => {
           if (tileset?.isDestroyed() !== false) {
+            return
+          }
+          if (style == null) {
             return
           }
           features.forEach(feature => {
@@ -181,12 +172,12 @@ export interface PlateauTilesetProps
   > {}
 
 export const PlateauTileset = forwardRef<Cesium3DTileset, PlateauTilesetProps>(
-  (props, ref) => {
+  (props, forwardedRef) => {
     const showWireframe = useAtomValue(showTilesetWireframeAtom)
     const showBoundingVolume = useAtomValue(showTilesetBoundingVolumeAtom)
     return (
       <DeferredPlateauTilesetContent
-        ref={ref}
+        ref={forwardedRef}
         {...props}
         showWireframe={showWireframe}
         showBoundingVolume={showBoundingVolume}

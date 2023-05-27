@@ -9,7 +9,7 @@ import { useEffect, useMemo, type FC } from 'react'
 import { type SetOptional } from 'type-fest'
 
 import { useCesium } from '@takram/plateau-cesium'
-import { PlateauTileset } from '@takram/plateau-datasets'
+import { PlateauBuildingTileset } from '@takram/plateau-datasets'
 import {
   PlateauDatasetType,
   useMunicipalityDatasetsQuery,
@@ -142,5 +142,5 @@ export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
   if (hidden || data == null) {
     return null
   }
-  return <PlateauTileset url={data.url} />
+  return <PlateauBuildingTileset url={data.url} />
 }
