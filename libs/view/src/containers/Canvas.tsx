@@ -40,6 +40,7 @@ import {
   type AntialiasType
 } from '../states/graphics'
 import { showGlobeWireframeAtom } from '../states/performance'
+import { GlobeDepthTestCoordinator } from './GlobeDepthTestCoordinator'
 
 declare module '@cesium/engine' {
   interface Globe {
@@ -147,6 +148,7 @@ export const Canvas = forwardRef<HTMLDivElement, CanvasProps>(
         <Configure />
         <ShadowMap {...shadowMapProps} maximumDistance={10000} />
         <AmbientOcclusion {...ambientOcclusionProps} />
+        <GlobeDepthTestCoordinator />
         {children}
       </Root>
     )
