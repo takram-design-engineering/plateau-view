@@ -7,9 +7,9 @@ export type DestroyCesiumCallback = (
   callback: (destructor: () => void) => void
 ) => void
 
-const cesiumPrimitiveAtom = atom<CesiumRoot | null>(null)
-const destroyEvent = new Event<DestroyCesiumCallback>()
+export const destroyEvent = new Event<DestroyCesiumCallback>()
 
+const cesiumPrimitiveAtom = atom<CesiumRoot | null>(null)
 export const cesiumAtom = atom(
   get => get(cesiumPrimitiveAtom),
   (get, set, value: SetStateAction<CesiumRoot | null>) => {

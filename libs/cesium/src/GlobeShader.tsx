@@ -9,6 +9,8 @@ import {
 } from '@cesium/engine'
 import { useEffect, type FC } from 'react'
 
+import { withEphemerality } from '@takram/plateau-react-helpers'
+
 import { ShaderCodeInjector } from './helpers/ShaderCodeInjector'
 import imageBasedLightingStage from './shaders/imageBasedLightingStage.glsl?raw'
 import { useCesium } from './useCesium'
@@ -100,14 +102,16 @@ export interface GlobeShaderProps {
   sphericalHarmonicCoefficients?: readonly Cartesian3[]
 }
 
-export const GlobeShader: FC<GlobeShaderProps> = ({
-  sphericalHarmonicCoefficients
-}) => {
-  const scene = useCesium(({ scene }) => scene)
-  useEffect(() => {
-    return modifyGlobeShaderSource(scene, {
-      sphericalHarmonicCoefficients
-    })
-  }, [scene, sphericalHarmonicCoefficients])
-  return null
-}
+export const GlobeShader: FC<GlobeShaderProps> = withEphemerality(
+  () => useCesium(({ scene }) => scene),
+  [],
+  ({ sphericalHarmonicCoefficients }) => {
+    const scene = useCesium(({ scene }) => scene)
+    useEffect(() => {
+      return modifyGlobeShaderSource(scene, {
+        sphericalHarmonicCoefficients
+      })
+    }, [scene, sphericalHarmonicCoefficients])
+    return null
+  }
+)
