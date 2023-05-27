@@ -4,7 +4,7 @@ import { isEqual, pick } from 'lodash'
 import { nanoid } from 'nanoid'
 import { type SetOptional } from 'type-fest'
 
-import { atomsWithSelection } from '@takram/plateau-selection'
+import { atomsWithSelection } from '@takram/plateau-shared-states'
 
 import { type LayerModel } from './types'
 

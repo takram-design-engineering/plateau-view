@@ -4,6 +4,7 @@ import { useResetAtom } from 'jotai/utils'
 import { type FC } from 'react'
 
 import { AmbientOcclusionOutputType } from '@takram/plateau-cesium-hbao'
+import { atomWithResettableAtoms } from '@takram/plateau-shared-states'
 import {
   DeveloperPanel,
   ParameterList,
@@ -13,7 +14,6 @@ import {
 } from '@takram/plateau-ui-components'
 
 import { environmentTypeAtom } from '../states/app'
-import { atomWithResettableAtoms } from '../states/atomWithResettableAtoms'
 import {
   ambientOcclusionAccurateNormalReconstructionAtom,
   ambientOcclusionBlackPointAtom,

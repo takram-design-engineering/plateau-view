@@ -1,7 +1,7 @@
 import { BoundingSphere } from '@cesium/engine'
 import { atom, type Getter, type Setter } from 'jotai'
 
-import { atomsWithSelection } from '@takram/plateau-selection'
+import { atomsWithSelection } from '@takram/plateau-shared-states'
 
 import { type ScreenSpaceSelectionHandler } from './ScreenSpaceSelectionHandler'
 

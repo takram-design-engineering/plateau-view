@@ -48,7 +48,7 @@ This repository consists of the following apps and libraries. The README for eac
 | [nest-vector-tile](libs/nest-vector-tile)             | NestJS module for rendering vector map tiles                                                          |
 | [react-helpers](libs/react-helpers)                   | Helper functions and hooks for React                                                                  |
 | [screen-space-selection](libs/screen-space-selection) | Screen-space selection for Cesium                                                                     |
-| [selection](libs/selection)                           | Abstract structure of selection                                                                       |
+| [shared-states](libs/shared-states)                   | Collection of states shared across libraries                                                          |
 | [sketch](libs/sketch)                                 | Work in progress                                                                                      |
 | [type-helpers](libs/type-helpers)                     | Helper functions for TypeScript                                                                       |
 | [ui-components](libs/ui-components)                   | UI components used in PLATEAU VIEW                                                                    |

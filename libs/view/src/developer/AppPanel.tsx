@@ -5,7 +5,10 @@ import { type FC } from 'react'
 
 import { showTexturesAtom } from '@takram/plateau-datasets'
 import { selectionAtom } from '@takram/plateau-screen-space-selection'
-import { colorModeAtom } from '@takram/plateau-shared-states'
+import {
+  atomWithResettableAtoms,
+  colorModeAtom
+} from '@takram/plateau-shared-states'
 import {
   DeveloperPanel,
   ParameterList,
@@ -24,7 +27,6 @@ import {
   showSelectionBoundingSphereAtom,
   terrainTypeAtom
 } from '../states/app'
-import { atomWithResettableAtoms } from '../states/atomWithResettableAtoms'
 
 const resetAtom = atomWithResettableAtoms([
   colorModeAtom,

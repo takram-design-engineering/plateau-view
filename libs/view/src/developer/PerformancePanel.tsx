@@ -11,6 +11,7 @@ import {
   showBoundingVolumeAtom as showTilesetBoundingVolumeAtom,
   showWireframeAtom as showTilesetWireframeAtom
 } from '@takram/plateau-datasets'
+import { atomWithResettableAtoms } from '@takram/plateau-shared-states'
 import {
   DeveloperPanel,
   ParameterItem,
@@ -18,7 +19,6 @@ import {
   SwitchParameterItem
 } from '@takram/plateau-ui-components'
 
-import { atomWithResettableAtoms } from '../states/atomWithResettableAtoms'
 import { showGlobeWireframeAtom } from '../states/performance'
 
 interface PrivateScene extends Scene {
