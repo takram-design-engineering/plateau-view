@@ -119,7 +119,7 @@ export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
   const [version, setVersion] = useAtom(versionAtom)
   const [lod, setLod] = useAtom(lodAtom)
   const [textured, setTextured] = useAtom(texturedAtom)
-  const data = useMemo(() => {
+  const datum = useMemo(() => {
     const data = (
       query.data?.municipality?.datasets as PlateauBuildingDataset[] | undefined
     )?.flatMap(({ data }) => data)
@@ -134,13 +134,13 @@ export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
   }, [version, lod, textured, query.data])
 
   useEffect(() => {
-    setVersion(data?.version ?? null)
-    setLod(data?.lod ?? null)
-    setTextured(data?.textured ?? null)
-  }, [setVersion, setLod, setTextured, data])
+    setVersion(datum?.version ?? null)
+    setLod(datum?.lod ?? null)
+    setTextured(datum?.textured ?? null)
+  }, [setVersion, setLod, setTextured, datum])
 
-  if (hidden || data == null) {
+  if (hidden || datum == null) {
     return null
   }
-  return <PlateauBuildingTileset url={data.url} />
+  return <PlateauBuildingTileset url={datum.url} />
 }

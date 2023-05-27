@@ -3,11 +3,12 @@ import { memo, type FC } from 'react'
 
 import { useCesium } from '@takram/plateau-cesium'
 import { layersAtom } from '@takram/plateau-layers'
-import { FLOOD_LAYER } from '@takram/plateau-view-layers'
+import { RIVER_FLOODING_RISK_LAYER } from '@takram/plateau-view-layers'
 
 const shouldDisableDepthTestAtom = atom(get =>
   get(layersAtom).some(
-    ({ type, hiddenAtom }) => type === FLOOD_LAYER && !get(hiddenAtom)
+    ({ type, hiddenAtom }) =>
+      type === RIVER_FLOODING_RISK_LAYER && !get(hiddenAtom)
   )
 )
 

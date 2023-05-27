@@ -69,22 +69,22 @@ enum PlateauDatasetType {
   Border
   Bridge
   Building
+  CityFurniture
   EmergencyRoute
-  Facility
-  Flood
-  Furniture
-  Generic
-  Hightide
-  InlandFlood
+  GenericCityObject
+  HighTideRisk
+  InlandFloodingRisk
+  LandSlideRisk
+  LandUse
   Landmark
-  Landslide
-  Landuse
   Park
   Railway
+  RiverFloodingRisk
   Road
   Shelter
   Station
-  Tsunami
+  TsunamiRisk
+  UrbanPlanning
   UseCase
   Vegetation
 }

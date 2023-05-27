@@ -12,7 +12,7 @@ import { ContextButton } from '@takram/plateau-ui-components'
 import {
   BRIDGE_LAYER,
   LANDSLIDE_LAYER,
-  LANDUSE_LAYER,
+  LAND_USE_LAYER,
   ROAD_LAYER,
   createViewLayer
 } from '@takram/plateau-view-layers'
@@ -54,7 +54,7 @@ export const DefaultDatasetButton: FC<DefaultDatasetButtonProps> = memo(
         switch (layerType) {
           case BRIDGE_LAYER:
           case ROAD_LAYER:
-          case LANDUSE_LAYER:
+          case LAND_USE_LAYER:
           case LANDSLIDE_LAYER:
             addLayer(
               createViewLayer({
