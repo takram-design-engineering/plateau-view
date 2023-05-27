@@ -10,9 +10,9 @@ import {
 
 import { LambertDiffuseShader } from './LambertDiffuseShader'
 import {
-  showBoundingVolumeAtom,
-  showTexturesAtom,
-  showWireframeAtom
+  showTilesetBoundingVolumeAtom,
+  showTilesetTextureAtom,
+  showTilesetWireframeAtom
 } from './states'
 import { type TilesetPrimitiveConstructorOptions } from './types'
 
@@ -32,7 +32,7 @@ const GooglePhotorealisticTilesetContent = withEphemerality(
     showBoundingVolume = false,
     ...props
   }: GooglePhotorealisticTilesetContentProps) => {
-    const showTextures = useAtomValue(showTexturesAtom)
+    const showTexture = useAtomValue(showTilesetTextureAtom)
 
     const scene = useCesium(({ scene }) => scene)
     const tileset = useAsyncInstance({
@@ -43,7 +43,7 @@ const GooglePhotorealisticTilesetContent = withEphemerality(
           `https://tile.googleapis.com/v1/3dtiles/root.json?key=${apiKey}`,
           {
             // @ts-expect-error missing type
-            customShader: !showTextures ? LambertDiffuseShader : undefined,
+            customShader: !showTexture ? LambertDiffuseShader : undefined,
             debugWireframe: showWireframe,
             debugShowBoundingVolume: showBoundingVolume,
             shadows: showWireframe ? ShadowMode.DISABLED : ShadowMode.ENABLED
@@ -58,7 +58,7 @@ const GooglePhotorealisticTilesetContent = withEphemerality(
     })
 
     if (tileset != null) {
-      tileset.customShader = !showTextures ? LambertDiffuseShader : undefined
+      tileset.customShader = !showTexture ? LambertDiffuseShader : undefined
       tileset.debugWireframe = showWireframe
       tileset.debugShowBoundingVolume = showBoundingVolume
       Object.assign(tileset, props)
@@ -82,8 +82,8 @@ export interface GooglePhotorealisticTilesetProps
 export const GooglePhotorealisticTileset: FC<
   GooglePhotorealisticTilesetProps
 > = props => {
-  const showWireframe = useAtomValue(showWireframeAtom)
-  const showBoundingVolume = useAtomValue(showBoundingVolumeAtom)
+  const showWireframe = useAtomValue(showTilesetWireframeAtom)
+  const showBoundingVolume = useAtomValue(showTilesetBoundingVolumeAtom)
 
   if (props.apiKey == null) {
     return null

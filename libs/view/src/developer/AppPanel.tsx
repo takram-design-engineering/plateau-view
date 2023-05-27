@@ -3,7 +3,7 @@ import { useAtomValue } from 'jotai'
 import { useResetAtom } from 'jotai/utils'
 import { type FC } from 'react'
 
-import { showTexturesAtom } from '@takram/plateau-datasets'
+import { showTilesetTextureAtom } from '@takram/plateau-datasets'
 import { selectionAtom } from '@takram/plateau-screen-space-selection'
 import {
   atomWithResettableAtoms,
@@ -37,7 +37,7 @@ const resetAtom = atomWithResettableAtoms([
   showAreaEntitiesAtom,
   showDataFormatsAtom,
   showSelectionBoundingSphereAtom,
-  showTexturesAtom,
+  showTilesetTextureAtom,
   terrainTypeAtom
 ])
 
@@ -83,8 +83,8 @@ export const AppPanel: FC = () => {
             atom={enableTerrainLightingAtom}
           />
           <SwitchParameterItem
-            label='Tileset Textures'
-            atom={showTexturesAtom}
+            label='Tileset Texture'
+            atom={showTilesetTextureAtom}
           />
           <SwitchParameterItem
             label='Debug Spherical Harmonics'

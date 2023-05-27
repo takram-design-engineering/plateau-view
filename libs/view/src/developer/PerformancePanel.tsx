@@ -8,8 +8,8 @@ import invariant from 'tiny-invariant'
 
 import { useCesium, useInstance, usePreRender } from '@takram/plateau-cesium'
 import {
-  showBoundingVolumeAtom as showTilesetBoundingVolumeAtom,
-  showWireframeAtom as showTilesetWireframeAtom
+  showTilesetBoundingVolumeAtom,
+  showTilesetWireframeAtom
 } from '@takram/plateau-datasets'
 import { atomWithResettableAtoms } from '@takram/plateau-shared-states'
 import {

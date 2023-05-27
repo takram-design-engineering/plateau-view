@@ -22,7 +22,10 @@ import {
 import { useScreenSpaceSelectionResponder } from '@takram/plateau-screen-space-selection'
 
 import { LambertDiffuseShader } from './LambertDiffuseShader'
-import { showBoundingVolumeAtom, showWireframeAtom } from './states'
+import {
+  showTilesetBoundingVolumeAtom,
+  showTilesetWireframeAtom
+} from './states'
 import { type TilesetPrimitiveConstructorOptions } from './types'
 
 const cartographicScratch = new Cartographic()
@@ -179,8 +182,8 @@ export interface PlateauTilesetProps
 
 export const PlateauTileset = forwardRef<Cesium3DTileset, PlateauTilesetProps>(
   (props, ref) => {
-    const showWireframe = useAtomValue(showWireframeAtom)
-    const showBoundingVolume = useAtomValue(showBoundingVolumeAtom)
+    const showWireframe = useAtomValue(showTilesetWireframeAtom)
+    const showBoundingVolume = useAtomValue(showTilesetBoundingVolumeAtom)
     return (
       <DeferredPlateauTilesetContent
         ref={ref}

@@ -1,5 +1,5 @@
 import { atomWithReset } from 'jotai/utils'
 
-export const showTexturesAtom = atomWithReset(true)
-export const showWireframeAtom = atomWithReset(false)
-export const showBoundingVolumeAtom = atomWithReset(false)
+export const showTilesetTextureAtom = atomWithReset(true)
+export const showTilesetWireframeAtom = atomWithReset(false)
+export const showTilesetBoundingVolumeAtom = atomWithReset(false)
