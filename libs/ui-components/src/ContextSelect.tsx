@@ -13,7 +13,9 @@ import { forwardRef, useCallback, useState, type ReactNode } from 'react'
 import invariant from 'tiny-invariant'
 
 const StyledSelect = styled(Select)(({ theme }) => ({
-  height: `calc(100% - ${theme.spacing(1)})`,
+  flexGrow: 0,
+  flexShrink: 0,
+  height: theme.spacing(5),
   [`& .${selectClasses.select}`]: {
     // Increase specificity
     [`&.${selectClasses.select}`]: {

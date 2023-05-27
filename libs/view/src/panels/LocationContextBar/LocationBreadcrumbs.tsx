@@ -17,6 +17,9 @@ import { areaDataSourceAtom } from '../../states/address'
 
 const StyledBreadcrumbs = styled(Breadcrumbs)(({ theme }) => ({
   ...theme.typography.body2,
+  display: 'flex',
+  alignItems: 'center',
+  height: theme.spacing(5),
   margin: `0 ${theme.spacing(1)}`,
   [`& .${breadcrumbsClasses.ol}`]: {
     alignItems: 'baseline',

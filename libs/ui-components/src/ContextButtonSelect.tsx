@@ -19,7 +19,7 @@ import invariant from 'tiny-invariant'
 import { DropdownIcon } from './icons/DropdownIcon'
 
 const StyledButton = styled(Button)(({ theme }) => ({
-  height: `calc(100% - ${theme.spacing(1)})`,
+  height: theme.spacing(5),
   paddingRight: theme.spacing(1),
   paddingLeft: theme.spacing(1),
   [`& .${buttonClasses.startIcon}`]: {
@@ -28,7 +28,7 @@ const StyledButton = styled(Button)(({ theme }) => ({
 }))
 
 const StyledSelect = styled(Select)(({ theme }) => ({
-  height: `calc(100% - ${theme.spacing(1)})`,
+  height: theme.spacing(5),
   [`& .${selectClasses.select}`]: {
     // Increase specificity
     [`&.${selectClasses.select}`]: {
