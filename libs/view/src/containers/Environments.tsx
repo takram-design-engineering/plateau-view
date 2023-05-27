@@ -40,8 +40,8 @@ export const Environments: FC = () => {
                 brightness: 1.5
               },
               dark: {
-                contrast: 1.25,
-                brightness: 0.35
+                contrast: 1.5,
+                brightness: 0.3
               }
             }[colorMode]}
           />
