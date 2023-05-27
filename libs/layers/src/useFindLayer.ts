@@ -1,6 +1,6 @@
 import { useSetAtom, type Getter } from 'jotai'
 
-import { findAtom } from './states'
+import { findLayerAtom } from './states'
 import {
   type LayerModel,
   type LayerModelOverrides,
@@ -15,5 +15,5 @@ export function useFindLayer(): <T extends LayerType>(
     | Partial<LayerModel>
     | ((layer: LayerModelOverrides[T], get: Getter) => boolean)
 ) => LayerModelOverrides[T] | undefined {
-  return useSetAtom(findAtom)
+  return useSetAtom(findLayerAtom)
 }

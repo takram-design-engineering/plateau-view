@@ -10,7 +10,7 @@ import { useCallback, type FC, type MouseEvent } from 'react'
 
 import { useCesium } from '@takram/plateau-cesium'
 import { flyToArea } from '@takram/plateau-data-sources'
-import { selectionAtom } from '@takram/plateau-screen-space-selection'
+import { screenSpaceSelectionAtom } from '@takram/plateau-screen-space-selection'
 
 import { type LocationContextState } from '../../hooks/useLocationContextState'
 import { areaDataSourceAtom } from '../../states/address'
@@ -44,7 +44,7 @@ export const LocationBreadcrumbs: FC<LocationBreadcrumbsProps> = ({
   const scene = useCesium(({ scene }) => scene, { indirect: true })
   const dataSource = useAtomValue(areaDataSourceAtom)
 
-  const replace = useSetAtom(selectionAtom)
+  const replace = useSetAtom(screenSpaceSelectionAtom)
 
   // TODO: Handle in atoms and make them declarative.
   const handleClick = useCallback(

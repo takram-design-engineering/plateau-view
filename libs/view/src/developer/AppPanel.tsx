@@ -4,7 +4,7 @@ import { useResetAtom } from 'jotai/utils'
 import { type FC } from 'react'
 
 import { showTilesetTextureAtom } from '@takram/plateau-datasets'
-import { selectionAtom } from '@takram/plateau-screen-space-selection'
+import { screenSpaceSelectionAtom } from '@takram/plateau-screen-space-selection'
 import {
   atomWithResettableAtoms,
   colorModeAtom
@@ -43,7 +43,7 @@ const resetAtom = atomWithResettableAtoms([
 
 export const AppPanel: FC = () => {
   const environmentType = useAtomValue(environmentTypeAtom)
-  const selection = useAtomValue(selectionAtom)
+  const selection = useAtomValue(screenSpaceSelectionAtom)
 
   const handleReset = useResetAtom(resetAtom)
 

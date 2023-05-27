@@ -96,12 +96,23 @@ function handleUpdate(
   )
 }
 
-const { selectionAtom, addAtom, removeAtom, clearAtom } = atomsWithSelection({
+const {
+  selectionAtom: screenSpaceSelectionAtom,
+  addAtom: addScreenSpaceSelectionAtom,
+  removeAtom: removeScreenSpaceSelectionAtom,
+  clearAtom: clearScreenSpaceSelectionAtom
+} = atomsWithSelection({
   onSelect: handleSelect,
   onDeselect: handleDeselect,
   onUpdate: handleUpdate
 })
 
-export { selectionAtom, addAtom, removeAtom, clearAtom }
+export {
+  screenSpaceSelectionAtom,
+  addScreenSpaceSelectionAtom,
+  removeScreenSpaceSelectionAtom,
+  clearScreenSpaceSelectionAtom
+}
 
-export const handlerAtom = atom<ScreenSpaceSelectionHandler | null>(null)
+export const screenSpaceSelectionHandlerAtom =
+  atom<ScreenSpaceSelectionHandler | null>(null)

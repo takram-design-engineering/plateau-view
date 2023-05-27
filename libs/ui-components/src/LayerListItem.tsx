@@ -20,7 +20,7 @@ import {
   type SyntheticEvent
 } from 'react'
 
-import { removeAtom, type LayerProps } from '@takram/plateau-layers'
+import { removeLayerAtom, type LayerProps } from '@takram/plateau-layers'
 
 import { AntIcon } from './AntIcon'
 import { ItemLocationIcon } from './icons/ItemLocationIcon'
@@ -117,7 +117,7 @@ const HoverMenu: FC<HoverMenuProps> = ({ id, hiddenAtom }) => {
     setHidden(value => !value)
   }, [setHidden])
 
-  const remove = useSetAtom(removeAtom)
+  const remove = useSetAtom(removeLayerAtom)
   const handleRemoveClick = useCallback(() => {
     remove(id)
   }, [id, remove])

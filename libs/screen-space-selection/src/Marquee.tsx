@@ -4,7 +4,7 @@ import { useEffect, useRef, type FC } from 'react'
 
 import { colorModeAtom, type ColorMode } from '@takram/plateau-shared-states'
 
-import { handlerAtom } from './states'
+import { screenSpaceSelectionHandlerAtom } from './states'
 
 const Root = styled('div', {
   shouldForwardProp: prop => prop !== 'colorMode'
@@ -24,7 +24,7 @@ const Root = styled('div', {
 
 export const Marquee: FC = () => {
   const ref = useRef<HTMLDivElement>(null)
-  const handler = useAtomValue(handlerAtom)
+  const handler = useAtomValue(screenSpaceSelectionHandlerAtom)
 
   useEffect(() => {
     if (handler == null) {

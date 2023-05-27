@@ -25,7 +25,7 @@ import {
 import invariant from 'tiny-invariant'
 
 import { LayerListItem } from './LayerListItem'
-import { layerAtomsAtom, layerIdsAtom, moveAtom } from './states'
+import { layerAtomsAtom, layerIdsAtom, moveLayerAtom } from './states'
 import { type LayerProps } from './types'
 
 const Root = styled('div')({})
@@ -62,7 +62,7 @@ export const LayerList = forwardRef<HTMLDivElement, LayerListProps>(
 
     const layerAtoms = useAtomValue(layerAtomsAtom)
     const layerIds = useAtomValue(layerIdsAtom)
-    const move = useSetAtom(moveAtom)
+    const move = useSetAtom(moveLayerAtom)
 
     const handleDragEnd = useCallback(
       (event: DragEndEvent) => {

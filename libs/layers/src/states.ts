@@ -15,20 +15,20 @@ export const layerAtomsAtom = splitAtom(layersAtom)
 export const layerIdsAtom = atom(get => get(layersAtom).map(({ id }) => id))
 
 const {
-  selectionAtom,
-  addAtom: addSelectionAtom,
-  removeAtom: removeSelectionAtom,
-  clearAtom: clearSelectionAtom
+  selectionAtom: layerSelectionAtom,
+  addAtom: addLayerSelectionAtom,
+  removeAtom: removeLayerSelectionAtom,
+  clearAtom: clearLayerSelectionAtom
 } = atomsWithSelection<string>()
 
 export {
-  selectionAtom,
-  addSelectionAtom,
-  removeSelectionAtom,
-  clearSelectionAtom
+  layerSelectionAtom,
+  addLayerSelectionAtom,
+  removeLayerSelectionAtom,
+  clearLayerSelectionAtom
 }
 
-export const addAtom = atom(
+export const addLayerAtom = atom(
   null,
   (get, set, layer: SetOptional<LayerModel, 'id'>) => {
     const id = layer.id ?? nanoid()
@@ -56,7 +56,7 @@ export const addAtom = atom(
   }
 )
 
-export const findAtom = atom(
+export const findLayerAtom = atom(
   null,
   (
     get,
@@ -75,7 +75,7 @@ export const findAtom = atom(
   }
 )
 
-export const filterAtom = atom(
+export const filterLayersAtom = atom(
   null,
   (
     get,
@@ -93,7 +93,7 @@ export const filterAtom = atom(
   }
 )
 
-export const removeAtom = atom(null, (get, set, id: string) => {
+export const removeLayerAtom = atom(null, (get, set, id: string) => {
   const layerAtom = get(layerAtomsAtom).find(
     layerAtom => get(layerAtom).id === id
   )
@@ -101,14 +101,14 @@ export const removeAtom = atom(null, (get, set, id: string) => {
     console.warn(`Layer does not exit: ${id}`)
     return
   }
-  set(removeSelectionAtom, [id])
+  set(removeLayerSelectionAtom, [id])
   set(layerAtomsAtom, {
     type: 'remove',
     atom: layerAtom
   })
 })
 
-export const moveAtom = atom(
+export const moveLayerAtom = atom(
   null,
   (get, set, activeId: string, overId: string) => {
     const layerAtoms = get(layerAtomsAtom)

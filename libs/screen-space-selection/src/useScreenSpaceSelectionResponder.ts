@@ -6,7 +6,7 @@ import { useConstant } from '@takram/plateau-react-helpers'
 
 import {
   becomeResponder,
-  removeAtom,
+  removeScreenSpaceSelectionAtom,
   type ScreenSpaceSelectionResponder
 } from './states'
 
@@ -45,7 +45,7 @@ export function useScreenSpaceSelectionResponder<T extends object>(
     }
   }))
 
-  const remove = useSetAtom(removeAtom)
+  const remove = useSetAtom(removeScreenSpaceSelectionAtom)
 
   // Assume that the component isn't reused.
   useEffect(() => {

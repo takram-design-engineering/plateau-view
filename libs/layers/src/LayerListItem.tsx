@@ -11,7 +11,7 @@ import {
 } from 'react'
 import { mergeRefs } from 'react-merge-refs'
 
-import { addSelectionAtom, selectionAtom } from './states'
+import { addLayerSelectionAtom, layerSelectionAtom } from './states'
 import { type LayerModel, type LayerProps } from './types'
 
 const Root = styled('div')({})
@@ -29,8 +29,8 @@ export const LayerListItem = forwardRef<HTMLDivElement, LayerListItemProps>(
     const { attributes, listeners, setNodeRef, transform, transition } =
       useSortable({ id: layer.id })
 
-    const [selection, setSelection] = useAtom(selectionAtom)
-    const addSelection = useSetAtom(addSelectionAtom)
+    const [selection, setSelection] = useAtom(layerSelectionAtom)
+    const addSelection = useSetAtom(addLayerSelectionAtom)
     const handleMouseDown = useCallback(
       (event: MouseEvent) => {
         if (event.shiftKey) {

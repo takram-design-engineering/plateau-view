@@ -4,7 +4,7 @@ import { memo, useCallback, useMemo, type FC } from 'react'
 import { type PlateauDatasetFragment } from '@takram/plateau-graphql'
 import {
   layersAtom,
-  removeAtom,
+  removeLayerAtom,
   useAddLayer,
   useFindLayer
 } from '@takram/plateau-layers'
@@ -44,7 +44,7 @@ export const DefaultDatasetButton: FC<DefaultDatasetButtonProps> = memo(
     )
 
     const addLayer = useAddLayer()
-    const removeLayer = useSetAtom(removeAtom)
+    const removeLayer = useSetAtom(removeLayerAtom)
 
     const handleClick = useCallback(() => {
       if (layerType == null) {

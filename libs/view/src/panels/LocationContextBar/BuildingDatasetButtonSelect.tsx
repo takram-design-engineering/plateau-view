@@ -16,7 +16,7 @@ import {
 } from '@takram/plateau-graphql'
 import {
   layersAtom,
-  removeAtom,
+  removeLayerAtom,
   useAddLayer,
   useFindLayer,
   type LayerModelOverrides
@@ -73,7 +73,7 @@ export const BuildingDatasetButtonSelect: FC<BuildingDatasetButtonSelectProps> =
     )
 
     const addLayer = useAddLayer()
-    const removeLayer = useSetAtom(removeAtom)
+    const removeLayer = useSetAtom(removeLayerAtom)
     const paramsAtom = useMemo(() => {
       if (layer == null) {
         return atom(

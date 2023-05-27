@@ -1,6 +1,6 @@
 import { useSetAtom, type Getter } from 'jotai'
 
-import { filterAtom } from './states'
+import { filterLayersAtom } from './states'
 import {
   type LayerModel,
   type LayerModelOverrides,
@@ -15,5 +15,5 @@ export function useFilterLayers(): <T extends LayerType>(
     | Partial<LayerModel>
     | ((layer: LayerModelOverrides[T], get: Getter) => boolean)
 ) => Array<LayerModelOverrides[T]> {
-  return useSetAtom(filterAtom)
+  return useSetAtom(filterLayersAtom)
 }

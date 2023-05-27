@@ -1,6 +1,6 @@
 import { useSetAtom } from 'jotai'
 
-import { addAtom } from './states'
+import { addLayerAtom } from './states'
 import { type LayerModelOverrides, type LayerType } from './types'
 
 // Provided for generic setter.
@@ -9,6 +9,6 @@ export function useAddLayer(): <T extends LayerType>(
     type: T
     id?: string
   } & Omit<LayerModelOverrides[T], 'type' | 'id'>
-) => ReturnType<(typeof addAtom)['write']> {
-  return useSetAtom(addAtom)
+) => ReturnType<(typeof addLayerAtom)['write']> {
+  return useSetAtom(addLayerAtom)
 }

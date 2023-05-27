@@ -14,7 +14,7 @@ import invariant from 'tiny-invariant'
 import { type PlateauDatasetFragment } from '@takram/plateau-graphql'
 import {
   layersAtom,
-  removeAtom,
+  removeLayerAtom,
   useAddLayer,
   useFilterLayers
 } from '@takram/plateau-layers'
@@ -88,7 +88,7 @@ export const DefaultDatasetSelect: FC<DefaultDatasetSelectProps> = memo(
     )
 
     const addLayer = useAddLayer()
-    const removeLayer = useSetAtom(removeAtom)
+    const removeLayer = useSetAtom(removeLayerAtom)
     const paramsAtom = useMemo(() => {
       if (layerType == null) {
         return atom(null, (get, set, params: SetStateAction<Params[]>) => {})

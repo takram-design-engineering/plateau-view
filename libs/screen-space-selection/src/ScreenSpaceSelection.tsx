@@ -9,7 +9,12 @@ import { Marquee } from './Marquee'
 import { type ScreenSpaceSelectionEventHandler } from './ScreenSpaceSelectionEvent'
 import { ScreenSpaceSelectionHandler } from './ScreenSpaceSelectionHandler'
 import { pickMany } from './pickMany'
-import { addAtom, handlerAtom, removeAtom, selectionAtom } from './states'
+import {
+  addScreenSpaceSelectionAtom,
+  removeScreenSpaceSelectionAtom,
+  screenSpaceSelectionAtom,
+  screenSpaceSelectionHandlerAtom
+} from './states'
 
 const defaultOptions = {
   disabled: false
@@ -35,15 +40,15 @@ export const ScreenSpaceSelection: FC<ScreenSpaceSelectionProps> = ({
     assignPropertyProps(handler, options, defaultOptions)
   }
 
-  const setHandler = useSetAtom(handlerAtom)
+  const setHandler = useSetAtom(screenSpaceSelectionHandlerAtom)
   useEffect(() => {
     setHandler(handler ?? null)
   }, [handler, setHandler])
 
   // Move to context perhaps?
-  const replace = useSetAtom(selectionAtom)
-  const add = useSetAtom(addAtom)
-  const remove = useSetAtom(removeAtom)
+  const replace = useSetAtom(screenSpaceSelectionAtom)
+  const add = useSetAtom(addScreenSpaceSelectionAtom)
+  const remove = useSetAtom(removeScreenSpaceSelectionAtom)
   const handleEvent: ScreenSpaceSelectionEventHandler = useCallback(
     event => {
       if (scene == null) {
