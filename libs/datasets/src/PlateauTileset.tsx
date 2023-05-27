@@ -11,7 +11,7 @@ import {
 } from '@cesium/engine'
 import { useTheme } from '@mui/material'
 import { useAtomValue } from 'jotai'
-import { forwardRef, useContext, useEffect, useMemo } from 'react'
+import { forwardRef, useEffect, useMemo } from 'react'
 
 import { useAsyncInstance, useCesium } from '@takram/plateau-cesium'
 import {
@@ -22,7 +22,7 @@ import {
 import { useScreenSpaceSelectionResponder } from '@takram/plateau-screen-space-selection'
 
 import { LambertDiffuseShader } from './LambertDiffuseShader'
-import { PlateauDatasetsContext } from './PlateauDatasetsContext'
+import { showBoundingVolumeAtom, showWireframeAtom } from './states'
 import { type TilesetPrimitiveConstructorOptions } from './types'
 
 const cartographicScratch = new Cartographic()
@@ -179,9 +179,8 @@ export interface PlateauTilesetProps
 
 export const PlateauTileset = forwardRef<Cesium3DTileset, PlateauTilesetProps>(
   (props, ref) => {
-    const context = useContext(PlateauDatasetsContext)
-    const showWireframe = useAtomValue(context.showWireframeAtom)
-    const showBoundingVolume = useAtomValue(context.showBoundingVolumeAtom)
+    const showWireframe = useAtomValue(showWireframeAtom)
+    const showBoundingVolume = useAtomValue(showBoundingVolumeAtom)
     return (
       <DeferredPlateauTilesetContent
         ref={ref}

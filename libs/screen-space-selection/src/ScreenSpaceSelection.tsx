@@ -1,15 +1,15 @@
 import { Cartesian2 } from '@cesium/engine'
 import { useSetAtom } from 'jotai'
-import { useCallback, useContext, useEffect, useMemo, type FC } from 'react'
+import { useCallback, useEffect, useMemo, type FC } from 'react'
 
 import { useCesium } from '@takram/plateau-cesium'
 import { assignPropertyProps } from '@takram/plateau-react-helpers'
 
 import { Marquee } from './Marquee'
-import { ScreenSpaceSelectionContext } from './ScreenSpaceSelectionContext'
 import { type ScreenSpaceSelectionEventHandler } from './ScreenSpaceSelectionEvent'
 import { ScreenSpaceSelectionHandler } from './ScreenSpaceSelectionHandler'
 import { pickMany } from './pickMany'
+import { addAtom, handlerAtom, removeAtom, selectionAtom } from './states'
 
 const defaultOptions = {
   disabled: false
@@ -35,9 +35,6 @@ export const ScreenSpaceSelection: FC<ScreenSpaceSelectionProps> = ({
     assignPropertyProps(handler, options, defaultOptions)
   }
 
-  const { handlerAtom, selectionAtom, addAtom, removeAtom } = useContext(
-    ScreenSpaceSelectionContext
-  )
   const setHandler = useSetAtom(handlerAtom)
   useEffect(() => {
     setHandler(handler ?? null)

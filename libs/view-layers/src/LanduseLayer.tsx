@@ -1,6 +1,6 @@
 import { schemeCategory10 } from 'd3'
 import { useAtomValue, useSetAtom } from 'jotai'
-import { useContext, useEffect, useMemo, type FC } from 'react'
+import { useEffect, useMemo, type FC } from 'react'
 import { type SetOptional } from 'type-fest'
 
 import { useCesium } from '@takram/plateau-cesium'
@@ -11,13 +11,13 @@ import {
 } from '@takram/plateau-graphql'
 import { type LayerProps } from '@takram/plateau-layers'
 
-import { ViewLayersContext } from './ViewLayersContext'
 import {
   createDatasetLayerBase,
   type DatasetLayerModel,
   type DatasetLayerModelParams
 } from './createDatasetLayerBase'
 import { LANDUSE_LAYER } from './layerTypes'
+import { pixelRatioAtom } from './states'
 import { useDatasetDatum } from './useDatasetDatum'
 import { useDatasetLayerTitle } from './useDatasetLayerTitle'
 import { useMVTMetadata } from './useMVTMetadata'
@@ -94,7 +94,6 @@ export const LanduseLayer: FC<LayerProps<typeof LANDUSE_LAYER>> = ({
     }
   }, [metadata])
 
-  const { pixelRatioAtom } = useContext(ViewLayersContext)
   const pixelRatio = useAtomValue(pixelRatioAtom)
 
   if (hidden || datum == null || metadata == null) {

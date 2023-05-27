@@ -1,10 +1,10 @@
 import { Divider, Stack } from '@mui/material'
 import { useAtomValue } from 'jotai'
 import { useResetAtom } from 'jotai/utils'
-import { useContext, useMemo, type FC } from 'react'
+import { type FC } from 'react'
 
-import { PlateauDatasetsContext } from '@takram/plateau-datasets'
-import { ScreenSpaceSelectionContext } from '@takram/plateau-screen-space-selection'
+import { showTexturesAtom } from '@takram/plateau-datasets'
+import { selectionAtom } from '@takram/plateau-screen-space-selection'
 import { colorModeAtom } from '@takram/plateau-shared-states'
 import {
   DeveloperPanel,
@@ -26,28 +26,22 @@ import {
 } from '../states/app'
 import { atomWithResettableAtoms } from '../states/atomWithResettableAtoms'
 
+const resetAtom = atomWithResettableAtoms([
+  colorModeAtom,
+  debugSphericalHarmonicsAtom,
+  enableTerrainLightingAtom,
+  environmentTypeAtom,
+  plateauDataSourceAtom,
+  showAreaEntitiesAtom,
+  showDataFormatsAtom,
+  showSelectionBoundingSphereAtom,
+  showTexturesAtom,
+  terrainTypeAtom
+])
+
 export const AppPanel: FC = () => {
   const environmentType = useAtomValue(environmentTypeAtom)
-  const { showTexturesAtom } = useContext(PlateauDatasetsContext)
-  const { selectionAtom } = useContext(ScreenSpaceSelectionContext)
   const selection = useAtomValue(selectionAtom)
-
-  const resetAtom = useMemo(
-    () =>
-      atomWithResettableAtoms([
-        colorModeAtom,
-        debugSphericalHarmonicsAtom,
-        enableTerrainLightingAtom,
-        environmentTypeAtom,
-        plateauDataSourceAtom,
-        showAreaEntitiesAtom,
-        showDataFormatsAtom,
-        showSelectionBoundingSphereAtom,
-        showTexturesAtom,
-        terrainTypeAtom
-      ]),
-    [showTexturesAtom]
-  )
 
   const handleReset = useResetAtom(resetAtom)
 

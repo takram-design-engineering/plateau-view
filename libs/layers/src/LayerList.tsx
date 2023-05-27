@@ -18,7 +18,6 @@ import { useAtomValue, useSetAtom } from 'jotai'
 import {
   forwardRef,
   useCallback,
-  useContext,
   type ComponentPropsWithRef,
   type ComponentType,
   type ElementType
@@ -26,7 +25,7 @@ import {
 import invariant from 'tiny-invariant'
 
 import { LayerListItem } from './LayerListItem'
-import { LayersContext } from './LayersContext'
+import { layerAtomsAtom, layerIdsAtom, moveAtom } from './states'
 import { type LayerProps } from './types'
 
 const Root = styled('div')({})
@@ -61,7 +60,6 @@ export const LayerList = forwardRef<HTMLDivElement, LayerListProps>(
       })
     )
 
-    const { layerIdsAtom, layerAtomsAtom, moveAtom } = useContext(LayersContext)
     const layerAtoms = useAtomValue(layerAtomsAtom)
     const layerIds = useAtomValue(layerIdsAtom)
     const move = useSetAtom(moveAtom)

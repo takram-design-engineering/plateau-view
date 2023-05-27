@@ -1,13 +1,14 @@
 import { useSetAtom } from 'jotai'
-import { useContext, useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 
 import { useCesium } from '@takram/plateau-cesium'
 import { useConstant } from '@takram/plateau-react-helpers'
 
 import {
-  ScreenSpaceSelectionContext,
+  becomeResponder,
+  removeAtom,
   type ScreenSpaceSelectionResponder
-} from './ScreenSpaceSelectionContext'
+} from './states'
 
 export interface ScreenSpaceSelectionResponderParams<T extends object>
   extends ScreenSpaceSelectionResponder<T> {}
@@ -44,9 +45,6 @@ export function useScreenSpaceSelectionResponder<T extends object>(
     }
   }))
 
-  const { becomeResponder, removeAtom } = useContext(
-    ScreenSpaceSelectionContext
-  )
   const remove = useSetAtom(removeAtom)
 
   // Assume that the component isn't reused.
@@ -58,7 +56,7 @@ export function useScreenSpaceSelectionResponder<T extends object>(
       }
       resignResponder()
     }
-  }, [selection, responder, becomeResponder, remove])
+  }, [selection, responder, remove])
 
   return selection
 }

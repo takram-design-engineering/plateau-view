@@ -6,11 +6,11 @@ import {
   styled
 } from '@mui/material'
 import { useAtomValue, useSetAtom } from 'jotai'
-import { useCallback, useContext, type FC, type MouseEvent } from 'react'
+import { useCallback, type FC, type MouseEvent } from 'react'
 
 import { useCesium } from '@takram/plateau-cesium'
 import { flyToArea } from '@takram/plateau-data-sources'
-import { ScreenSpaceSelectionContext } from '@takram/plateau-screen-space-selection'
+import { selectionAtom } from '@takram/plateau-screen-space-selection'
 
 import { type LocationContextState } from '../../hooks/useLocationContextState'
 import { areaDataSourceAtom } from '../../states/address'
@@ -44,7 +44,6 @@ export const LocationBreadcrumbs: FC<LocationBreadcrumbsProps> = ({
   const scene = useCesium(({ scene }) => scene, { indirect: true })
   const dataSource = useAtomValue(areaDataSourceAtom)
 
-  const { selectionAtom } = useContext(ScreenSpaceSelectionContext)
   const replace = useSetAtom(selectionAtom)
 
   // TODO: Handle in atoms and make them declarative.

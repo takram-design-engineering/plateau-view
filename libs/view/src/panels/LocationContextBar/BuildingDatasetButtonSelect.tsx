@@ -8,14 +8,15 @@ import {
   type SetStateAction
 } from 'jotai'
 import { uniqWith } from 'lodash'
-import { memo, useCallback, useContext, useMemo, type FC } from 'react'
+import { memo, useCallback, useMemo, type FC } from 'react'
 
 import {
   type PlateauBuildingDatasetDatum,
   type PlateauDatasetFragment
 } from '@takram/plateau-graphql'
 import {
-  LayersContext,
+  layersAtom,
+  removeAtom,
   useAddLayer,
   useFindLayer,
   type LayerModelOverrides
@@ -60,7 +61,6 @@ export interface BuildingDatasetButtonSelectProps {
 
 export const BuildingDatasetButtonSelect: FC<BuildingDatasetButtonSelectProps> =
   memo(({ dataset, municipalityCode, disabled }) => {
-    const { layersAtom, removeAtom } = useContext(LayersContext)
     const layers = useAtomValue(layersAtom)
     const findLayer = useFindLayer()
     const layer = useMemo(

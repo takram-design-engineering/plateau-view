@@ -1,6 +1,6 @@
 import { Cesium3DTileset, ShadowMode } from '@cesium/engine'
 import { useAtomValue } from 'jotai'
-import { useContext, type FC } from 'react'
+import { type FC } from 'react'
 
 import { useAsyncInstance, useCesium } from '@takram/plateau-cesium'
 import {
@@ -9,7 +9,11 @@ import {
 } from '@takram/plateau-react-helpers'
 
 import { LambertDiffuseShader } from './LambertDiffuseShader'
-import { PlateauDatasetsContext } from './PlateauDatasetsContext'
+import {
+  showBoundingVolumeAtom,
+  showTexturesAtom,
+  showWireframeAtom
+} from './states'
 import { type TilesetPrimitiveConstructorOptions } from './types'
 
 interface GooglePhotorealisticTilesetContentProps
@@ -28,7 +32,6 @@ const GooglePhotorealisticTilesetContent = withEphemerality(
     showBoundingVolume = false,
     ...props
   }: GooglePhotorealisticTilesetContentProps) => {
-    const { showTexturesAtom } = useContext(PlateauDatasetsContext)
     const showTextures = useAtomValue(showTexturesAtom)
 
     const scene = useCesium(({ scene }) => scene)
@@ -79,9 +82,8 @@ export interface GooglePhotorealisticTilesetProps
 export const GooglePhotorealisticTileset: FC<
   GooglePhotorealisticTilesetProps
 > = props => {
-  const context = useContext(PlateauDatasetsContext)
-  const showWireframe = useAtomValue(context.showWireframeAtom)
-  const showBoundingVolume = useAtomValue(context.showBoundingVolumeAtom)
+  const showWireframe = useAtomValue(showWireframeAtom)
+  const showBoundingVolume = useAtomValue(showBoundingVolumeAtom)
 
   if (props.apiKey == null) {
     return null
