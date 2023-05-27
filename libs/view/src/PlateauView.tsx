@@ -126,6 +126,9 @@ const Events: FC = () => {
   useWindowEvent('blur', () => {
     send({ type: 'WINDOW_BLUR' })
   })
+  useWindowEvent('focus', () => {
+    send({ type: 'WINDOW_FOCUS' })
+  })
 
   const eventHandler = useScreenSpaceEventHandler()
   useScreenSpaceEvent(eventHandler, ScreenSpaceEventType.LEFT_DOWN, () => {
