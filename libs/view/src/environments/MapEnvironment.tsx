@@ -3,8 +3,9 @@ import { useAtomValue } from 'jotai'
 import { type FC } from 'react'
 
 import { Environment, type EnvironmentProps } from '@takram/plateau-cesium'
+import { type ColorMode } from '@takram/plateau-shared-states'
 
-import { enableTerrainLightingAtom, type ColorMode } from '../states/app'
+import { enableTerrainLightingAtom } from '../states/app'
 
 // Flat white sky and gray ground
 const sphericalHarmonicCoefficients = [
