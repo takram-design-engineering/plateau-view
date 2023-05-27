@@ -5,6 +5,7 @@ import {
   ListItemSecondaryAction,
   ListItemText,
   Tooltip,
+  alpha,
   listItemButtonClasses,
   listItemSecondaryActionClasses,
   listItemTextClasses,
@@ -36,8 +37,12 @@ const StyledListItem = styled(ListItemButton, {
   minHeight: theme.spacing(5),
   transition: 'none',
   cursor: 'default',
+
   ...(hidden && {
-    opacity: theme.palette.action.disabledOpacity
+    color: alpha(
+      theme.palette.text.primary,
+      theme.palette.action.disabledOpacity
+    )
   }),
 
   // Disable hover style
