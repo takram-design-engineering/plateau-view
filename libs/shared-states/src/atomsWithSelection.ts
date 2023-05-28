@@ -1,96 +1,94 @@
-import { atom, type Getter, type SetStateAction, type Setter } from 'jotai'
-import { difference, intersection, without } from 'lodash'
+import { atom } from 'jotai'
+import { differenceWith, intersectionWith, without } from 'lodash'
 
-export interface SelectionAtomsOptions<T> {
-  onSelect?: (objects: readonly T[]) => readonly T[]
-  onDeselect?: (objects: readonly T[]) => readonly T[]
-  onUpdate?: (get: Getter, set: Setter, objects: readonly T[]) => void
+import { isNotNullish } from '@takram/plateau-type-helpers'
+
+export interface SelectionAtomsOptions<T, U = T> {
+  transform?: (object: U) => T | null | undefined
+  isEqual?: (a: T, b: T) => boolean
+  onSelect?: (value: T) => void
+  onDeselect?: (value: T) => void
 }
 
-export type SelectionAtoms = ReturnType<typeof atomsWithSelection>
-
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-export function atomsWithSelection<T>({
-  onSelect = objects => objects,
-  onDeselect = objects => objects,
-  onUpdate
-}: SelectionAtomsOptions<T> = {}) {
+export function atomsWithSelection<T, U = T>({
+  transform = object => object as unknown as T,
+  isEqual = (a, b) => a === b,
+  onSelect,
+  onDeselect
+}: SelectionAtomsOptions<T, U> = {}) {
   const selectionPrimitiveAtom = atom<T[]>([])
-
-  const updateSelectionAtom = atom(
-    null,
-    (get, set, value: SetStateAction<T[]>) => {
-      set(selectionPrimitiveAtom, prevValue => {
-        const nextValue = typeof value === 'function' ? value(prevValue) : value
-        onUpdate?.(get, set, nextValue)
-        return nextValue
-      })
-    }
-  )
 
   const selectionAtom = atom(
     get => get(selectionPrimitiveAtom),
-    (get, set, objects: readonly T[]) => {
-      set(updateSelectionAtom, prevSelection => {
+    (get, set, objects: readonly U[]) => {
+      set(selectionPrimitiveAtom, prevSelection => {
+        if (objects.length === 0) {
+          if (prevSelection.length > 0 && onDeselect != null) {
+            prevSelection.forEach(onDeselect)
+          }
+          return []
+        }
         // Assume that the cost of deriving difference here is smaller than
         // triggering state update.
-        const maybeObjectsToRemove = difference(prevSelection, objects)
-        const maybeObjectsToAdd = difference(objects, prevSelection)
-        let objectsToRemove: readonly T[] = []
-        let objectsToAdd: readonly T[] = []
-        if (maybeObjectsToRemove.length > 0) {
-          objectsToRemove = onDeselect(maybeObjectsToRemove)
+        const values = objects.map(transform).filter(isNotNullish)
+        const valuesToRemove = differenceWith(prevSelection, values, isEqual)
+        const valuesToAdd = differenceWith(values, prevSelection, isEqual)
+        if (valuesToRemove.length > 0 && onDeselect != null) {
+          valuesToRemove.forEach(onDeselect)
         }
-        if (maybeObjectsToAdd.length > 0) {
-          objectsToAdd = onSelect(maybeObjectsToAdd)
+        if (valuesToAdd.length > 0 && onSelect != null) {
+          valuesToAdd.forEach(onSelect)
         }
-        return objectsToRemove.length > 0 || objectsToAdd.length > 0
-          ? [...without(prevSelection, ...objectsToRemove), ...objectsToAdd]
+        return valuesToRemove.length > 0 || valuesToAdd.length > 0
+          ? [...without(prevSelection, ...valuesToRemove), ...valuesToAdd]
           : prevSelection
       })
     }
   )
 
-  const addAtom = atom(null, (get, set, objects: readonly T[]) => {
-    set(updateSelectionAtom, prevSelection => {
+  const addAtom = atom(null, (get, set, objects: readonly U[]) => {
+    set(selectionPrimitiveAtom, prevSelection => {
       if (objects.length === 0) {
         return prevSelection
       }
-      const maybeObjectsToAdd = difference(objects, prevSelection)
-      if (maybeObjectsToAdd.length === 0) {
+      const values = objects.map(transform).filter(isNotNullish)
+      const valuesToAdd = differenceWith(values, prevSelection, isEqual)
+      if (valuesToAdd.length === 0) {
         return prevSelection
       }
-      const objectsToAdd = onSelect(maybeObjectsToAdd)
-      if (objectsToAdd.length === 0) {
-        return prevSelection
+      if (onSelect != null) {
+        valuesToAdd.forEach(onSelect)
       }
-      return [...prevSelection, ...objectsToAdd]
+      return [...prevSelection, ...valuesToAdd]
     })
   })
 
-  const removeAtom = atom(null, (get, set, objects: readonly T[]) => {
-    set(updateSelectionAtom, prevSelection => {
+  const removeAtom = atom(null, (get, set, objects: readonly U[]) => {
+    set(selectionPrimitiveAtom, prevSelection => {
       if (objects.length === 0) {
         return prevSelection
       }
-      const maybeObjectsToRemove = intersection(prevSelection, objects)
-      if (maybeObjectsToRemove.length === 0) {
+      const values = objects.map(transform).filter(isNotNullish)
+      const valuesToRemove = intersectionWith(prevSelection, values, isEqual)
+      if (valuesToRemove.length === 0) {
         return prevSelection
       }
-      const objectsToRemove = onDeselect(maybeObjectsToRemove)
-      if (objectsToRemove.length === 0) {
-        return prevSelection
+      if (onDeselect != null) {
+        valuesToRemove.forEach(onDeselect)
       }
-      return without(prevSelection, ...objectsToRemove)
+      return without(prevSelection, ...valuesToRemove)
     })
   })
 
   const clearAtom = atom(null, (get, set) => {
-    set(updateSelectionAtom, prevSelection => {
+    set(selectionPrimitiveAtom, prevSelection => {
       if (prevSelection.length === 0) {
         return prevSelection
       }
-      onDeselect(prevSelection)
+      if (onDeselect != null) {
+        prevSelection.forEach(onDeselect)
+      }
       return []
     })
   })
@@ -102,3 +100,5 @@ export function atomsWithSelection<T>({
     clearAtom
   }
 }
+
+export type SelectionAtoms = ReturnType<typeof atomsWithSelection>
