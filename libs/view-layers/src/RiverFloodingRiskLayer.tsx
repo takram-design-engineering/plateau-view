@@ -3,7 +3,7 @@ import { useEffect, type FC } from 'react'
 import { type SetOptional } from 'type-fest'
 
 import { useCesium } from '@takram/plateau-cesium'
-import { PlateauBuildingTileset } from '@takram/plateau-datasets'
+import { PlateauWaterSurfaceTileset } from '@takram/plateau-datasets'
 import {
   PlateauDatasetFormat,
   PlateauDatasetType,
@@ -86,7 +86,7 @@ export const RiverFloodingRiskLayer: FC<
         layerId={id}
         // TODO: Infer type
         datum={datum as DatasetDatum<PlateauDatasetFormat.Cesium3DTiles>}
-        component={PlateauBuildingTileset}
+        component={PlateauWaterSurfaceTileset}
         featureIndexAtom={featureIndexAtom}
         hiddenFeaturesAtom={hiddenFeaturesAtom}
       />
