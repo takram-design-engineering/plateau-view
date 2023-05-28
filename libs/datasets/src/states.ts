@@ -12,29 +12,29 @@ export const featureIndicesAtom = atom(get => get(featureIndicesPrimitiveAtom))
 
 export const addFeatureIndexAtom = atom(
   null,
-  (get, set, gmlIndex: TileFeatureIndex) => {
-    const gmlIndexSet = new Set(get(featureIndicesPrimitiveAtom))
-    if (gmlIndexSet.has(gmlIndex)) {
+  (get, set, index: TileFeatureIndex) => {
+    const indexSet = new Set(get(featureIndicesPrimitiveAtom))
+    if (indexSet.has(index)) {
       console.warn('GML index already exists.')
       return () => {}
     }
-    gmlIndexSet.add(gmlIndex)
-    set(featureIndicesPrimitiveAtom, Array.from(gmlIndexSet))
+    indexSet.add(index)
+    set(featureIndicesPrimitiveAtom, Array.from(indexSet))
     return () => {
-      set(removeFeatureIndexAtom, gmlIndex)
+      set(removeFeatureIndexAtom, index)
     }
   }
 )
 
 export const removeFeatureIndexAtom = atom(
   null,
-  (get, set, gmlIndex: TileFeatureIndex) => {
-    const gmlIndexSet = new Set(get(featureIndicesPrimitiveAtom))
-    if (!gmlIndexSet.has(gmlIndex)) {
+  (get, set, index: TileFeatureIndex) => {
+    const indexSet = new Set(get(featureIndicesPrimitiveAtom))
+    if (!indexSet.has(index)) {
       console.warn('GML index does not exist.')
       return () => {}
     }
-    gmlIndexSet.delete(gmlIndex)
-    set(featureIndicesPrimitiveAtom, Array.from(gmlIndexSet))
+    indexSet.delete(index)
+    set(featureIndicesPrimitiveAtom, Array.from(indexSet))
   }
 )
