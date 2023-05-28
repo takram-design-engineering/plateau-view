@@ -15,6 +15,7 @@ export interface DatasetLayerModelParams extends ViewLayerModelParams {
 }
 
 export interface DatasetLayerModel extends LayerModelBase {
+  isDatasetLayer: true
   municipalityCode: string
   datasetId: string
   datumIdAtom: PrimitiveAtom<string | null>
@@ -25,6 +26,7 @@ export function createDatasetLayerBase(
 ): Omit<SetOptional<DatasetLayerModel, 'id'>, 'type'> {
   return {
     ...createViewLayerBase(params),
+    isDatasetLayer: true,
     municipalityCode: params.municipalityCode,
     datasetId: params.datasetId,
     datumIdAtom: atom(params.datumId ?? null)

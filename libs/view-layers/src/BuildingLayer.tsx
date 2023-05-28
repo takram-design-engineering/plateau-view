@@ -89,12 +89,14 @@ function matchDatum(
 }
 
 export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
+  id,
   titleAtom,
   hiddenAtom,
   municipalityCode,
   versionAtom,
   lodAtom,
   texturedAtom,
+  featureIndexAtom,
   hiddenFeaturesAtom
 }) => {
   const query = useMunicipalityDatasetsQuery({
@@ -151,9 +153,11 @@ export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
   if (datum.format === PlateauDatasetFormat.Cesium3DTiles) {
     return (
       <PlateauTilesetLayerContent
+        layerId={id}
         // TODO: Infer type
         datum={datum as DatasetDatum<PlateauDatasetFormat.Cesium3DTiles>}
         component={PlateauBuildingTileset}
+        featureIndexAtom={featureIndexAtom}
         hiddenFeaturesAtom={hiddenFeaturesAtom}
       />
     )

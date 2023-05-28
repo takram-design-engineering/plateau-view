@@ -38,10 +38,12 @@ export function createRiverFloodingRiskLayer(
 export const RiverFloodingRiskLayer: FC<
   LayerProps<typeof RIVER_FLOODING_RISK_LAYER>
 > = ({
+  id,
   titleAtom,
   hiddenAtom,
   municipalityCode,
   datumIdAtom,
+  featureIndexAtom,
   hiddenFeaturesAtom
 }) => {
   const query = useMunicipalityDatasetsQuery({
@@ -81,9 +83,11 @@ export const RiverFloodingRiskLayer: FC<
   if (datum.format === PlateauDatasetFormat.Cesium3DTiles) {
     return (
       <PlateauTilesetLayerContent
+        layerId={id}
         // TODO: Infer type
         datum={datum as DatasetDatum<PlateauDatasetFormat.Cesium3DTiles>}
         component={PlateauBuildingTileset}
+        featureIndexAtom={featureIndexAtom}
         hiddenFeaturesAtom={hiddenFeaturesAtom}
       />
     )

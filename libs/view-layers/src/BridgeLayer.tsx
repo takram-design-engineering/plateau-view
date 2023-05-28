@@ -36,10 +36,12 @@ export function createBridgeLayer(
 }
 
 export const BridgeLayer: FC<LayerProps<typeof BRIDGE_LAYER>> = ({
+  id,
   titleAtom,
   hiddenAtom,
   municipalityCode,
   datumIdAtom,
+  featureIndexAtom,
   hiddenFeaturesAtom
 }) => {
   const query = useMunicipalityDatasetsQuery({
@@ -74,9 +76,11 @@ export const BridgeLayer: FC<LayerProps<typeof BRIDGE_LAYER>> = ({
   if (datum.format === PlateauDatasetFormat.Cesium3DTiles) {
     return (
       <PlateauTilesetLayerContent
+        layerId={id}
         // TODO: Infer type
         datum={datum as DatasetDatum<PlateauDatasetFormat.Cesium3DTiles>}
         component={PlateauBridgeTileset}
+        featureIndexAtom={featureIndexAtom}
         hiddenFeaturesAtom={hiddenFeaturesAtom}
       />
     )

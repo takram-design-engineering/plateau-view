@@ -9,7 +9,7 @@ import {
   type Cesium3DTileStyle,
   type Ellipsoid
 } from '@cesium/engine'
-import { useAtomValue, useSetAtom } from 'jotai'
+import { useAtomValue } from 'jotai'
 import { difference } from 'lodash'
 import { forwardRef, useEffect, useRef, type ForwardedRef } from 'react'
 
@@ -31,7 +31,6 @@ import { LambertDiffuseShader } from './LambertDiffuseShader'
 import { TileFeatureIndex } from './TileFeatureIndex'
 import { getGMLId } from './getGMLId'
 import {
-  addFeatureIndexAtom,
   showTilesetBoundingVolumeAtom,
   showTilesetWireframeAtom
 } from './states'
@@ -188,7 +187,7 @@ function useHiddenFeatures({
     if (keysToHide.length > 0) {
       keysToHide.forEach(key => {
         featureIndex.find(key)?.forEach(feature => {
-          feature.show = true
+          feature.show = false
         })
       })
     }
@@ -230,11 +229,6 @@ const PlateauTilesetContent = withEphemerality(
         () => assignForwardedRef(featureIndexRef, featureIndex),
         [featureIndexRef, featureIndex]
       )
-
-      const addFeatureIndex = useSetAtom(addFeatureIndexAtom)
-      useEffect(() => {
-        return addFeatureIndex(featureIndex)
-      }, [featureIndex, addFeatureIndex])
 
       const selection = useAtomValue(screenSpaceSelectionAtom)
 
