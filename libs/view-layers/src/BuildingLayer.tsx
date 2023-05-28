@@ -5,12 +5,14 @@ import {
   useSetAtom,
   type PrimitiveAtom
 } from 'jotai'
+import { omit } from 'lodash'
 import { useEffect, useMemo, type FC } from 'react'
 import { type SetOptional } from 'type-fest'
 
 import { useCesium } from '@takram/plateau-cesium'
 import { PlateauBuildingTileset } from '@takram/plateau-datasets'
 import {
+  PlateauDatasetFormat,
   PlateauDatasetType,
   useMunicipalityDatasetsQuery,
   type PlateauBuildingDataset,
@@ -18,24 +20,25 @@ import {
 } from '@takram/plateau-graphql'
 import { type LayerProps } from '@takram/plateau-layers'
 
+import { PlateauTilesetLayerContent } from './PlateauTilesetLayerContent'
 import {
-  createViewLayerBase,
-  type ViewLayerModel,
-  type ViewLayerModelParams
-} from './createViewLayerBase'
+  createPlateauTilesetLayerBase,
+  type PlateauTilesetLayerModel,
+  type PlateauTilesetLayerModelParams
+} from './createPlateauTilesetLayerBase'
 import { BUILDING_LAYER } from './layerTypes'
+import { type DatasetDatum } from './useDatasetDatum'
 import { useMunicipalityName } from './useMunicipalityName'
 
 export interface BuildingLayerModelParams
-  extends Omit<ViewLayerModelParams, 'datumId'> {
-  municipalityCode: string
+  extends Omit<PlateauTilesetLayerModelParams, 'datasetId' | 'datumId'> {
   version?: string
   lod?: number
   textured?: boolean
 }
 
-export interface BuildingLayerModel extends ViewLayerModel {
-  municipalityCode: string
+export interface BuildingLayerModel
+  extends Omit<PlateauTilesetLayerModel, 'datasetId' | 'datumIdAtom'> {
   versionAtom: PrimitiveAtom<string | null>
   lodAtom: PrimitiveAtom<number | null>
   texturedAtom: PrimitiveAtom<boolean | null>
@@ -45,9 +48,11 @@ export function createBuildingLayer(
   params: BuildingLayerModelParams
 ): SetOptional<BuildingLayerModel, 'id'> {
   return {
-    ...createViewLayerBase(params),
+    ...omit(
+      createPlateauTilesetLayerBase(params as PlateauTilesetLayerModelParams),
+      ['datasetId', 'datumIdAtom']
+    ),
     type: BUILDING_LAYER,
-    municipalityCode: params.municipalityCode,
     versionAtom: atom(params.version ?? null),
     lodAtom: atom(params.lod ?? null),
     texturedAtom: atom(params.textured ?? null)
@@ -89,7 +94,8 @@ export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
   municipalityCode,
   versionAtom,
   lodAtom,
-  texturedAtom
+  texturedAtom,
+  hiddenFeaturesAtom
 }) => {
   const query = useMunicipalityDatasetsQuery({
     variables: {
@@ -142,5 +148,15 @@ export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
   if (hidden || datum == null) {
     return null
   }
-  return <PlateauBuildingTileset url={datum.url} />
+  if (datum.format === PlateauDatasetFormat.Cesium3DTiles) {
+    return (
+      <PlateauTilesetLayerContent
+        // TODO: Infer type
+        datum={datum as DatasetDatum<PlateauDatasetFormat.Cesium3DTiles>}
+        component={PlateauBuildingTileset}
+        hiddenFeaturesAtom={hiddenFeaturesAtom}
+      />
+    )
+  }
+  return null
 }

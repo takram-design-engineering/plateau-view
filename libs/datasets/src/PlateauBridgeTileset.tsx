@@ -4,8 +4,7 @@ import { forwardRef } from 'react'
 import { PlateauTileset, type PlateauTilesetProps } from './PlateauTileset'
 import { useDefaultTileStyle } from './useDefaultTileStyle'
 
-export interface PlateauBridgeTilesetProps
-  extends Omit<PlateauTilesetProps, 'style' | 'selectionColor'> {
+export interface PlateauBridgeTilesetProps extends PlateauTilesetProps {
   color?: string
   opacity?: number
 }

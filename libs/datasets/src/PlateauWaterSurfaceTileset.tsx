@@ -5,8 +5,7 @@ import { forwardRef } from 'react'
 import { PlateauTileset, type PlateauTilesetProps } from './PlateauTileset'
 import { useDefaultTileStyle } from './useDefaultTileStyle'
 
-export interface PlateauWaterSurfaceTilesetProps
-  extends Omit<PlateauTilesetProps, 'style' | 'selectionColor'> {}
+export interface PlateauWaterSurfaceTilesetProps extends PlateauTilesetProps {}
 
 export const PlateauWaterSurfaceTileset = forwardRef<
   Cesium3DTileset,
