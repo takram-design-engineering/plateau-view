@@ -26,3 +26,16 @@ export const cesiumAtom = atom(
     })
   }
 )
+
+export const requestRenderAtom = atom((get, set) => {
+  const cesium = get(cesiumAtom)
+  return () => {
+    if (
+      cesium != null &&
+      !cesium.isDestroyed() &&
+      !cesium.scene.isDestroyed()
+    ) {
+      cesium.scene.requestRender()
+    }
+  }
+})
