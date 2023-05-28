@@ -1,4 +1,4 @@
-import { Cesium3DTileStyle } from '@cesium/engine'
+import { Cesium3DTileStyle, type Cesium3DTileFeature } from '@cesium/engine'
 import { useTheme } from '@mui/material'
 import { useAtomValue } from 'jotai'
 import { useMemo } from 'react'
@@ -18,6 +18,11 @@ export function useDefaultTileStyle({
   const colorMode = useAtomValue(colorModeAtom)
   return useMemo(() => {
     return new Cesium3DTileStyle({
+      show: {
+        evaluate: (feature: Cesium3DTileFeature) => {
+          return feature.show
+        }
+      },
       color: {
         conditions: [
           // eslint-disable-next-line no-template-curly-in-string
