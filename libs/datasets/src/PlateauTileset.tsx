@@ -8,7 +8,7 @@ import {
   type Cesium3DTile,
   type Cesium3DTileStyle
 } from '@cesium/engine'
-import { useAtomValue } from 'jotai'
+import { useAtomValue, useSetAtom } from 'jotai'
 import { forwardRef, useEffect, useRef } from 'react'
 
 import { useAsyncInstance, useCesium } from '@takram/plateau-cesium'
@@ -26,8 +26,10 @@ import {
 } from '@takram/plateau-screen-space-selection'
 
 import { LambertDiffuseShader } from './LambertDiffuseShader'
-import { PlateauGMLIndex, getGmlId } from './PlateauGMLIndex'
+import { TileFeatureIndex } from './TileFeatureIndex'
+import { getGMLId } from './getGMLId'
 import {
+  addFeatureIndexAtom,
   showTilesetBoundingVolumeAtom,
   showTilesetWireframeAtom
 } from './states'
@@ -39,7 +41,7 @@ declare module '@takram/plateau-screen-space-selection' {
   interface ScreenSpaceSelectionOverrides {
     [PLATEAU_TILESET]: {
       key: string
-      gmlIndex: PlateauGMLIndex
+      featureIndex: TileFeatureIndex
     }
   }
 }
@@ -71,7 +73,11 @@ const PlateauTilesetContent = withEphemerality(
       forwardedRef
     ) => {
       // Assume that component is ephemeral.
-      const gmlIndex = useConstant(() => new PlateauGMLIndex())
+      const featureIndex = useConstant(() => new TileFeatureIndex())
+      const addFeatureIndex = useSetAtom(addFeatureIndexAtom)
+      useEffect(() => {
+        return addFeatureIndex(featureIndex)
+      }, [featureIndex, addFeatureIndex])
 
       const selection = useAtomValue(screenSpaceSelectionAtom)
       const selectionRef = useRef(selection)
@@ -95,11 +101,11 @@ const PlateauTilesetContent = withEphemerality(
         transferOwnership: (tileset, primitives) => {
           const removeListeners = [
             tileset.tileLoad.addEventListener((tile: Cesium3DTile) => {
-              gmlIndex.addTile(tile)
+              featureIndex.addTile(tile, getGMLId)
 
               // Mark features as selected when tiles are loaded.
               forEachTileFeature(tile, feature => {
-                const id = getGmlId(feature)
+                const id = getGMLId(feature)
                 const selected = selectionRef.current.some(
                   ({ type, value }) =>
                     type === PLATEAU_TILESET && value.key === id
@@ -152,13 +158,13 @@ const PlateauTilesetContent = withEphemerality(
           ) {
             return
           }
-          const id = getGmlId(object)
+          const id = getGMLId(object)
           return id != null
             ? {
                 type: PLATEAU_TILESET,
                 value: {
                   key: id,
-                  gmlIndex
+                  featureIndex
                 }
               }
             : undefined
@@ -166,10 +172,12 @@ const PlateauTilesetContent = withEphemerality(
         predicate: (
           value
         ): value is ScreenSpaceSelectionEntry<typeof PLATEAU_TILESET> => {
-          return value.type === PLATEAU_TILESET && gmlIndex.has(value.value.key)
+          return (
+            value.type === PLATEAU_TILESET && featureIndex.has(value.value.key)
+          )
         },
         onSelect: value => {
-          const features = gmlIndex.find(value.value.key)
+          const features = featureIndex.find(value.value.key)
           if (features == null) {
             return
           }
@@ -178,7 +186,7 @@ const PlateauTilesetContent = withEphemerality(
           })
         },
         onDeselect: value => {
-          const features = gmlIndex.find(value.value.key)
+          const features = featureIndex.find(value.value.key)
           if (features == null) {
             return
           }
@@ -187,7 +195,7 @@ const PlateauTilesetContent = withEphemerality(
           })
         },
         computeBoundingSphere: (value, result = new BoundingSphere()) => {
-          const features = gmlIndex.find(value.value.key)
+          const features = featureIndex.find(value.value.key)
           if (features == null) {
             return
           }
