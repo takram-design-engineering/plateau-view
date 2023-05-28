@@ -5,15 +5,20 @@ export interface ScreenSpaceSelectionOverrides {}
 
 export type ScreenSpaceSelectionType = keyof ScreenSpaceSelectionOverrides
 
+export type ScreenSpaceSelectionKey = Exclude<Primitive, null | undefined>
+
 export type ScreenSpaceSelectionEntry<
   T extends ScreenSpaceSelectionType = ScreenSpaceSelectionType
 > = {
   [K in ScreenSpaceSelectionType]: K extends T
-    ? // TODO: Support non-primitive values
-      ScreenSpaceSelectionOverrides[K] extends Exclude<
-        Primitive,
-        null | undefined
-      >
+    ? ScreenSpaceSelectionOverrides[K] extends ScreenSpaceSelectionKey
+      ? {
+          type: K
+          value: ScreenSpaceSelectionOverrides[K]
+        }
+      : ScreenSpaceSelectionOverrides[K] extends {
+          key: ScreenSpaceSelectionKey
+        }
       ? {
           type: K
           value: ScreenSpaceSelectionOverrides[K]
@@ -30,9 +35,10 @@ export type ComputeBoundingSphere<
 ) => BoundingSphere | undefined
 
 export interface ScreenSpaceSelectionResponder<
-  T extends ScreenSpaceSelectionType = ScreenSpaceSelectionType
+  T extends ScreenSpaceSelectionType = ScreenSpaceSelectionType,
+  U extends object = object
 > {
-  transform: (object: object) => ScreenSpaceSelectionEntry<T> | null | undefined
+  transform: (object: U) => ScreenSpaceSelectionEntry<T> | null | undefined
   predicate: (
     value: ScreenSpaceSelectionEntry
   ) => value is ScreenSpaceSelectionEntry<T>

@@ -9,6 +9,7 @@ import {
 import { type ScreenSpaceSelectionHandler } from './ScreenSpaceSelectionHandler'
 import {
   type ScreenSpaceSelectionEntry,
+  type ScreenSpaceSelectionKey,
   type ScreenSpaceSelectionResponder,
   type ScreenSpaceSelectionType
 } from './types'
@@ -42,7 +43,19 @@ function transform(object: object): ScreenSpaceSelectionEntry | undefined {
 
 const selectionAtoms = atomsWithSelection<ScreenSpaceSelectionEntry>({
   isEqual: (a, b) => {
-    return a.type === b.type && a.value === b.value
+    if (a.type !== b.type) {
+      return false
+    }
+    if (typeof a.type !== typeof b.type) {
+      return false
+    }
+    interface KeyedValue {
+      key: ScreenSpaceSelectionKey
+    }
+    return typeof a.value === 'object'
+      ? (a.value as unknown as KeyedValue).key ===
+          (b.value as unknown as KeyedValue).key
+      : a.value === b.value
   },
   onSelect: value => {
     for (const responder of responders) {
