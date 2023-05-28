@@ -160,7 +160,7 @@ const HoverMenu: FC<HoverMenuProps> = ({ id, hiddenAtom }) => {
   )
 }
 
-export interface LayerListItemProps extends LayerProps {
+export type LayerListItemProps = LayerProps & {
   iconComponent: ComponentType<SvgIconProps>
 }
 

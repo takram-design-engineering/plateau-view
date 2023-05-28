@@ -1,7 +1,7 @@
 import { atom, type PrimitiveAtom } from 'jotai'
 import { type SetOptional } from 'type-fest'
 
-import { type LayerModel } from '@takram/plateau-layers'
+import { type LayerModelBase } from '@takram/plateau-layers'
 
 import {
   createViewLayerBase,
@@ -14,7 +14,7 @@ export interface DatasetLayerModelParams extends ViewLayerModelParams {
   datumId?: string
 }
 
-export interface DatasetLayerModel extends LayerModel {
+export interface DatasetLayerModel extends LayerModelBase {
   municipalityCode: string
   datasetId: string
   datumIdAtom: PrimitiveAtom<string | null>

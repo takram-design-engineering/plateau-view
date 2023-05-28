@@ -1,7 +1,7 @@
 import { atom } from 'jotai'
 import { type SetOptional } from 'type-fest'
 
-import { type LayerModel } from '@takram/plateau-layers'
+import { type LayerModelBase } from '@takram/plateau-layers'
 
 import { type LayerTitle } from './types'
 
@@ -9,7 +9,7 @@ export interface ViewLayerModelParams {
   title?: string
 }
 
-export interface ViewLayerModel extends LayerModel {}
+export interface ViewLayerModel extends LayerModelBase {}
 
 export function createViewLayerBase(
   params: ViewLayerModelParams

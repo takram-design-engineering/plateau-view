@@ -1,8 +1,8 @@
 import { useAtomValue, type PrimitiveAtom } from 'jotai'
-import { Suspense, type FC, type ReactNode } from 'react'
+import { Suspense, type ComponentType, type FC, type ReactNode } from 'react'
 
 import { layerAtomsAtom, layerIdsAtom, layerSelectionAtom } from './states'
-import { type LayerComponents, type LayerModel } from './types'
+import { type LayerComponents, type LayerModel, type LayerProps } from './types'
 
 interface LayerRendererProps {
   components: LayerComponents
@@ -17,7 +17,10 @@ const LayerRenderer: FC<LayerRendererProps> = ({
 }) => {
   const layer = useAtomValue(layerAtom)
   const selection = useAtomValue(layerSelectionAtom)
-  const Component = components[layer.type]
+  const Component = components[layer.type] as ComponentType<LayerProps>
+  if (Component == null) {
+    return null
+  }
   return (
     <Suspense>
       <Component

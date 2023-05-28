@@ -1,26 +1,36 @@
+import { type Getter } from 'jotai'
 import { type ComponentType, type HTMLAttributes } from 'react'
 
-export interface LayerModel {
+export interface LayerModelOverrides {}
+
+export type LayerType = keyof LayerModelOverrides
+
+export interface LayerModelBase {
   id: string
   type: LayerType
 }
 
-// Must be an interface to be override.
-// eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
-export interface LayerModelOverrides {
-  [type: string]: LayerModel
-}
+export type LayerModel<T extends LayerType = LayerType> = {
+  [K in LayerType]: K extends T
+    ? LayerModelOverrides[K] extends LayerModelBase
+      ? LayerModelOverrides[K]
+      : never
+    : never
+}[LayerType]
 
-export type LayerType = keyof LayerModelOverrides
+export type LayerPredicate<T extends LayerType = LayerType> = (
+  layer: LayerModel<T>,
+  get: Getter // TODO: Eliminate getter from arguments
+) => boolean
 
-export type LayerProps<T extends LayerType = LayerType> = {
-  [K in keyof LayerModelOverrides[T]]: LayerModelOverrides[T][K]
-} & {
+export type LayerProps<T extends LayerType = LayerType> = LayerModel<T> & {
   index: number
   selected: boolean
   itemProps?: HTMLAttributes<HTMLElement>
 }
 
 export type LayerComponents = {
-  [T in keyof LayerModelOverrides]: ComponentType<LayerProps<T>>
+  [T in keyof LayerModelOverrides]: LayerProps<T> extends never
+    ? undefined
+    : ComponentType<LayerProps<T>>
 }

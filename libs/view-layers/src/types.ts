@@ -39,7 +39,7 @@ export type LayerTitle =
     }
 
 declare module '@takram/plateau-layers' {
-  interface LayerModel {
+  interface LayerModelBase {
     titleAtom: PrimitiveAtom<LayerTitle | null>
     loadingAtom: PrimitiveAtom<boolean>
     hiddenAtom: PrimitiveAtom<boolean>
