@@ -25,7 +25,7 @@ export type LayerPredicate<T extends LayerType = LayerType> = (
 
 export type LayerProps<T extends LayerType = LayerType> = LayerModel<T> & {
   index: number
-  selected: boolean
+  selected?: boolean
   itemProps?: HTMLAttributes<HTMLElement>
 }
 
