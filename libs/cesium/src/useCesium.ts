@@ -1,8 +1,7 @@
 import { useAtomValue } from 'jotai'
-import { useContext } from 'react'
 
-import { CesiumContext } from './CesiumContext'
 import { type CesiumRoot } from './CesiumRoot'
+import { cesiumAtom } from './states'
 
 type Selector<T> = (cesium: CesiumRoot) => T
 
@@ -31,7 +30,6 @@ export function useCesium<T, Indirect extends boolean = false>(
   } else {
     options = arg1
   }
-  const { cesiumAtom } = useContext(CesiumContext)
   const cesium = useAtomValue(cesiumAtom)
   if (cesium == null) {
     if (options?.indirect === true) {

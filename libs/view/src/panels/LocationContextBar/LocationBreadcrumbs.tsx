@@ -5,18 +5,20 @@ import {
   buttonClasses,
   styled
 } from '@mui/material'
-import { useAtomValue, useSetAtom } from 'jotai'
-import { useCallback, useContext, type FC, type MouseEvent } from 'react'
+import { useAtomValue } from 'jotai'
+import { useCallback, type FC, type MouseEvent } from 'react'
 
 import { useCesium } from '@takram/plateau-cesium'
 import { flyToArea } from '@takram/plateau-data-sources'
-import { ScreenSpaceSelectionContext } from '@takram/plateau-screen-space-selection'
 
 import { type LocationContextState } from '../../hooks/useLocationContextState'
 import { areaDataSourceAtom } from '../../states/address'
 
 const StyledBreadcrumbs = styled(Breadcrumbs)(({ theme }) => ({
   ...theme.typography.body2,
+  display: 'flex',
+  alignItems: 'center',
+  height: theme.spacing(5),
   margin: `0 ${theme.spacing(1)}`,
   [`& .${breadcrumbsClasses.ol}`]: {
     alignItems: 'baseline',
@@ -44,9 +46,6 @@ export const LocationBreadcrumbs: FC<LocationBreadcrumbsProps> = ({
   const scene = useCesium(({ scene }) => scene, { indirect: true })
   const dataSource = useAtomValue(areaDataSourceAtom)
 
-  const { replaceAtom } = useContext(ScreenSpaceSelectionContext)
-  const replace = useSetAtom(replaceAtom)
-
   // TODO: Handle in atoms and make them declarative.
   const handleClick = useCallback(
     (event: MouseEvent<HTMLElement>) => {
@@ -70,11 +69,10 @@ export const LocationBreadcrumbs: FC<LocationBreadcrumbsProps> = ({
       }
       const entities = dataSource.getEntities(area.code)
       if (entities != null) {
-        replace(entities)
         void flyToArea(scene, dataSource, area.code)
       }
     },
-    [areas, focusedAreaCode, focusArea, scene, dataSource, replace]
+    [areas, focusedAreaCode, focusArea, scene, dataSource]
   )
 
   if (areas == null) {

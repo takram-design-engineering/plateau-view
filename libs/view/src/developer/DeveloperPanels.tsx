@@ -10,9 +10,10 @@ import { useAtom, useAtomValue } from 'jotai'
 import { useCallback, type FC } from 'react'
 
 import { useWindowEvent } from '@takram/plateau-react-helpers'
+import { platformAtom } from '@takram/plateau-shared-states'
 import { Shortcut } from '@takram/plateau-ui-components'
 
-import { platformAtom, showDeveloperPanelsAtom } from '../states/app'
+import { showDeveloperPanelsAtom } from '../states/app'
 import { AppPanel } from './AppPanel'
 import { GraphicsPanel } from './GraphicsPanel'
 import { PerformancePanel } from './PerformancePanel'

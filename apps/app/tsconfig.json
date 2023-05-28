@@ -14,10 +14,10 @@
     "types": ["jest", "node"]
   },
   "files": [
-    "../../libs/cesium/src/types.d.ts",
-    "../../libs/cesium-hbao/src/types.d.ts",
-    "../../libs/screen-space-selection/src/types.d.ts",
-    "../../libs/view/src/types.d.ts"
+    "../../libs/cesium/types.d.ts",
+    "../../libs/cesium-hbao/types.d.ts",
+    "../../libs/screen-space-selection/types.d.ts",
+    "../../libs/view/types.d.ts"
   ],
   "include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "next-env.d.ts"],
   "exclude": [

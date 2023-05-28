@@ -1,4 +1,4 @@
-import { Stack, Typography, type SelectChangeEvent } from '@mui/material'
+import { Box, Stack, Typography, type SelectChangeEvent } from '@mui/material'
 import { type Meta, type StoryObj } from '@storybook/react'
 import { useCallback, useState, type FC } from 'react'
 
@@ -79,11 +79,46 @@ const SelectComponent: FC = () => {
 export const Default: Story = {
   render: () => (
     <ContextBar>
-      <Stack direction='row' spacing={1} alignItems='center' height='100%'>
+      <Stack direction='row' spacing={1}>
         <ButtonComponent />
         <ButtonSelectComponent />
         <SelectComponent />
       </Stack>
     </ContextBar>
   )
+}
+
+const OverflowContextBar: FC = () => {
+  const [expanded, setExpanded] = useState(false)
+  const handleClick = useCallback(() => {
+    setExpanded(value => !value)
+  }, [])
+
+  return (
+    <Box height={200}>
+      <ContextBar overflow expanded={expanded} onClickOverflow={handleClick}>
+        <Stack
+          direction='row'
+          spacing={1}
+          useFlexGap
+          rowGap={0}
+          width={500}
+          {...(expanded && {
+            flexWrap: 'wrap'
+          })}
+        >
+          <ButtonComponent />
+          <ButtonSelectComponent />
+          <SelectComponent />
+          <ButtonComponent />
+          <ButtonSelectComponent />
+          <SelectComponent />
+        </Stack>
+      </ContextBar>
+    </Box>
+  )
+}
+
+export const Overflow: Story = {
+  render: () => <OverflowContextBar />
 }

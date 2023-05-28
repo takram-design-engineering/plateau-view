@@ -99,7 +99,6 @@ export const Environment: FC<EnvironmentProps> = ({
 
   cloneColor(backgroundColor, scene.backgroundColor)
   scene.globe.baseColor = cloneColor(globeBaseColor)
-  scene.globe.depthTestAgainstTerrain = false
   scene.globe.show = showGlobe
   scene.globe.enableLighting = enableGlobeLighting
   // This uniform is used as the factor of IBL, so that I don't have to create

@@ -15,7 +15,7 @@ export interface TileRendererParams
     VectorTileRendererOptions<OffscreenCanvas>,
     'paintRules' | 'labelRules' | 'labelersCanvas'
   > {
-  style?: string | JsonObject
+  style?: string | JsonObject // TODO: Refine type
 }
 
 export interface RenderTileParams extends TileRendererParams {

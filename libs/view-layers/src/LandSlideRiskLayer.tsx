@@ -1,6 +1,6 @@
 import { schemeCategory10 } from 'd3'
 import { useAtomValue, useSetAtom } from 'jotai'
-import { useContext, useEffect, useMemo, type FC } from 'react'
+import { useEffect, useMemo, type FC } from 'react'
 import { type SetOptional } from 'type-fest'
 
 import { useCesium } from '@takram/plateau-cesium'
@@ -11,24 +11,25 @@ import {
 } from '@takram/plateau-graphql'
 import { type LayerProps } from '@takram/plateau-layers'
 
-import { ViewLayersContext } from './ViewLayersContext'
 import {
   createDatasetLayerBase,
   type DatasetLayerModel,
   type DatasetLayerModelParams
 } from './createDatasetLayerBase'
 import { LANDSLIDE_LAYER } from './layerTypes'
+import { pixelRatioAtom } from './states'
 import { useDatasetDatum } from './useDatasetDatum'
 import { useDatasetLayerTitle } from './useDatasetLayerTitle'
 import { useMVTMetadata } from './useMVTMetadata'
 
-export interface LandslideLayerModelParams extends DatasetLayerModelParams {}
+export interface LandSlideRiskLayerModelParams
+  extends DatasetLayerModelParams {}
 
-export interface LandslideLayerModel extends DatasetLayerModel {}
+export interface LandSlideRiskLayerModel extends DatasetLayerModel {}
 
-export function createLandslideLayer(
-  params: LandslideLayerModelParams
-): SetOptional<LandslideLayerModel, 'id'> {
+export function createLandSlideRiskLayer(
+  params: LandSlideRiskLayerModelParams
+): SetOptional<LandSlideRiskLayerModel, 'id'> {
   return {
     ...createDatasetLayerBase(params),
     type: LANDSLIDE_LAYER
@@ -36,7 +37,7 @@ export function createLandslideLayer(
 }
 
 // TODO: Abstraction of MVT
-export const LandslideLayer: FC<LayerProps<typeof LANDSLIDE_LAYER>> = ({
+export const LandSlideRiskLayer: FC<LayerProps<typeof LANDSLIDE_LAYER>> = ({
   titleAtom,
   hiddenAtom,
   municipalityCode,
@@ -45,7 +46,7 @@ export const LandslideLayer: FC<LayerProps<typeof LANDSLIDE_LAYER>> = ({
   const query = useMunicipalityDatasetsQuery({
     variables: {
       municipalityCode,
-      includeTypes: [PlateauDatasetType.Landslide]
+      includeTypes: [PlateauDatasetType.LandSlideRisk]
     }
   })
   const municipality = query.data?.municipality
@@ -94,7 +95,6 @@ export const LandslideLayer: FC<LayerProps<typeof LANDSLIDE_LAYER>> = ({
     }
   }, [metadata])
 
-  const { pixelRatioAtom } = useContext(ViewLayersContext)
   const pixelRatio = useAtomValue(pixelRatioAtom)
 
   if (hidden || datum == null || metadata == null) {

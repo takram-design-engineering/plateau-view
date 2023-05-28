@@ -17,7 +17,6 @@ export function createViewLayerBase(
   return {
     titleAtom: atom<LayerTitle | null>(params.title ?? null),
     loadingAtom: atom(false),
-    hiddenAtom: atom(false),
-    selectedAtom: atom(false)
+    hiddenAtom: atom(false)
   }
 }

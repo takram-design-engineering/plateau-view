@@ -3,11 +3,15 @@ import DrawCommand from '@cesium/engine/Source/Renderer/DrawCommand'
 import { Divider, Stack, styled } from '@mui/material'
 import { useResetAtom } from 'jotai/utils'
 import { sumBy } from 'lodash'
-import { useContext, useMemo, useRef, type FC } from 'react'
+import { useRef, type FC } from 'react'
 import invariant from 'tiny-invariant'
 
 import { useCesium, useInstance, usePreRender } from '@takram/plateau-cesium'
-import { PlateauDatasetsContext } from '@takram/plateau-datasets'
+import {
+  showTilesetBoundingVolumeAtom,
+  showTilesetWireframeAtom
+} from '@takram/plateau-datasets'
+import { atomWithResettableAtoms } from '@takram/plateau-shared-states'
 import {
   DeveloperPanel,
   ParameterItem,
@@ -15,7 +19,6 @@ import {
   SwitchParameterItem
 } from '@takram/plateau-ui-components'
 
-import { atomWithResettableAtoms } from '../states/atomWithResettableAtoms'
 import { showGlobeWireframeAtom } from '../states/performance'
 
 interface PrivateScene extends Scene {
@@ -37,6 +40,12 @@ const Value = styled('span')(({ theme }) => ({
   ...theme.typography.body2,
   fontVariantNumeric: 'tabular-nums'
 }))
+
+const resetAtom = atomWithResettableAtoms([
+  showGlobeWireframeAtom,
+  showTilesetWireframeAtom,
+  showTilesetBoundingVolumeAtom
+])
 
 export const PerformancePanel: FC = () => {
   const frameRateRef = useRef<HTMLSpanElement>(null)
@@ -95,20 +104,6 @@ export const PerformancePanel: FC = () => {
     ).toLocaleString()
   })
 
-  const {
-    showWireframeAtom: showTilesetWireframeAtom,
-    showBoundingVolumeAtom: showTilesetBoundingVolumeAtom
-  } = useContext(PlateauDatasetsContext)
-
-  const resetAtom = useMemo(
-    () =>
-      atomWithResettableAtoms([
-        showGlobeWireframeAtom,
-        showTilesetWireframeAtom,
-        showTilesetBoundingVolumeAtom
-      ]),
-    [showTilesetWireframeAtom, showTilesetBoundingVolumeAtom]
-  )
   const handleReset = useResetAtom(resetAtom)
 
   return (

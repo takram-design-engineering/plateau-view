@@ -8,6 +8,7 @@ import {
 import { useAtomValue, useSetAtom } from 'jotai'
 import { forwardRef, useCallback, type FC } from 'react'
 
+import { platformAtom } from '@takram/plateau-shared-states'
 import {
   FloatingButton,
   FloatingToolbar,
@@ -22,7 +23,6 @@ import {
   type ShortcutTooltipProps
 } from '@takram/plateau-ui-components'
 
-import { platformAtom } from '../states/app'
 import { toolAtom, toolMachineAtom, type Tool } from '../states/tool'
 import { type EventObject } from '../states/toolMachine'
 

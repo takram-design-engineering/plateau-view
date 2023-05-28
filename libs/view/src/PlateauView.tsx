@@ -13,7 +13,6 @@ import {
   Suspense,
   forwardRef,
   useCallback,
-  useContext,
   useEffect,
   useMemo,
   type FC
@@ -27,16 +26,10 @@ import {
   useScreenSpaceEventHandler
 } from '@takram/plateau-cesium'
 import { SuspendUntilTilesLoaded } from '@takram/plateau-cesium-helpers'
-import {
-  GooglePhotorealisticTileset,
-  PlateauDatasetsContext
-} from '@takram/plateau-datasets'
+import { GooglePhotorealisticTileset } from '@takram/plateau-datasets'
 import { LayerList, LayersRenderer, useAddLayer } from '@takram/plateau-layers'
 import { useWindowEvent } from '@takram/plateau-react-helpers'
-import {
-  ScreenSpaceSelectionBoundingSphere,
-  ScreenSpaceSelectionContext
-} from '@takram/plateau-screen-space-selection'
+import { ScreenSpaceSelectionBoundingSphere } from '@takram/plateau-screen-space-selection'
 import { AppLayout } from '@takram/plateau-ui-components'
 import {
   BUILDING_LAYER,
@@ -58,7 +51,6 @@ import { MainPanel } from './panels/MainPanel'
 import { Toolbar } from './panels/Toolbar'
 import { addressAtom } from './states/address'
 import {
-  colorModeAtom,
   environmentTypeAtom,
   readyAtom,
   showSelectionBoundingSphereAtom
@@ -134,6 +126,9 @@ const Events: FC = () => {
   useWindowEvent('blur', () => {
     send({ type: 'WINDOW_BLUR' })
   })
+  useWindowEvent('focus', () => {
+    send({ type: 'WINDOW_FOCUS' })
+  })
 
   const eventHandler = useScreenSpaceEventHandler()
   useScreenSpaceEvent(eventHandler, ScreenSpaceEventType.LEFT_DOWN, () => {
@@ -208,22 +203,6 @@ const ReverseGeocoder: FC = () => {
       setAddress(address ?? null)
     }
   }, [address, setAddress, ready])
-  return null
-}
-
-// TODO: Settle into appropriate component.
-const SyncColorMode: FC = () => {
-  const colorMode = useAtomValue(colorModeAtom)
-  const setPlateauDatasetsColorMode = useSetAtom(
-    useContext(PlateauDatasetsContext).colorModeAtom
-  )
-  const setScreenSpaceSelectionColorMode = useSetAtom(
-    useContext(ScreenSpaceSelectionContext).colorModeAtom
-  )
-  useEffect(() => {
-    setPlateauDatasetsColorMode(colorMode)
-    setScreenSpaceSelectionColorMode(colorMode)
-  }, [colorMode, setPlateauDatasetsColorMode, setScreenSpaceSelectionColorMode])
   return null
 }
 
@@ -321,7 +300,6 @@ export const PlateauView: FC<PlateauViewProps> = () => {
         <SelectionBoundingSphere />
       </Canvas>
       <ScreenSpaceSelection />
-      <SyncColorMode />
       <AppLayout
         main={
           <MainPanel>

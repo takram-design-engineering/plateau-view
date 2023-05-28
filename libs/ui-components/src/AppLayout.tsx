@@ -180,7 +180,7 @@ export const AppLayout: FC<AppLayoutProps> = memo(
   ({
     spacing = 1.5,
     mainWidth = 360,
-    contextWidth = 200,
+    contextWidth = mainWidth,
     main,
     aside,
     context,

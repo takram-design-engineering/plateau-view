@@ -25,12 +25,11 @@ const ItemComponent: FC<{ selected?: boolean }> = ({ selected = false }) => {
         type: 'BUILDING_LAYER',
         titleAtom: atom('レイヤー名称'),
         readyAtom: atom(true),
-        hiddenAtom: atom(false),
-        selectedAtom: atom(selected)
+        hiddenAtom: atom(false)
       }),
-    [selected]
+    []
   )
-  return <LayerListItem layerAtom={layerAtom} />
+  return <LayerListItem layerAtom={layerAtom} selected={selected} />
 }
 
 export const Default: Story = {

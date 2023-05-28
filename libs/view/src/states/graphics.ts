@@ -25,8 +25,9 @@ export const shadowMapSizeAtom = atomWithReset(4096)
 export const shadowMapSoftShadowsAtom = atomWithReset(true)
 
 export const ambientOcclusionEnabledAtom = atomWithReset(true)
-export const ambientOcclusionIntensityAtom = atomWithReset(150)
+export const ambientOcclusionIntensityAtom = atomWithReset(100)
 export const ambientOcclusionMaxRadiusAtom = atomWithReset(40)
+export const ambientOcclusionBiasAtom = atomWithReset(0.1)
 export const ambientOcclusionDirectionsAtom = atomWithReset(4)
 export const ambientOcclusionStepsAtom = atomWithReset(8)
 
@@ -59,6 +60,6 @@ export const ambientOcclusionAccurateNormalReconstructionAtom =
 export const ambientOcclusionOutputTypeAtom =
   atomWithReset<AmbientOcclusionOutputType | null>(null)
 
-export const ambientOcclusionBlackPointAtom = atomWithReset(0.25)
+export const ambientOcclusionBlackPointAtom = atomWithReset(0.05)
 export const ambientOcclusionWhitePointAtom = atomWithReset(0.9)
-export const ambientOcclusionGammaAtom = atomWithReset(1)
+export const ambientOcclusionGammaAtom = atomWithReset(2.5)

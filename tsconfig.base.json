@@ -37,6 +37,7 @@
       "@takram/plateau-screen-space-selection": [
         "libs/screen-space-selection/src/index.ts"
       ],
+      "@takram/plateau-shared-states": ["libs/shared-states/src/index.ts"],
       "@takram/plateau-sketch": ["libs/sketch/src/index.ts"],
       "@takram/plateau-type-helpers": ["libs/type-helpers/src/index.ts"],
       "@takram/plateau-ui-components": ["libs/ui-components/src/index.ts"],

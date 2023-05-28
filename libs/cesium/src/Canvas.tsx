@@ -3,7 +3,6 @@ import { useAtom } from 'jotai'
 import { debounce, omit, pick } from 'lodash'
 import {
   forwardRef,
-  useContext,
   useEffect,
   useRef,
   type ComponentPropsWithRef,
@@ -18,9 +17,9 @@ import {
   assignPropertyProps
 } from '@takram/plateau-react-helpers'
 
-import { CesiumContext } from './CesiumContext'
 import { CesiumRoot, type CesiumRootOptions } from './CesiumRoot'
 import { DefaultImageryProvider } from './DefaultImageryProvider'
+import { cesiumAtom } from './states'
 
 const Root = styled('div')({
   overflow: 'hidden',
@@ -107,7 +106,6 @@ export const Canvas = forwardRef<HTMLDivElement, CanvasProps>(
       }
     }, [])
 
-    const { cesiumAtom } = useContext(CesiumContext)
     const [cesium, setCesium] = useAtom(cesiumAtom)
 
     useIsomorphicLayoutEffect(

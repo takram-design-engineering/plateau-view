@@ -1,4 +1,4 @@
-import { type ComponentType } from 'react'
+import { type ComponentType, type HTMLAttributes } from 'react'
 
 export interface LayerModel {
   id: string
@@ -17,6 +17,8 @@ export type LayerProps<T extends LayerType = LayerType> = {
   [K in keyof LayerModelOverrides[T]]: LayerModelOverrides[T][K]
 } & {
   index: number
+  selected: boolean
+  itemProps?: HTMLAttributes<HTMLElement>
 }
 
 export type LayerComponents = {

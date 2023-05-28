@@ -3,11 +3,22 @@ import { useTheme } from '@mui/material'
 import { useAtom, useAtomValue } from 'jotai'
 import { useMemo, type FC } from 'react'
 
-import { AreaEntities, type AreaEntity } from '@takram/plateau-data-sources'
-import { useScreenSpaceSelectionResponder } from '@takram/plateau-screen-space-selection'
+import { AreaEntities } from '@takram/plateau-data-sources'
+import {
+  useScreenSpaceSelectionResponder,
+  type ScreenSpaceSelectionEntry
+} from '@takram/plateau-screen-space-selection'
 
 import { areaDataSourceAtom, prefectureAtom } from '../states/address'
 import { showAreaEntitiesAtom } from '../states/app'
+
+export const AREA = 'AREA'
+
+declare module '@takram/plateau-screen-space-selection' {
+  interface ScreenSpaceSelectionOverrides {
+    [AREA]: string
+  }
+}
 
 export const Areas: FC = () => {
   const prefecture = useAtomValue(prefectureAtom)
@@ -16,25 +27,24 @@ export const Areas: FC = () => {
   // model is not too much to say broken, and we cannot prevent data sources
   // or related resources from being destroyed when DataSourceDisplay is
   // destroyed.
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [dataSource, setDataSource] = useAtom(areaDataSourceAtom)
   const show = useAtomValue(showAreaEntitiesAtom)
 
+  // TODO: Make selectable
   useScreenSpaceSelectionResponder({
-    predicate: (object): object is AreaEntity => {
-      return object instanceof Entity && object.id.startsWith('AreaEntity:')
+    type: AREA,
+    transform: object => {
+      if (!(object instanceof Entity) || !object.id.startsWith('AreaEntity:')) {
+        return
+      }
+      return {
+        type: AREA,
+        value: object.id
+      }
     },
-    onSelect: objects => {
-      objects.forEach(object => {
-        dataSource?.entities.add(object)
-      })
-    },
-    onDeselect: objects => {
-      objects.forEach(object => {
-        dataSource?.entities.remove(object)
-      })
-    },
-    computeBoundingSphere: (object, result) => {
-      return object.boundingSphere.clone(result)
+    predicate: (value): value is ScreenSpaceSelectionEntry<typeof AREA> => {
+      return value.type === AREA
     }
   })
 

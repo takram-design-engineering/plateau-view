@@ -1,10 +1,14 @@
 import { Divider, Stack } from '@mui/material'
 import { useAtomValue } from 'jotai'
 import { useResetAtom } from 'jotai/utils'
-import { useContext, useMemo, type FC } from 'react'
+import { type FC } from 'react'
 
-import { PlateauDatasetsContext } from '@takram/plateau-datasets'
-import { ScreenSpaceSelectionContext } from '@takram/plateau-screen-space-selection'
+import { showTilesetTextureAtom } from '@takram/plateau-datasets'
+import { screenSpaceSelectionAtom } from '@takram/plateau-screen-space-selection'
+import {
+  atomWithResettableAtoms,
+  colorModeAtom
+} from '@takram/plateau-shared-states'
 import {
   DeveloperPanel,
   ParameterList,
@@ -14,7 +18,6 @@ import {
 } from '@takram/plateau-ui-components'
 
 import {
-  colorModeAtom,
   debugSphericalHarmonicsAtom,
   enableTerrainLightingAtom,
   environmentTypeAtom,
@@ -24,30 +27,23 @@ import {
   showSelectionBoundingSphereAtom,
   terrainTypeAtom
 } from '../states/app'
-import { atomWithResettableAtoms } from '../states/atomWithResettableAtoms'
+
+const resetAtom = atomWithResettableAtoms([
+  colorModeAtom,
+  debugSphericalHarmonicsAtom,
+  enableTerrainLightingAtom,
+  environmentTypeAtom,
+  plateauDataSourceAtom,
+  showAreaEntitiesAtom,
+  showDataFormatsAtom,
+  showSelectionBoundingSphereAtom,
+  showTilesetTextureAtom,
+  terrainTypeAtom
+])
 
 export const AppPanel: FC = () => {
   const environmentType = useAtomValue(environmentTypeAtom)
-  const { showTexturesAtom } = useContext(PlateauDatasetsContext)
-  const { selectionAtom } = useContext(ScreenSpaceSelectionContext)
-  const selection = useAtomValue(selectionAtom)
-
-  const resetAtom = useMemo(
-    () =>
-      atomWithResettableAtoms([
-        colorModeAtom,
-        debugSphericalHarmonicsAtom,
-        enableTerrainLightingAtom,
-        environmentTypeAtom,
-        plateauDataSourceAtom,
-        showAreaEntitiesAtom,
-        showDataFormatsAtom,
-        showSelectionBoundingSphereAtom,
-        showTexturesAtom,
-        terrainTypeAtom
-      ]),
-    [showTexturesAtom]
-  )
+  const selection = useAtomValue(screenSpaceSelectionAtom)
 
   const handleReset = useResetAtom(resetAtom)
 
@@ -87,8 +83,8 @@ export const AppPanel: FC = () => {
             atom={enableTerrainLightingAtom}
           />
           <SwitchParameterItem
-            label='Tileset Textures'
-            atom={showTexturesAtom}
+            label='Tileset Texture'
+            atom={showTilesetTextureAtom}
           />
           <SwitchParameterItem
             label='Debug Spherical Harmonics'
