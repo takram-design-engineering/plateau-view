@@ -1,4 +1,5 @@
 import { json_style } from 'protomaps'
+import { type JsonObject } from 'type-fest'
 
 export interface FontSub {
   face: string
@@ -12,7 +13,7 @@ export interface MapStyle {
 }
 
 export function createStyleFromJSON(
-  data: unknown,
+  data: string | JsonObject, // TODO: Refine type
   fontSubMap = new Map<string, FontSub>()
 ): MapStyle {
   if (typeof json_style !== 'function') {
