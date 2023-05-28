@@ -1,29 +1,25 @@
 import { atom } from 'jotai'
 import { differenceWith, intersectionWith, without } from 'lodash'
 
-import { isNotNullish } from '@takram/plateau-type-helpers'
-
-export interface SelectionAtomsOptions<T, U = T> {
-  transform?: (object: U) => T | null | undefined
+export interface SelectionAtomsOptions<T> {
   isEqual?: (a: T, b: T) => boolean
   onSelect?: (value: T) => void
   onDeselect?: (value: T) => void
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-export function atomsWithSelection<T, U = T>({
-  transform = object => object as unknown as T,
+export function atomsWithSelection<T>({
   isEqual = (a, b) => a === b,
   onSelect,
   onDeselect
-}: SelectionAtomsOptions<T, U> = {}) {
+}: SelectionAtomsOptions<T> = {}) {
   const selectionPrimitiveAtom = atom<T[]>([])
 
   const selectionAtom = atom(
     get => get(selectionPrimitiveAtom),
-    (get, set, objects: readonly U[]) => {
+    (get, set, values: readonly T[]) => {
       set(selectionPrimitiveAtom, prevSelection => {
-        if (objects.length === 0) {
+        if (values.length === 0) {
           if (prevSelection.length > 0 && onDeselect != null) {
             prevSelection.forEach(onDeselect)
           }
@@ -31,7 +27,6 @@ export function atomsWithSelection<T, U = T>({
         }
         // Assume that the cost of deriving difference here is smaller than
         // triggering state update.
-        const values = objects.map(transform).filter(isNotNullish)
         const valuesToRemove = differenceWith(prevSelection, values, isEqual)
         const valuesToAdd = differenceWith(values, prevSelection, isEqual)
         if (valuesToRemove.length > 0 && onDeselect != null) {
@@ -47,12 +42,11 @@ export function atomsWithSelection<T, U = T>({
     }
   )
 
-  const addAtom = atom(null, (get, set, objects: readonly U[]) => {
+  const addAtom = atom(null, (get, set, values: readonly T[]) => {
     set(selectionPrimitiveAtom, prevSelection => {
-      if (objects.length === 0) {
+      if (values.length === 0) {
         return prevSelection
       }
-      const values = objects.map(transform).filter(isNotNullish)
       const valuesToAdd = differenceWith(values, prevSelection, isEqual)
       if (valuesToAdd.length === 0) {
         return prevSelection
@@ -64,12 +58,11 @@ export function atomsWithSelection<T, U = T>({
     })
   })
 
-  const removeAtom = atom(null, (get, set, objects: readonly U[]) => {
+  const removeAtom = atom(null, (get, set, values: readonly T[]) => {
     set(selectionPrimitiveAtom, prevSelection => {
-      if (objects.length === 0) {
+      if (values.length === 0) {
         return prevSelection
       }
-      const values = objects.map(transform).filter(isNotNullish)
       const valuesToRemove = intersectionWith(prevSelection, values, isEqual)
       if (valuesToRemove.length === 0) {
         return prevSelection
@@ -101,4 +94,4 @@ export function atomsWithSelection<T, U = T>({
   }
 }
 
-export type SelectionAtoms = ReturnType<typeof atomsWithSelection>
+export type SelectionAtoms<T> = ReturnType<typeof atomsWithSelection<T>>
