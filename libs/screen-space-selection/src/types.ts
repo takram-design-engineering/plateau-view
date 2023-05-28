@@ -5,20 +5,22 @@ export interface ScreenSpaceSelectionOverrides {}
 
 export type ScreenSpaceSelectionType = keyof ScreenSpaceSelectionOverrides
 
-export type ScreenSpaceSelectionKey = Exclude<Primitive, null | undefined>
+type NonNullishPrimitive = Exclude<Primitive, null | undefined>
+
+export interface ScreenSpaceSelectionKeyedValue {
+  key: NonNullishPrimitive
+}
 
 export type ScreenSpaceSelectionEntry<
   T extends ScreenSpaceSelectionType = ScreenSpaceSelectionType
 > = {
   [K in ScreenSpaceSelectionType]: K extends T
-    ? ScreenSpaceSelectionOverrides[K] extends ScreenSpaceSelectionKey
+    ? ScreenSpaceSelectionOverrides[K] extends NonNullishPrimitive
       ? {
           type: K
           value: ScreenSpaceSelectionOverrides[K]
         }
-      : ScreenSpaceSelectionOverrides[K] extends {
-          key: ScreenSpaceSelectionKey
-        }
+      : ScreenSpaceSelectionOverrides[K] extends ScreenSpaceSelectionKeyedValue
       ? {
           type: K
           value: ScreenSpaceSelectionOverrides[K]
@@ -26,6 +28,11 @@ export type ScreenSpaceSelectionEntry<
       : never
     : never
 }[ScreenSpaceSelectionType]
+
+export interface AnyScreenSpaceSelectionEntry {
+  type: ScreenSpaceSelectionEntry
+  value: NonNullishPrimitive | ScreenSpaceSelectionKeyedValue
+}
 
 export type ComputeBoundingSphere<
   T extends ScreenSpaceSelectionType = ScreenSpaceSelectionType

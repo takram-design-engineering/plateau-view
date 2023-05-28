@@ -9,7 +9,7 @@ import {
 import { type ScreenSpaceSelectionHandler } from './ScreenSpaceSelectionHandler'
 import {
   type ScreenSpaceSelectionEntry,
-  type ScreenSpaceSelectionKey,
+  type ScreenSpaceSelectionKeyedValue,
   type ScreenSpaceSelectionResponder,
   type ScreenSpaceSelectionType
 } from './types'
@@ -49,12 +49,10 @@ const selectionAtoms = atomsWithSelection<ScreenSpaceSelectionEntry>({
     if (typeof a.type !== typeof b.type) {
       return false
     }
-    interface KeyedValue {
-      key: ScreenSpaceSelectionKey
-    }
+    // Don't remove type assertion.
     return typeof a.value === 'object'
-      ? (a.value as unknown as KeyedValue).key ===
-          (b.value as unknown as KeyedValue).key
+      ? (a.value as unknown as ScreenSpaceSelectionKeyedValue).key ===
+          (b.value as unknown as ScreenSpaceSelectionKeyedValue).key
       : a.value === b.value
   },
   onSelect: value => {
