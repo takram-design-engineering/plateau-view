@@ -10,9 +10,9 @@ import { type ScreenSpaceSelectionEventHandler } from './ScreenSpaceSelectionEve
 import { ScreenSpaceSelectionHandler } from './ScreenSpaceSelectionHandler'
 import { pickMany } from './pickMany'
 import {
-  addScreenSpaceSelectionAtom,
-  removeScreenSpaceSelectionAtom,
-  screenSpaceSelectionAtom,
+  addScreenSpaceSelectionObjectsAtom,
+  removeScreenSpaceSelectionObjectsAtom,
+  replaceScreenSpaceSelectionObjectsAtom,
   screenSpaceSelectionHandlerAtom
 } from './states'
 
@@ -46,9 +46,9 @@ export const ScreenSpaceSelection: FC<ScreenSpaceSelectionProps> = ({
   }, [handler, setHandler])
 
   // Move to context perhaps?
-  const replace = useSetAtom(screenSpaceSelectionAtom)
-  const add = useSetAtom(addScreenSpaceSelectionAtom)
-  const remove = useSetAtom(removeScreenSpaceSelectionAtom)
+  const replace = useSetAtom(replaceScreenSpaceSelectionObjectsAtom)
+  const add = useSetAtom(addScreenSpaceSelectionObjectsAtom)
+  const remove = useSetAtom(removeScreenSpaceSelectionObjectsAtom)
   const handleEvent: ScreenSpaceSelectionEventHandler = useCallback(
     event => {
       if (scene == null) {

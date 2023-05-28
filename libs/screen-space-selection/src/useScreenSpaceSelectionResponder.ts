@@ -4,57 +4,61 @@ import { useEffect, useRef } from 'react'
 import { useCesium } from '@takram/plateau-cesium'
 import { useConstant } from '@takram/plateau-react-helpers'
 
+import { becomeResponder, removeScreenSpaceSelectionAtom } from './states'
 import {
-  becomeResponder,
-  removeScreenSpaceSelectionAtom,
-  type ScreenSpaceSelectionResponder
-} from './states'
+  type ScreenSpaceSelectionEntry,
+  type ScreenSpaceSelectionResponder,
+  type ScreenSpaceSelectionType
+} from './types'
 
-export interface ScreenSpaceSelectionResponderParams<T extends object>
-  extends ScreenSpaceSelectionResponder<T> {}
+export interface ScreenSpaceSelectionResponderParams<
+  T extends ScreenSpaceSelectionType
+> extends ScreenSpaceSelectionResponder<T> {
+  type: T
+}
 
-export function useScreenSpaceSelectionResponder<T extends object>(
-  params: ScreenSpaceSelectionResponder<T>
-): ReadonlySet<T> {
+export function useScreenSpaceSelectionResponder<
+  T extends ScreenSpaceSelectionType
+>(
+  params: ScreenSpaceSelectionResponderParams<T>
+): ReadonlySet<ScreenSpaceSelectionEntry<T>> {
   const scene = useCesium(({ scene }) => scene, { indirect: true })
-  const selection = useConstant(() => new Set<T>())
+  const selection = useConstant(() => new Set<ScreenSpaceSelectionEntry<T>>())
 
   const paramsRef = useRef(params)
   paramsRef.current = params
 
   const responder = useConstant<ScreenSpaceSelectionResponder<T>>(() => ({
-    predicate: (object): object is T => {
-      return paramsRef.current.predicate(object)
+    transform: object => {
+      return paramsRef.current.transform(object)
     },
-    onSelect: objects => {
-      paramsRef.current.onSelect(objects)
-      objects.forEach(object => {
-        selection.add(object)
-      })
+    predicate: (value): value is ScreenSpaceSelectionEntry<T> => {
+      return paramsRef.current.predicate(value)
+    },
+    onSelect: value => {
+      paramsRef.current.onSelect?.(value)
+      selection.add(value)
       scene?.requestRender()
     },
-    onDeselect: objects => {
-      paramsRef.current.onDeselect(objects)
-      objects.forEach(object => {
-        selection.delete(object)
-      })
+    onDeselect: value => {
+      paramsRef.current.onDeselect?.(value)
+      selection.delete(value)
       scene?.requestRender()
     },
-    computeBoundingSphere: (object, result) => {
-      return paramsRef.current.computeBoundingSphere?.(object, result)
+    computeBoundingSphere: (value, result) => {
+      return paramsRef.current.computeBoundingSphere?.(value, result)
     }
   }))
 
+  // Assume that component is ephemeral.
   const remove = useSetAtom(removeScreenSpaceSelectionAtom)
-
-  // Assume that the component isn't reused.
   useEffect(() => {
     const resignResponder = becomeResponder(responder)
     return () => {
+      resignResponder()
       if (selection.size > 0) {
         remove(Array.from(selection.values()))
       }
-      resignResponder()
     }
   }, [selection, responder, remove])
 
