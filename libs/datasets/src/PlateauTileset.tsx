@@ -37,7 +37,10 @@ export const PLATEAU_TILESET = 'PLATEAU_TILESET'
 
 declare module '@takram/plateau-screen-space-selection' {
   interface ScreenSpaceSelectionOverrides {
-    [PLATEAU_TILESET]: string
+    [PLATEAU_TILESET]: {
+      key: string
+      gmlIndex: PlateauGMLIndex
+    }
   }
 }
 
@@ -98,7 +101,8 @@ const PlateauTilesetContent = withEphemerality(
               forEachTileFeature(tile, feature => {
                 const id = getGmlId(feature)
                 const selected = selectionRef.current.some(
-                  ({ type, value }) => type === PLATEAU_TILESET && value === id
+                  ({ type, value }) =>
+                    type === PLATEAU_TILESET && value.key === id
                 )
                 if (selected) {
                   feature.setProperty('selected', true)
@@ -149,15 +153,23 @@ const PlateauTilesetContent = withEphemerality(
             return
           }
           const id = getGmlId(object)
-          return id != null ? { type: PLATEAU_TILESET, value: id } : undefined
+          return id != null
+            ? {
+                type: PLATEAU_TILESET,
+                value: {
+                  key: id,
+                  gmlIndex
+                }
+              }
+            : undefined
         },
         predicate: (
           value
         ): value is ScreenSpaceSelectionEntry<typeof PLATEAU_TILESET> => {
-          return value.type === PLATEAU_TILESET && gmlIndex.has(value.value)
+          return value.type === PLATEAU_TILESET && gmlIndex.has(value.value.key)
         },
         onSelect: value => {
-          const features = gmlIndex.find(value.value)
+          const features = gmlIndex.find(value.value.key)
           if (features == null) {
             return
           }
@@ -166,7 +178,7 @@ const PlateauTilesetContent = withEphemerality(
           })
         },
         onDeselect: value => {
-          const features = gmlIndex.find(value.value)
+          const features = gmlIndex.find(value.value.key)
           if (features == null) {
             return
           }
@@ -175,7 +187,7 @@ const PlateauTilesetContent = withEphemerality(
           })
         },
         computeBoundingSphere: (value, result = new BoundingSphere()) => {
-          const features = gmlIndex.find(value.value)
+          const features = gmlIndex.find(value.value.key)
           if (features == null) {
             return
           }
