@@ -27,7 +27,7 @@ export const cesiumAtom = atom(
   }
 )
 
-export const requestRenderAtom = atom((get, set) => {
+export const requestRenderAtom = atom(get => {
   const cesium = get(cesiumAtom)
   return () => {
     if (
