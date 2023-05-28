@@ -17,7 +17,7 @@ import { canQueue, queue } from './workerPool'
 
 export interface VectorImageryProviderOptions {
   url: string
-  style?: string | JsonObject
+  style?: string | JsonObject // TODO: Refine type
   minimumZoom?: number
   maximumZoom?: number
   maximumDataZoom?: number

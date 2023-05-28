@@ -69,22 +69,22 @@ enum PlateauDatasetType {
   Border
   Bridge
   Building
+  CityFurniture
   EmergencyRoute
-  Facility
-  Flood
-  Furniture
-  Generic
-  Hightide
-  InlandFlood
+  GenericCityObject
+  HighTideRisk
+  InlandFloodingRisk
+  LandSlideRisk
+  LandUse
   Landmark
-  Landslide
-  Landuse
   Park
   Railway
+  RiverFloodingRisk
   Road
   Shelter
   Station
-  Tsunami
+  TsunamiRisk
+  UrbanPlanning
   UseCase
   Vegetation
 }
@@ -108,7 +108,10 @@ type PlateauDefaultDatasetDatum implements PlateauDatasetDatum {
 
 type PlateauMunicipality implements PlateauArea {
   code: String!
-  datasets(excludeTypes: [PlateauDatasetType!], includeTypes: [PlateauDatasetType!]): [PlateauDataset!]!
+  datasets(
+    excludeTypes: [PlateauDatasetType!]
+    includeTypes: [PlateauDatasetType!]
+  ): [PlateauDataset!]!
   id: ID!
   name: String!
   parents: [PlateauArea!]!

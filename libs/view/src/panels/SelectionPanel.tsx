@@ -1,8 +1,8 @@
 import { Stack, Typography, styled } from '@mui/material'
 import { useAtomValue } from 'jotai'
-import { useContext, type FC } from 'react'
+import { type FC } from 'react'
 
-import { ScreenSpaceSelectionContext } from '@takram/plateau-screen-space-selection'
+import { screenSpaceSelectionAtom } from '@takram/plateau-screen-space-selection'
 import { FloatingPanel } from '@takram/plateau-ui-components'
 
 const Root = styled(FloatingPanel)({
@@ -10,8 +10,7 @@ const Root = styled(FloatingPanel)({
 })
 
 export const SelectionPanel: FC = () => {
-  const { selectionAtom } = useContext(ScreenSpaceSelectionContext)
-  const selection = useAtomValue(selectionAtom)
+  const selection = useAtomValue(screenSpaceSelectionAtom)
   if (selection.length === 0) {
     return null
   }

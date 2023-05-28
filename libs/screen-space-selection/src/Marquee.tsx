@@ -1,13 +1,15 @@
 import { alpha, styled } from '@mui/material'
 import { useAtomValue } from 'jotai'
-import { useContext, useEffect, useRef, type FC } from 'react'
+import { useEffect, useRef, type FC } from 'react'
 
-import { ScreenSpaceSelectionContext } from './ScreenSpaceSelectionContext'
+import { colorModeAtom, type ColorMode } from '@takram/plateau-shared-states'
+
+import { screenSpaceSelectionHandlerAtom } from './states'
 
 const Root = styled('div', {
   shouldForwardProp: prop => prop !== 'colorMode'
 })<{
-  colorMode: 'light' | 'dark'
+  colorMode: ColorMode
 }>(({ theme, colorMode }) => {
   const color = theme.palette.grey[colorMode === 'light' ? 600 : 400]
   return {
@@ -22,9 +24,7 @@ const Root = styled('div', {
 
 export const Marquee: FC = () => {
   const ref = useRef<HTMLDivElement>(null)
-
-  const { colorModeAtom, handlerAtom } = useContext(ScreenSpaceSelectionContext)
-  const handler = useAtomValue(handlerAtom)
+  const handler = useAtomValue(screenSpaceSelectionHandlerAtom)
 
   useEffect(() => {
     if (handler == null) {

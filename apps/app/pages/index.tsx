@@ -6,8 +6,9 @@ import Head from 'next/head'
 import { Suspense, type FC } from 'react'
 import UAParser from 'ua-parser-js'
 
-import { LoadingScreen, type Platform } from '@takram/plateau-ui-components'
-import { PlateauView, platformAtom, readyAtom } from '@takram/plateau-view'
+import { platformAtom, type Platform } from '@takram/plateau-shared-states'
+import { LoadingScreen } from '@takram/plateau-ui-components'
+import { PlateauView, readyAtom } from '@takram/plateau-view'
 
 const Loading: FC = () => {
   const ready = useAtomValue(readyAtom)

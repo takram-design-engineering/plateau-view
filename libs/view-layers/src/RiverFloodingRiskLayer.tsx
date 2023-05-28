@@ -1,10 +1,9 @@
-import { useTheme } from '@mui/material'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { useEffect, type FC } from 'react'
 import { type SetOptional } from 'type-fest'
 
 import { useCesium } from '@takram/plateau-cesium'
-import { PlateauTileset } from '@takram/plateau-datasets'
+import { PlateauWaterSurfaceTileset } from '@takram/plateau-datasets'
 import {
   PlateauDatasetType,
   useMunicipalityDatasetsQuery
@@ -16,40 +15,38 @@ import {
   type DatasetLayerModel,
   type DatasetLayerModelParams
 } from './createDatasetLayerBase'
-import { FLOOD_LAYER } from './layerTypes'
+import { RIVER_FLOODING_RISK_LAYER } from './layerTypes'
 import { useDatasetDatum } from './useDatasetDatum'
 import { useDatasetLayerTitle } from './useDatasetLayerTitle'
 
-export interface FloodLayerModelParams extends DatasetLayerModelParams {}
+export interface RiverFloodingRiskLayerModelParams
+  extends DatasetLayerModelParams {}
 
-export interface FloodLayerModel extends DatasetLayerModel {}
+export interface RiverFloodingRiskLayerModel extends DatasetLayerModel {}
 
-export function createFloodLayer(
-  params: FloodLayerModelParams
-): SetOptional<FloodLayerModel, 'id'> {
+export function createRiverFloodingRiskLayer(
+  params: RiverFloodingRiskLayerModelParams
+): SetOptional<RiverFloodingRiskLayerModel, 'id'> {
   return {
     ...createDatasetLayerBase(params),
-    type: FLOOD_LAYER
+    type: RIVER_FLOODING_RISK_LAYER
   }
 }
 
-export const FloodLayer: FC<LayerProps<typeof FLOOD_LAYER>> = ({
-  titleAtom,
-  hiddenAtom,
-  municipalityCode,
-  datumIdAtom
-}) => {
+export const RiverFloodingRiskLayer: FC<
+  LayerProps<typeof RIVER_FLOODING_RISK_LAYER>
+> = ({ titleAtom, hiddenAtom, municipalityCode, datumIdAtom }) => {
   const query = useMunicipalityDatasetsQuery({
     variables: {
       municipalityCode,
-      includeTypes: [PlateauDatasetType.Flood]
+      includeTypes: [PlateauDatasetType.RiverFloodingRisk]
     }
   })
   const municipality = query.data?.municipality
   const datum = useDatasetDatum(datumIdAtom, municipality?.datasets)
 
   const title = useDatasetLayerTitle({
-    layerType: FLOOD_LAYER,
+    layerType: RIVER_FLOODING_RISK_LAYER,
     municipality,
     datum
   })
@@ -70,16 +67,8 @@ export const FloodLayer: FC<LayerProps<typeof FLOOD_LAYER>> = ({
     }
   }, [scene])
 
-  const theme = useTheme()
   if (hidden || datum == null) {
     return null
   }
-  return (
-    <PlateauTileset
-      url={datum.url}
-      color={theme.palette.primary.main}
-      opacity={0.5}
-      disableShadow
-    />
-  )
+  return <PlateauWaterSurfaceTileset url={datum.url} />
 }

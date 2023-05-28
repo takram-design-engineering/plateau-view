@@ -6,15 +6,12 @@ import {
   BingMapsImageryLayer,
   VectorMapImageryLayer
 } from '@takram/plateau-datasets'
+import { colorModeAtom } from '@takram/plateau-shared-states'
 
 import { GooglePhotorealisticEnvironment } from '../environments/GooglePhotorealisticEnvironment'
 import { MapEnvironment } from '../environments/MapEnvironment'
 import { SatelliteEnvironment } from '../environments/SatelliteEnvironment'
-import {
-  colorModeAtom,
-  debugSphericalHarmonicsAtom,
-  environmentTypeAtom
-} from '../states/app'
+import { debugSphericalHarmonicsAtom, environmentTypeAtom } from '../states/app'
 
 export type EnvironmentType = 'map' | 'satellite' | 'google-photorealistic'
 
@@ -43,8 +40,8 @@ export const Environments: FC = () => {
                 brightness: 1.5
               },
               dark: {
-                contrast: 1.25,
-                brightness: 0.35
+                contrast: 1.5,
+                brightness: 0.3
               }
             }[colorMode]}
           />

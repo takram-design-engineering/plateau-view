@@ -13,6 +13,7 @@ export interface EntityProps extends CesiumEntity.ConstructorOptions {
 export const Entity = memo(
   forwardRef<CesiumEntity, EntityProps>(
     ({ entities: entitiesProp, ...options }, ref) => {
+      const scene = useCesium(({ scene }) => scene)
       const defaultEntities = useCesium(({ entities }) => entities)
       const entities = entitiesProp ?? defaultEntities
       const [entity, setEntity] = useState(() => new CesiumEntity(options))
@@ -36,6 +37,8 @@ export const Entity = memo(
       // Although it seems Entity.merge() is the way to merge with the new
       // options, Object.assign() also works.
       Object.assign(entity, omit(options, 'id'))
+
+      scene.requestRender()
 
       return null
     }

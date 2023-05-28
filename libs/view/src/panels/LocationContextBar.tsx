@@ -1,5 +1,12 @@
-import { Divider, Stack } from '@mui/material'
-import { useMemo, type FC } from 'react'
+import { Stack, alpha, styled } from '@mui/material'
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type FC
+} from 'react'
 import invariant from 'tiny-invariant'
 
 import { ContextBar } from '@takram/plateau-ui-components'
@@ -9,6 +16,21 @@ import { BuildingDatasetButtonSelect } from './LocationContextBar/BuildingDatase
 import { DefaultDatasetButton } from './LocationContextBar/DefaultDatasetButton'
 import { DefaultDatasetSelect } from './LocationContextBar/DefaultDatasetSelect'
 import { LocationBreadcrumbs } from './LocationContextBar/LocationBreadcrumbs'
+
+const Controls = styled('div')(({ theme }) => ({
+  position: 'relative',
+  '&:before': {
+    content: '""',
+    position: 'absolute',
+    display: 'block',
+    top: theme.spacing(-0.5),
+    left: theme.spacing(-1),
+    height: `calc(100% + ${theme.spacing(1)})`,
+    // Match the light style of divider.
+    // https://github.com/mui/material-ui/blob/v5.13.1/packages/mui-material/src/Divider/Divider.js#L71
+    borderLeft: `solid 1px ${alpha(theme.palette.divider, 0.08)}`
+  }
+}))
 
 export const LocationContextBar: FC = () => {
   const {
@@ -27,13 +49,64 @@ export const LocationContextBar: FC = () => {
     [areas, focusedAreaCode]
   )
 
+  const [overflow, setOverflow] = useState(false)
+  const [expanded, setExpanded] = useState(false)
+  const expandedRef = useRef(expanded)
+  expandedRef.current = expanded
+
+  const containerRef = useRef<HTMLDivElement>(null)
+  const contentRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    const container = containerRef.current
+    const content = contentRef.current
+    invariant(container != null)
+    invariant(content != null)
+
+    const intrinsicHeight = container.getBoundingClientRect().height
+    // Initial test intentionally omitted.
+
+    let containerRect: DOMRect | undefined
+    let contentRect: DOMRect | undefined
+    const observer = new ResizeObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.target === container) {
+          containerRect = entry.contentRect
+        } else if (entry.target === content) {
+          contentRect = entry.contentRect
+        }
+      })
+      if (containerRect == null || contentRect == null) {
+        return
+      }
+      if (!expandedRef.current) {
+        setOverflow(containerRect.width < contentRect.width)
+      } else {
+        setOverflow(contentRect.height > intrinsicHeight)
+      }
+    })
+
+    observer.observe(container)
+    observer.observe(content)
+    return () => {
+      observer.disconnect()
+    }
+  }, [])
+
+  const handleClickOverflow = useCallback(() => {
+    setExpanded(value => !value)
+  }, [])
+
   return (
     <ContextBar
+      ref={containerRef}
       hidden={areas == null}
+      overflow={overflow}
+      expanded={expanded}
+      onClickOverflow={handleClickOverflow}
       onMouseEnter={preventChanges}
       onMouseLeave={approveChanges}
     >
-      <Stack direction='row' spacing={1} alignItems='center' height='100%'>
+      <Stack ref={contentRef} direction='row' spacing={1.5}>
         {areas != null && (
           <LocationBreadcrumbs
             areas={areas}
@@ -42,13 +115,15 @@ export const LocationContextBar: FC = () => {
           />
         )}
         {datasetGroups != null && municipalityCode != null && (
-          <>
-            <Divider orientation='vertical' light />
+          <Controls>
             <Stack
               direction='row'
               spacing={1}
-              alignItems='center'
-              height='100%'
+              useFlexGap
+              rowGap={0.5}
+              {...(expanded && {
+                flexWrap: 'wrap'
+              })}
             >
               {datasetGroups.map(datasets => {
                 if (datasets.length > 1) {
@@ -83,7 +158,7 @@ export const LocationContextBar: FC = () => {
                 )
               })}
             </Stack>
-          </>
+          </Controls>
         )}
       </Stack>
     </ContextBar>

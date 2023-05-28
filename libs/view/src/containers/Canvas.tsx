@@ -1,8 +1,7 @@
 import { Globe } from '@cesium/engine'
 import { styled } from '@mui/material'
-import { atom, useAtomValue, useSetAtom } from 'jotai'
+import { atom, useAtomValue } from 'jotai'
 import { forwardRef, memo, useCallback, type FC } from 'react'
-import { mergeRefs } from 'react-merge-refs'
 
 import {
   Canvas as CesiumCanvas,
@@ -17,11 +16,11 @@ import {
 } from '@takram/plateau-cesium-hbao'
 import { JapanSeaLevelEllipsoid } from '@takram/plateau-datasets'
 import { withDeferredProps } from '@takram/plateau-react-helpers'
-import { isNotNullish } from '@takram/plateau-type-helpers'
 
-import { cesiumAtom, readyAtom } from '../states/app'
+import { readyAtom } from '../states/app'
 import {
   ambientOcclusionAccurateNormalReconstructionAtom,
+  ambientOcclusionBiasAtom,
   ambientOcclusionBlackPointAtom,
   ambientOcclusionDenoiseAtom,
   ambientOcclusionDirectionsAtom,
@@ -42,6 +41,7 @@ import {
   type AntialiasType
 } from '../states/graphics'
 import { showGlobeWireframeAtom } from '../states/performance'
+import { GlobeDepthTestCoordinator } from './GlobeDepthTestCoordinator'
 
 declare module '@cesium/engine' {
   interface Globe {
@@ -94,6 +94,7 @@ const ambientOcclusionPropsAtom = atom(
     enabled: get(ambientOcclusionEnabledAtom),
     intensity: get(ambientOcclusionIntensityAtom),
     maxRadius: get(ambientOcclusionMaxRadiusAtom),
+    bias: get(ambientOcclusionBiasAtom),
     directions: get(ambientOcclusionDirectionsAtom),
     steps: get(ambientOcclusionStepsAtom),
     blackPoint: get(ambientOcclusionBlackPointAtom),
@@ -119,7 +120,7 @@ const msaaSamples: Record<AntialiasType, number | undefined> = {
 export interface CanvasProps extends CesiumCanvasProps {}
 
 export const Canvas = forwardRef<HTMLDivElement, CanvasProps>(
-  ({ cesiumRef, children, ...props }, forwardedRef) => {
+  ({ children, ...props }, forwardedRef) => {
     const constructorOptions = useCallback(
       () => ({
         globe: new Globe(JapanSeaLevelEllipsoid)
@@ -127,7 +128,6 @@ export const Canvas = forwardRef<HTMLDivElement, CanvasProps>(
       []
     )
 
-    const setCesium = useSetAtom(cesiumAtom)
     const ready = useAtomValue(readyAtom)
     const nativeResolutionEnabled = useAtomValue(nativeResolutionEnabledAtom)
     const explicitRenderingEnabled = useAtomValue(explicitRenderingEnabledAtom)
@@ -138,7 +138,6 @@ export const Canvas = forwardRef<HTMLDivElement, CanvasProps>(
     return (
       <Root
         ref={forwardedRef}
-        cesiumRef={mergeRefs([cesiumRef, setCesium].filter(isNotNullish))}
         constructorOptions={constructorOptions}
         msaaSamples={msaaSamples[antialiasType] ?? 0}
         useBrowserRecommendedResolution={!nativeResolutionEnabled}
@@ -151,6 +150,7 @@ export const Canvas = forwardRef<HTMLDivElement, CanvasProps>(
         <Configure />
         <ShadowMap {...shadowMapProps} maximumDistance={10000} />
         <AmbientOcclusion {...ambientOcclusionProps} />
+        <GlobeDepthTestCoordinator />
         {children}
       </Root>
     )

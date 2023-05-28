@@ -4,7 +4,9 @@ import { Button, buttonClasses, styled, type ButtonProps } from '@mui/material'
 import { forwardRef } from 'react'
 
 const StyledButton = styled(Button)(({ theme }) => ({
-  height: `calc(100% - ${theme.spacing(1)})`,
+  flexGrow: 0,
+  flexShrink: 0,
+  height: theme.spacing(5),
   paddingRight: theme.spacing(1.5),
   paddingLeft: theme.spacing(1),
   // borderRadius: 0,

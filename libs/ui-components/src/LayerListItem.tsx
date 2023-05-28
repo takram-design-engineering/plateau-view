@@ -5,6 +5,7 @@ import {
   ListItemSecondaryAction,
   ListItemText,
   Tooltip,
+  alpha,
   listItemButtonClasses,
   listItemSecondaryActionClasses,
   listItemTextClasses,
@@ -15,13 +16,12 @@ import {
 import { useAtom, useAtomValue, useSetAtom, type PrimitiveAtom } from 'jotai'
 import {
   useCallback,
-  useContext,
   type ComponentType,
   type FC,
   type SyntheticEvent
 } from 'react'
 
-import { LayersContext, type LayerProps } from '@takram/plateau-layers'
+import { removeLayerAtom, type LayerProps } from '@takram/plateau-layers'
 
 import { AntIcon } from './AntIcon'
 import { ItemLocationIcon } from './icons/ItemLocationIcon'
@@ -35,9 +35,14 @@ const StyledListItem = styled(ListItemButton, {
 }>(({ theme, hidden = false }) => ({
   alignItems: 'center',
   minHeight: theme.spacing(5),
+  transition: 'none',
   cursor: 'default',
+
   ...(hidden && {
-    opacity: theme.palette.action.disabledOpacity
+    color: alpha(
+      theme.palette.text.primary,
+      theme.palette.action.disabledOpacity
+    )
   }),
 
   // Disable hover style
@@ -117,8 +122,7 @@ const HoverMenu: FC<HoverMenuProps> = ({ id, hiddenAtom }) => {
     setHidden(value => !value)
   }, [setHidden])
 
-  const { removeAtom } = useContext(LayersContext)
-  const remove = useSetAtom(removeAtom)
+  const remove = useSetAtom(removeLayerAtom)
   const handleRemoveClick = useCallback(() => {
     remove(id)
   }, [id, remove])
@@ -162,19 +166,19 @@ export interface LayerListItemProps extends LayerProps {
 
 export const LayerListItem: FC<LayerListItemProps> = ({
   id,
+  selected,
   iconComponent,
   titleAtom,
   loadingAtom,
   hiddenAtom,
-  selectedAtom
+  itemProps
 }) => {
   const title = useAtomValue(titleAtom)
   const loading = useAtomValue(loadingAtom)
   const hidden = useAtomValue(hiddenAtom)
-  const selected = useAtomValue(selectedAtom)
   const Icon = iconComponent
   return (
-    <StyledListItem selected={selected} hidden={hidden}>
+    <StyledListItem {...itemProps} selected={selected} hidden={hidden}>
       <ListItemIcon>
         {loading ? (
           <AntIcon iconComponent={LoadingIcon} fontSize='medium' />

@@ -21,16 +21,16 @@ const datasetTypeOrder = [
   PlateauDatasetType.Road,
   PlateauDatasetType.Railway,
   PlateauDatasetType.Park,
-  PlateauDatasetType.Landuse,
-  PlateauDatasetType.Flood,
-  PlateauDatasetType.InlandFlood,
-  PlateauDatasetType.Hightide,
-  PlateauDatasetType.Landslide,
-  PlateauDatasetType.Tsunami,
+  PlateauDatasetType.LandUse,
+  PlateauDatasetType.RiverFloodingRisk,
+  PlateauDatasetType.InlandFloodingRisk,
+  PlateauDatasetType.HighTideRisk,
+  PlateauDatasetType.LandSlideRisk,
+  PlateauDatasetType.TsunamiRisk,
   PlateauDatasetType.Shelter,
   PlateauDatasetType.EmergencyRoute,
-  PlateauDatasetType.Facility,
-  PlateauDatasetType.Furniture,
+  PlateauDatasetType.UrbanPlanning,
+  PlateauDatasetType.CityFurniture,
   PlateauDatasetType.Vegetation
 ]
 
@@ -88,7 +88,7 @@ export function useLocationContextState(): LocationContextState {
             municipalityCode: area.code,
             excludeTypes: [
               PlateauDatasetType.UseCase,
-              PlateauDatasetType.Generic
+              PlateauDatasetType.GenericCityObject
             ]
           }
         : undefined,

@@ -1,9 +1,10 @@
 import { useAtomValue, useSetAtom } from 'jotai'
-import { memo, useCallback, useContext, useMemo, type FC } from 'react'
+import { memo, useCallback, useMemo, type FC } from 'react'
 
 import { type PlateauDatasetFragment } from '@takram/plateau-graphql'
 import {
-  LayersContext,
+  layersAtom,
+  removeLayerAtom,
   useAddLayer,
   useFindLayer
 } from '@takram/plateau-layers'
@@ -11,7 +12,7 @@ import { ContextButton } from '@takram/plateau-ui-components'
 import {
   BRIDGE_LAYER,
   LANDSLIDE_LAYER,
-  LANDUSE_LAYER,
+  LAND_USE_LAYER,
   ROAD_LAYER,
   createViewLayer
 } from '@takram/plateau-view-layers'
@@ -28,7 +29,6 @@ export interface DefaultDatasetButtonProps {
 
 export const DefaultDatasetButton: FC<DefaultDatasetButtonProps> = memo(
   ({ dataset, municipalityCode, disabled = false }) => {
-    const { layersAtom, removeAtom } = useContext(LayersContext)
     const layers = useAtomValue(layersAtom)
     const layerType = datasetTypeLayers[dataset.type]
     const findLayer = useFindLayer()
@@ -44,7 +44,7 @@ export const DefaultDatasetButton: FC<DefaultDatasetButtonProps> = memo(
     )
 
     const addLayer = useAddLayer()
-    const removeLayer = useSetAtom(removeAtom)
+    const removeLayer = useSetAtom(removeLayerAtom)
 
     const handleClick = useCallback(() => {
       if (layerType == null) {
@@ -54,7 +54,7 @@ export const DefaultDatasetButton: FC<DefaultDatasetButtonProps> = memo(
         switch (layerType) {
           case BRIDGE_LAYER:
           case ROAD_LAYER:
-          case LANDUSE_LAYER:
+          case LAND_USE_LAYER:
           case LANDSLIDE_LAYER:
             addLayer(
               createViewLayer({

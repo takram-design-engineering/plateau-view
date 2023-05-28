@@ -4,6 +4,7 @@ import { useResetAtom } from 'jotai/utils'
 import { type FC } from 'react'
 
 import { AmbientOcclusionOutputType } from '@takram/plateau-cesium-hbao'
+import { atomWithResettableAtoms } from '@takram/plateau-shared-states'
 import {
   DeveloperPanel,
   ParameterList,
@@ -13,9 +14,9 @@ import {
 } from '@takram/plateau-ui-components'
 
 import { environmentTypeAtom } from '../states/app'
-import { atomWithResettableAtoms } from '../states/atomWithResettableAtoms'
 import {
   ambientOcclusionAccurateNormalReconstructionAtom,
+  ambientOcclusionBiasAtom,
   ambientOcclusionBlackPointAtom,
   ambientOcclusionDenoiseAtom,
   ambientOcclusionDirectionsAtom,
@@ -53,6 +54,7 @@ const ambientOcclusionReduceScaleAtom = atom(
 
 const resetAtom = atomWithResettableAtoms([
   ambientOcclusionAccurateNormalReconstructionAtom,
+  ambientOcclusionBiasAtom,
   ambientOcclusionBlackPointAtom,
   ambientOcclusionDenoiseAtom,
   ambientOcclusionDirectionsAtom,
@@ -150,6 +152,14 @@ export const GraphicsPanel: FC = () => {
             decimalPlaces={0}
             disabled={!ambientOcclusionEnabled}
             atom={ambientOcclusionMaxRadiusAtom}
+          />
+          <SliderParameterItem
+            label='Bias'
+            min={0}
+            max={1}
+            decimalPlaces={2}
+            disabled={!ambientOcclusionEnabled}
+            atom={ambientOcclusionBiasAtom}
           />
           <SwitchParameterItem
             label='Reduce Resolution'
