@@ -11,7 +11,7 @@ import {
 } from '@cesium/engine'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { difference } from 'lodash'
-import { forwardRef, useEffect, useRef } from 'react'
+import { forwardRef, useEffect, useRef, type ForwardedRef } from 'react'
 
 import { useAsyncInstance, useCesium } from '@takram/plateau-cesium'
 import { forEachTileFeature } from '@takram/plateau-cesium-helpers'
@@ -198,6 +198,7 @@ function useHiddenFeatures({
 
 interface PlateauTilesetContentProps
   extends TilesetPrimitiveConstructorOptions {
+  featureIndexRef?: ForwardedRef<TileFeatureIndex>
   url: string
   style?: Cesium3DTileStyle
   disableShadow?: boolean
@@ -212,6 +213,7 @@ const PlateauTilesetContent = withEphemerality(
   forwardRef<Cesium3DTileset, PlateauTilesetContentProps>(
     (
       {
+        featureIndexRef,
         url,
         style,
         disableShadow = false,
@@ -224,6 +226,11 @@ const PlateauTilesetContent = withEphemerality(
     ) => {
       // Assume that component is ephemeral.
       const featureIndex = useConstant(() => new TileFeatureIndex())
+      useEffect(
+        () => assignForwardedRef(featureIndexRef, featureIndex),
+        [featureIndexRef, featureIndex]
+      )
+
       const addFeatureIndex = useSetAtom(addFeatureIndexAtom)
       useEffect(() => {
         return addFeatureIndex(featureIndex)
@@ -284,9 +291,10 @@ const PlateauTilesetContent = withEphemerality(
         Object.assign(tileset, props)
       }
 
-      useEffect(() => {
-        assignForwardedRef(forwardedRef, tileset ?? null)
-      }, [forwardedRef, tileset])
+      useEffect(
+        () => assignForwardedRef(forwardedRef, tileset ?? null),
+        [forwardedRef, tileset]
+      )
 
       // Assignment of style is not trivial.
       useEffect(() => {
