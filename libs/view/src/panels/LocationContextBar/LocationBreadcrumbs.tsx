@@ -5,12 +5,11 @@ import {
   buttonClasses,
   styled
 } from '@mui/material'
-import { useAtomValue, useSetAtom } from 'jotai'
+import { useAtomValue } from 'jotai'
 import { useCallback, type FC, type MouseEvent } from 'react'
 
 import { useCesium } from '@takram/plateau-cesium'
 import { flyToArea } from '@takram/plateau-data-sources'
-import { screenSpaceSelectionAtom } from '@takram/plateau-screen-space-selection'
 
 import { type LocationContextState } from '../../hooks/useLocationContextState'
 import { areaDataSourceAtom } from '../../states/address'
@@ -47,8 +46,6 @@ export const LocationBreadcrumbs: FC<LocationBreadcrumbsProps> = ({
   const scene = useCesium(({ scene }) => scene, { indirect: true })
   const dataSource = useAtomValue(areaDataSourceAtom)
 
-  const replace = useSetAtom(screenSpaceSelectionAtom)
-
   // TODO: Handle in atoms and make them declarative.
   const handleClick = useCallback(
     (event: MouseEvent<HTMLElement>) => {
@@ -72,11 +69,10 @@ export const LocationBreadcrumbs: FC<LocationBreadcrumbsProps> = ({
       }
       const entities = dataSource.getEntities(area.code)
       if (entities != null) {
-        replace(entities)
         void flyToArea(scene, dataSource, area.code)
       }
     },
-    [areas, focusedAreaCode, focusArea, scene, dataSource, replace]
+    [areas, focusedAreaCode, focusArea, scene, dataSource]
   )
 
   if (areas == null) {
