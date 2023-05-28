@@ -19,7 +19,7 @@ import {
   removeLayerAtom,
   useAddLayer,
   useFindLayer,
-  type LayerModelOverrides
+  type LayerModel
 } from '@takram/plateau-layers'
 import { ContextButtonSelect, SelectItem } from '@takram/plateau-ui-components'
 import { BUILDING_LAYER, createViewLayer } from '@takram/plateau-view-layers'
@@ -34,7 +34,7 @@ interface Params {
 
 function createParams(
   get: Getter,
-  layer: LayerModelOverrides[typeof BUILDING_LAYER]
+  layer: LayerModel<typeof BUILDING_LAYER>
 ): Params {
   return {
     version: get(layer.versionAtom),

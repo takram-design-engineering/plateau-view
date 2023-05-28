@@ -5,37 +5,47 @@ import { type SetOptional } from 'type-fest'
 import { useCesium } from '@takram/plateau-cesium'
 import { PlateauWaterSurfaceTileset } from '@takram/plateau-datasets'
 import {
+  PlateauDatasetFormat,
   PlateauDatasetType,
   useMunicipalityDatasetsQuery
 } from '@takram/plateau-graphql'
 import { type LayerProps } from '@takram/plateau-layers'
 
+import { PlateauTilesetLayerContent } from './PlateauTilesetLayerContent'
 import {
-  createDatasetLayerBase,
-  type DatasetLayerModel,
-  type DatasetLayerModelParams
-} from './createDatasetLayerBase'
+  createPlateauTilesetLayerBase,
+  type PlateauTilesetLayerModel,
+  type PlateauTilesetLayerModelParams
+} from './createPlateauTilesetLayerBase'
 import { RIVER_FLOODING_RISK_LAYER } from './layerTypes'
-import { useDatasetDatum } from './useDatasetDatum'
+import { useDatasetDatum, type DatasetDatum } from './useDatasetDatum'
 import { useDatasetLayerTitle } from './useDatasetLayerTitle'
 
 export interface RiverFloodingRiskLayerModelParams
-  extends DatasetLayerModelParams {}
+  extends PlateauTilesetLayerModelParams {}
 
-export interface RiverFloodingRiskLayerModel extends DatasetLayerModel {}
+export interface RiverFloodingRiskLayerModel extends PlateauTilesetLayerModel {}
 
 export function createRiverFloodingRiskLayer(
   params: RiverFloodingRiskLayerModelParams
 ): SetOptional<RiverFloodingRiskLayerModel, 'id'> {
   return {
-    ...createDatasetLayerBase(params),
+    ...createPlateauTilesetLayerBase(params),
     type: RIVER_FLOODING_RISK_LAYER
   }
 }
 
 export const RiverFloodingRiskLayer: FC<
   LayerProps<typeof RIVER_FLOODING_RISK_LAYER>
-> = ({ titleAtom, hiddenAtom, municipalityCode, datumIdAtom }) => {
+> = ({
+  id,
+  titleAtom,
+  hiddenAtom,
+  municipalityCode,
+  datumIdAtom,
+  featureIndexAtom,
+  hiddenFeaturesAtom
+}) => {
   const query = useMunicipalityDatasetsQuery({
     variables: {
       municipalityCode,
@@ -70,5 +80,17 @@ export const RiverFloodingRiskLayer: FC<
   if (hidden || datum == null) {
     return null
   }
-  return <PlateauWaterSurfaceTileset url={datum.url} />
+  if (datum.format === PlateauDatasetFormat.Cesium3DTiles) {
+    return (
+      <PlateauTilesetLayerContent
+        layerId={id}
+        // TODO: Infer type
+        datum={datum as DatasetDatum<PlateauDatasetFormat.Cesium3DTiles>}
+        component={PlateauWaterSurfaceTileset}
+        featureIndexAtom={featureIndexAtom}
+        hiddenFeaturesAtom={hiddenFeaturesAtom}
+      />
+    )
+  }
+  return null
 }

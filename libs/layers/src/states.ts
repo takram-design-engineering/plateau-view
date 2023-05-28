@@ -1,4 +1,4 @@
-import { atom, type Getter } from 'jotai'
+import { atom } from 'jotai'
 import { atomWithReset, splitAtom } from 'jotai/utils'
 import { isEqual, pick } from 'lodash'
 import { nanoid } from 'nanoid'
@@ -6,9 +6,7 @@ import { type SetOptional } from 'type-fest'
 
 import { atomsWithSelection } from '@takram/plateau-shared-states'
 
-import { type LayerModel } from './types'
-
-type LayerPredicate = (layer: LayerModel, get: Getter) => boolean
+import { type LayerModel, type LayerPredicate } from './types'
 
 export const layersAtom = atomWithReset<LayerModel[]>([])
 export const layerAtomsAtom = splitAtom(layersAtom)

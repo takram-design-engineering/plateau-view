@@ -1,36 +1,16 @@
-import {
-  Cartesian3,
-  Color,
-  HeadingPitchRoll,
-  ScreenSpaceEventType,
-  type CameraEventAggregator,
-  type Cartesian2,
-  type ScreenSpaceCameraController
-} from '@cesium/engine'
-import { List, styled, useTheme, type ListProps } from '@mui/material'
+import { Cartesian3, HeadingPitchRoll } from '@cesium/engine'
+import { styled } from '@mui/material'
 import { useAtomValue, useSetAtom } from 'jotai'
-import {
-  Suspense,
-  forwardRef,
-  useCallback,
-  useEffect,
-  useMemo,
-  type FC
-} from 'react'
+import { Suspense, useCallback, useEffect, type FC } from 'react'
 
-import {
-  CurrentTime,
-  ViewLocator,
-  useCesium,
-  useScreenSpaceEvent,
-  useScreenSpaceEventHandler
-} from '@takram/plateau-cesium'
+import { CurrentTime, ViewLocator } from '@takram/plateau-cesium'
 import { SuspendUntilTilesLoaded } from '@takram/plateau-cesium-helpers'
 import { GooglePhotorealisticTileset } from '@takram/plateau-datasets'
 import { LayerList, LayersRenderer, useAddLayer } from '@takram/plateau-layers'
-import { useWindowEvent } from '@takram/plateau-react-helpers'
-import { ScreenSpaceSelectionBoundingSphere } from '@takram/plateau-screen-space-selection'
-import { AppLayout } from '@takram/plateau-ui-components'
+import {
+  AppLayout,
+  LayerList as LayerListComponent
+} from '@takram/plateau-ui-components'
 import {
   BUILDING_LAYER,
   ViewLayerListItem,
@@ -41,21 +21,19 @@ import {
 import { Areas } from './containers/Areas'
 import { Canvas } from './containers/Canvas'
 import { Environments } from './containers/Environments'
+import { ExclusiveSelection } from './containers/ExclusiveSelection'
+import { KeyBindings } from './containers/KeyBindings'
+import { ReverseGeocoding } from './containers/ReverseGeocoding'
 import { ScreenSpaceCamera } from './containers/ScreenSpaceCamera'
 import { ScreenSpaceSelection } from './containers/ScreenSpaceSelection'
+import { SelectionBoundingSphere } from './containers/SelectionBoundingSphere'
 import { Terrains } from './containers/Terrains'
+import { ToolMachineEvents } from './containers/ToolMachineEvents'
 import { DeveloperPanels } from './developer/DeveloperPanels'
-import { useReverseGeocoder } from './hooks/useReverseGeocoder'
 import { LocationContextBar } from './panels/LocationContextBar'
 import { MainPanel } from './panels/MainPanel'
 import { Toolbar } from './panels/Toolbar'
-import { addressAtom } from './states/address'
-import {
-  environmentTypeAtom,
-  readyAtom,
-  showSelectionBoundingSphereAtom
-} from './states/app'
-import { toolAtom, toolMachineAtom } from './states/tool'
+import { environmentTypeAtom, readyAtom } from './states/app'
 
 const initialDestination = Cartesian3.fromDegrees(139.755, 35.675, 1000)
 const initialOrientation = new HeadingPitchRoll(Math.PI * 0.4, -Math.PI * 0.2)
@@ -64,161 +42,8 @@ const Root = styled('div')({
   touchAction: 'none' // TODO: Don't disable globally
 })
 
-const LayerListComponent = forwardRef<HTMLDivElement, ListProps<'div'>>(
-  (props, ref) => <List ref={ref} component='div' dense {...props} />
-)
-
-// TODO: Settle into appropriate component.
-const Events: FC = () => {
-  const send = useSetAtom(toolMachineAtom)
-  const tool = useAtomValue(toolAtom)
-  const scene = useCesium(({ scene }) => scene)
-
-  // Stop inertial movements when switching between tools. There're no such
-  // public methods to do so, so I'm accessing private API.
-  useEffect(() => {
-    // Private API
-    const controller =
-      scene.screenSpaceCameraController as ScreenSpaceCameraController & {
-        _aggregator: CameraEventAggregator & {
-          _lastMovement: Record<
-            string,
-            {
-              startPosition: Cartesian2
-              endPosition: Cartesian2
-            }
-          >
-        }
-      }
-    Object.values(controller._aggregator._lastMovement).forEach(
-      ({ startPosition, endPosition }) => {
-        startPosition.x = 0
-        startPosition.y = 0
-        endPosition.x = 0
-        endPosition.y = 0
-      }
-    )
-  }, [tool, scene])
-
-  useWindowEvent('keydown', event => {
-    if (event.repeat) {
-      return
-    }
-    if (
-      event.code === 'Space' &&
-      !event.altKey &&
-      !event.shiftKey &&
-      !event.metaKey &&
-      !event.ctrlKey
-    ) {
-      send({ type: 'PRESS_SPACE' })
-    } else if (event.key === 'Meta') {
-      send({ type: 'PRESS_COMMAND' })
-    }
-  })
-  useWindowEvent('keyup', event => {
-    if (event.code === 'Space') {
-      send({ type: 'RELEASE_SPACE' })
-    } else if (event.key === 'Meta') {
-      send({ type: 'RELEASE_COMMAND' })
-    }
-  })
-  useWindowEvent('blur', () => {
-    send({ type: 'WINDOW_BLUR' })
-  })
-  useWindowEvent('focus', () => {
-    send({ type: 'WINDOW_FOCUS' })
-  })
-
-  const eventHandler = useScreenSpaceEventHandler()
-  useScreenSpaceEvent(eventHandler, ScreenSpaceEventType.LEFT_DOWN, () => {
-    send({ type: 'MOUSE_DOWN' })
-  })
-  useScreenSpaceEvent(eventHandler, ScreenSpaceEventType.LEFT_UP, () => {
-    send({ type: 'MOUSE_UP' })
-  })
-  return null
-}
-
-// TODO: Settle into appropriate component.
-const CanvasPointer: FC = () => {
-  const canvas = useCesium(({ canvas }) => canvas)
-  const state = useAtomValue(toolMachineAtom)
-  let cursor
-  if (
-    state.matches('activeTool.modal.hand') ||
-    state.matches('activeTool.momentary.hand')
-  ) {
-    cursor = 'grabbing'
-  } else if (
-    state.matches('selectedTool.modal.hand') ||
-    state.matches('selectedTool.momentary.hand')
-  ) {
-    cursor = 'grab'
-  } else {
-    cursor = 'auto'
-  }
-  canvas.style.cursor = cursor
-  return null
-}
-
-// TODO: Settle into appropriate component.
-const KeyBindings: FC = () => {
-  const send = useSetAtom(toolMachineAtom)
-  useWindowEvent('keydown', event => {
-    if (document.activeElement !== document.body) {
-      return
-    }
-    if (event.altKey || event.shiftKey || event.metaKey || event.ctrlKey) {
-      return
-    }
-    switch (event.key) {
-      case 'v':
-        send({ type: 'SELECT' })
-        break
-      case 'h':
-        send({ type: 'HAND' })
-        break
-      case 'g':
-        send({ type: 'SKETCH' })
-        break
-      case 't':
-        send({ type: 'STORY' })
-        break
-      case 'p':
-        send({ type: 'PEDESTRIAN' })
-        break
-    }
-  })
-  return null
-}
-
-// TODO: Settle into appropriate component.
-const ReverseGeocoder: FC = () => {
-  const address = useReverseGeocoder()
-  const setAddress = useSetAtom(addressAtom)
-  const ready = useAtomValue(readyAtom)
-  useEffect(() => {
-    if (ready) {
-      setAddress(address ?? null)
-    }
-  }, [address, setAddress, ready])
-  return null
-}
-
-// TODO: Settle into appropriate component.
-const SelectionBoundingSphere: FC = () => {
-  const show = useAtomValue(showSelectionBoundingSphereAtom)
-  const theme = useTheme()
-  const color = useMemo(
-    () => Color.fromCssColorString(theme.palette.primary.main),
-    [theme]
-  )
-  return show ? <ScreenSpaceSelectionBoundingSphere color={color} /> : null
-}
-
 // TODO: Just for temporary.
-const Layers: FC = () => {
+const InitialLayers: FC = () => {
   const addLayer = useAddLayer()
 
   useEffect(() => {
@@ -293,13 +118,13 @@ export const PlateauView: FC<PlateauViewProps> = () => {
           />
         )}
         <Areas />
-        <Events />
-        <CanvasPointer />
-        <KeyBindings />
-        <ReverseGeocoder />
+        <ReverseGeocoding />
+        <ToolMachineEvents />
         <SelectionBoundingSphere />
       </Canvas>
+      <KeyBindings />
       <ScreenSpaceSelection />
+      <ExclusiveSelection />
       <AppLayout
         main={
           <MainPanel>
@@ -314,7 +139,7 @@ export const PlateauView: FC<PlateauViewProps> = () => {
         bottomLeft={<Toolbar />}
         developer={<DeveloperPanels />}
       />
-      <Layers />
+      <InitialLayers />
     </Root>
   )
 }

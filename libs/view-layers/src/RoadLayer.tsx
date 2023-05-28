@@ -1,25 +1,24 @@
 import { useAtomValue, useSetAtom } from 'jotai'
-import { useEffect, useMemo, type FC } from 'react'
+import { useEffect, type FC } from 'react'
 import { type SetOptional } from 'type-fest'
 
 import { useCesium } from '@takram/plateau-cesium'
-import { VectorImageryLayer } from '@takram/plateau-datasets'
 import {
+  PlateauDatasetFormat,
   PlateauDatasetType,
   useMunicipalityDatasetsQuery
 } from '@takram/plateau-graphql'
 import { type LayerProps } from '@takram/plateau-layers'
 
+import { MVTLayerContent } from './MVTLayerContent'
 import {
   createDatasetLayerBase,
   type DatasetLayerModel,
   type DatasetLayerModelParams
 } from './createDatasetLayerBase'
 import { ROAD_LAYER } from './layerTypes'
-import { pixelRatioAtom } from './states'
-import { useDatasetDatum } from './useDatasetDatum'
+import { useDatasetDatum, type DatasetDatum } from './useDatasetDatum'
 import { useDatasetLayerTitle } from './useDatasetLayerTitle'
-import { useMVTMetadata } from './useMVTMetadata'
 
 export interface RoadLayerModelParams extends DatasetLayerModelParams {}
 
@@ -34,7 +33,6 @@ export function createRoadLayer(
   }
 }
 
-// TODO: Abstraction of MVT
 export const RoadLayer: FC<LayerProps<typeof ROAD_LAYER>> = ({
   titleAtom,
   hiddenAtom,
@@ -72,36 +70,19 @@ export const RoadLayer: FC<LayerProps<typeof ROAD_LAYER>> = ({
     }
   }, [scene])
 
-  const metadata = useMVTMetadata(datum?.url)
-  const style = useMemo(() => {
-    if (metadata == null) {
-      return
-    }
-    // TODO: Make it configurable.
-    return {
-      version: 8,
-      layers: metadata.sourceLayers.map(layer => ({
-        'source-layer': layer.id,
-        type: 'fill',
-        paint: { 'fill-color': '#808080' }
-      }))
-    }
-  }, [metadata])
-
-  const pixelRatio = useAtomValue(pixelRatioAtom)
-
-  if (hidden || datum == null || metadata == null) {
+  if (hidden || datum == null) {
     return null
   }
-  return (
-    <VectorImageryLayer
-      url={datum.url}
-      style={style}
-      pixelRatio={pixelRatio}
-      rectangle={metadata.rectangle}
-      maximumDataZoom={metadata.maximumZoom}
-    />
-  )
+  if (datum.format === PlateauDatasetFormat.Mvt) {
+    return (
+      <MVTLayerContent
+        // TODO: Infer type
+        datum={datum as DatasetDatum<PlateauDatasetFormat.Mvt>}
+        styles={styles}
+      />
+    )
+  }
+  return null
 }
 
 // TODO: Separate definition.
@@ -121,3 +102,11 @@ export const RoadLayer: FC<LayerProps<typeof ROAD_LAYER>> = ({
 //   '9010', // 対象外
 //   '9020' // 不明
 // ]
+
+// TODO: Make configurable.
+const styles = [
+  {
+    type: 'fill',
+    paint: { 'fill-color': '#808080' }
+  }
+]

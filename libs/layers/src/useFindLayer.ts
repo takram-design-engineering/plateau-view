@@ -1,19 +1,21 @@
-import { useSetAtom, type Getter } from 'jotai'
+import { useSetAtom } from 'jotai'
 
 import { findLayerAtom } from './states'
-import {
-  type LayerModel,
-  type LayerModelOverrides,
-  type LayerType
-} from './types'
+import { type LayerModel, type LayerPredicate, type LayerType } from './types'
 
 // Provided for generic setter.
-export function useFindLayer(): <T extends LayerType>(
-  layers: readonly LayerModel[],
+export function useFindLayer(): <
+  T extends LayerType,
+  U extends LayerType = LayerType
+>(
+  layers: ReadonlyArray<LayerModel<T>>,
   predicate:
-    | ({ type: T } & Partial<Omit<LayerModelOverrides[T], 'type'>>)
-    | Partial<LayerModel>
-    | ((layer: LayerModelOverrides[T], get: Getter) => boolean)
-) => LayerModelOverrides[T] | undefined {
+    | (LayerModel<T> & { type: U })
+    | Partial<LayerModel<U>>
+    | LayerPredicate<T>
+) => LayerModel<T & U> | undefined
+
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+export function useFindLayer() {
   return useSetAtom(findLayerAtom)
 }

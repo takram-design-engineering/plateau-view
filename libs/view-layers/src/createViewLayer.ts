@@ -1,10 +1,6 @@
 import { type SetOptional } from 'type-fest'
 
-import {
-  type LayerModel,
-  type LayerModelOverrides,
-  type LayerType
-} from '@takram/plateau-layers'
+import { type LayerModel, type LayerType } from '@takram/plateau-layers'
 
 import { createBridgeLayer, type BridgeLayerModelParams } from './BridgeLayer'
 import {
@@ -79,7 +75,7 @@ type ViewLayerModelParams<T extends LayerType> =
 
 export function createViewLayer<T extends LayerType>(
   params: ViewLayerModelParams<T> & { type: T }
-): SetOptional<LayerModelOverrides[T], 'id'>
+): SetOptional<LayerModel<T>, 'id'>
 
 // TODO: Refine types
 export function createViewLayer<T extends LayerType>(

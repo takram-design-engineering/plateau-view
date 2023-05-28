@@ -42,18 +42,13 @@ function transform(object: object): ScreenSpaceSelectionEntry | undefined {
 }
 
 const selectionAtoms = atomsWithSelection<ScreenSpaceSelectionEntry>({
-  isEqual: (a, b) => {
-    if (a.type !== b.type) {
-      return false
-    }
-    if (typeof a.type !== typeof b.type) {
-      return false
-    }
+  getKey: value => {
     // Don't remove type assertion.
-    return typeof a.value === 'object'
-      ? (a.value as unknown as ScreenSpaceSelectionKeyedValue).key ===
-          (b.value as unknown as ScreenSpaceSelectionKeyedValue).key
-      : a.value === b.value
+    return `${value.type}:${
+      typeof value.value === 'object'
+        ? String((value.value as unknown as ScreenSpaceSelectionKeyedValue).key)
+        : String(value.value)
+    }`
   },
   onSelect: value => {
     for (const responder of responders) {
