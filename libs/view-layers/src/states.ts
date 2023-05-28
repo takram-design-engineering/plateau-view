@@ -21,7 +21,7 @@ export const tilesetLayersAtom = atom(get => {
   )
 })
 
-export const highlightedLayers = atom(get => {
+export const highlightedLayersAtom = atom(get => {
   // TODO: Support other types of selection.
   const screenSpaceSelection = get(screenSpaceSelectionAtom)
   const featureKeys = screenSpaceSelection

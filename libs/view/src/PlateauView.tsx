@@ -18,6 +18,7 @@ import {
 import { Areas } from './containers/Areas'
 import { Canvas } from './containers/Canvas'
 import { Environments } from './containers/Environments'
+import { ExclusiveSelection } from './containers/ExclusiveSelection'
 import { KeyBindings } from './containers/KeyBindings'
 import { ReverseGeocoding } from './containers/ReverseGeocoding'
 import { ScreenSpaceCamera } from './containers/ScreenSpaceCamera'
@@ -124,6 +125,7 @@ export const PlateauView: FC<PlateauViewProps> = () => {
       </Canvas>
       <KeyBindings />
       <ScreenSpaceSelection />
+      <ExclusiveSelection />
       <AppLayout
         main={
           <MainPanel>
