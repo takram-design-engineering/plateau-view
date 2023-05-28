@@ -1,26 +1,25 @@
 import { schemeCategory10 } from 'd3'
 import { useAtomValue, useSetAtom } from 'jotai'
-import { useEffect, useMemo, type FC } from 'react'
+import { useEffect, type FC } from 'react'
 import { type SetOptional } from 'type-fest'
 
 import { useCesium } from '@takram/plateau-cesium'
-import { VectorImageryLayer } from '@takram/plateau-datasets'
 import {
+  PlateauDatasetFormat,
   PlateauDatasetType,
   useMunicipalityDatasetsQuery
 } from '@takram/plateau-graphql'
 import { type LayerProps } from '@takram/plateau-layers'
 
+import { MVTLayerContent } from './MVTLayerContent'
 import {
   createDatasetLayerBase,
   type DatasetLayerModel,
   type DatasetLayerModelParams
 } from './createDatasetLayerBase'
 import { LANDSLIDE_LAYER } from './layerTypes'
-import { pixelRatioAtom } from './states'
-import { useDatasetDatum } from './useDatasetDatum'
+import { useDatasetDatum, type DatasetDatum } from './useDatasetDatum'
 import { useDatasetLayerTitle } from './useDatasetLayerTitle'
-import { useMVTMetadata } from './useMVTMetadata'
 
 export interface LandSlideRiskLayerModelParams
   extends DatasetLayerModelParams {}
@@ -36,7 +35,6 @@ export function createLandSlideRiskLayer(
   }
 }
 
-// TODO: Abstraction of MVT
 export const LandSlideRiskLayer: FC<LayerProps<typeof LANDSLIDE_LAYER>> = ({
   titleAtom,
   hiddenAtom,
@@ -74,41 +72,19 @@ export const LandSlideRiskLayer: FC<LayerProps<typeof LANDSLIDE_LAYER>> = ({
     }
   }, [scene])
 
-  const metadata = useMVTMetadata(datum?.url)
-  const style = useMemo(() => {
-    if (metadata == null) {
-      return
-    }
-    // TODO: Make it configurable.
-    return {
-      version: 8,
-      layers: metadata.sourceLayers.flatMap(layer =>
-        values.map((value, index) => ({
-          'source-layer': layer.id,
-          filter: ['all', ['==', 'urf:areaType_code', value]],
-          type: 'fill',
-          paint: {
-            'fill-color': schemeCategory10[index % schemeCategory10.length]
-          }
-        }))
-      )
-    }
-  }, [metadata])
-
-  const pixelRatio = useAtomValue(pixelRatioAtom)
-
-  if (hidden || datum == null || metadata == null) {
+  if (hidden || datum == null) {
     return null
   }
-  return (
-    <VectorImageryLayer
-      url={datum.url}
-      style={style}
-      pixelRatio={pixelRatio}
-      rectangle={metadata.rectangle}
-      maximumDataZoom={metadata.maximumZoom}
-    />
-  )
+  if (datum.format === PlateauDatasetFormat.Mvt) {
+    return (
+      <MVTLayerContent
+        // TODO: Infer type
+        datum={datum as DatasetDatum<PlateauDatasetFormat.Mvt>}
+        styles={styles}
+      />
+    )
+  }
+  return null
 }
 
 // TODO: Separate definition.
@@ -119,3 +95,12 @@ const values = [
   '3', // 土砂災害警戒区域（指定前）
   '4' // 土砂災害特別警戒区域（指定前）
 ]
+
+// TODO: Make configurable.
+const styles = values.map((value, index) => ({
+  filter: ['all', ['==', 'urf:areaType_code', value]],
+  type: 'fill',
+  paint: {
+    'fill-color': schemeCategory10[index % schemeCategory10.length]
+  }
+}))
