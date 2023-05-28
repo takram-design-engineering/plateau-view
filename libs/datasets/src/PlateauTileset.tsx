@@ -5,27 +5,41 @@ import {
   Cesium3DTileset,
   Math as CesiumMath,
   ShadowMode,
-  type Cesium3DTileStyle,
-  type ClassificationType,
-  type Color
+  type Cesium3DTile,
+  type Cesium3DTileStyle
 } from '@cesium/engine'
 import { useAtomValue } from 'jotai'
-import { forwardRef, useEffect } from 'react'
+import { forwardRef, useEffect, useRef } from 'react'
 
 import { useAsyncInstance, useCesium } from '@takram/plateau-cesium'
+import { forEachTileFeature } from '@takram/plateau-cesium-helpers'
 import {
   assignForwardedRef,
+  useConstant,
   withDeferredProps,
   withEphemerality
 } from '@takram/plateau-react-helpers'
-import { useScreenSpaceSelectionResponder } from '@takram/plateau-screen-space-selection'
+import {
+  screenSpaceSelectionAtom,
+  useScreenSpaceSelectionResponder,
+  type ScreenSpaceSelectionEntry
+} from '@takram/plateau-screen-space-selection'
 
 import { LambertDiffuseShader } from './LambertDiffuseShader'
+import { PlateauGMLIndex, getGmlId } from './PlateauGMLIndex'
 import {
   showTilesetBoundingVolumeAtom,
   showTilesetWireframeAtom
 } from './states'
 import { type TilesetPrimitiveConstructorOptions } from './types'
+
+export const PLATEAU_TILESET = 'PLATEAU_TILESET'
+
+declare module '@takram/plateau-screen-space-selection' {
+  interface ScreenSpaceSelectionOverrides {
+    [PLATEAU_TILESET]: string
+  }
+}
 
 const cartographicScratch = new Cartographic()
 
@@ -33,9 +47,7 @@ interface PlateauTilesetContentProps
   extends TilesetPrimitiveConstructorOptions {
   url: string
   style?: Cesium3DTileStyle
-  selectionColor?: Color
   disableShadow?: boolean
-  classificationType?: ClassificationType
   showWireframe?: boolean
   showBoundingVolume?: boolean
 }
@@ -48,19 +60,24 @@ const PlateauTilesetContent = withEphemerality(
       {
         url,
         style,
-        selectionColor,
         disableShadow = false,
-        classificationType,
         showWireframe = false,
         showBoundingVolume = false,
         ...props
       },
       forwardedRef
     ) => {
+      // Assume that component is ephemeral.
+      const gmlIndex = useConstant(() => new PlateauGMLIndex())
+
+      const selection = useAtomValue(screenSpaceSelectionAtom)
+      const selectionRef = useRef(selection)
+      selectionRef.current = selection
+
       const scene = useCesium(({ scene }) => scene)
       const tileset = useAsyncInstance({
         owner: scene.primitives,
-        keys: [url, scene, classificationType],
+        keys: [url, scene],
         create: async () =>
           await Cesium3DTileset.fromUrl(url, {
             // @ts-expect-error missing type
@@ -69,20 +86,39 @@ const PlateauTilesetContent = withEphemerality(
               disableShadow || showWireframe
                 ? ShadowMode.DISABLED
                 : ShadowMode.ENABLED,
-            classificationType,
             debugWireframe: showWireframe,
             debugShowBoundingVolume: showBoundingVolume
           }),
         transferOwnership: (tileset, primitives) => {
+          const removeListeners = [
+            tileset.tileLoad.addEventListener((tile: Cesium3DTile) => {
+              gmlIndex.addTile(tile)
+
+              // Mark features as selected when tiles are loaded.
+              forEachTileFeature(tile, feature => {
+                const id = getGmlId(feature)
+                const selected = selectionRef.current.some(
+                  ({ type, value }) => type === PLATEAU_TILESET && value === id
+                )
+                if (selected) {
+                  feature.setProperty('selected', true)
+                }
+              })
+            })
+          ]
+          // TODO: Make sure it's not necessary to observe tileUnload events.
           primitives.add(tileset)
           return () => {
+            // No need to clean up gmlIndex because component is ephemeral.
+            removeListeners.forEach(removeListener => {
+              removeListener()
+            })
             primitives.remove(tileset)
           }
         }
       })
 
       if (tileset != null) {
-        tileset.style = style
         tileset.shadows =
           disableShadow || showWireframe
             ? ShadowMode.DISABLED
@@ -92,45 +128,60 @@ const PlateauTilesetContent = withEphemerality(
         Object.assign(tileset, props)
       }
 
+      // Assignment of style is not trivial.
+      useEffect(() => {
+        if (tileset != null) {
+          tileset.style = style
+        }
+      }, [style, tileset])
+
       useEffect(() => {
         assignForwardedRef(forwardedRef, tileset ?? null)
       }, [forwardedRef, tileset])
 
       useScreenSpaceSelectionResponder({
-        predicate: (object): object is Cesium3DTileFeature => {
-          return (
-            object instanceof Cesium3DTileFeature && object.tileset === tileset
-          )
+        type: PLATEAU_TILESET,
+        transform: object => {
+          if (
+            !(object instanceof Cesium3DTileFeature) ||
+            object.tileset !== tileset
+          ) {
+            return
+          }
+          const id = getGmlId(object)
+          return id != null ? { type: PLATEAU_TILESET, value: id } : undefined
         },
-        onSelect: features => {
-          if (selectionColor == null) {
+        predicate: (
+          value
+        ): value is ScreenSpaceSelectionEntry<typeof PLATEAU_TILESET> => {
+          return value.type === PLATEAU_TILESET && gmlIndex.has(value.value)
+        },
+        onSelect: value => {
+          const features = gmlIndex.find(value.value)
+          if (features == null) {
             return
           }
           features.forEach(feature => {
-            feature.color = selectionColor
+            feature.setProperty('selected', true)
           })
         },
-        onDeselect: features => {
-          if (tileset?.isDestroyed() !== false) {
-            return
-          }
-          if (style == null) {
+        onDeselect: value => {
+          const features = gmlIndex.find(value.value)
+          if (features == null) {
             return
           }
           features.forEach(feature => {
-            try {
-              // When color is white, the feature's color is not changed.
-              feature.color = style.color.evaluateColor(feature)
-            } catch (error) {
-              if (process.env.NODE_ENV !== 'production') {
-                // TODO: Remove features in unloaded tiles. This happens only
-                // with PLATEAU 2022 tilesets where refinement is replacement.
-                console.warn('Error during deselecting feature.')
-              }
-            }
+            feature.setProperty('selected', false)
           })
         },
-        computeBoundingSphere: (feature, result = new BoundingSphere()) => {
+        computeBoundingSphere: (value, result = new BoundingSphere()) => {
+          const features = gmlIndex.find(value.value)
+          if (features == null) {
+            return
+          }
+          // TODO: Do I have to the bounding sphere of all the features?
+          const [feature] = features
+
           // I cannot find the way to access glTF buffer. Try approximate bounding
           // sphere by property values, but PLATEAU 2022 tilesets don't have
           // coordinates information in their properties. Only PLATEAU 2020
