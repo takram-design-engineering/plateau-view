@@ -6,10 +6,12 @@ import {
   Math as CesiumMath,
   ShadowMode,
   type Cesium3DTile,
-  type Cesium3DTileStyle
+  type Cesium3DTileStyle,
+  type Ellipsoid
 } from '@cesium/engine'
 import { useAtomValue } from 'jotai'
-import { forwardRef, useEffect, useRef } from 'react'
+import { difference } from 'lodash'
+import { forwardRef, useEffect, useRef, type ForwardedRef } from 'react'
 
 import { useAsyncInstance, useCesium } from '@takram/plateau-cesium'
 import { forEachTileFeature } from '@takram/plateau-cesium-helpers'
@@ -26,7 +28,8 @@ import {
 } from '@takram/plateau-screen-space-selection'
 
 import { LambertDiffuseShader } from './LambertDiffuseShader'
-import { PlateauGMLIndex, getGmlId } from './PlateauGMLIndex'
+import { TileFeatureIndex } from './TileFeatureIndex'
+import { getGMLId } from './getGMLId'
 import {
   showTilesetBoundingVolumeAtom,
   showTilesetWireframeAtom
@@ -39,18 +42,166 @@ declare module '@takram/plateau-screen-space-selection' {
   interface ScreenSpaceSelectionOverrides {
     [PLATEAU_TILESET]: {
       key: string
-      gmlIndex: PlateauGMLIndex
+      featureIndex: TileFeatureIndex
     }
   }
 }
 
+function initTile(
+  tile: Cesium3DTile,
+  states: {
+    hiddenFeatures?: readonly string[]
+    selection?: readonly ScreenSpaceSelectionEntry[]
+  }
+): void {
+  forEachTileFeature(tile, feature => {
+    const id = getGMLId(feature)
+    if (id == null) {
+      return
+    }
+    if (states.hiddenFeatures?.includes(id) === true) {
+      feature.show = false
+    }
+    if (
+      states.selection?.some(
+        ({ type, value }) => type === PLATEAU_TILESET && value.key === id
+      ) === true
+    ) {
+      feature.setProperty('selected', true)
+    }
+  })
+}
+
 const cartographicScratch = new Cartographic()
+
+function computeBoundingSphere(
+  features: readonly Cesium3DTileFeature[],
+  ellipsoid?: Ellipsoid,
+  result = new BoundingSphere()
+): BoundingSphere | undefined {
+  // TODO: Do I have to the bounding sphere of all the features?
+  const [feature] = features
+
+  // I cannot find the way to access glTF buffer. Try approximate bounding
+  // sphere by property values, but PLATEAU 2022 tilesets don't have
+  // coordinates information in their properties. Only PLATEAU 2020
+  // datasets are supported.
+  const x: number | undefined = feature.getProperty('_x')
+  const y: number | undefined = feature.getProperty('_y')
+  const z: number | undefined = feature.getProperty('_z')
+  const height: number | undefined = feature.getProperty('_height')
+  if (x == null || y == null || z == null || height == null) {
+    return undefined
+  }
+  cartographicScratch.longitude = CesiumMath.toRadians(x)
+  cartographicScratch.latitude = CesiumMath.toRadians(y)
+  cartographicScratch.height = z
+  Cartographic.toCartesian(cartographicScratch, ellipsoid, result.center)
+  result.radius = height / 2
+  return result
+}
+
+function useSelectionResponder({
+  tileset,
+  featureIndex
+}: {
+  tileset?: Cesium3DTileset
+  featureIndex: TileFeatureIndex
+}): void {
+  const scene = useCesium(({ scene }) => scene)
+  useScreenSpaceSelectionResponder({
+    type: PLATEAU_TILESET,
+    transform: object => {
+      if (
+        !(object instanceof Cesium3DTileFeature) ||
+        object.tileset !== tileset
+      ) {
+        return
+      }
+      const id = getGMLId(object)
+      return id != null
+        ? {
+            type: PLATEAU_TILESET,
+            value: {
+              key: id,
+              featureIndex
+            }
+          }
+        : undefined
+    },
+    predicate: (
+      value
+    ): value is ScreenSpaceSelectionEntry<typeof PLATEAU_TILESET> => {
+      return value.type === PLATEAU_TILESET && featureIndex.has(value.value.key)
+    },
+    onSelect: value => {
+      const features = featureIndex.find(value.value.key)
+      if (features == null) {
+        return
+      }
+      features.forEach(feature => {
+        feature.setProperty('selected', true)
+      })
+    },
+    onDeselect: value => {
+      const features = featureIndex.find(value.value.key)
+      if (features == null) {
+        return
+      }
+      features.forEach(feature => {
+        feature.setProperty('selected', false)
+      })
+    },
+    computeBoundingSphere: (value, result) => {
+      const features = featureIndex.find(value.value.key)
+      if (features == null) {
+        return
+      }
+      return computeBoundingSphere(features, scene.globe.ellipsoid, result)
+    }
+  })
+}
+
+function useHiddenFeatures({
+  featureIndex,
+  hiddenFeatures
+}: {
+  featureIndex: TileFeatureIndex
+  hiddenFeatures?: readonly string[]
+}): void {
+  const scene = useCesium(({ scene }) => scene)
+  const prevHiddenFeaturesRef = useRef(hiddenFeatures)
+  useEffect(() => {
+    const prevValue = prevHiddenFeaturesRef.current ?? []
+    const nextValue = hiddenFeatures ?? []
+    prevHiddenFeaturesRef.current = hiddenFeatures
+    const keysToHide = difference(nextValue, prevValue)
+    const keysToShow = difference(prevValue, nextValue)
+    if (keysToShow.length > 0) {
+      keysToShow.forEach(key => {
+        featureIndex.find(key)?.forEach(feature => {
+          feature.show = true
+        })
+      })
+    }
+    if (keysToHide.length > 0) {
+      keysToHide.forEach(key => {
+        featureIndex.find(key)?.forEach(feature => {
+          feature.show = false
+        })
+      })
+    }
+    scene.requestRender()
+  }, [hiddenFeatures, featureIndex, scene])
+}
 
 interface PlateauTilesetContentProps
   extends TilesetPrimitiveConstructorOptions {
+  featureIndexRef?: ForwardedRef<TileFeatureIndex>
   url: string
   style?: Cesium3DTileStyle
   disableShadow?: boolean
+  hiddenFeatures?: readonly string[]
   showWireframe?: boolean
   showBoundingVolume?: boolean
 }
@@ -61,9 +212,11 @@ const PlateauTilesetContent = withEphemerality(
   forwardRef<Cesium3DTileset, PlateauTilesetContentProps>(
     (
       {
+        featureIndexRef,
         url,
         style,
         disableShadow = false,
+        hiddenFeatures,
         showWireframe = false,
         showBoundingVolume = false,
         ...props
@@ -71,11 +224,22 @@ const PlateauTilesetContent = withEphemerality(
       forwardedRef
     ) => {
       // Assume that component is ephemeral.
-      const gmlIndex = useConstant(() => new PlateauGMLIndex())
+      const featureIndex = useConstant(() => new TileFeatureIndex())
+      useEffect(
+        () => assignForwardedRef(featureIndexRef, featureIndex),
+        [featureIndexRef, featureIndex]
+      )
 
       const selection = useAtomValue(screenSpaceSelectionAtom)
-      const selectionRef = useRef(selection)
-      selectionRef.current = selection
+
+      const stateRef = useRef({
+        hiddenFeatures,
+        selection
+      })
+      Object.assign(stateRef.current, {
+        hiddenFeatures,
+        selection
+      })
 
       const scene = useCesium(({ scene }) => scene)
       const tileset = useAsyncInstance({
@@ -95,19 +259,8 @@ const PlateauTilesetContent = withEphemerality(
         transferOwnership: (tileset, primitives) => {
           const removeListeners = [
             tileset.tileLoad.addEventListener((tile: Cesium3DTile) => {
-              gmlIndex.addTile(tile)
-
-              // Mark features as selected when tiles are loaded.
-              forEachTileFeature(tile, feature => {
-                const id = getGmlId(feature)
-                const selected = selectionRef.current.some(
-                  ({ type, value }) =>
-                    type === PLATEAU_TILESET && value.key === id
-                )
-                if (selected) {
-                  feature.setProperty('selected', true)
-                }
-              })
+              featureIndex.addTile(tile, getGMLId)
+              initTile(tile, stateRef.current)
             })
           ]
           // TODO: Make sure it's not necessary to observe tileUnload events.
@@ -132,6 +285,11 @@ const PlateauTilesetContent = withEphemerality(
         Object.assign(tileset, props)
       }
 
+      useEffect(
+        () => assignForwardedRef(forwardedRef, tileset ?? null),
+        [forwardedRef, tileset]
+      )
+
       // Assignment of style is not trivial.
       useEffect(() => {
         if (tileset != null) {
@@ -139,85 +297,14 @@ const PlateauTilesetContent = withEphemerality(
         }
       }, [style, tileset])
 
-      useEffect(() => {
-        assignForwardedRef(forwardedRef, tileset ?? null)
-      }, [forwardedRef, tileset])
-
-      useScreenSpaceSelectionResponder({
-        type: PLATEAU_TILESET,
-        transform: object => {
-          if (
-            !(object instanceof Cesium3DTileFeature) ||
-            object.tileset !== tileset
-          ) {
-            return
-          }
-          const id = getGmlId(object)
-          return id != null
-            ? {
-                type: PLATEAU_TILESET,
-                value: {
-                  key: id,
-                  gmlIndex
-                }
-              }
-            : undefined
-        },
-        predicate: (
-          value
-        ): value is ScreenSpaceSelectionEntry<typeof PLATEAU_TILESET> => {
-          return value.type === PLATEAU_TILESET && gmlIndex.has(value.value.key)
-        },
-        onSelect: value => {
-          const features = gmlIndex.find(value.value.key)
-          if (features == null) {
-            return
-          }
-          features.forEach(feature => {
-            feature.setProperty('selected', true)
-          })
-        },
-        onDeselect: value => {
-          const features = gmlIndex.find(value.value.key)
-          if (features == null) {
-            return
-          }
-          features.forEach(feature => {
-            feature.setProperty('selected', false)
-          })
-        },
-        computeBoundingSphere: (value, result = new BoundingSphere()) => {
-          const features = gmlIndex.find(value.value.key)
-          if (features == null) {
-            return
-          }
-          // TODO: Do I have to the bounding sphere of all the features?
-          const [feature] = features
-
-          // I cannot find the way to access glTF buffer. Try approximate bounding
-          // sphere by property values, but PLATEAU 2022 tilesets don't have
-          // coordinates information in their properties. Only PLATEAU 2020
-          // datasets are supported.
-          const x: number | undefined = feature.getProperty('_x')
-          const y: number | undefined = feature.getProperty('_y')
-          const z: number | undefined = feature.getProperty('_z')
-          const height: number | undefined = feature.getProperty('_height')
-          if (x == null || y == null || z == null || height == null) {
-            return undefined
-          }
-          cartographicScratch.longitude = CesiumMath.toRadians(x)
-          cartographicScratch.latitude = CesiumMath.toRadians(y)
-          cartographicScratch.height = z
-          Cartographic.toCartesian(
-            cartographicScratch,
-            scene.globe.ellipsoid,
-            result.center
-          )
-          result.radius = height / 2
-          return result
-        }
+      useHiddenFeatures({
+        featureIndex,
+        hiddenFeatures
       })
-
+      useSelectionResponder({
+        tileset,
+        featureIndex
+      })
       return null
     }
   )

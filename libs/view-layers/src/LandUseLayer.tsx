@@ -1,26 +1,25 @@
 import { schemeCategory10 } from 'd3'
 import { useAtomValue, useSetAtom } from 'jotai'
-import { useEffect, useMemo, type FC } from 'react'
+import { useEffect, type FC } from 'react'
 import { type SetOptional } from 'type-fest'
 
 import { useCesium } from '@takram/plateau-cesium'
-import { VectorImageryLayer } from '@takram/plateau-datasets'
 import {
+  PlateauDatasetFormat,
   PlateauDatasetType,
   useMunicipalityDatasetsQuery
 } from '@takram/plateau-graphql'
 import { type LayerProps } from '@takram/plateau-layers'
 
+import { MVTLayerContent } from './MVTLayerContent'
 import {
   createDatasetLayerBase,
   type DatasetLayerModel,
   type DatasetLayerModelParams
 } from './createDatasetLayerBase'
 import { LAND_USE_LAYER } from './layerTypes'
-import { pixelRatioAtom } from './states'
-import { useDatasetDatum } from './useDatasetDatum'
+import { useDatasetDatum, type DatasetDatum } from './useDatasetDatum'
 import { useDatasetLayerTitle } from './useDatasetLayerTitle'
-import { useMVTMetadata } from './useMVTMetadata'
 
 export interface LandUseLayerModelParams extends DatasetLayerModelParams {}
 
@@ -35,7 +34,6 @@ export function createLandUseLayer(
   }
 }
 
-// TODO: Abstraction of MVT
 export const LandUseLayer: FC<LayerProps<typeof LAND_USE_LAYER>> = ({
   titleAtom,
   hiddenAtom,
@@ -73,41 +71,19 @@ export const LandUseLayer: FC<LayerProps<typeof LAND_USE_LAYER>> = ({
     }
   }, [scene])
 
-  const metadata = useMVTMetadata(datum?.url)
-  const style = useMemo(() => {
-    if (metadata == null) {
-      return
-    }
-    // TODO: Make it configurable.
-    return {
-      version: 8,
-      layers: metadata.sourceLayers.flatMap(layer =>
-        values.map((value, index) => ({
-          'source-layer': layer.id,
-          filter: ['all', ['==', 'luse:class_code', value]],
-          type: 'fill',
-          paint: {
-            'fill-color': schemeCategory10[index % schemeCategory10.length]
-          }
-        }))
-      )
-    }
-  }, [metadata])
-
-  const pixelRatio = useAtomValue(pixelRatioAtom)
-
-  if (hidden || datum == null || metadata == null) {
+  if (hidden || datum == null) {
     return null
   }
-  return (
-    <VectorImageryLayer
-      url={datum.url}
-      style={style}
-      pixelRatio={pixelRatio}
-      rectangle={metadata.rectangle}
-      maximumDataZoom={metadata.maximumZoom}
-    />
-  )
+  if (datum.format === PlateauDatasetFormat.Mvt) {
+    return (
+      <MVTLayerContent
+        // TODO: Infer type
+        datum={datum as DatasetDatum<PlateauDatasetFormat.Mvt>}
+        styles={styles}
+      />
+    )
+  }
+  return null
 }
 
 // TODO: Separate definition.
@@ -139,3 +115,12 @@ const values = [
   '262', // 道路・鉄軌道敷（道路と交通施設用地が混在）
   '263' // 空地（その他の空地①～④の区分が無い）
 ]
+
+// TODO: Make configurable.
+const styles = values.map((value, index) => ({
+  filter: ['all', ['==', 'luse:class_code', value]],
+  type: 'fill',
+  paint: {
+    'fill-color': schemeCategory10[index % schemeCategory10.length]
+  }
+}))

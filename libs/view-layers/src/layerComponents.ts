@@ -1,10 +1,4 @@
-import { type FC } from 'react'
-
-import {
-  type LayerComponents,
-  type LayerProps,
-  type LayerType
-} from '@takram/plateau-layers'
+import { type LayerComponents } from '@takram/plateau-layers'
 
 import { BridgeLayer } from './BridgeLayer'
 import { BuildingLayer } from './BuildingLayer'
@@ -37,29 +31,26 @@ import {
   VEGETATION_LAYER
 } from './layerTypes'
 
-// TODO: Remove this when all the layers are implemented.
-const NullLayer: FC<LayerProps<LayerType>> = () => null
-
-export const layerComponents = {
-  [BORDER_LAYER]: NullLayer,
+export const layerComponents: LayerComponents = {
+  [BORDER_LAYER]: undefined,
   [BRIDGE_LAYER]: BridgeLayer,
   [BUILDING_LAYER]: BuildingLayer,
-  [CITY_FURNITURE_LAYER]: NullLayer,
-  [EMERGENCY_ROUTE_LAYER]: NullLayer,
-  [GENERIC_CITY_OBJECT_LAYER]: NullLayer,
-  [HIGH_TIDE_RISK_LAYER]: NullLayer,
-  [INLAND_FLOODING_RISK_LAYER]: NullLayer,
+  [CITY_FURNITURE_LAYER]: undefined,
+  [EMERGENCY_ROUTE_LAYER]: undefined,
+  [GENERIC_CITY_OBJECT_LAYER]: undefined,
+  [HIGH_TIDE_RISK_LAYER]: undefined,
+  [INLAND_FLOODING_RISK_LAYER]: undefined,
   [LAND_USE_LAYER]: LandUseLayer,
-  [LANDMARK_LAYER]: NullLayer,
+  [LANDMARK_LAYER]: undefined,
   [LANDSLIDE_LAYER]: LandSlideRiskLayer,
-  [PARK_LAYER]: NullLayer,
-  [RAILWAY_LAYER]: NullLayer,
+  [PARK_LAYER]: undefined,
+  [RAILWAY_LAYER]: undefined,
   [RIVER_FLOODING_RISK_LAYER]: RiverFloodingRiskLayer,
   [ROAD_LAYER]: RoadLayer,
-  [SHELTER_LAYER]: NullLayer,
-  [STATION_LAYER]: NullLayer,
-  [TSUNAMI_RISK_LAYER]: NullLayer,
+  [SHELTER_LAYER]: undefined,
+  [STATION_LAYER]: undefined,
+  [TSUNAMI_RISK_LAYER]: undefined,
   [URBAN_PLANNING_LAYER]: UrbanPlanningLayer,
-  [USE_CASE_LAYER]: NullLayer,
-  [VEGETATION_LAYER]: NullLayer
-} as unknown as LayerComponents // TODO: Refine type
+  [USE_CASE_LAYER]: undefined,
+  [VEGETATION_LAYER]: undefined
+}

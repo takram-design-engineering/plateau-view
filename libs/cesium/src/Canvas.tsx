@@ -153,7 +153,6 @@ export const Canvas = forwardRef<HTMLDivElement, CanvasProps>(
         assignForwardedRef(forwardedCesiumRef, cesium)
         return () => {
           setCesium(null)
-          assignForwardedRef(forwardedCesiumRef, null)
           cesium.render = () => {}
 
           // TODO: Cesium destructs all the attached instances recursively, but
@@ -174,9 +173,10 @@ export const Canvas = forwardRef<HTMLDivElement, CanvasProps>(
       assignMutableOptionProps(cesium, props)
     }
 
-    useEffect(() => {
-      assignForwardedRef(forwardedCesiumRef, cesium)
-    }, [forwardedCesiumRef, cesium])
+    useEffect(
+      () => assignForwardedRef(forwardedCesiumRef, cesium),
+      [forwardedCesiumRef, cesium]
+    )
 
     return (
       <>

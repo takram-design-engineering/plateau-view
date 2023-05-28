@@ -30,9 +30,7 @@ export const Entity = memo(
         }
       }, [entities, entity])
 
-      useEffect(() => {
-        assignForwardedRef(ref, entity)
-      }, [ref, entity])
+      useEffect(() => assignForwardedRef(ref, entity), [ref, entity])
 
       // Although it seems Entity.merge() is the way to merge with the new
       // options, Object.assign() also works.

@@ -1,26 +1,25 @@
 import { schemeCategory10 } from 'd3'
 import { useAtomValue, useSetAtom } from 'jotai'
-import { useEffect, useMemo, type FC } from 'react'
+import { useEffect, type FC } from 'react'
 import { type SetOptional } from 'type-fest'
 
 import { useCesium } from '@takram/plateau-cesium'
-import { VectorImageryLayer } from '@takram/plateau-datasets'
 import {
+  PlateauDatasetFormat,
   PlateauDatasetType,
   useMunicipalityDatasetsQuery
 } from '@takram/plateau-graphql'
 import { type LayerProps } from '@takram/plateau-layers'
 
+import { MVTLayerContent } from './MVTLayerContent'
 import {
   createDatasetLayerBase,
   type DatasetLayerModel,
   type DatasetLayerModelParams
 } from './createDatasetLayerBase'
 import { URBAN_PLANNING_LAYER } from './layerTypes'
-import { pixelRatioAtom } from './states'
-import { useDatasetDatum } from './useDatasetDatum'
+import { useDatasetDatum, type DatasetDatum } from './useDatasetDatum'
 import { useDatasetLayerTitle } from './useDatasetLayerTitle'
-import { useMVTMetadata } from './useMVTMetadata'
 
 export interface UrbanPlanningLayerModelParams
   extends DatasetLayerModelParams {}
@@ -36,7 +35,6 @@ export function createUrbanPlanningLayer(
   }
 }
 
-// TODO: Abstraction of MVT
 export const UrbanPlanningLayer: FC<
   LayerProps<typeof URBAN_PLANNING_LAYER>
 > = ({ titleAtom, hiddenAtom, municipalityCode, datumIdAtom }) => {
@@ -71,43 +69,19 @@ export const UrbanPlanningLayer: FC<
     }
   }, [scene])
 
-  const metadata = useMVTMetadata(datum?.url)
-  const style = useMemo(() => {
-    if (metadata == null) {
-      return
-    }
-    // TODO: Make it configurable.
-    return {
-      version: 8,
-      layers: metadata.sourceLayers.flatMap(layer =>
-        values.map((value, index) => ({
-          'source-layer': layer.id,
-          // TODO: I cannot find documentation about this field. Value type
-          // differs from "urf:function_code" in "attributes" field.
-          filter: ['all', ['==', 'function_code', value]],
-          type: 'fill',
-          paint: {
-            'fill-color': schemeCategory10[index % schemeCategory10.length]
-          }
-        }))
-      )
-    }
-  }, [metadata])
-
-  const pixelRatio = useAtomValue(pixelRatioAtom)
-
-  if (hidden || datum == null || metadata == null) {
+  if (hidden || datum == null) {
     return null
   }
-  return (
-    <VectorImageryLayer
-      url={datum.url}
-      style={style}
-      pixelRatio={pixelRatio}
-      rectangle={metadata.rectangle}
-      maximumDataZoom={metadata.maximumZoom}
-    />
-  )
+  if (datum.format === PlateauDatasetFormat.Mvt) {
+    return (
+      <MVTLayerContent
+        // TODO: Infer type
+        datum={datum as DatasetDatum<PlateauDatasetFormat.Mvt>}
+        styles={styles}
+      />
+    )
+  }
+  return null
 }
 
 // TODO: Separate definition.
@@ -158,3 +132,14 @@ const values = [
   41, // 航空機騒音障害防止特別地区
   42 // 居住環境向上用途誘導地区
 ]
+
+// TODO: Make configurable.
+const styles = values.map((value, index) => ({
+  // TODO: I cannot find documentation about this field. Value type
+  // differs from "urf:function_code" in "attributes" field.
+  filter: ['all', ['==', 'function_code', value]],
+  type: 'fill',
+  paint: {
+    'fill-color': schemeCategory10[index % schemeCategory10.length]
+  }
+}))

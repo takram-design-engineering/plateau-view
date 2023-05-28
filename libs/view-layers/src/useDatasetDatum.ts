@@ -3,11 +3,15 @@ import { useMemo } from 'react'
 
 import {
   type PlateauDatasetDatumFragment,
+  type PlateauDatasetFormat,
   type PlateauDatasetFragment
 } from '@takram/plateau-graphql'
 
-export type DatasetDatum = PlateauDatasetDatumFragment & {
+export type DatasetDatum<
+  Format extends PlateauDatasetFormat = PlateauDatasetFormat
+> = PlateauDatasetDatumFragment & {
   dataset: PlateauDatasetFragment
+  format: Format
 }
 
 export function useDatasetDatum(

@@ -1,15 +1,15 @@
 import { atom } from 'jotai'
-import { differenceWith, intersectionWith, without } from 'lodash'
+import { differenceBy, intersectionBy, without } from 'lodash'
 
 export interface SelectionAtomsOptions<T> {
-  isEqual?: (a: T, b: T) => boolean
+  getKey?: (a: T) => unknown
   onSelect?: (value: T) => void
   onDeselect?: (value: T) => void
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export function atomsWithSelection<T>({
-  isEqual = (a, b) => a === b,
+  getKey = value => value,
   onSelect,
   onDeselect
 }: SelectionAtomsOptions<T> = {}) {
@@ -27,8 +27,10 @@ export function atomsWithSelection<T>({
         }
         // Assume that the cost of deriving difference here is smaller than
         // triggering state update.
-        const valuesToRemove = differenceWith(prevSelection, values, isEqual)
-        const valuesToAdd = differenceWith(values, prevSelection, isEqual)
+        // Note that differenceBy is much faster than differenceWith because it
+        // can internally use Set. Same is for intersectionBy.
+        const valuesToRemove = differenceBy(prevSelection, values, getKey)
+        const valuesToAdd = differenceBy(values, prevSelection, getKey)
         if (valuesToRemove.length > 0 && onDeselect != null) {
           valuesToRemove.forEach(onDeselect)
         }
@@ -47,7 +49,7 @@ export function atomsWithSelection<T>({
       if (values.length === 0) {
         return prevSelection
       }
-      const valuesToAdd = differenceWith(values, prevSelection, isEqual)
+      const valuesToAdd = differenceBy(values, prevSelection, getKey)
       if (valuesToAdd.length === 0) {
         return prevSelection
       }
@@ -63,7 +65,7 @@ export function atomsWithSelection<T>({
       if (values.length === 0) {
         return prevSelection
       }
-      const valuesToRemove = intersectionWith(prevSelection, values, isEqual)
+      const valuesToRemove = intersectionBy(prevSelection, values, getKey)
       if (valuesToRemove.length === 0) {
         return prevSelection
       }

@@ -31,48 +31,67 @@ import { ItemVisibilityIcon } from './icons/ItemVisibilityIcon'
 const StyledListItem = styled(ListItemButton, {
   shouldForwardProp: prop => prop !== 'hidden'
 })<{
+  highlighted?: boolean
   hidden?: boolean
-}>(({ theme, hidden = false }) => ({
-  alignItems: 'center',
-  minHeight: theme.spacing(5),
-  transition: 'none',
-  cursor: 'default',
+}>(({ theme, highlighted = false, hidden = false }) => {
+  const highlightedColor = alpha(
+    theme.palette.primary.main,
+    theme.palette.action.focusOpacity
+  )
+  return {
+    alignItems: 'center',
+    minHeight: theme.spacing(5),
+    transition: 'none',
+    cursor: 'default',
 
-  ...(hidden && {
-    color: alpha(
-      theme.palette.text.primary,
-      theme.palette.action.disabledOpacity
-    )
-  }),
+    ...(highlighted
+      ? {
+          backgroundColor: highlightedColor,
+          '&:hover': {
+            backgroundColor: highlightedColor
+          },
+          [`&.${listItemButtonClasses.selected}:hover`]: {
+            backgroundColor: highlightedColor
+          }
+        }
+      : {
+          // Disable hover style
+          backgroundColor: 'transparent',
+          '&:hover': {
+            backgroundColor: 'transparent'
+          },
+          [`&.${listItemButtonClasses.selected}:hover`]: {
+            backgroundColor: 'transparent'
+          }
+        }),
 
-  // Disable hover style
-  backgroundColor: 'transparent',
-  '&:hover': {
-    backgroundColor: 'transparent'
-  },
-  [`&.${listItemButtonClasses.selected}:hover`]: {
-    backgroundColor: 'transparent'
-  },
+    ...(hidden && {
+      color: alpha(
+        theme.palette.text.primary,
+        theme.palette.action.disabledOpacity
+      )
+    }),
 
-  [`&.${listItemButtonClasses.selected}`]: {
-    color: theme.palette.getContrastText(theme.palette.primary.dark),
-    backgroundColor: theme.palette.primary.main,
-    '&:hover': {
-      backgroundColor: theme.palette.primary.main
+    [`&.${listItemButtonClasses.selected}`]: {
+      color: theme.palette.getContrastText(theme.palette.primary.dark),
+      backgroundColor: theme.palette.primary.main,
+      '&:hover': {
+        backgroundColor: theme.palette.primary.main
+      },
+      [`& .${listItemTextClasses.secondary}`]: {
+        color: theme.palette.getContrastText(theme.palette.primary.dark)
+      }
     },
-    [`& .${listItemTextClasses.secondary}`]: {
-      color: theme.palette.getContrastText(theme.palette.primary.dark)
-    }
-  },
 
-  // Show secondary actions only when hovered
-  [`& .${listItemSecondaryActionClasses.root}`]: {
-    display: 'none'
-  },
-  [`&:hover .${listItemSecondaryActionClasses.root}`]: {
-    display: 'block'
+    // Show secondary actions only when hovered
+    [`& .${listItemSecondaryActionClasses.root}`]: {
+      display: 'none'
+    },
+    [`&:hover .${listItemSecondaryActionClasses.root}`]: {
+      display: 'block'
+    }
   }
-}))
+})
 
 const ListItemIcon = styled('div')(({ theme }) => ({
   marginRight: theme.spacing(1.5),
@@ -160,13 +179,15 @@ const HoverMenu: FC<HoverMenuProps> = ({ id, hiddenAtom }) => {
   )
 }
 
-export interface LayerListItemProps extends LayerProps {
+export type LayerListItemProps = LayerProps & {
   iconComponent: ComponentType<SvgIconProps>
+  highlighted?: boolean
 }
 
 export const LayerListItem: FC<LayerListItemProps> = ({
   id,
   selected,
+  highlighted,
   iconComponent,
   titleAtom,
   loadingAtom,
@@ -178,7 +199,12 @@ export const LayerListItem: FC<LayerListItemProps> = ({
   const hidden = useAtomValue(hiddenAtom)
   const Icon = iconComponent
   return (
-    <StyledListItem {...itemProps} selected={selected} hidden={hidden}>
+    <StyledListItem
+      {...itemProps}
+      selected={selected}
+      highlighted={highlighted}
+      hidden={hidden}
+    >
       <ListItemIcon>
         {loading ? (
           <AntIcon iconComponent={LoadingIcon} fontSize='medium' />

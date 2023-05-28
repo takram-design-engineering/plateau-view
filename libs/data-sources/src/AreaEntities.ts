@@ -37,7 +37,6 @@ export const AreaEntities = withEphemerality(
           assignForwardedRef(forwardedRef, dataSource)
           return () => {
             dataSources.remove(dataSource)
-            assignForwardedRef(forwardedRef, null)
           }
         }
       })
@@ -47,9 +46,10 @@ export const AreaEntities = withEphemerality(
         dataSource.show = show
       }
 
-      useEffect(() => {
-        assignForwardedRef(forwardedRef, dataSource ?? null)
-      }, [forwardedRef, dataSource])
+      useEffect(
+        () => assignForwardedRef(forwardedRef, dataSource ?? null),
+        [forwardedRef, dataSource]
+      )
 
       return null
     }

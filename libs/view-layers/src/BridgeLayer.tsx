@@ -5,38 +5,44 @@ import { type SetOptional } from 'type-fest'
 import { useCesium } from '@takram/plateau-cesium'
 import { PlateauBridgeTileset } from '@takram/plateau-datasets'
 import {
+  PlateauDatasetFormat,
   PlateauDatasetType,
   useMunicipalityDatasetsQuery
 } from '@takram/plateau-graphql'
 import { type LayerProps } from '@takram/plateau-layers'
 
+import { PlateauTilesetLayerContent } from './PlateauTilesetLayerContent'
 import {
-  createDatasetLayerBase,
-  type DatasetLayerModel,
-  type DatasetLayerModelParams
-} from './createDatasetLayerBase'
+  createPlateauTilesetLayerBase,
+  type PlateauTilesetLayerModel,
+  type PlateauTilesetLayerModelParams
+} from './createPlateauTilesetLayerBase'
 import { BRIDGE_LAYER } from './layerTypes'
-import { useDatasetDatum } from './useDatasetDatum'
+import { useDatasetDatum, type DatasetDatum } from './useDatasetDatum'
 import { useMunicipalityName } from './useMunicipalityName'
 
-export interface BridgeLayerModelParams extends DatasetLayerModelParams {}
+export interface BridgeLayerModelParams
+  extends PlateauTilesetLayerModelParams {}
 
-export interface BridgeLayerModel extends DatasetLayerModel {}
+export interface BridgeLayerModel extends PlateauTilesetLayerModel {}
 
 export function createBridgeLayer(
   params: BridgeLayerModelParams
 ): SetOptional<BridgeLayerModel, 'id'> {
   return {
-    ...createDatasetLayerBase(params),
+    ...createPlateauTilesetLayerBase(params),
     type: BRIDGE_LAYER
   }
 }
 
 export const BridgeLayer: FC<LayerProps<typeof BRIDGE_LAYER>> = ({
+  id,
   titleAtom,
   hiddenAtom,
   municipalityCode,
-  datumIdAtom
+  datumIdAtom,
+  featureIndexAtom,
+  hiddenFeaturesAtom
 }) => {
   const query = useMunicipalityDatasetsQuery({
     variables: {
@@ -67,5 +73,17 @@ export const BridgeLayer: FC<LayerProps<typeof BRIDGE_LAYER>> = ({
   if (hidden || datum == null) {
     return null
   }
-  return <PlateauBridgeTileset url={datum.url} />
+  if (datum.format === PlateauDatasetFormat.Cesium3DTiles) {
+    return (
+      <PlateauTilesetLayerContent
+        layerId={id}
+        // TODO: Infer type
+        datum={datum as DatasetDatum<PlateauDatasetFormat.Cesium3DTiles>}
+        component={PlateauBridgeTileset}
+        featureIndexAtom={featureIndexAtom}
+        hiddenFeaturesAtom={hiddenFeaturesAtom}
+      />
+    )
+  }
+  return null
 }
