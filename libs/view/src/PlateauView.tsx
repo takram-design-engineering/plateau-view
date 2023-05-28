@@ -1,13 +1,16 @@
 import { Cartesian3, HeadingPitchRoll } from '@cesium/engine'
-import { List, styled, type ListProps } from '@mui/material'
+import { styled } from '@mui/material'
 import { useAtomValue, useSetAtom } from 'jotai'
-import { Suspense, forwardRef, useCallback, useEffect, type FC } from 'react'
+import { Suspense, useCallback, useEffect, type FC } from 'react'
 
 import { CurrentTime, ViewLocator } from '@takram/plateau-cesium'
 import { SuspendUntilTilesLoaded } from '@takram/plateau-cesium-helpers'
 import { GooglePhotorealisticTileset } from '@takram/plateau-datasets'
 import { LayerList, LayersRenderer, useAddLayer } from '@takram/plateau-layers'
-import { AppLayout } from '@takram/plateau-ui-components'
+import {
+  AppLayout,
+  LayerList as LayerListComponent
+} from '@takram/plateau-ui-components'
 import {
   BUILDING_LAYER,
   ViewLayerListItem,
@@ -38,10 +41,6 @@ const initialOrientation = new HeadingPitchRoll(Math.PI * 0.4, -Math.PI * 0.2)
 const Root = styled('div')({
   touchAction: 'none' // TODO: Don't disable globally
 })
-
-const LayerListComponent = forwardRef<HTMLDivElement, ListProps<'div'>>(
-  (props, ref) => <List ref={ref} component='div' dense {...props} />
-)
 
 // TODO: Just for temporary.
 const InitialLayers: FC = () => {
