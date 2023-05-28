@@ -1,5 +1,5 @@
 import { useAtom } from 'jotai'
-import { useEffect, type FC } from 'react'
+import { useLayoutEffect, type FC } from 'react'
 
 import { layerSelectionAtom } from '@takram/plateau-layers'
 import { screenSpaceSelectionAtom } from '@takram/plateau-screen-space-selection'
@@ -10,13 +10,13 @@ export const ExclusiveSelection: FC = () => {
     screenSpaceSelectionAtom
   )
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (layerSelection.length > 0) {
       setScreenSpaceSelection([])
     }
   }, [layerSelection, setLayerSelection, setScreenSpaceSelection])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (screenSpaceSelection.length > 0) {
       setLayerSelection([])
     }
