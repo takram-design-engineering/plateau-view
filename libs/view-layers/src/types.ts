@@ -1,5 +1,7 @@
 import { type PrimitiveAtom } from 'jotai'
 
+import { type LayerListItemTitle } from '@takram/plateau-ui-components'
+
 import { type BridgeLayerModel } from './BridgeLayer'
 import { type BuildingLayerModel } from './BuildingLayer'
 import { type LandSlideRiskLayerModel } from './LandSlideRiskLayer'
@@ -31,16 +33,9 @@ import {
   type VEGETATION_LAYER
 } from './layerTypes'
 
-export type LayerTitle =
-  | string
-  | {
-      primary: string
-      secondary?: string
-    }
-
 declare module '@takram/plateau-layers' {
   interface LayerModelBase {
-    titleAtom: PrimitiveAtom<LayerTitle | null>
+    titleAtom: PrimitiveAtom<LayerListItemTitle | null>
     loadingAtom: PrimitiveAtom<boolean>
     hiddenAtom: PrimitiveAtom<boolean>
   }

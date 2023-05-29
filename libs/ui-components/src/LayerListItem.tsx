@@ -11,24 +11,22 @@ import {
   listItemTextClasses,
   styled,
   svgIconClasses,
+  type ListItemButtonProps,
   type SvgIconProps
 } from '@mui/material'
-import { useAtom, useAtomValue, useSetAtom, type PrimitiveAtom } from 'jotai'
 import {
-  useCallback,
   type ComponentType,
   type FC,
+  type MouseEventHandler,
   type SyntheticEvent
 } from 'react'
-
-import { removeLayerAtom, type LayerProps } from '@takram/plateau-layers'
 
 import { AntIcon } from './AntIcon'
 import { ItemLocationIcon } from './icons/ItemLocationIcon'
 import { ItemTrashIcon } from './icons/ItemTrashIcon'
 import { ItemVisibilityIcon } from './icons/ItemVisibilityIcon'
 
-const StyledListItem = styled(ListItemButton, {
+const StyledListItemButton = styled(ListItemButton, {
   shouldForwardProp: prop => prop !== 'highlighted' && prop !== 'hidden'
 })<{
   highlighted?: boolean
@@ -131,76 +129,80 @@ function stopPropagation(event: SyntheticEvent): void {
 }
 
 interface HoverMenuProps {
-  id: string
-  hiddenAtom: PrimitiveAtom<boolean>
+  hidden?: boolean
+  onRemove?: MouseEventHandler<HTMLButtonElement>
+  onToggleHidden?: MouseEventHandler<HTMLButtonElement>
 }
 
-const HoverMenu: FC<HoverMenuProps> = ({ id, hiddenAtom }) => {
-  const [hidden, setHidden] = useAtom(hiddenAtom)
-  const handleVisibilityClick = useCallback(() => {
-    setHidden(value => !value)
-  }, [setHidden])
-
-  const remove = useSetAtom(removeLayerAtom)
-  const handleRemoveClick = useCallback(() => {
-    remove(id)
-  }, [id, remove])
-
-  return (
-    <HoverMenuRoot onMouseDown={stopPropagation}>
-      <Tooltip title='削除'>
-        <IconButton
-          size='small'
-          color='inherit'
-          aria-label='削除'
-          onClick={handleRemoveClick}
-        >
-          <ItemTrashIcon fontSize='medium' />
+const HoverMenu: FC<HoverMenuProps> = ({
+  hidden = false,
+  onRemove,
+  onToggleHidden
+}) => (
+  <HoverMenuRoot onMouseDown={stopPropagation}>
+    <Tooltip title='削除'>
+      <IconButton
+        size='small'
+        color='inherit'
+        aria-label='削除'
+        onClick={onRemove}
+      >
+        <ItemTrashIcon fontSize='medium' />
+      </IconButton>
+    </Tooltip>
+    <Tooltip title='移動'>
+      <span>
+        <IconButton size='small' color='inherit' aria-label='移動' disabled>
+          <ItemLocationIcon fontSize='medium' />
         </IconButton>
-      </Tooltip>
-      <Tooltip title='移動'>
-        <span>
-          <IconButton size='small' color='inherit' aria-label='移動' disabled>
-            <ItemLocationIcon fontSize='medium' />
-          </IconButton>
-        </span>
-      </Tooltip>
-      <Tooltip title={hidden ? '表示' : '隠す'}>
-        <IconButton
-          size='small'
-          color='inherit'
-          aria-label={hidden ? '表示' : '隠す'}
-          onClick={handleVisibilityClick}
-        >
-          <ItemVisibilityIcon fontSize='medium' />
-        </IconButton>
-      </Tooltip>
-    </HoverMenuRoot>
-  )
-}
+      </span>
+    </Tooltip>
+    <Tooltip title={hidden ? '表示' : '隠す'}>
+      <IconButton
+        size='small'
+        color='inherit'
+        aria-label={hidden ? '表示' : '隠す'}
+        onClick={onToggleHidden}
+      >
+        <ItemVisibilityIcon fontSize='medium' />
+      </IconButton>
+    </Tooltip>
+  </HoverMenuRoot>
+)
 
-export type LayerListItemProps = LayerProps & {
+export type LayerListItemTitle =
+  | string
+  | {
+      primary: string
+      secondary?: string
+    }
+
+export interface LayerListItemProps
+  extends Omit<ListItemButtonProps, 'title'>,
+    Omit<HoverMenuProps, 'hidden'> {
+  title?: LayerListItemTitle
   iconComponent: ComponentType<SvgIconProps>
   highlighted?: boolean
+  selected?: boolean
+  loading?: boolean
+  hidden?: boolean
 }
 
 export const LayerListItem: FC<LayerListItemProps> = ({
-  id,
-  selected,
-  highlighted,
+  title,
   iconComponent,
-  titleAtom,
-  loadingAtom,
-  hiddenAtom,
-  itemProps
+  highlighted = false,
+  selected = false,
+  loading = false,
+  hidden = false,
+  onRemove,
+  onToggleHidden,
+  ...props
 }) => {
-  const title = useAtomValue(titleAtom)
-  const loading = useAtomValue(loadingAtom)
-  const hidden = useAtomValue(hiddenAtom)
   const Icon = iconComponent
   return (
-    <StyledListItem
-      {...itemProps}
+    <StyledListItemButton
+      {...props}
       selected={selected}
       highlighted={highlighted}
       hidden={hidden}
@@ -222,7 +224,11 @@ export const LayerListItem: FC<LayerListItemProps> = ({
           variant: 'caption'
         }}
       />
-      <HoverMenu id={id} hiddenAtom={hiddenAtom} />
-    </StyledListItem>
+      <HoverMenu
+        hidden={hidden}
+        onRemove={onRemove}
+        onToggleHidden={onToggleHidden}
+      />
+    </StyledListItemButton>
   )
 }
