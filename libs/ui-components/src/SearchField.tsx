@@ -1,8 +1,7 @@
-import SearchIcon from '@ant-design/icons/SearchOutlined'
 import { InputAdornment, TextField, type TextFieldProps } from '@mui/material'
 import { forwardRef } from 'react'
 
-import { AntIcon } from './AntIcon'
+import { SearchIcon } from './icons'
 
 export type SearchFieldProps = TextFieldProps
 
@@ -15,7 +14,7 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(
         InputProps={{
           startAdornment: (
             <InputAdornment position='start'>
-              <AntIcon iconComponent={SearchIcon} sx={{ fontSize: 20 }} />
+              <SearchIcon sx={{ fontSize: 26 }} />
             </InputAdornment>
           ),
           ...props.InputProps
