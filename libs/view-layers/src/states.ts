@@ -1,5 +1,5 @@
 import { atom } from 'jotai'
-import { fromPairs, uniq } from 'lodash'
+import { fromPairs, uniq, without } from 'lodash'
 
 import { featureSelectionAtom } from '@takram/plateau-datasets'
 import { layersAtom } from '@takram/plateau-layers'
@@ -64,6 +64,26 @@ export const hideFeaturesAtom = atom(
           ? uniq([...(prevValue ?? []), ...(nextValue ?? [])])
           : null
       )
+    })
+  }
+)
+
+export const showFeaturesAtom = atom(
+  null,
+  (get, set, value: readonly string[] | null) => {
+    const layers = get(tilesetLayersAtom)
+    layers.forEach(({ hiddenFeaturesAtom }) => {
+      set(hiddenFeaturesAtom, prevValue => {
+        if (value == null) {
+          return null
+        }
+        const nextValue = without(prevValue, ...value)
+        return nextValue.length === prevValue?.length
+          ? prevValue
+          : nextValue.length > 0
+          ? nextValue
+          : null
+      })
     })
   }
 )
