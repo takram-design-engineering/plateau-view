@@ -47,80 +47,80 @@ export const Default: Story = {
           }}
           iconComponent={BuildingIcon}
         />
+        <Divider light />
+        <InspectorActions>
+          <IconButton>
+            <VisibilityIcon />
+          </IconButton>
+          <IconButton>
+            <SearchIcon />
+          </IconButton>
+          <IconButton>
+            <LocationIcon />
+          </IconButton>
+          <IconButton>
+            <TrashIcon />
+          </IconButton>
+        </InspectorActions>
+        <Divider light />
+        <InspectorItem>
+          <ParameterList>
+            <SwitchParameterItem label='Switch' atom={switchAtom} />
+            <SelectParameterItem
+              label='Select'
+              atom={selectAtom}
+              items={[
+                [1, 'Value 1'],
+                [2, 'Value 2'],
+                [3, 'Value 3'],
+                [4, 'Value 4']
+              ]}
+            />
+            <SelectParameterItem
+              label='Select'
+              layout='stack'
+              atom={selectAtom}
+              items={[
+                [1, 'Value 1'],
+                [2, 'Value 2'],
+                [3, 'Value 3'],
+                [4, 'Value 4']
+              ]}
+            />
+            <SliderParameterItem
+              label='Slider'
+              min={0}
+              max={10}
+              decimalPlaces={1}
+              atom={sliderAtom1}
+            />
+            <SliderParameterItem
+              label='Discrete Slider'
+              min={0}
+              max={10}
+              step={1}
+              atom={sliderAtom2}
+            />
+            <SliderParameterItem
+              label='Range Slider'
+              min={0}
+              max={10}
+              decimalPlaces={1}
+              atom={sliderAtom3}
+            />
+            <SegmentParameterItem
+              label='Segment'
+              atom={segmentAtom}
+              items={[
+                [1, 'Value 1'],
+                [2, 'Value 2'],
+                [3, 'Value 3'],
+                [4, 'Value 4']
+              ]}
+            />
+          </ParameterList>
+        </InspectorItem>
       </Inspector>
-      <Divider light />
-      <InspectorActions>
-        <IconButton>
-          <VisibilityIcon />
-        </IconButton>
-        <IconButton>
-          <SearchIcon />
-        </IconButton>
-        <IconButton>
-          <LocationIcon />
-        </IconButton>
-        <IconButton>
-          <TrashIcon />
-        </IconButton>
-      </InspectorActions>
-      <Divider light />
-      <InspectorItem>
-        <ParameterList>
-          <SwitchParameterItem label='Switch' atom={switchAtom} />
-          <SelectParameterItem
-            label='Select'
-            atom={selectAtom}
-            items={[
-              [1, 'Value 1'],
-              [2, 'Value 2'],
-              [3, 'Value 3'],
-              [4, 'Value 4']
-            ]}
-          />
-          <SelectParameterItem
-            label='Select'
-            layout='stack'
-            atom={selectAtom}
-            items={[
-              [1, 'Value 1'],
-              [2, 'Value 2'],
-              [3, 'Value 3'],
-              [4, 'Value 4']
-            ]}
-          />
-          <SliderParameterItem
-            label='Slider'
-            min={0}
-            max={10}
-            decimalPlaces={1}
-            atom={sliderAtom1}
-          />
-          <SliderParameterItem
-            label='Discrete Slider'
-            min={0}
-            max={10}
-            step={1}
-            atom={sliderAtom2}
-          />
-          <SliderParameterItem
-            label='Range Slider'
-            min={0}
-            max={10}
-            decimalPlaces={1}
-            atom={sliderAtom3}
-          />
-          <SegmentParameterItem
-            label='Segment'
-            atom={segmentAtom}
-            items={[
-              [1, 'Value 1'],
-              [2, 'Value 2'],
-              [3, 'Value 3'],
-              [4, 'Value 4']
-            ]}
-          />
-        </ParameterList>
-      </InspectorItem>
     </FloatingPanel>
   )
 }
