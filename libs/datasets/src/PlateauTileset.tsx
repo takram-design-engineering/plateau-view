@@ -95,7 +95,7 @@ function computeBoundingSphere(
   }
   cartographicScratch.longitude = CesiumMath.toRadians(x)
   cartographicScratch.latitude = CesiumMath.toRadians(y)
-  cartographicScratch.height = z
+  cartographicScratch.height = height / 2
   Cartographic.toCartesian(cartographicScratch, ellipsoid, result.center)
   result.radius = height / 2
   return result
