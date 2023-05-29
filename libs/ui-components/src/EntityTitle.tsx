@@ -32,7 +32,8 @@ export const EntityTitleText = styled(ListItemText)(({ theme }) => ({
   [`& .${listItemTextClasses.secondary}`]: {
     overflow: 'hidden',
     whiteSpace: 'nowrap',
-    textOverflow: 'ellipsis'
+    textOverflow: 'ellipsis',
+    marginTop: '0.1em'
   }
 }))
 

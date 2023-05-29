@@ -1,4 +1,4 @@
-import { Divider, Stack, styled } from '@mui/material'
+import { Box, Divider, Stack, styled } from '@mui/material'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { useCallback, useRef, useState, type FC } from 'react'
 
@@ -94,16 +94,22 @@ export const MainPanel: FC = () => {
           />
         </Stack>
       </Search>
-      <Divider light />
-      <StyledLayerList
-        footer={`${layerAtoms.length}項目`}
-        open={layersOpen}
-        onOpen={handleLayersOpen}
-        onClose={handleLayersClose}
-        onMouseDown={handleLayersMouseDown}
+      <Box
+        // TODO: Unmounting LayerList breaks layer states, and removed layers
+        // stay visible.
+        display={layerAtoms.length > 0 ? 'block' : 'none'}
       >
-        <LayerList itemComponent={ViewLayerListItem} unmountWhenEmpty />
-      </StyledLayerList>
+        <Divider light />
+        <StyledLayerList
+          footer={`${layerAtoms.length}項目`}
+          open={layersOpen}
+          onOpen={handleLayersOpen}
+          onClose={handleLayersClose}
+          onMouseDown={handleLayersMouseDown}
+        >
+          <LayerList itemComponent={ViewLayerListItem} unmountWhenEmpty />
+        </StyledLayerList>
+      </Box>
     </FloatingPanel>
   )
 }
