@@ -4,10 +4,9 @@ import {
   Material,
   ShaderSource,
   type Cartesian3,
-  type Globe,
-  type Scene
+  type Globe
 } from '@cesium/engine'
-import { useEffect, type FC } from 'react'
+import { useEffect, useRef, type FC } from 'react'
 
 import { withEphemerality } from '@takram/plateau-react-helpers'
 
@@ -15,7 +14,7 @@ import { ShaderCodeInjector } from './helpers/ShaderCodeInjector'
 import imageBasedLightingStage from './shaders/imageBasedLightingStage.glsl?raw'
 import { useCesium } from './useCesium'
 
-function makeGlobeShadersDirty(globe: Globe): void {
+function makeGlobeShadersDirty(globe: PrivateGlobe): void {
   // Invoke the internal makeShadersDirty() by setting a material to globe to
   // reset surface shader source to the initial state (assuming that we never
   // use custom material on globe).
@@ -23,41 +22,41 @@ function makeGlobeShadersDirty(globe: Globe): void {
   globe.material = undefined
 }
 
-function modifyGlobeShaderSource(
-  scene: Scene,
-  params: {
-    sphericalHarmonicCoefficients?: readonly Cartesian3[]
-  }
-): void {
-  if (params.sphericalHarmonicCoefficients == null) {
-    return // TODO: Support procedural IBL
-  }
-
-  // Private API
-  const globe = scene.globe as Globe & {
-    _surfaceShaderSet: {
-      baseFragmentShaderSource: ShaderSource
+interface PrivateGlobe extends Globe {
+  _surface: {
+    _tileProvider: {
+      materialUniformMap?: object
     }
   }
+  _surfaceShaderSet: {
+    baseFragmentShaderSource: ShaderSource
+  }
+}
+
+function modifyGlobeShaderSource(
+  globe: PrivateGlobe,
+  uniforms: {
+    sphericalHarmonicCoefficients: () => readonly Cartesian3[]
+  }
+): void {
   // TODO: This does make shaders dirty, but doesn't propagate to all the shader
   // program caches, which I don't yet know where they are managed.
   makeGlobeShadersDirty(globe)
+
+  globe._surface._tileProvider.materialUniformMap = {
+    ...globe._surface._tileProvider.materialUniformMap,
+    u_sphericalHarmonicCoefficients: uniforms.sphericalHarmonicCoefficients
+  }
 
   const surfaceShaderSet = globe._surfaceShaderSet
   const baseFragmentShaderSource = surfaceShaderSet.baseFragmentShaderSource
   const sources = baseFragmentShaderSource.sources
 
-  const sphericalHarmonicCoefficients = params.sphericalHarmonicCoefficients
-    .map(({ x, y, z }) => `vec3(${x}, ${y}, ${z})`)
-    .join(',')
-
   const globeFS = new ShaderCodeInjector(sources[sources.length - 1])
     .replace(
       'void main()',
       /* glsl */ `
-      const vec3 sphericalHarmonicCoefficients[9] = vec3[](
-        ${sphericalHarmonicCoefficients}
-      );
+      uniform vec3 u_sphericalHarmonicCoefficients[9];
       ${imageBasedLightingStage}
       void main()
     `
@@ -105,19 +104,26 @@ function modifyGlobeShaderSource(
 }
 
 export interface GlobeShaderProps {
-  sphericalHarmonicCoefficients?: readonly Cartesian3[]
+  sphericalHarmonicCoefficients: readonly Cartesian3[]
 }
 
 export const GlobeShader: FC<GlobeShaderProps> = withEphemerality(
-  () => useCesium(({ scene }) => scene),
+  () => useCesium(({ scene }) => scene.globe),
   [],
   ({ sphericalHarmonicCoefficients }) => {
-    const scene = useCesium(({ scene }) => scene)
+    const sphericalHarmonicCoefficientsRef = useRef(
+      sphericalHarmonicCoefficients
+    )
+    sphericalHarmonicCoefficientsRef.current = sphericalHarmonicCoefficients
+
+    const globe = useCesium(({ scene }) => scene.globe)
     useEffect(() => {
-      modifyGlobeShaderSource(scene, {
-        sphericalHarmonicCoefficients
+      modifyGlobeShaderSource(globe as unknown as PrivateGlobe, {
+        sphericalHarmonicCoefficients: () =>
+          sphericalHarmonicCoefficientsRef.current
       })
-    }, [scene, sphericalHarmonicCoefficients])
+    }, [globe])
+
     return null
   }
 )
