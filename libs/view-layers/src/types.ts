@@ -1,6 +1,6 @@
 import { type PrimitiveAtom } from 'jotai'
 
-import { type LayerListItemTitle } from '@takram/plateau-ui-components'
+import { type LayerListItemProps } from '@takram/plateau-ui-components'
 
 import { type BridgeLayerModel } from './BridgeLayer'
 import { type BuildingLayerModel } from './BuildingLayer'
@@ -35,7 +35,7 @@ import {
 
 declare module '@takram/plateau-layers' {
   interface LayerModelBase {
-    titleAtom: PrimitiveAtom<LayerListItemTitle | null>
+    titleAtom: PrimitiveAtom<LayerListItemProps['title'] | null>
     loadingAtom: PrimitiveAtom<boolean>
     hiddenAtom: PrimitiveAtom<boolean>
   }

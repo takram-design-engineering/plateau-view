@@ -50,3 +50,61 @@ export const Default: Story = {
     </FloatingPanel>
   )
 }
+
+export const Subtitled: Story = {
+  render: () => (
+    <FloatingPanel sx={{ width: 360 }}>
+      <LayerList>
+        <LayerListItem
+          title={{
+            primary: 'レイヤー名称',
+            secondary: '詳細な情報の付加'
+          }}
+          iconComponent={BuildingIcon}
+        />
+        <LayerListItem
+          title={{
+            primary: 'レイヤー名称',
+            secondary: '詳細な情報の付加'
+          }}
+          iconComponent={BuildingIcon}
+          highlighted
+        />
+        <LayerListItem
+          title={{
+            primary: 'レイヤー名称',
+            secondary: '詳細な情報の付加'
+          }}
+          iconComponent={BuildingIcon}
+          selected
+        />
+        <LayerListItem
+          title={{
+            primary: 'レイヤー名称',
+            secondary: '詳細な情報の付加'
+          }}
+          iconComponent={BuildingIcon}
+          hidden
+        />
+        <LayerListItem
+          title={{
+            primary: 'レイヤー名称',
+            secondary: '詳細な情報の付加'
+          }}
+          iconComponent={BuildingIcon}
+          highlighted
+          hidden
+        />
+        <LayerListItem
+          title={{
+            primary: 'レイヤー名称',
+            secondary: '詳細な情報の付加'
+          }}
+          iconComponent={BuildingIcon}
+          selected
+          hidden
+        />
+      </LayerList>
+    </FloatingPanel>
+  )
+}
