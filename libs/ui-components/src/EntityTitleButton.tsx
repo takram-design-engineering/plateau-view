@@ -18,57 +18,51 @@ const StyledListItemButton = styled(ListItemButton, {
 })<{
   highlighted?: boolean
   hidden?: boolean
-}>(({ theme, highlighted = false, hidden = false }) => {
-  const highlightedColor = alpha(
-    theme.palette.primary.main,
-    theme.palette.action.focusOpacity
-  )
-  return {
-    alignItems: 'center',
-    minHeight: theme.spacing(5),
-    transition: 'none',
-    cursor: 'default',
+}>(({ theme, highlighted = false, hidden = false }) => ({
+  alignItems: 'center',
+  minHeight: theme.spacing(5),
+  transition: 'none',
+  cursor: 'default',
 
-    ...(highlighted
-      ? {
-          backgroundColor: highlightedColor,
-          '&:hover': {
-            backgroundColor: highlightedColor
-          },
-          [`&.${listItemButtonClasses.selected}:hover`]: {
-            backgroundColor: highlightedColor
-          }
+  ...(highlighted
+    ? {
+        backgroundColor: theme.palette.action.hover,
+        '&:hover': {
+          backgroundColor: theme.palette.action.hover
+        },
+        [`&.${listItemButtonClasses.selected}:hover`]: {
+          backgroundColor: theme.palette.action.hover
         }
-      : {
-          // Disable hover style
-          backgroundColor: 'transparent',
-          '&:hover': {
-            backgroundColor: 'transparent'
-          },
-          [`&.${listItemButtonClasses.selected}:hover`]: {
-            backgroundColor: 'transparent'
-          }
-        }),
-
-    ...(hidden && {
-      color: alpha(
-        theme.palette.text.primary,
-        theme.palette.action.disabledOpacity
-      )
-    }),
-
-    [`&.${listItemButtonClasses.selected}`]: {
-      color: theme.palette.getContrastText(theme.palette.primary.dark),
-      backgroundColor: theme.palette.primary.main,
-      '&:hover': {
-        backgroundColor: theme.palette.primary.main
-      },
-      [`& .${listItemTextClasses.secondary}`]: {
-        color: theme.palette.getContrastText(theme.palette.primary.dark)
       }
+    : {
+        // Disable hover style
+        backgroundColor: 'transparent',
+        '&:hover': {
+          backgroundColor: 'transparent'
+        },
+        [`&.${listItemButtonClasses.selected}:hover`]: {
+          backgroundColor: 'transparent'
+        }
+      }),
+
+  ...(hidden && {
+    color: alpha(
+      theme.palette.text.primary,
+      theme.palette.action.disabledOpacity
+    )
+  }),
+
+  [`&.${listItemButtonClasses.selected}`]: {
+    color: theme.palette.getContrastText(theme.palette.primary.dark),
+    backgroundColor: theme.palette.primary.main,
+    '&:hover': {
+      backgroundColor: theme.palette.primary.main
+    },
+    [`& .${listItemTextClasses.secondary}`]: {
+      color: theme.palette.getContrastText(theme.palette.primary.dark)
     }
   }
-})
+}))
 
 export interface EntityTitleButtonProps
   extends Omit<ListItemButtonProps, 'title'> {
