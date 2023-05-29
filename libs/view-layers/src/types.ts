@@ -33,9 +33,11 @@ import {
   type VEGETATION_LAYER
 } from './layerTypes'
 
+export type LayerTitle = LayerListItemProps['title']
+
 declare module '@takram/plateau-layers' {
   interface LayerModelBase {
-    titleAtom: PrimitiveAtom<LayerListItemProps['title'] | null>
+    titleAtom: PrimitiveAtom<LayerTitle | null>
     loadingAtom: PrimitiveAtom<boolean>
     hiddenAtom: PrimitiveAtom<boolean>
   }
