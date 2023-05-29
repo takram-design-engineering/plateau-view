@@ -8,6 +8,8 @@ export type {
   ViewLayerModelParams
 } from './createViewLayerBase'
 export * from './layerComponents'
+export * from './layerTypeIcons'
+export * from './layerTypeNames'
 export * from './layerTypes'
 export * from './states'
 export * from './types'
