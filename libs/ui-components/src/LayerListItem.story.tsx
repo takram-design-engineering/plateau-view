@@ -1,4 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react'
+import { useCallback, useState, type FC } from 'react'
 
 import { FloatingPanel } from './FloatingPanel'
 import { LayerList } from './LayerList'
@@ -14,10 +15,19 @@ export default meta
 
 type Story = StoryObj<typeof LayerListItem>
 
-export const Default: Story = {
-  render: () => (
+const DefaultComponent: FC = () => {
+  const [open, setOpen] = useState(false)
+  const handleToggleOpen = useCallback(() => {
+    setOpen(value => !value)
+  }, [])
+
+  return (
     <FloatingPanel sx={{ width: 360 }}>
-      <LayerList>
+      <LayerList
+        open={open}
+        onOpen={handleToggleOpen}
+        onClose={handleToggleOpen}
+      >
         <LayerListItem title='レイヤー名称' iconComponent={BuildingIcon} />
         <LayerListItem
           title='レイヤー名称'
@@ -46,9 +56,14 @@ export const Default: Story = {
           selected
           hidden
         />
+        <LayerListItem title='レイヤー名称' iconComponent={BuildingIcon} />
       </LayerList>
     </FloatingPanel>
   )
+}
+
+export const Default: Story = {
+  render: () => <DefaultComponent />
 }
 
 export const Subtitled: Story = {
@@ -103,6 +118,13 @@ export const Subtitled: Story = {
           iconComponent={BuildingIcon}
           selected
           hidden
+        />
+        <LayerListItem
+          title={{
+            primary: 'レイヤー名称',
+            secondary: '詳細な情報の付加'
+          }}
+          iconComponent={BuildingIcon}
         />
       </LayerList>
     </FloatingPanel>

@@ -6,14 +6,12 @@ import { Suspense, useCallback, useEffect, type FC } from 'react'
 import { CurrentTime, ViewLocator } from '@takram/plateau-cesium'
 import { SuspendUntilTilesLoaded } from '@takram/plateau-cesium-helpers'
 import { GooglePhotorealisticTileset } from '@takram/plateau-datasets'
-import { LayerList, LayersRenderer, useAddLayer } from '@takram/plateau-layers'
+import { LayersRenderer, useAddLayer } from '@takram/plateau-layers'
 import {
-  AppLayout,
-  LayerList as LayerListComponent
+  AppLayout
 } from '@takram/plateau-ui-components'
 import {
   BUILDING_LAYER,
-  ViewLayerListItem,
   createViewLayer,
   layerComponents
 } from '@takram/plateau-view-layers'
@@ -126,15 +124,7 @@ export const PlateauView: FC<PlateauViewProps> = () => {
       <ScreenSpaceSelection />
       <ExclusiveSelection />
       <AppLayout
-        main={
-          <MainPanel>
-            <LayerList
-              component={LayerListComponent}
-              itemComponent={ViewLayerListItem}
-              unmountWhenEmpty
-            />
-          </MainPanel>
-        }
+        main={<MainPanel />}
         context={<LocationContextBar />}
         bottomLeft={<Toolbar />}
         developer={<DeveloperPanels />}

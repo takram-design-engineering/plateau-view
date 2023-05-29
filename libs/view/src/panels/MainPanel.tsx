@@ -1,14 +1,17 @@
 import { Divider, Stack, alpha, styled } from '@mui/material'
 import { useAtomValue } from 'jotai'
-import { useCallback, useRef, useState, type FC, type ReactNode } from 'react'
+import { useCallback, useRef, useState, type FC } from 'react'
 
+import { LayerList, layerAtomsAtom } from '@takram/plateau-layers'
 import { useWindowEvent } from '@takram/plateau-react-helpers'
 import { platformAtom } from '@takram/plateau-shared-states'
 import {
   FloatingPanel,
+  LayerList as LayerListComponent,
   SearchField,
   Shortcut
 } from '@takram/plateau-ui-components'
+import { ViewLayerListItem } from '@takram/plateau-view-layers'
 
 import { MainMenuButton } from './MainPanel/MainMenuButton'
 
@@ -31,17 +34,22 @@ const Search = styled('div', {
   })
 }))
 
-export interface MainPanelProps {
-  children?: ReactNode
-}
-
-export const MainPanel: FC<MainPanelProps> = ({ children }) => {
+export const MainPanel: FC = () => {
   const [focused, setFocused] = useState(false)
   const handleFocus = useCallback(() => {
     setFocused(true)
   }, [])
   const handleBlur = useCallback(() => {
     setFocused(false)
+  }, [])
+
+  const layerAtoms = useAtomValue(layerAtomsAtom)
+  const [layersOpen, setLayersOpen] = useState(true)
+  const handleOpenLayers = useCallback(() => {
+    setLayersOpen(true)
+  }, [])
+  const handleCloseLayers = useCallback(() => {
+    setLayersOpen(false)
   }, [])
 
   const textFieldRef = useRef<HTMLInputElement>(null)
@@ -58,7 +66,7 @@ export const MainPanel: FC<MainPanelProps> = ({ children }) => {
   return (
     <FloatingPanel scrollable>
       <div>
-        <Search divider={children != null}>
+        <Search divider>
           <Stack direction='row' flexGrow={1} alignItems='center'>
             <MainMenuButton />
             <Divider orientation='vertical' light />
@@ -86,7 +94,15 @@ export const MainPanel: FC<MainPanelProps> = ({ children }) => {
             />
           </Stack>
         </Search>
-        {children}
+        <LayerList
+          component={LayerListComponent}
+          itemComponent={ViewLayerListItem}
+          unmountWhenEmpty
+          footer={`${layerAtoms.length}項目`}
+          open={layersOpen}
+          onOpen={handleOpenLayers}
+          onClose={handleCloseLayers}
+        />
       </div>
     </FloatingPanel>
   )
