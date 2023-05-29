@@ -13,7 +13,6 @@ import {
   SwitchParameterItem
 } from '@takram/plateau-ui-components'
 
-import { environmentTypeAtom } from '../states/app'
 import {
   ambientOcclusionAccurateNormalReconstructionAtom,
   ambientOcclusionBiasAtom,
@@ -79,7 +78,6 @@ export const GraphicsPanel: FC = () => {
   const shadowMapEnabled = useAtomValue(shadowMapEnabledAtom)
   const ambientOcclusionEnabled = useAtomValue(ambientOcclusionEnabledAtom)
   const ambientOcclusionDenoise = useAtomValue(ambientOcclusionDenoiseAtom)
-  const environmentType = useAtomValue(environmentTypeAtom)
 
   const handleReset = useResetAtom(resetAtom)
 
@@ -109,11 +107,7 @@ export const GraphicsPanel: FC = () => {
         </ParameterList>
         <Divider />
         <ParameterList>
-          <SwitchParameterItem
-            label='Shadow Map'
-            disabled={environmentType === 'google-photorealistic'}
-            atom={shadowMapEnabledAtom}
-          />
+          <SwitchParameterItem label='Shadow Map' atom={shadowMapEnabledAtom} />
           <SelectParameterItem
             label='Resolution'
             disabled={!shadowMapEnabled}
