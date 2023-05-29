@@ -1,12 +1,8 @@
 import { atom } from 'jotai'
 import { fromPairs, uniq } from 'lodash'
 
-import { PLATEAU_TILESET } from '@takram/plateau-datasets'
+import { featureSelectionAtom } from '@takram/plateau-datasets'
 import { layersAtom } from '@takram/plateau-layers'
-import {
-  screenSpaceSelectionAtom,
-  type ScreenSpaceSelectionEntry
-} from '@takram/plateau-screen-space-selection'
 import { isNotNullish } from '@takram/plateau-type-helpers'
 
 import { type PlateauTilesetLayerModel } from './createPlateauTilesetLayerBase'
@@ -23,14 +19,7 @@ export const tilesetLayersAtom = atom(get => {
 
 export const highlightedLayersAtom = atom(get => {
   // TODO: Support other types of selection.
-  const screenSpaceSelection = get(screenSpaceSelectionAtom)
-  const featureKeys = screenSpaceSelection
-    .filter(
-      (entry): entry is ScreenSpaceSelectionEntry<typeof PLATEAU_TILESET> =>
-        entry.type === PLATEAU_TILESET
-    )
-    .map(({ value }) => value.key)
-
+  const featureKeys = get(featureSelectionAtom).map(({ value }) => value.key)
   const tilesetLayers = get(tilesetLayersAtom)
   return tilesetLayers.filter(layer => {
     const featureIndex = get(layer.featureIndexAtom)

@@ -29,7 +29,7 @@ import { ItemTrashIcon } from './icons/ItemTrashIcon'
 import { ItemVisibilityIcon } from './icons/ItemVisibilityIcon'
 
 const StyledListItem = styled(ListItemButton, {
-  shouldForwardProp: prop => prop !== 'hidden'
+  shouldForwardProp: prop => prop !== 'highlighted' && prop !== 'hidden'
 })<{
   highlighted?: boolean
   hidden?: boolean
