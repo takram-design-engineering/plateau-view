@@ -23,7 +23,8 @@ const StyledPaper = styled(Paper)(({ theme, elevation = 4 }) => ({
   }
 }))
 
-const RoundedBlock = styled('div')(({ theme }) => ({
+const RoundedBox = styled('div')(({ theme }) => ({
+  overflow: 'hidden',
   maxHeight: '100%',
   borderRadius: theme.shape.borderRadius
 }))
@@ -40,7 +41,7 @@ const ScrollableRoundedBox = forwardRef<
     invariant(ref.current != null)
     initialize(ref.current)
   }, [initialize])
-  return <RoundedBlock ref={mergeRefs([ref, forwardedRef])} {...props} />
+  return <RoundedBox ref={mergeRefs([ref, forwardedRef])} {...props} />
 })
 
 export interface FloatingPanelProps extends PaperProps {
@@ -53,7 +54,7 @@ export const FloatingPanel = forwardRef<HTMLDivElement, FloatingPanelProps>(
       {scrollable ? (
         <ScrollableRoundedBox>{children}</ScrollableRoundedBox>
       ) : (
-        children
+        <RoundedBox>{children}</RoundedBox>
       )}
     </StyledPaper>
   )
