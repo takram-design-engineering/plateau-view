@@ -15,14 +15,22 @@ import { ShaderCodeInjector } from './helpers/ShaderCodeInjector'
 import imageBasedLightingStage from './shaders/imageBasedLightingStage.glsl?raw'
 import { useCesium } from './useCesium'
 
+function makeGlobeShadersDirty(globe: Globe): void {
+  // Invoke the internal makeShadersDirty() by setting a material to globe to
+  // reset surface shader source to the initial state (assuming that we never
+  // use custom material on globe).
+  globe.material = Material.fromType('Color')
+  globe.material = undefined
+}
+
 function modifyGlobeShaderSource(
   scene: Scene,
   params: {
     sphericalHarmonicCoefficients?: readonly Cartesian3[]
   }
-): (() => void) | undefined {
+): void {
   if (params.sphericalHarmonicCoefficients == null) {
-    return // TODO
+    return // TODO: Support procedural IBL
   }
 
   // Private API
@@ -31,6 +39,10 @@ function modifyGlobeShaderSource(
       baseFragmentShaderSource: ShaderSource
     }
   }
+  // TODO: This does make shaders dirty, but doesn't propagate to all the shader
+  // program caches, which I don't yet know where they are managed.
+  makeGlobeShadersDirty(globe)
+
   const surfaceShaderSet = globe._surfaceShaderSet
   const baseFragmentShaderSource = surfaceShaderSet.baseFragmentShaderSource
   const sources = baseFragmentShaderSource.sources
@@ -89,16 +101,6 @@ function modifyGlobeShaderSource(
     sources: [...baseFragmentShaderSource.sources.slice(0, -1), globeFS],
     defines: baseFragmentShaderSource.defines
   })
-
-  return () => {
-    if (globe.isDestroyed()) {
-      return
-    }
-    // Invoke the internal makeShadersDirty() by setting a material to globe to
-    // reset surface shader source to the initial state.
-    globe.material = Material.fromType('Color')
-    globe.material = undefined
-  }
 }
 
 export interface GlobeShaderProps {
@@ -111,7 +113,7 @@ export const GlobeShader: FC<GlobeShaderProps> = withEphemerality(
   ({ sphericalHarmonicCoefficients }) => {
     const scene = useCesium(({ scene }) => scene)
     useEffect(() => {
-      return modifyGlobeShaderSource(scene, {
+      modifyGlobeShaderSource(scene, {
         sphericalHarmonicCoefficients
       })
     }, [scene, sphericalHarmonicCoefficients])
