@@ -44,7 +44,7 @@ export interface EntityTitleProps extends Omit<ListItemProps<'div'>, 'title'> {
         primary: string
         secondary?: string
       }
-  iconComponent: ComponentType<SvgIconProps>
+  iconComponent?: ComponentType<SvgIconProps>
 }
 
 export const EntityTitle = forwardRef<HTMLDivElement, EntityTitleProps>(
@@ -52,9 +52,11 @@ export const EntityTitle = forwardRef<HTMLDivElement, EntityTitleProps>(
     const Icon = iconComponent
     return (
       <StyledListItem ref={ref} {...props} component='div'>
-        <EntityTitleIcon>
-          <Icon fontSize='medium' />
-        </EntityTitleIcon>
+        {Icon != null && (
+          <EntityTitleIcon>
+            <Icon fontSize='medium' />
+          </EntityTitleIcon>
+        )}
         <EntityTitleText
           primary={typeof title === 'object' ? title?.primary : title}
           secondary={typeof title === 'object' ? title?.secondary : undefined}
