@@ -72,16 +72,17 @@ function modifyGlobeShaderSource(
       pbrParameters.diffuseColor = color.rgb;
       // Specular parameters are not used.
 
+      vec3 normalEC = normalize(v_normalEC);
       vec3 lighting = czm_pbrLighting(
         v_positionEC,
-        v_normalEC,
+        normalEC,
         czm_lightDirectionEC,
         czm_lightColorHdr,
         pbrParameters
       );
       lighting += imageBasedLightingStage(
         v_positionEC,
-        v_normalEC,
+        normalEC,
         czm_lightDirectionEC,
         czm_lightColorHdr,
         pbrParameters
