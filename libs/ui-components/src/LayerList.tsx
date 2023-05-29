@@ -57,7 +57,7 @@ export const LayerList = forwardRef<HTMLDivElement, LayerListProps>(
           <Divider light />
         </>
       )}
-      <Footer>
+      <Footer component='div'>
         <ListItemText>{footer ?? '\u00a0'}</ListItemText>
         <StyledListItemSecondaryAction>
           <IconButton
