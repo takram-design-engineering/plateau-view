@@ -1,8 +1,12 @@
 import { Divider, Stack, styled } from '@mui/material'
-import { useAtomValue } from 'jotai'
+import { useAtomValue, useSetAtom } from 'jotai'
 import { useCallback, useRef, useState, type FC } from 'react'
 
-import { LayerList, layerAtomsAtom } from '@takram/plateau-layers'
+import {
+  LayerList,
+  clearLayerSelectionAtom,
+  layerAtomsAtom
+} from '@takram/plateau-layers'
 import { useWindowEvent } from '@takram/plateau-react-helpers'
 import { platformAtom } from '@takram/plateau-shared-states'
 import {
@@ -37,12 +41,17 @@ export const MainPanel: FC = () => {
 
   const layerAtoms = useAtomValue(layerAtomsAtom)
   const [layersOpen, setLayersOpen] = useState(true)
-  const handleOpenLayers = useCallback(() => {
+  const handleLayersOpen = useCallback(() => {
     setLayersOpen(true)
   }, [])
-  const handleCloseLayers = useCallback(() => {
+  const handleLayersClose = useCallback(() => {
     setLayersOpen(false)
   }, [])
+
+  const clearLayerSelection = useSetAtom(clearLayerSelectionAtom)
+  const handleLayersMouseDown = useCallback(() => {
+    clearLayerSelection()
+  }, [clearLayerSelection])
 
   const textFieldRef = useRef<HTMLInputElement>(null)
 
@@ -89,8 +98,9 @@ export const MainPanel: FC = () => {
       <StyledLayerList
         footer={`${layerAtoms.length}項目`}
         open={layersOpen}
-        onOpen={handleOpenLayers}
-        onClose={handleCloseLayers}
+        onOpen={handleLayersOpen}
+        onClose={handleLayersClose}
+        onMouseDown={handleLayersMouseDown}
       >
         <LayerList itemComponent={ViewLayerListItem} unmountWhenEmpty />
       </StyledLayerList>

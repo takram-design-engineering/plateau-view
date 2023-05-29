@@ -33,6 +33,7 @@ export const LayerListItem = forwardRef<HTMLDivElement, LayerListItemProps>(
     const addSelection = useSetAtom(addLayerSelectionAtom)
     const handleMouseDown = useCallback(
       (event: MouseEvent) => {
+        event.stopPropagation()
         if (event.shiftKey) {
           // TODO: Toggle selection
           addSelection([layer.id])
