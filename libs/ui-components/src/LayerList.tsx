@@ -10,19 +10,19 @@ import {
 } from '@mui/material'
 import { forwardRef, type MouseEventHandler, type ReactNode } from 'react'
 
+import { Scrollable } from './Scrollable'
 import { ExpandArrowIcon } from './icons'
 
 const Root = styled(List)({
-  padding: 0
+  position: 'relative',
+  padding: 0,
+  maxHeight: 'calc(100% - 50px)'
 }) as unknown as typeof List // For generics
-
-const Content = styled(List)(({ theme }) => ({
-  paddingTop: theme.spacing(1),
-  paddingBottom: theme.spacing(1)
-})) as unknown as typeof List // For generics
 
 const Footer = styled(ListItem)(({ theme }) => ({
   ...theme.typography.body2,
+  alignItems: 'center',
+  height: theme.spacing(4),
   color: theme.palette.text.secondary,
   backgroundColor: theme.palette.grey[50]
 }))
@@ -32,6 +32,10 @@ const StyledListItemSecondaryAction = styled(ListItemSecondaryAction)(
     right: theme.spacing(1)
   })
 )
+
+const StyledScrollable = styled(Scrollable)(({ theme }) => ({
+  maxHeight: `calc(100% - ${theme.spacing(4)} - 1px)`
+}))
 
 export interface LayerListProps extends ListProps<'div'> {
   footer?: ReactNode
@@ -45,9 +49,11 @@ export const LayerList = forwardRef<HTMLDivElement, LayerListProps>(
     <Root ref={ref} component='div' dense {...props}>
       {open && (
         <>
-          <Content component='div' dense>
-            {children}
-          </Content>
+          <StyledScrollable>
+            <List component='div' dense>
+              {children}
+            </List>
+          </StyledScrollable>
           <Divider light />
         </>
       )}

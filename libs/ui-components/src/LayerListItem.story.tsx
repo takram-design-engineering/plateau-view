@@ -16,7 +16,7 @@ export default meta
 type Story = StoryObj<typeof LayerListItem>
 
 const DefaultComponent: FC = () => {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(true)
   const handleToggleOpen = useCallback(() => {
     setOpen(value => !value)
   }, [])
