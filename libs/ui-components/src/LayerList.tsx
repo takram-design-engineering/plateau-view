@@ -25,7 +25,7 @@ const Footer = styled(ListItem)(({ theme }) => ({
   height: theme.spacing(4),
   color: theme.palette.text.secondary,
   backgroundColor: theme.palette.grey[50]
-}))
+})) as unknown as typeof ListItem // For generics
 
 const StyledListItemSecondaryAction = styled(ListItemSecondaryAction)(
   ({ theme }) => ({
