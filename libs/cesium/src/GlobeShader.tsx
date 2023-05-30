@@ -18,8 +18,14 @@ function makeGlobeShadersDirty(globe: PrivateGlobe): void {
   // Invoke the internal makeShadersDirty() by setting a material to globe to
   // reset surface shader source to the initial state (assuming that we never
   // use custom material on globe).
-  globe.material = Material.fromType('Color')
-  globe.material = undefined
+  const material = globe.material
+  if (material == null) {
+    globe.material = Material.fromType('Color')
+    globe.material = undefined
+  } else {
+    globe.material = undefined
+    globe.material = material
+  }
 }
 
 interface PrivateGlobe extends Globe {
