@@ -37,6 +37,7 @@ This repository consists of the following apps and libraries. The README for eac
 | [cesium-helpers](libs/cesium-helpers)                 | Helper functions for Cesium                                                                           |
 | [cesium-vector-imagery](libs/cesium-vector-imagery)   | [ImageryProvider](https://cesium.com/learn/cesiumjs/ref-doc/ImageryProvider.html) for drawing MVT     |
 | [cesium](libs/cesium)                                 | React components for Cesium                                                                           |
+| [color-schemes](libs/color-schemes)                   | Collection of color schemes                                                                           |
 | [data-sources](libs/data-sources)                     | Several [DataSources](https://cesium.com/learn/cesiumjs/ref-doc/DataSource.html) used in PLATEAU VIEW |
 | [datasets](libs/datasets)                             | Classes and components that represent PLATEAU and other datasets                                      |
 | [geocoder](libs/geocoder)                             | Simple geocoding functions                                                                            |

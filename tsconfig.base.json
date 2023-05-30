@@ -22,6 +22,7 @@
       "@takram/plateau-cesium-vector-imagery": [
         "libs/cesium-vector-imagery/src/index.ts"
       ],
+      "@takram/plateau-color-schemes": ["libs/color-schemes/src/index.ts"],
       "@takram/plateau-data-sources": ["libs/data-sources/src/index.ts"],
       "@takram/plateau-datasets": ["libs/datasets/src/index.ts"],
       "@takram/plateau-geocoder": ["libs/geocoder/src/index.ts"],
