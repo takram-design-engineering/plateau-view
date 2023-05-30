@@ -1,11 +1,4 @@
-import {
-  List,
-  ListItem,
-  ListItemSecondaryAction,
-  Stack,
-  Typography,
-  styled
-} from '@mui/material'
+import { List, ListItem, Stack, Typography, styled } from '@mui/material'
 import { useAtom, useAtomValue } from 'jotai'
 import { useCallback, type FC } from 'react'
 
@@ -57,11 +50,10 @@ export const DeveloperPanels: FC = () => {
   return (
     <Root>
       <Header>
-        <ListItem disablePadding disableGutters>
-          <Typography variant='subtitle1' color='text.primary'>
-            Developer Panels
-          </Typography>
-          <ListItemSecondaryAction>
+        <ListItem
+          disablePadding
+          disableGutters
+          secondaryAction={
             <Shortcut
               variant='outlined'
               platform={platform}
@@ -69,7 +61,11 @@ export const DeveloperPanels: FC = () => {
               commandKey
               onClick={handleClose}
             />
-          </ListItemSecondaryAction>
+          }
+        >
+          <Typography variant='subtitle1' color='text.primary'>
+            Developer Panels
+          </Typography>
         </ListItem>
       </Header>
       <Stack spacing={1} marginTop={1}>
