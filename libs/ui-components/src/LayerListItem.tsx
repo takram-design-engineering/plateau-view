@@ -2,28 +2,24 @@ import {
   IconButton,
   ListItemSecondaryAction,
   Tooltip,
-  listItemSecondaryActionClasses,
   styled
 } from '@mui/material'
-import { type FC, type MouseEventHandler, type SyntheticEvent } from 'react'
+import {
+  useState,
+  type FC,
+  type MouseEventHandler,
+  type SyntheticEvent
+} from 'react'
+
+import { useForkEventHandler } from '@takram/plateau-react-helpers'
 
 import {
   EntityTitleButton,
   type EntityTitleButtonProps
 } from './EntityTitleButton'
-import { LocationIcon } from './icons/LocationIcon'
 import { TrashIcon } from './icons/TrashIcon'
-import { VisibilityIcon } from './icons/VisibilityIcon'
-
-const StyledEntityTitleButton = styled(EntityTitleButton)({
-  // Show secondary actions only when hovered
-  [`& .${listItemSecondaryActionClasses.root}`]: {
-    display: 'none'
-  },
-  [`&:hover .${listItemSecondaryActionClasses.root}`]: {
-    display: 'block'
-  }
-})
+import { VisibilityOffIcon } from './icons/VisibilityOffIcon'
+import { VisibilityOnIcon } from './icons/VisibilityOnIcon'
 
 const HoverMenuRoot = styled(ListItemSecondaryAction)(({ theme }) => ({
   position: 'relative',
@@ -31,8 +27,7 @@ const HoverMenuRoot = styled(ListItemSecondaryAction)(({ theme }) => ({
   transform: 'none',
   flexShrink: 0,
   flexGrow: 0,
-  marginRight: theme.spacing(-0.5),
-  marginLeft: theme.spacing(0.5)
+  marginRight: theme.spacing(-1)
 }))
 
 function stopPropagation(event: SyntheticEvent): void {
@@ -40,40 +35,46 @@ function stopPropagation(event: SyntheticEvent): void {
 }
 
 interface HoverMenuProps {
+  hovered?: boolean
   hidden?: boolean
   onRemove?: MouseEventHandler<HTMLButtonElement>
   onToggleHidden?: MouseEventHandler<HTMLButtonElement>
 }
 
 const HoverMenu: FC<HoverMenuProps> = ({
+  hovered = false,
   hidden = false,
   onRemove,
   onToggleHidden
-}) => (
-  <HoverMenuRoot onMouseDown={stopPropagation}>
-    <Tooltip title='削除'>
-      <IconButton color='inherit' aria-label='削除' onClick={onRemove}>
-        <TrashIcon fontSize='small' />
-      </IconButton>
-    </Tooltip>
-    <Tooltip title='移動'>
-      <span>
-        <IconButton color='inherit' aria-label='移動' disabled>
-          <LocationIcon fontSize='small' />
+}) => {
+  if (!hovered && !hidden) {
+    return null
+  }
+  return (
+    <HoverMenuRoot onMouseDown={stopPropagation}>
+      {(hovered || !hidden) && (
+        <Tooltip title='削除'>
+          <IconButton color='inherit' aria-label='削除' onClick={onRemove}>
+            <TrashIcon fontSize='small' />
+          </IconButton>
+        </Tooltip>
+      )}
+      <Tooltip title={hidden ? '表示' : '隠す'}>
+        <IconButton
+          color='inherit'
+          aria-label={hidden ? '表示' : '隠す'}
+          onClick={onToggleHidden}
+        >
+          {hidden ? (
+            <VisibilityOffIcon fontSize='small' />
+          ) : (
+            <VisibilityOnIcon fontSize='small' />
+          )}
         </IconButton>
-      </span>
-    </Tooltip>
-    <Tooltip title={hidden ? '表示' : '隠す'}>
-      <IconButton
-        color='inherit'
-        aria-label={hidden ? '表示' : '隠す'}
-        onClick={onToggleHidden}
-      >
-        <VisibilityIcon fontSize='small' />
-      </IconButton>
-    </Tooltip>
-  </HoverMenuRoot>
-)
+      </Tooltip>
+    </HoverMenuRoot>
+  )
+}
 
 export interface LayerListItemProps
   extends EntityTitleButtonProps,
@@ -83,13 +84,30 @@ export const LayerListItem: FC<LayerListItemProps> = ({
   hidden = false,
   onRemove,
   onToggleHidden,
+  onMouseEnter,
+  onMouseLeave,
   ...props
-}) => (
-  <StyledEntityTitleButton {...props} hidden={hidden}>
-    <HoverMenu
+}) => {
+  const [hovered, setHovered] = useState(false)
+  const handleMouseEnter = useForkEventHandler(onMouseEnter, () => {
+    setHovered(true)
+  })
+  const handleMouseLeave = useForkEventHandler(onMouseLeave, () => {
+    setHovered(false)
+  })
+  return (
+    <EntityTitleButton
+      {...props}
       hidden={hidden}
-      onRemove={onRemove}
-      onToggleHidden={onToggleHidden}
-    />
-  </StyledEntityTitleButton>
-)
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      <HoverMenu
+        hovered={hovered}
+        hidden={hidden}
+        onRemove={onRemove}
+        onToggleHidden={onToggleHidden}
+      />
+    </EntityTitleButton>
+  )
+}

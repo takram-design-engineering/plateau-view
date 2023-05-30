@@ -28,10 +28,18 @@ const StyledListItemButton = styled(ListItemButton, {
     ? {
         backgroundColor: theme.palette.action.hover,
         '&:hover': {
-          backgroundColor: theme.palette.action.hover
+          backgroundColor: theme.palette.action.hover,
+          // Reset on touch devices, it doesn't add specificity
+          '@media (hover: none)': {
+            backgroundColor: 'transparent'
+          }
         },
         [`&.${listItemButtonClasses.selected}:hover`]: {
-          backgroundColor: theme.palette.action.hover
+          backgroundColor: theme.palette.action.hover,
+          // Reset on touch devices, it doesn't add specificity
+          '@media (hover: none)': {
+            backgroundColor: 'transparent'
+          }
         }
       }
     : {
