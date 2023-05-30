@@ -13,3 +13,5 @@ export function isNotFalse<T>(value: T | false): value is T {
 export type CancelablePromise<T> = Promise<T> & {
   cancel: () => void
 }
+
+export function assertType<T>(value: unknown): asserts value is T {}

@@ -13,6 +13,7 @@ import Cesium3DTilePassState from '@cesium/engine/Source/Scene/Cesium3DTilePassS
 import invariant from 'tiny-invariant'
 
 import { getPixelRatio } from '@takram/plateau-cesium-helpers'
+import { assertType } from '@takram/plateau-type-helpers'
 
 declare module '@cesium/engine' {
   // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -225,7 +226,7 @@ export function pickMany(
   windowHeight: number
 ): object[] {
   invariant(windowWidth > 0 && windowHeight > 0)
-  invariant(((scene): scene is PrivateScene => true)(scene))
+  assertType<PrivateScene>(scene)
   const context = scene.context
   const view = scene.defaultView
   scene.view = view
