@@ -36,11 +36,11 @@ import {
 } from './states'
 import { type TilesetPrimitiveConstructorOptions } from './types'
 
-export const PLATEAU_TILESET = 'PLATEAU_TILESET'
+export const PLATEAU_TILE_FEATURE = 'PLATEAU_TILE_FEATURE'
 
 declare module '@takram/plateau-screen-space-selection' {
   interface ScreenSpaceSelectionOverrides {
-    [PLATEAU_TILESET]: {
+    [PLATEAU_TILE_FEATURE]: {
       key: string
       featureIndex: TileFeatureIndex
     }
@@ -64,7 +64,7 @@ function initTile(
     }
     if (
       states.selection?.some(
-        ({ type, value }) => type === PLATEAU_TILESET && value.key === id
+        ({ type, value }) => type === PLATEAU_TILE_FEATURE && value.key === id
       ) === true
     ) {
       feature.setProperty('selected', true)
@@ -95,7 +95,7 @@ function computeBoundingSphere(
   }
   cartographicScratch.longitude = CesiumMath.toRadians(x)
   cartographicScratch.latitude = CesiumMath.toRadians(y)
-  cartographicScratch.height = z
+  cartographicScratch.height = height / 2
   Cartographic.toCartesian(cartographicScratch, ellipsoid, result.center)
   result.radius = height / 2
   return result
@@ -110,7 +110,7 @@ function useSelectionResponder({
 }): void {
   const scene = useCesium(({ scene }) => scene)
   useScreenSpaceSelectionResponder({
-    type: PLATEAU_TILESET,
+    type: PLATEAU_TILE_FEATURE,
     transform: object => {
       if (
         !(object instanceof Cesium3DTileFeature) ||
@@ -121,7 +121,7 @@ function useSelectionResponder({
       const id = getGMLId(object)
       return id != null
         ? {
-            type: PLATEAU_TILESET,
+            type: PLATEAU_TILE_FEATURE,
             value: {
               key: id,
               featureIndex
@@ -131,8 +131,10 @@ function useSelectionResponder({
     },
     predicate: (
       value
-    ): value is ScreenSpaceSelectionEntry<typeof PLATEAU_TILESET> => {
-      return value.type === PLATEAU_TILESET && featureIndex.has(value.value.key)
+    ): value is ScreenSpaceSelectionEntry<typeof PLATEAU_TILE_FEATURE> => {
+      return (
+        value.type === PLATEAU_TILE_FEATURE && featureIndex.has(value.value.key)
+      )
     },
     onSelect: value => {
       const features = featureIndex.find(value.value.key)

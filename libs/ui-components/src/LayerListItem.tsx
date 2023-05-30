@@ -1,120 +1,25 @@
-import LoadingIcon from '@ant-design/icons/LoadingOutlined'
 import {
   IconButton,
-  ListItemButton,
   ListItemSecondaryAction,
-  ListItemText,
   Tooltip,
-  alpha,
-  listItemButtonClasses,
-  listItemSecondaryActionClasses,
-  listItemTextClasses,
-  styled,
-  svgIconClasses,
-  type SvgIconProps
+  styled
 } from '@mui/material'
-import { useAtom, useAtomValue, useSetAtom, type PrimitiveAtom } from 'jotai'
 import {
-  useCallback,
-  type ComponentType,
+  useState,
   type FC,
+  type MouseEventHandler,
   type SyntheticEvent
 } from 'react'
 
-import { removeLayerAtom, type LayerProps } from '@takram/plateau-layers'
+import { useForkEventHandler } from '@takram/plateau-react-helpers'
 
-import { AntIcon } from './AntIcon'
-import { ItemLocationIcon } from './icons/ItemLocationIcon'
-import { ItemTrashIcon } from './icons/ItemTrashIcon'
-import { ItemVisibilityIcon } from './icons/ItemVisibilityIcon'
-
-const StyledListItem = styled(ListItemButton, {
-  shouldForwardProp: prop => prop !== 'hidden'
-})<{
-  highlighted?: boolean
-  hidden?: boolean
-}>(({ theme, highlighted = false, hidden = false }) => {
-  const highlightedColor = alpha(
-    theme.palette.primary.main,
-    theme.palette.action.focusOpacity
-  )
-  return {
-    alignItems: 'center',
-    minHeight: theme.spacing(5),
-    transition: 'none',
-    cursor: 'default',
-
-    ...(highlighted
-      ? {
-          backgroundColor: highlightedColor,
-          '&:hover': {
-            backgroundColor: highlightedColor
-          },
-          [`&.${listItemButtonClasses.selected}:hover`]: {
-            backgroundColor: highlightedColor
-          }
-        }
-      : {
-          // Disable hover style
-          backgroundColor: 'transparent',
-          '&:hover': {
-            backgroundColor: 'transparent'
-          },
-          [`&.${listItemButtonClasses.selected}:hover`]: {
-            backgroundColor: 'transparent'
-          }
-        }),
-
-    ...(hidden && {
-      color: alpha(
-        theme.palette.text.primary,
-        theme.palette.action.disabledOpacity
-      )
-    }),
-
-    [`&.${listItemButtonClasses.selected}`]: {
-      color: theme.palette.getContrastText(theme.palette.primary.dark),
-      backgroundColor: theme.palette.primary.main,
-      '&:hover': {
-        backgroundColor: theme.palette.primary.main
-      },
-      [`& .${listItemTextClasses.secondary}`]: {
-        color: theme.palette.getContrastText(theme.palette.primary.dark)
-      }
-    },
-
-    // Show secondary actions only when hovered
-    [`& .${listItemSecondaryActionClasses.root}`]: {
-      display: 'none'
-    },
-    [`&:hover .${listItemSecondaryActionClasses.root}`]: {
-      display: 'block'
-    }
-  }
-})
-
-const ListItemIcon = styled('div')(({ theme }) => ({
-  marginRight: theme.spacing(1.5),
-  [`& .${svgIconClasses.root}`]: {
-    display: 'block'
-  }
-}))
-
-const StyledListItemText = styled(ListItemText)(({ theme }) => ({
-  marginTop: 4,
-  marginBottom: 4,
-  [`& .${listItemTextClasses.primary}`]: {
-    overflow: 'hidden',
-    whiteSpace: 'nowrap',
-    textOverflow: 'ellipsis'
-  },
-  [`& .${listItemTextClasses.secondary}`]: {
-    overflow: 'hidden',
-    whiteSpace: 'nowrap',
-    textOverflow: 'ellipsis',
-    marginTop: theme.spacing(0.25)
-  }
-}))
+import {
+  EntityTitleButton,
+  type EntityTitleButtonProps
+} from './EntityTitleButton'
+import { TrashIcon } from './icons/TrashIcon'
+import { VisibilityOffIcon } from './icons/VisibilityOffIcon'
+import { VisibilityOnIcon } from './icons/VisibilityOnIcon'
 
 const HoverMenuRoot = styled(ListItemSecondaryAction)(({ theme }) => ({
   position: 'relative',
@@ -122,8 +27,7 @@ const HoverMenuRoot = styled(ListItemSecondaryAction)(({ theme }) => ({
   transform: 'none',
   flexShrink: 0,
   flexGrow: 0,
-  marginRight: theme.spacing(-0.5),
-  marginLeft: theme.spacing(0.5)
+  marginRight: theme.spacing(-1)
 }))
 
 function stopPropagation(event: SyntheticEvent): void {
@@ -131,98 +35,79 @@ function stopPropagation(event: SyntheticEvent): void {
 }
 
 interface HoverMenuProps {
-  id: string
-  hiddenAtom: PrimitiveAtom<boolean>
+  hovered?: boolean
+  hidden?: boolean
+  onRemove?: MouseEventHandler<HTMLButtonElement>
+  onToggleHidden?: MouseEventHandler<HTMLButtonElement>
 }
 
-const HoverMenu: FC<HoverMenuProps> = ({ id, hiddenAtom }) => {
-  const [hidden, setHidden] = useAtom(hiddenAtom)
-  const handleVisibilityClick = useCallback(() => {
-    setHidden(value => !value)
-  }, [setHidden])
-
-  const remove = useSetAtom(removeLayerAtom)
-  const handleRemoveClick = useCallback(() => {
-    remove(id)
-  }, [id, remove])
-
+const HoverMenu: FC<HoverMenuProps> = ({
+  hovered = false,
+  hidden = false,
+  onRemove,
+  onToggleHidden
+}) => {
+  if (!hovered && !hidden) {
+    return null
+  }
   return (
     <HoverMenuRoot onMouseDown={stopPropagation}>
-      <Tooltip title='削除'>
-        <IconButton
-          size='small'
-          color='inherit'
-          aria-label='削除'
-          onClick={handleRemoveClick}
-        >
-          <ItemTrashIcon fontSize='medium' />
-        </IconButton>
-      </Tooltip>
-      <Tooltip title='移動'>
-        <span>
-          <IconButton size='small' color='inherit' aria-label='移動' disabled>
-            <ItemLocationIcon fontSize='medium' />
+      {(hovered || !hidden) && (
+        <Tooltip title='削除'>
+          <IconButton color='inherit' aria-label='削除' onClick={onRemove}>
+            <TrashIcon fontSize='small' />
           </IconButton>
-        </span>
-      </Tooltip>
+        </Tooltip>
+      )}
       <Tooltip title={hidden ? '表示' : '隠す'}>
         <IconButton
-          size='small'
           color='inherit'
           aria-label={hidden ? '表示' : '隠す'}
-          onClick={handleVisibilityClick}
+          onClick={onToggleHidden}
         >
-          <ItemVisibilityIcon fontSize='medium' />
+          {hidden ? (
+            <VisibilityOffIcon fontSize='small' />
+          ) : (
+            <VisibilityOnIcon fontSize='small' />
+          )}
         </IconButton>
       </Tooltip>
     </HoverMenuRoot>
   )
 }
 
-export type LayerListItemProps = LayerProps & {
-  iconComponent: ComponentType<SvgIconProps>
-  highlighted?: boolean
-}
+export interface LayerListItemProps
+  extends EntityTitleButtonProps,
+    Omit<HoverMenuProps, 'hidden'> {}
 
 export const LayerListItem: FC<LayerListItemProps> = ({
-  id,
-  selected,
-  highlighted,
-  iconComponent,
-  titleAtom,
-  loadingAtom,
-  hiddenAtom,
-  itemProps
+  hidden = false,
+  onRemove,
+  onToggleHidden,
+  onMouseEnter,
+  onMouseLeave,
+  ...props
 }) => {
-  const title = useAtomValue(titleAtom)
-  const loading = useAtomValue(loadingAtom)
-  const hidden = useAtomValue(hiddenAtom)
-  const Icon = iconComponent
+  const [hovered, setHovered] = useState(false)
+  const handleMouseEnter = useForkEventHandler(onMouseEnter, () => {
+    setHovered(true)
+  })
+  const handleMouseLeave = useForkEventHandler(onMouseLeave, () => {
+    setHovered(false)
+  })
   return (
-    <StyledListItem
-      {...itemProps}
-      selected={selected}
-      highlighted={highlighted}
+    <EntityTitleButton
+      {...props}
       hidden={hidden}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
-      <ListItemIcon>
-        {loading ? (
-          <AntIcon iconComponent={LoadingIcon} fontSize='medium' />
-        ) : (
-          <Icon fontSize='medium' />
-        )}
-      </ListItemIcon>
-      <StyledListItemText
-        primary={typeof title === 'object' ? title?.primary : title}
-        secondary={typeof title === 'object' ? title?.secondary : undefined}
-        primaryTypographyProps={{
-          variant: 'body2'
-        }}
-        secondaryTypographyProps={{
-          variant: 'caption'
-        }}
+      <HoverMenu
+        hovered={hovered}
+        hidden={hidden}
+        onRemove={onRemove}
+        onToggleHidden={onToggleHidden}
       />
-      <HoverMenu id={id} hiddenAtom={hiddenAtom} />
-    </StyledListItem>
+    </EntityTitleButton>
   )
 }

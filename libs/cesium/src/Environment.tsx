@@ -107,7 +107,7 @@ export const Environment: FC<EnvironmentProps> = ({
 
   // Light and shadow
   cloneColor(lightColor, scene.light.color)
-  scene.light.intensity = debugSphericalHarmonics ? 0 : lightIntensity
+  scene.light.intensity = debugSphericalHarmonics ? 0.5 : lightIntensity
   scene.shadowMap.darkness = shadowDarkness
 
   // Image-based lighting

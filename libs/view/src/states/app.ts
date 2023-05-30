@@ -1,13 +1,23 @@
-import { atom } from 'jotai'
-import { atomWithReset } from 'jotai/utils'
+import { atom, type SetStateAction } from 'jotai'
+import { atomWithReset, type RESET } from 'jotai/utils'
 
 import { type EnvironmentType } from '../containers/Environments'
 import { type TerrainType } from '../containers/Terrains'
+import { shadowMapEnabledAtom } from './graphics'
 
 export const readyAtom = atom<boolean>(false)
 export const showDeveloperPanelsAtom = atom(false)
 
-export const environmentTypeAtom = atomWithReset<EnvironmentType>('map')
+const environmentTypePrimitiveAtom = atomWithReset<EnvironmentType>('map')
+export const environmentTypeAtom = atom(
+  get => get(environmentTypePrimitiveAtom),
+  (get, set, value: SetStateAction<EnvironmentType> | typeof RESET) => {
+    set(environmentTypePrimitiveAtom, value)
+    if (value === 'google-photorealistic') {
+      set(shadowMapEnabledAtom, false)
+    }
+  }
+)
 export const terrainTypeAtom = atomWithReset<TerrainType>('plateau')
 export const enableTerrainLightingAtom = atomWithReset(true)
 export const debugSphericalHarmonicsAtom = atomWithReset(false)

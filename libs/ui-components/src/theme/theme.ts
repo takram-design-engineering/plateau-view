@@ -42,11 +42,26 @@ export const themeOptions: ThemeOptions = {
   },
   typography: {
     fontSize: 14,
-    fontFamily: 'system-ui, Hiragino Sans, sans-serif',
+    fontFamily: [
+      'ui-sans-serif',
+      'system-ui',
+      '-apple-system',
+      'BlinkMacSystemFont',
+      '"Segoe UI"',
+      'Roboto',
+      '"Helvetica Neue"',
+      'Arial',
+      '"Noto Sans"',
+      'sans-serif',
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"'
+    ].join(','),
     h1: {
+      fontSize: theme.typography.pxToRem(28.38),
       fontWeight: 600
     },
-    // Major second typographic scale of 15px base.
+    // Major second typographic scale of 14px base.
     // https://typescale.com
     h2: {
       fontSize: theme.typography.pxToRem(25.23),

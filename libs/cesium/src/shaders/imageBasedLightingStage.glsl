@@ -28,7 +28,7 @@ vec3 imageBasedLightingStage(
   );
   vec3 diffuseIrradiance = czm_sphericalHarmonics(
     cubeDir,
-    sphericalHarmonicCoefficients
+    u_sphericalHarmonicCoefficients
   );
 
   return pbrParameters.diffuseColor * diffuseIrradiance;

@@ -1,41 +1,36 @@
-import { Divider, Stack, alpha, styled } from '@mui/material'
-import { useAtomValue } from 'jotai'
-import { useCallback, useRef, useState, type FC, type ReactNode } from 'react'
+import { Box, Divider, Stack, styled } from '@mui/material'
+import { useAtomValue, useSetAtom } from 'jotai'
+import { useCallback, useRef, useState, type FC } from 'react'
 
+import {
+  LayerList,
+  clearLayerSelectionAtom,
+  layerAtomsAtom
+} from '@takram/plateau-layers'
 import { useWindowEvent } from '@takram/plateau-react-helpers'
 import { platformAtom } from '@takram/plateau-shared-states'
 import {
   FloatingPanel,
+  LayerList as LayerListComponent,
   SearchField,
   Shortcut
 } from '@takram/plateau-ui-components'
+import { ViewLayerListItem } from '@takram/plateau-view-layers'
 
 import { MainMenuButton } from './MainPanel/MainMenuButton'
 
-const Search = styled('div', {
-  shouldForwardProp: prop => prop !== 'divider'
-})<{
-  divider: boolean
-}>(({ theme, divider }) => ({
-  position: 'sticky',
-  top: 0,
+const Search = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'row',
   minHeight: theme.spacing(6),
-  backgroundColor: theme.palette.background.default,
-  zIndex: 1,
-  ...(divider && {
-    // Match the light style of divider.
-    // https://github.com/mui/material-ui/blob/v5.13.1/packages/mui-material/src/Divider/Divider.js#L71
-    boxShadow: `0 1px 0 ${alpha(theme.palette.divider, 0.08)}`
-  })
+  backgroundColor: theme.palette.background.default
 }))
 
-export interface MainPanelProps {
-  children?: ReactNode
-}
+const StyledLayerList = styled(LayerListComponent)(({ theme }) => ({
+  maxHeight: `calc(100% - ${theme.spacing(6)})`
+}))
 
-export const MainPanel: FC<MainPanelProps> = ({ children }) => {
+export const MainPanel: FC = () => {
   const [focused, setFocused] = useState(false)
   const handleFocus = useCallback(() => {
     setFocused(true)
@@ -43,6 +38,20 @@ export const MainPanel: FC<MainPanelProps> = ({ children }) => {
   const handleBlur = useCallback(() => {
     setFocused(false)
   }, [])
+
+  const layerAtoms = useAtomValue(layerAtomsAtom)
+  const [layersOpen, setLayersOpen] = useState(true)
+  const handleLayersOpen = useCallback(() => {
+    setLayersOpen(true)
+  }, [])
+  const handleLayersClose = useCallback(() => {
+    setLayersOpen(false)
+  }, [])
+
+  const clearLayerSelection = useSetAtom(clearLayerSelectionAtom)
+  const handleLayersMouseDown = useCallback(() => {
+    clearLayerSelection()
+  }, [clearLayerSelection])
 
   const textFieldRef = useRef<HTMLInputElement>(null)
 
@@ -56,38 +65,51 @@ export const MainPanel: FC<MainPanelProps> = ({ children }) => {
 
   const platform = useAtomValue(platformAtom)
   return (
-    <FloatingPanel scrollable>
-      <div>
-        <Search divider={children != null}>
-          <Stack direction='row' flexGrow={1} alignItems='center'>
-            <MainMenuButton />
-            <Divider orientation='vertical' light />
-            <SearchField
-              inputRef={textFieldRef}
-              variant='standard'
-              fullWidth
-              placeholder='データ、エリア、場所を検索'
-              onFocus={handleFocus}
-              onBlur={handleBlur}
-              InputProps={{
-                disableUnderline: true,
-                ...(!focused && {
-                  endAdornment: (
-                    <Shortcut
-                      variant='outlined'
-                      platform={platform}
-                      shortcutKey='K'
-                      commandKey
-                    />
-                  )
-                })
-              }}
-              sx={{ marginX: 1.5 }}
-            />
-          </Stack>
-        </Search>
-        {children}
-      </div>
+    <FloatingPanel>
+      <Search>
+        <Stack direction='row' flexGrow={1} alignItems='center'>
+          <MainMenuButton />
+          <Divider orientation='vertical' light />
+          <SearchField
+            inputRef={textFieldRef}
+            variant='standard'
+            fullWidth
+            placeholder='データ、エリア、場所を検索'
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            InputProps={{
+              disableUnderline: true,
+              ...(!focused && {
+                endAdornment: (
+                  <Shortcut
+                    variant='outlined'
+                    platform={platform}
+                    shortcutKey='K'
+                    commandKey
+                  />
+                )
+              })
+            }}
+            sx={{ marginX: 1.5 }}
+          />
+        </Stack>
+      </Search>
+      <Box
+        // TODO: Unmounting LayerList breaks layer states, and removed layers
+        // stay visible.
+        display={layerAtoms.length > 0 ? 'block' : 'none'}
+      >
+        <Divider light />
+        <StyledLayerList
+          footer={`${layerAtoms.length}項目`}
+          open={layersOpen}
+          onOpen={handleLayersOpen}
+          onClose={handleLayersClose}
+          onMouseDown={handleLayersMouseDown}
+        >
+          <LayerList itemComponent={ViewLayerListItem} unmountWhenEmpty />
+        </StyledLayerList>
+      </Box>
     </FloatingPanel>
   )
 }

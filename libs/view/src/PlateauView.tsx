@@ -6,14 +6,12 @@ import { Suspense, useCallback, useEffect, type FC } from 'react'
 import { CurrentTime, ViewLocator } from '@takram/plateau-cesium'
 import { SuspendUntilTilesLoaded } from '@takram/plateau-cesium-helpers'
 import { GooglePhotorealisticTileset } from '@takram/plateau-datasets'
-import { LayerList, LayersRenderer, useAddLayer } from '@takram/plateau-layers'
+import { LayersRenderer, useAddLayer } from '@takram/plateau-layers'
 import {
-  AppLayout,
-  LayerList as LayerListComponent
+  AppLayout
 } from '@takram/plateau-ui-components'
 import {
   BUILDING_LAYER,
-  ViewLayerListItem,
   createViewLayer,
   layerComponents
 } from '@takram/plateau-view-layers'
@@ -32,6 +30,7 @@ import { ToolMachineEvents } from './containers/ToolMachineEvents'
 import { DeveloperPanels } from './developer/DeveloperPanels'
 import { LocationContextBar } from './panels/LocationContextBar'
 import { MainPanel } from './panels/MainPanel'
+import { SelectionPanel } from './panels/SelectionPanel'
 import { Toolbar } from './panels/Toolbar'
 import { environmentTypeAtom, readyAtom } from './states/app'
 
@@ -126,16 +125,9 @@ export const PlateauView: FC<PlateauViewProps> = () => {
       <ScreenSpaceSelection />
       <ExclusiveSelection />
       <AppLayout
-        main={
-          <MainPanel>
-            <LayerList
-              component={LayerListComponent}
-              itemComponent={ViewLayerListItem}
-              unmountWhenEmpty
-            />
-          </MainPanel>
-        }
+        main={<MainPanel />}
         context={<LocationContextBar />}
+        aside={<SelectionPanel />}
         bottomLeft={<Toolbar />}
         developer={<DeveloperPanels />}
       />

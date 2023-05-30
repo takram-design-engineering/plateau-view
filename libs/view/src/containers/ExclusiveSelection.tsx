@@ -1,5 +1,6 @@
 import { useAtom } from 'jotai'
-import { useEffect, type FC } from 'react'
+import { type FC } from 'react'
+import { useIsomorphicLayoutEffect } from 'react-use'
 
 import { layerSelectionAtom } from '@takram/plateau-layers'
 import { screenSpaceSelectionAtom } from '@takram/plateau-screen-space-selection'
@@ -10,13 +11,13 @@ export const ExclusiveSelection: FC = () => {
     screenSpaceSelectionAtom
   )
 
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (layerSelection.length > 0) {
       setScreenSpaceSelection([])
     }
   }, [layerSelection, setLayerSelection, setScreenSpaceSelection])
 
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (screenSpaceSelection.length > 0) {
       setLayerSelection([])
     }

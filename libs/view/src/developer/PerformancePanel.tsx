@@ -12,6 +12,7 @@ import {
   showTilesetWireframeAtom
 } from '@takram/plateau-datasets'
 import { atomWithResettableAtoms } from '@takram/plateau-shared-states'
+import { assertType } from '@takram/plateau-type-helpers'
 import {
   DeveloperPanel,
   ParameterItem,
@@ -72,7 +73,7 @@ export const PerformancePanel: FC = () => {
           : 'Measuring...'
     }
 
-    invariant(((scene): scene is PrivateScene => true)(scene))
+    assertType<PrivateScene>(scene)
     const view = scene.view
     const frustumCommandsList = view.frustumCommandsList
 

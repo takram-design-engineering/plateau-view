@@ -51,19 +51,6 @@ const OverflowButton = styled('div')(({ theme }) => {
   }
 })
 
-const StyledExpandArrowIcon = styled(ExpandArrowIcon, {
-  shouldForwardProp: prop => prop !== 'expanded'
-})<{
-  expanded?: boolean
-}>(({ theme, expanded = false }) => ({
-  transition: theme.transitions.create('transform', {
-    duration: theme.transitions.duration.shorter
-  }),
-  ...(expanded && {
-    transform: 'rotate(180deg)'
-  })
-}))
-
 export interface ContextBarProps extends ComponentPropsWithRef<typeof Root> {
   overflow?: boolean
   expanded?: boolean
@@ -80,8 +67,11 @@ export const ContextBar = forwardRef<HTMLDivElement, ContextBarProps>(
       <RoundedBox>{children}</RoundedBox>
       {overflow && (
         <OverflowButton>
-          <IconButton onClick={onClickOverflow}>
-            <StyledExpandArrowIcon expanded={expanded} />
+          <IconButton
+            aria-label={expanded ? '閉じる' : '開く'}
+            onClick={onClickOverflow}
+          >
+            <ExpandArrowIcon expanded={expanded} />
           </IconButton>
         </OverflowButton>
       )}

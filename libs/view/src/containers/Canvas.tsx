@@ -43,18 +43,6 @@ import {
 import { showGlobeWireframeAtom } from '../states/performance'
 import { GlobeDepthTestCoordinator } from './GlobeDepthTestCoordinator'
 
-declare module '@cesium/engine' {
-  interface Globe {
-    _surface: {
-      tileProvider: {
-        _debug: {
-          wireframe: boolean
-        }
-      }
-    }
-  }
-}
-
 const Root = withDeferredProps(
   ['useBrowserRecommendedResolution'],
   styled(CesiumCanvas)({
@@ -72,7 +60,16 @@ const Configure: FC = memo(() => {
   scene.camera.frustum.near = 5
 
   const showGlobeWireframe = useAtomValue(showGlobeWireframeAtom)
-  scene.globe._surface.tileProvider._debug.wireframe = showGlobeWireframe
+  const globe = scene.globe as Globe & {
+    _surface: {
+      tileProvider: {
+        _debug: {
+          wireframe: boolean
+        }
+      }
+    }
+  }
+  globe._surface.tileProvider._debug.wireframe = showGlobeWireframe
 
   const antialiasType = useAtomValue(antialiasTypeAtom)
   scene.postProcessStages.fxaa.enabled = antialiasType === 'fxaa'
