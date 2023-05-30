@@ -17,7 +17,7 @@ import {
   LocationIcon,
   SearchIcon,
   TrashIcon,
-  VisibilityIcon
+  VisibilityOnIcon
 } from './icons'
 
 const meta: Meta<typeof Inspector> = {
@@ -50,7 +50,7 @@ export const Default: Story = {
         <Divider light />
         <InspectorActions>
           <IconButton>
-            <VisibilityIcon />
+            <VisibilityOnIcon />
           </IconButton>
           <IconButton>
             <SearchIcon />
