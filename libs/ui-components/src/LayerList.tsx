@@ -3,8 +3,8 @@ import {
   IconButton,
   List,
   ListItem,
-  ListItemSecondaryAction,
   ListItemText,
+  listItemSecondaryActionClasses,
   styled,
   type ListProps
 } from '@mui/material'
@@ -24,14 +24,11 @@ const Footer = styled(ListItem)(({ theme }) => ({
   alignItems: 'center',
   height: theme.spacing(4),
   color: theme.palette.text.secondary,
-  backgroundColor: theme.palette.grey[50]
-})) as unknown as typeof ListItem // For generics
-
-const StyledListItemSecondaryAction = styled(ListItemSecondaryAction)(
-  ({ theme }) => ({
+  backgroundColor: theme.palette.grey[50],
+  [`& .${listItemSecondaryActionClasses.root}`]: {
     right: theme.spacing(1)
-  })
-)
+  }
+})) as unknown as typeof ListItem // For generics
 
 const StyledScrollable = styled(Scrollable)(({ theme }) => ({
   maxHeight: `calc(100% - ${theme.spacing(4)} - 1px)`
@@ -57,9 +54,9 @@ export const LayerList = forwardRef<HTMLDivElement, LayerListProps>(
           <Divider light />
         </>
       )}
-      <Footer component='div'>
-        <ListItemText>{footer ?? '\u00a0'}</ListItemText>
-        <StyledListItemSecondaryAction>
+      <Footer
+        component='div'
+        secondaryAction={
           <IconButton
             size='small'
             aria-label={open ? '閉じる' : '開く'}
@@ -67,7 +64,9 @@ export const LayerList = forwardRef<HTMLDivElement, LayerListProps>(
           >
             <ExpandArrowIcon expanded={open} />
           </IconButton>
-        </StyledListItemSecondaryAction>
+        }
+      >
+        <ListItemText>{footer ?? '\u00a0'}</ListItemText>
       </Footer>
     </Root>
   )
