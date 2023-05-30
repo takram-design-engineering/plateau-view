@@ -1,11 +1,7 @@
 import { Paper, styled, type PaperProps } from '@mui/material'
-import {
-  useOverlayScrollbars,
-  type UseOverlayScrollbarsParams
-} from 'overlayscrollbars-react'
-import { forwardRef, useEffect, useRef, type ReactNode } from 'react'
-import { mergeRefs } from 'react-merge-refs'
-import invariant from 'tiny-invariant'
+import { forwardRef } from 'react'
+
+import { Scrollable } from './Scrollable'
 
 const StyledPaper = styled(Paper)(({ theme, elevation = 4 }) => ({
   position: 'relative',
@@ -23,25 +19,19 @@ const StyledPaper = styled(Paper)(({ theme, elevation = 4 }) => ({
   }
 }))
 
-const RoundedBlock = styled('div')(({ theme }) => ({
+const RoundedBox = styled('div')(({ theme }) => ({
+  overflow: 'hidden',
   maxHeight: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  height: '100%',
+  minHeight: 0,
   borderRadius: theme.shape.borderRadius
 }))
 
-const ScrollableRoundedBox = forwardRef<
-  HTMLDivElement,
-  UseOverlayScrollbarsParams & {
-    children?: ReactNode
-  }
->(({ options, events, defer, ...props }, forwardedRef) => {
-  const ref = useRef<HTMLDivElement>(null)
-  const [initialize] = useOverlayScrollbars({ options, events, defer })
-  useEffect(() => {
-    invariant(ref.current != null)
-    initialize(ref.current)
-  }, [initialize])
-  return <RoundedBlock ref={mergeRefs([ref, forwardedRef])} {...props} />
-})
+const ScrollableRoundedBox = styled(Scrollable)(({ theme }) => ({
+  borderRadius: theme.shape.borderRadius
+}))
 
 export interface FloatingPanelProps extends PaperProps {
   scrollable?: boolean
@@ -53,7 +43,7 @@ export const FloatingPanel = forwardRef<HTMLDivElement, FloatingPanelProps>(
       {scrollable ? (
         <ScrollableRoundedBox>{children}</ScrollableRoundedBox>
       ) : (
-        children
+        <RoundedBox>{children}</RoundedBox>
       )}
     </StyledPaper>
   )

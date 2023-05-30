@@ -6,7 +6,7 @@ import {
   type ScreenSpaceSelectionEntry
 } from '@takram/plateau-screen-space-selection'
 
-import { PLATEAU_TILESET } from './PlateauTileset'
+import { PLATEAU_TILE_FEATURE } from './PlateauTileset'
 
 export const showTilesetTextureAtom = atomWithReset(true)
 export const showTilesetWireframeAtom = atomWithReset(false)
@@ -14,7 +14,7 @@ export const showTilesetBoundingVolumeAtom = atomWithReset(false)
 
 export const featureSelectionAtom = atom(get => {
   return get(screenSpaceSelectionAtom).filter(
-    (entry): entry is ScreenSpaceSelectionEntry<typeof PLATEAU_TILESET> =>
-      entry.type === PLATEAU_TILESET
+    (entry): entry is ScreenSpaceSelectionEntry<typeof PLATEAU_TILE_FEATURE> =>
+      entry.type === PLATEAU_TILE_FEATURE
   )
 })

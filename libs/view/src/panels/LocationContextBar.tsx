@@ -118,7 +118,7 @@ export const LocationContextBar: FC = () => {
           <Controls>
             <Stack
               direction='row'
-              spacing={1}
+              spacing={0.5}
               useFlexGap
               rowGap={0.5}
               {...(expanded && {

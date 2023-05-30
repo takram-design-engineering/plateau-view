@@ -1,10 +1,9 @@
 import { type Meta, type StoryObj } from '@storybook/react'
-import { atom } from 'jotai'
-import { useMemo, type FC } from 'react'
+import { useCallback, useState, type FC } from 'react'
 
 import { FloatingPanel } from './FloatingPanel'
 import { LayerList } from './LayerList'
-import { LayerListItem, type LayerListItemProps } from './LayerListItem'
+import { LayerListItem } from './LayerListItem'
 import { BuildingIcon } from './icons'
 
 const meta: Meta<typeof LayerListItem> = {
@@ -16,28 +15,117 @@ export default meta
 
 type Story = StoryObj<typeof LayerListItem>
 
-const ItemComponent: FC<{ selected?: boolean }> = ({ selected = false }) => {
-  const props = useMemo(
-    () => ({
-      id: 1,
-      titleAtom: atom('レイヤー名称') as LayerListItemProps['titleAtom'],
-      loadingAtom: atom(false),
-      hiddenAtom: atom(false),
-      iconComponent: BuildingIcon,
-      selected
-    }),
-    [selected]
+const DefaultComponent: FC = () => {
+  const [open, setOpen] = useState(true)
+  const handleToggleOpen = useCallback(() => {
+    setOpen(value => !value)
+  }, [])
+
+  return (
+    <FloatingPanel sx={{ width: 360 }}>
+      <LayerList
+        open={open}
+        onOpen={handleToggleOpen}
+        onClose={handleToggleOpen}
+      >
+        <LayerListItem title='レイヤー名称' iconComponent={BuildingIcon} />
+        <LayerListItem
+          title='レイヤー名称'
+          iconComponent={BuildingIcon}
+          highlighted
+        />
+        <LayerListItem
+          title='レイヤー名称'
+          iconComponent={BuildingIcon}
+          selected
+        />
+        <LayerListItem
+          title='レイヤー名称'
+          iconComponent={BuildingIcon}
+          hidden
+        />
+        <LayerListItem
+          title='レイヤー名称'
+          iconComponent={BuildingIcon}
+          highlighted
+          hidden
+        />
+        <LayerListItem
+          title='レイヤー名称'
+          iconComponent={BuildingIcon}
+          selected
+          hidden
+        />
+        <LayerListItem title='レイヤー名称' iconComponent={BuildingIcon} />
+      </LayerList>
+    </FloatingPanel>
   )
-  return <LayerListItem {...(props as unknown as LayerListItemProps)} />
 }
 
 export const Default: Story = {
+  render: () => <DefaultComponent />
+}
+
+export const Subtitled: Story = {
   render: () => (
     <FloatingPanel sx={{ width: 360 }}>
       <LayerList>
-        <ItemComponent />
-        <ItemComponent />
-        <ItemComponent selected />
+        <LayerListItem
+          title={{
+            primary: 'レイヤー名称',
+            secondary: '詳細な情報の付加'
+          }}
+          iconComponent={BuildingIcon}
+        />
+        <LayerListItem
+          title={{
+            primary: 'レイヤー名称',
+            secondary: '詳細な情報の付加'
+          }}
+          iconComponent={BuildingIcon}
+          highlighted
+        />
+        <LayerListItem
+          title={{
+            primary: 'レイヤー名称',
+            secondary: '詳細な情報の付加'
+          }}
+          iconComponent={BuildingIcon}
+          selected
+        />
+        <LayerListItem
+          title={{
+            primary: 'レイヤー名称',
+            secondary: '詳細な情報の付加'
+          }}
+          iconComponent={BuildingIcon}
+          hidden
+        />
+        <LayerListItem
+          title={{
+            primary: 'レイヤー名称',
+            secondary: '詳細な情報の付加'
+          }}
+          iconComponent={BuildingIcon}
+          highlighted
+          hidden
+        />
+        <LayerListItem
+          title={{
+            primary: 'レイヤー名称',
+            secondary: '詳細な情報の付加'
+          }}
+          iconComponent={BuildingIcon}
+          selected
+          hidden
+        />
+        <LayerListItem
+          title={{
+            primary: 'レイヤー名称',
+            secondary: '詳細な情報の付加'
+          }}
+          iconComponent={BuildingIcon}
+        />
       </LayerList>
     </FloatingPanel>
   )
