@@ -1,8 +1,12 @@
-import { Stack, styled } from '@mui/material'
+import { Stack, styled, svgIconClasses } from '@mui/material'
 import { type FC, type ReactNode } from 'react'
 
 const Root = styled(Stack)(({ theme }) => ({
-  padding: theme.spacing(0.5)
+  padding: theme.spacing(0.5),
+  // WORKAROUND: TODO: Icons appears to be off size.
+  [`& .${svgIconClasses.root}`]: {
+    fontSize: 20
+  }
 }))
 
 export interface InspectorActionsProps {

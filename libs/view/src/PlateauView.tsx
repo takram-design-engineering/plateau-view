@@ -30,6 +30,7 @@ import { ToolMachineEvents } from './containers/ToolMachineEvents'
 import { DeveloperPanels } from './developer/DeveloperPanels'
 import { LocationContextBar } from './panels/LocationContextBar'
 import { MainPanel } from './panels/MainPanel'
+import { SelectionPanel } from './panels/SelectionPanel'
 import { Toolbar } from './panels/Toolbar'
 import { environmentTypeAtom, readyAtom } from './states/app'
 
@@ -126,6 +127,7 @@ export const PlateauView: FC<PlateauViewProps> = () => {
       <AppLayout
         main={<MainPanel />}
         context={<LocationContextBar />}
+        aside={<SelectionPanel />}
         bottomLeft={<Toolbar />}
         developer={<DeveloperPanels />}
       />
