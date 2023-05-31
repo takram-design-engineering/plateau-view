@@ -1,8 +1,8 @@
-import { Cartesian3, Color } from '@cesium/engine'
+import { Cartesian3, Color, type Material } from '@cesium/engine'
 import { useMemo, type FC } from 'react'
 
-import { GlobeShader } from './GlobeShader'
 import { useCesium } from './useCesium'
+import { useModifyGlobeShaders } from './useModifyGlobeShaders'
 
 function cloneColor(value: Color | string | number, result?: Color): Color {
   return typeof value === 'string'
@@ -48,6 +48,7 @@ export interface EnvironmentProps {
   showGlobe?: boolean
   enableGlobeLighting?: boolean
   globeImageBasedLightingFactor?: number
+  globeMaterial?: Material
   lightColor?: Color | string | number
   lightIntensity?: number
   shadowDarkness?: number
@@ -75,6 +76,7 @@ export const Environment: FC<EnvironmentProps> = ({
   showGlobe = true,
   enableGlobeLighting = false,
   globeImageBasedLightingFactor = 0.3,
+  globeMaterial,
   lightColor = Color.WHITE,
   lightIntensity = 2,
   shadowDarkness = 0.3,
@@ -155,13 +157,12 @@ export const Environment: FC<EnvironmentProps> = ({
 
   scene.requestRender()
 
-  return (
-    <GlobeShader
-      sphericalHarmonicCoefficients={
-        debugSphericalHarmonics
-          ? debugSphericalHarmonicCoefficients
-          : scaledSphericalHarmonicCoefficients ?? []
-      }
-    />
-  )
+  useModifyGlobeShaders({
+    material: globeMaterial,
+    sphericalHarmonicCoefficients: debugSphericalHarmonics
+      ? debugSphericalHarmonicCoefficients
+      : scaledSphericalHarmonicCoefficients ?? []
+  })
+
+  return null
 }
