@@ -1,5 +1,7 @@
 export * from './BucketCache'
+export * from './CachedTileRenderer'
 export * from './FileCache'
 export * from './interfaces/Coordinates'
 export * from './interfaces/TileCache'
 export * from './interfaces/TileFormat'
+export * from './TileFormatValidationPipe'
