@@ -1,10 +1,7 @@
 import { Cartesian3 } from '@cesium/engine'
-import { useAtomValue } from 'jotai'
 import { type FC } from 'react'
 
 import { Environment, type EnvironmentProps } from '@takram/plateau-cesium'
-
-import { enableTerrainLightingAtom } from '../states/app'
 
 // TODO: Create time-based interpolation of sky atmosphere.
 // Spherical harmonic coefficients generated from a modified version of:
@@ -22,10 +19,8 @@ const sphericalHarmonicCoefficients = [
 ]
 
 export const SatelliteEnvironment: FC<EnvironmentProps> = props => {
-  const enableTerrainLighting = useAtomValue(enableTerrainLightingAtom)
   return (
     <Environment
-      enableGlobeLighting={enableTerrainLighting}
       lightIntensity={1}
       shadowDarkness={0.5}
       sphericalHarmonicCoefficients={sphericalHarmonicCoefficients}
