@@ -1,7 +1,7 @@
 import { Global, Module } from '@nestjs/common'
 
-import { BucketCache } from './caches/BucketCache'
-import { FileCache } from './caches/FileCache'
+import { BucketCache, FileCache } from '@takram/plateau-nest-tile-cache'
+
 import { VECTOR_TILE_CACHE, VECTOR_TILE_MODULE_OPTIONS } from './constants'
 import { type VectorTileModuleOptions } from './interfaces/VectorTileModuleOptions'
 import {

@@ -11,15 +11,17 @@ import { type Readable } from 'stream'
 import invariant from 'tiny-invariant'
 
 import { CESIUM, type Cesium } from '@takram/plateau-nest-cesium'
+import {
+  type Coordinates,
+  type TileCache,
+  type TileFormat
+} from '@takram/plateau-nest-tile-cache'
 
 import {
   VECTOR_TILE_CACHE,
   VECTOR_TILE_MAP_STYLE,
   VECTOR_TILE_OPTIONS
 } from './constants'
-import { type Coordinates } from './interfaces/Coordinates'
-import { type VectorTileCache } from './interfaces/VectorTileCache'
-import { type VectorTileRenderFormat } from './interfaces/VectorTileFormat'
 import { VectorTileOptions } from './interfaces/VectorTileOptions'
 
 interface MapRequest {
@@ -42,10 +44,10 @@ type MapStyle = Omit<Style, 'layers'> & {
 }
 
 interface RenderTileOptions {
-  format?: VectorTileRenderFormat
+  format?: TileFormat
 }
 
-function applyFormat(image: Sharp, format: VectorTileRenderFormat): Sharp {
+function applyFormat(image: Sharp, format: TileFormat): Sharp {
   return format === 'webp' ? image.webp({ lossless: true }) : image.png()
 }
 
@@ -53,7 +55,7 @@ function applyFormat(image: Sharp, format: VectorTileRenderFormat): Sharp {
 export class VectorTileService {
   constructor(
     @Inject(VECTOR_TILE_CACHE)
-    private readonly cache: VectorTileCache | undefined,
+    private readonly cache: TileCache | undefined,
     @Inject(VECTOR_TILE_OPTIONS)
     private readonly options: VectorTileOptions,
     @Inject(VECTOR_TILE_MAP_STYLE)

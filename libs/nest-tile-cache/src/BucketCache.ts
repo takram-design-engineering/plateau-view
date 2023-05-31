@@ -5,12 +5,12 @@ import { type Sharp } from 'sharp'
 import { type Readable } from 'stream'
 import invariant from 'tiny-invariant'
 
-import { type Coordinates } from '../interfaces/Coordinates'
-import { type VectorTileCache } from '../interfaces/VectorTileCache'
-import { type VectorTileRenderFormat } from '../interfaces/VectorTileFormat'
+import { type Coordinates } from './interfaces/Coordinates'
+import { type TileCache } from './interfaces/TileCache'
+import { type TileFormat } from './interfaces/TileFormat'
 
 @Injectable()
-export class BucketCache implements VectorTileCache {
+export class BucketCache implements TileCache {
   private readonly storage = new Storage()
   private readonly bucket: Bucket
   private readonly bucketRoot: string // TODO: Use bucket root in paths
@@ -25,7 +25,7 @@ export class BucketCache implements VectorTileCache {
   private makePath(
     name: string,
     coords: Coordinates,
-    format: VectorTileRenderFormat
+    format: TileFormat
   ): string {
     const { x, y, level } = coords
     return path.join(name, `${level}/${x}/${y}.${format}`)
@@ -34,7 +34,7 @@ export class BucketCache implements VectorTileCache {
   async get(
     name: string,
     coords: Coordinates,
-    format: VectorTileRenderFormat
+    format: TileFormat
   ): Promise<string | Readable | undefined> {
     const file = this.bucket.file(this.makePath(name, coords, format))
     const [exists] = await file.exists()
@@ -44,7 +44,7 @@ export class BucketCache implements VectorTileCache {
   async set(
     name: string,
     coords: Coordinates,
-    format: VectorTileRenderFormat,
+    format: TileFormat,
     image: Sharp
   ): Promise<void> {
     const file = this.bucket.file(this.makePath(name, coords, format))

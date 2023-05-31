@@ -46,6 +46,7 @@ This repository consists of the following apps and libraries. The README for eac
 | [nest-cesium](libs/nest-cesium)                       | Module for using Cesium in NestJS                                                                     |
 | [nest-firestore](libs/nest-firestore)                 | Module for using Google Firestore in NestJS                                                           |
 | [nest-plateau](libs/nest-plateau)                     | NestJS module for PLATEAU datasets                                                                    |
+| [nest-tile-cache](libs/nest-tile-cache)               | NestJS module for caching tile images                                                                 |
 | [nest-vector-tile](libs/nest-vector-tile)             | NestJS module for rendering vector map tiles                                                          |
 | [react-helpers](libs/react-helpers)                   | Helper functions and hooks for React                                                                  |
 | [screen-space-selection](libs/screen-space-selection) | Screen-space selection for Cesium                                                                     |

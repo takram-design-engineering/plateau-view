@@ -13,8 +13,9 @@ import {
 } from '@nestjs/common'
 import { type Response } from 'express'
 
+import { type TileFormat } from '@takram/plateau-nest-tile-cache'
+
 import { VectorTileService } from './VectorTileService'
-import { VectorTileRenderFormat } from './interfaces/VectorTileFormat'
 import { type VectorTileOptions } from './interfaces/VectorTileOptions'
 
 @Injectable()
@@ -37,7 +38,7 @@ export function createVectorTileController(options: VectorTileOptions): Type {
       @Param('x', ParseIntPipe) x: number,
       @Param('y', ParseIntPipe) y: number,
       @Param('level', ParseIntPipe) level: number,
-      @Param('format', FormatValidationPipe) format: VectorTileRenderFormat,
+      @Param('format', FormatValidationPipe) format: TileFormat,
       @Res({ passthrough: true }) res: Response
     ): Promise<StreamableFile | undefined> {
       const result = await this.service.renderTile({ x, y, level }, { format })

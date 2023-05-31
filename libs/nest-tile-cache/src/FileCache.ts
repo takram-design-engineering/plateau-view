@@ -6,18 +6,18 @@ import path from 'path'
 import { type Sharp } from 'sharp'
 import { type Readable } from 'stream'
 
-import { type Coordinates } from '../interfaces/Coordinates'
-import { type VectorTileCache } from '../interfaces/VectorTileCache'
-import { type VectorTileRenderFormat } from '../interfaces/VectorTileFormat'
+import { type Coordinates } from './interfaces/Coordinates'
+import { type TileCache } from './interfaces/TileCache'
+import { type TileFormat } from './interfaces/TileFormat'
 
 @Injectable()
-export class FileCache implements VectorTileCache {
+export class FileCache implements TileCache {
   constructor(private readonly cacheRoot: string) {}
 
   private makePath(
     name: string,
     coords: Coordinates,
-    format: VectorTileRenderFormat
+    format: TileFormat
   ): string {
     const { x, y, level } = coords
     return path.resolve(this.cacheRoot, name, `${level}/${x}/${y}.${format}`)
@@ -26,7 +26,7 @@ export class FileCache implements VectorTileCache {
   async get(
     name: string,
     coords: Coordinates,
-    format: VectorTileRenderFormat
+    format: TileFormat
   ): Promise<string | Readable | undefined> {
     try {
       return createReadStream('', {
@@ -39,7 +39,7 @@ export class FileCache implements VectorTileCache {
   async set(
     name: string,
     coords: Coordinates,
-    format: VectorTileRenderFormat,
+    format: TileFormat,
     image: Sharp
   ): Promise<void> {
     const cachePath = this.makePath(name, coords, format)
