@@ -13,13 +13,13 @@ import { type TileFormat } from './interfaces/TileFormat'
 export class BucketCache implements TileCache {
   private readonly storage = new Storage()
   private readonly bucket: Bucket
-  private readonly bucketRoot: string // TODO: Use bucket root in paths
+  private readonly bucketRoot: string
 
   constructor(cacheRoot: string) {
     const url = new URL(cacheRoot)
     invariant(url.protocol === 'gs:')
     this.bucket = this.storage.bucket(url.host)
-    this.bucketRoot = url.pathname
+    this.bucketRoot = url.pathname.slice(1)
   }
 
   private makePath(
@@ -28,7 +28,7 @@ export class BucketCache implements TileCache {
     format: TileFormat
   ): string {
     const { x, y, level } = coords
-    return path.join(name, `${level}/${x}/${y}.${format}`)
+    return path.join(this.bucketRoot, name, `${level}/${x}/${y}.${format}`)
   }
 
   async get(
