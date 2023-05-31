@@ -7,23 +7,25 @@ import {
   StreamableFile,
   type Type
 } from '@nestjs/common'
-import { type Response } from 'express'
+import { Response } from 'express'
 
 import {
-  TileFormatValidationPipe,
-  type TileFormat
+  TileFormat,
+  TileFormatValidationPipe
 } from '@takram/plateau-nest-tile-cache'
 
-import { VectorTileService } from './VectorTileService'
-import { type VectorTileOptions } from './interfaces/VectorTileOptions'
+import { TerrainTileService } from './TerrainTileService'
+import { type TerrainTileModuleOptions } from './interfaces/TerrainTileModuleOptions'
 
-export function createVectorTileController(options: VectorTileOptions): Type {
+export function createTerrainTileController(
+  options: TerrainTileModuleOptions
+): Type {
   @Controller(options.path)
-  class VectorTileController {
-    constructor(private readonly service: VectorTileService) {}
+  class TerrainTileController {
+    constructor(private readonly service: TerrainTileService) {}
 
     @Get(':level/:x/:y.:format')
-    async renderTilePng(
+    async proxyDEMImage(
       @Param('x', ParseIntPipe) x: number,
       @Param('y', ParseIntPipe) y: number,
       @Param('level', ParseIntPipe) level: number,
@@ -46,5 +48,5 @@ export function createVectorTileController(options: VectorTileOptions): Type {
     }
   }
 
-  return VectorTileController
+  return TerrainTileController
 }

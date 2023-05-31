@@ -31,6 +31,9 @@
       "@takram/plateau-nest-cesium": ["libs/nest-cesium/src/index.ts"],
       "@takram/plateau-nest-firestore": ["libs/nest-firestore/src/index.ts"],
       "@takram/plateau-nest-plateau": ["libs/nest-plateau/src/index.ts"],
+      "@takram/plateau-nest-terrain-tile": [
+        "libs/nest-terrain-tile/src/index.ts"
+      ],
       "@takram/plateau-nest-tile-cache": ["libs/nest-tile-cache/src/index.ts"],
       "@takram/plateau-nest-vector-tile": [
         "libs/nest-vector-tile/src/index.ts"
