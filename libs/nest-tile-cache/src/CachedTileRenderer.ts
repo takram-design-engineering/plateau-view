@@ -31,9 +31,9 @@ export abstract class CachedTileRenderer {
     this.maximumLevel = options.maximumLevel
   }
 
-  abstract render(coords: Coordinates): Promise<Sharp | undefined>
+  abstract renderTile(coords: Coordinates): Promise<Sharp | undefined>
 
-  async renderTile(
+  async findTile(
     coords: Coordinates,
     { format = 'png' }: RenderTileOptions = {}
   ): Promise<Sharp | Readable | string | undefined> {
@@ -47,7 +47,7 @@ export abstract class CachedTileRenderer {
       }
     }
 
-    const image = await this.render(coords)
+    const image = await this.renderTile(coords)
     if (image == null) {
       return
     }

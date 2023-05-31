@@ -8,7 +8,7 @@ import { AppController } from './AppController'
 @Module({
   imports: [
     VectorTileModule.forRoot({
-      cacheRoot: process.env.VECTOR_TILE_CACHE_ROOT
+      cacheRoot: process.env.TILE_CACHE_ROOT
     }),
     VectorTileModule.forFeature({
       path: 'light',

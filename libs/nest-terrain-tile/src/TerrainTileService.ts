@@ -53,11 +53,11 @@ export class TerrainTileService extends CachedTileRenderer {
     }
   }
 
-  override async render({
+  private async requestBuffers({
     x,
     y,
     level
-  }: Coordinates): Promise<Sharp | undefined> {
+  }: Coordinates): Promise<Buffer[]> {
     const formats = ['dem5a_png', 'dem5b_png', 'dem5c_png', 'dem_png']
     const requests = await Promise.allSettled(
       formats.map(
@@ -68,7 +68,7 @@ export class TerrainTileService extends CachedTileRenderer {
           )
       )
     )
-    const buffers = (
+    return (
       await Promise.all(
         requests.map(async result => {
           if (result.status === 'rejected') {
@@ -85,6 +85,10 @@ export class TerrainTileService extends CachedTileRenderer {
         })
       )
     ).filter(isNotNullish)
+  }
+
+  private async requestTile(coords: Coordinates): Promise<Buffer | undefined> {
+    const buffers = await this.requestBuffers(coords)
     if (buffers.length === 0) {
       return
     }
@@ -103,11 +107,18 @@ export class TerrainTileService extends CachedTileRenderer {
         }
       }
       if (value == null) {
-        value = 0x800000 // TODO: Look for the parent tile to fill N/A.
+        value = 0x800000 // TODO: Fill N/A by parent tile.
       }
       packHeightRGB(value, result, offset)
     }
+    return result
+  }
 
+  override async renderTile(coords: Coordinates): Promise<Sharp | undefined> {
+    const result = await this.requestTile(coords)
+    if (result == null) {
+      return
+    }
     return sharp(result, {
       raw: {
         width: 256,

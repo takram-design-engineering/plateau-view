@@ -114,7 +114,7 @@ export class VectorTileService extends CachedTileRenderer {
     })
   }
 
-  override async render({ x, y, level }: Coordinates): Promise<Sharp> {
+  override async renderTile({ x, y, level }: Coordinates): Promise<Sharp> {
     const {
       Cartesian3,
       Cartographic,

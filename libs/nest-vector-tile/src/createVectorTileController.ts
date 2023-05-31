@@ -30,7 +30,7 @@ export function createVectorTileController(options: VectorTileOptions): Type {
       @Param('format', TileFormatValidationPipe) format: TileFormat,
       @Res({ passthrough: true }) res: Response
     ): Promise<StreamableFile | undefined> {
-      const result = await this.service.renderTile({ x, y, level }, { format })
+      const result = await this.service.findTile({ x, y, level }, { format })
       if (result == null) {
         return
       }

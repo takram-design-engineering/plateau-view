@@ -7,6 +7,7 @@ import path from 'path'
 
 import { FirestoreModule } from '@takram/plateau-nest-firestore'
 import { PlateauModule } from '@takram/plateau-nest-plateau'
+import { TerrainTileModule } from '@takram/plateau-nest-terrain-tile'
 
 import { AppController } from './AppController'
 import { AppService } from './AppService'
@@ -32,6 +33,10 @@ const env = envalid.cleanEnv(process.env, {
     PlateauModule.forRoot({
       baseUrl: env.DATA_BASE_URL,
       storageRoot: env.DATA_STORAGE_ROOT
+    }),
+    TerrainTileModule.forRoot({
+      path: 'terrain',
+      cacheRoot: process.env.TILE_CACHE_ROOT
     }),
 
     // Serve static files for development; these routes are behind our path
