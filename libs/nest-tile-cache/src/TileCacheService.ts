@@ -11,12 +11,6 @@ import { type Coordinates } from './interfaces/Coordinates'
 import { type TileCache } from './interfaces/TileCache'
 import { type TileFormat } from './interfaces/TileFormat'
 
-export interface CachedTileRendererOptions {
-  cache: TileCache | undefined
-  path: string
-  maximumLevel: number
-}
-
 export interface RenderTileOptions {
   format?: TileFormat
 }
@@ -30,12 +24,17 @@ function makeDocumentId(path: string, { x, y, level }: Coordinates): string {
 }
 
 function getParents(coords: Coordinates): Coordinates[] {
-  const x = coords.x / 2 ** coords.level
-  const y = coords.y / 2 ** coords.level
+  const divisor = 2 ** coords.level
+  const x = coords.x / divisor
+  const y = coords.y / divisor
   const parents: Coordinates[] = []
   for (let level = coords.level - 1; level >= 0; --level) {
-    const n = 2 ** level
-    parents.push({ x: Math.floor(x * n), y: Math.floor(y * n), level })
+    const scale = 2 ** level
+    parents.push({
+      x: Math.floor(x * scale),
+      y: Math.floor(y * scale),
+      level
+    })
   }
   return parents
 }

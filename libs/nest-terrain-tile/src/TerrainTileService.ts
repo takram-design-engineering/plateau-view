@@ -13,7 +13,7 @@ import { isNotNullish } from '@takram/plateau-type-helpers'
 import { TERRAIN_TILE_MODULE_OPTIONS } from './constants'
 import { TerrainTileModuleOptions } from './interfaces/TerrainTileModuleOptions'
 
-function packHeightRGB(value: number, buffer: Buffer, offset: number): void {
+function packHeightToRGB(value: number, buffer: Buffer, offset: number): void {
   // DEM data is encoded as signed integer, but I prefer unsigned value so
   // that it can be packed to RGB and linearly interpolated. Handle N/A as zero,
   // as they are mostly sea areas.
@@ -95,9 +95,9 @@ export class TerrainTileService {
         }
       }
       if (value == null) {
-        value = 0x800000 // TODO: Fill N/A by parent tile.
+        value = 0x800000 // TODO: Fill N/A by the parent tile.
       }
-      packHeightRGB(value, result, offset)
+      packHeightToRGB(value, result, offset)
     }
     return result
   }
