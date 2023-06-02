@@ -1,4 +1,4 @@
-import { ShaderCodeEditor } from './ShaderCodeEditor'
+import { StringMatcher } from './StringMatcher'
 
 const source =
   'uniform sampler2D colorTexture;\n' +
@@ -9,19 +9,17 @@ const source =
   '  out_FragColor = color;\n' +
   '}\n'
 
-describe('ShaderCodeEditor', () => {
+describe('StringMatcher', () => {
   describe('match', () => {
     test('match single code', () => {
-      const injector = new ShaderCodeEditor(source)
-      const result = injector.match('void main()')
+      const result = StringMatcher.match(source, 'void main()')
       expect(result.length).toBe(1)
       expect(result[0].index).toBe(65)
       expect(result[0][0]).toBe('void main()')
     })
 
     test('match multiple codes', () => {
-      const injector = new ShaderCodeEditor(source)
-      const result = injector.match('uniform sampler2D', true)
+      const result = StringMatcher.match(source, 'uniform sampler2D', true)
       expect(result.length).toBe(2)
       expect(result[0].index).toBe(0)
       expect(result[0][0]).toBe('uniform sampler2D')
@@ -30,23 +28,22 @@ describe('ShaderCodeEditor', () => {
     })
 
     test('throw error when multiple codes found', () => {
-      const injector = new ShaderCodeEditor(source)
       expect(() => {
-        injector.match('uniform sampler2D')
+        StringMatcher.match(source, 'uniform sampler2D')
       }).toThrowError()
     })
   })
 
   describe('replace', () => {
     test('replace single line', () => {
-      const injector = new ShaderCodeEditor(source)
+      const injector = new StringMatcher()
       expect(
         injector
           .replace(
             'vec4 color = texture(colorTexture, v_textureCoordinates);',
             'vec4 color = texture(colorTexture, v_textureCoordinates * 0.5);'
           )
-          .toString()
+          .execute(source)
       ).toBe(
         'uniform sampler2D colorTexture;\n' +
           'uniform sampler2D depthTexture;\n' +
@@ -62,7 +59,7 @@ describe('ShaderCodeEditor', () => {
             'uniform sampler2D colorTexture;',
             'uniform sampler2D colorTexture2;'
           )
-          .toString()
+          .execute(source)
       ).toBe(
         'uniform sampler2D colorTexture2;\n' +
           'uniform sampler2D depthTexture;\n' +
@@ -75,9 +72,11 @@ describe('ShaderCodeEditor', () => {
     })
 
     test('replace multiple lines', () => {
-      const injector = new ShaderCodeEditor(source)
+      const injector = new StringMatcher()
       expect(
-        injector.replace('uniform sampler2D', 'uniform vec4', true).toString()
+        injector
+          .replace('uniform sampler2D', 'uniform vec4', true)
+          .execute(source)
       ).toBe(
         'uniform vec4 colorTexture;\n' +
           'uniform vec4 depthTexture;\n' +
@@ -91,9 +90,9 @@ describe('ShaderCodeEditor', () => {
   })
 
   describe('insertBefore', () => {
-    const injector = new ShaderCodeEditor(source)
+    const injector = new StringMatcher()
     expect(
-      injector.insertBefore('void main()', 'uniform vec2 uv;').toString()
+      injector.insertBefore('void main()', 'uniform vec2 uv;').execute(source)
     ).toBe(
       'uniform sampler2D colorTexture;\n' +
         'uniform sampler2D depthTexture;\n' +
@@ -107,11 +106,11 @@ describe('ShaderCodeEditor', () => {
   })
 
   describe('insertAfter', () => {
-    const injector = new ShaderCodeEditor(source)
+    const injector = new StringMatcher()
     expect(
       injector
         .insertAfter('uniform sampler2D depthTexture;', 'uniform vec2 uv;')
-        .toString()
+        .execute(source)
     ).toBe(
       'uniform sampler2D colorTexture;\n' +
         'uniform sampler2D depthTexture;\n' +
@@ -125,8 +124,10 @@ describe('ShaderCodeEditor', () => {
   })
 
   describe('erase', () => {
-    const injector = new ShaderCodeEditor(source)
-    expect(injector.erase('uniform sampler2D depthTexture;\n').toString()).toBe(
+    const injector = new StringMatcher()
+    expect(
+      injector.erase('uniform sampler2D depthTexture;\n').execute(source)
+    ).toBe(
       'uniform sampler2D colorTexture;\n' +
         '\n' +
         'void main() {\n' +
