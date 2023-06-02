@@ -6,20 +6,18 @@ import {
 import { Inject, Injectable } from '@nestjs/common'
 import axios, { isAxiosError } from 'axios'
 import { type CustomLayerInterface, type Style } from 'mapbox-gl'
-import sharp, { type Sharp } from 'sharp'
+import sharp from 'sharp'
 import { type Readable } from 'stream'
 import invariant from 'tiny-invariant'
 
 import { CESIUM, type Cesium } from '@takram/plateau-nest-cesium'
-
 import {
-  VECTOR_TILE_CACHE,
-  VECTOR_TILE_MAP_STYLE,
-  VECTOR_TILE_OPTIONS
-} from './constants'
-import { type Coordinates } from './interfaces/Coordinates'
-import { type VectorTileCache } from './interfaces/VectorTileCache'
-import { type VectorTileRenderFormat } from './interfaces/VectorTileFormat'
+  TileCacheService,
+  type Coordinates,
+  type RenderTileOptions
+} from '@takram/plateau-nest-tile-cache'
+
+import { VECTOR_TILE_MAP_STYLE, VECTOR_TILE_OPTIONS } from './constants'
 import { VectorTileOptions } from './interfaces/VectorTileOptions'
 
 interface MapRequest {
@@ -41,28 +39,19 @@ type MapStyle = Omit<Style, 'layers'> & {
   layers: Array<Exclude<Style['layers'][number], CustomLayerInterface>>
 }
 
-interface RenderTileOptions {
-  format?: VectorTileRenderFormat
-}
-
-function applyFormat(image: Sharp, format: VectorTileRenderFormat): Sharp {
-  return format === 'webp' ? image.webp({ lossless: true }) : image.png()
-}
-
 @Injectable()
 export class VectorTileService {
   constructor(
-    @Inject(VECTOR_TILE_CACHE)
-    private readonly cache: VectorTileCache | undefined,
     @Inject(VECTOR_TILE_OPTIONS)
     private readonly options: VectorTileOptions,
+    private readonly cacheService: TileCacheService,
     @Inject(VECTOR_TILE_MAP_STYLE)
     private readonly mapStyle: MapStyle,
     @Inject(CESIUM)
     private readonly cesium: Cesium
   ) {}
 
-  private request(
+  private requestTile(
     req: MapRequest,
     callback: Parameters<MapOptions['request']>[1]
   ): void {
@@ -76,9 +65,16 @@ export class VectorTileService {
         })
       } catch (error) {
         if (isAxiosError(error) && error.response?.status === 404) {
-          callback(undefined, {
-            data: Buffer.alloc(0)
-          })
+          if (req.kind === 3 /* ResourceKind.Tile */) {
+            const [level, x, y] = new URL(req.url).pathname
+              .split('/')
+              .slice(-3)
+              .map(value => +value.split('.')[0])
+            invariant(!isNaN(level) && !isNaN(x) && !isNaN(y))
+            const coords = { x, y, level }
+            await this.cacheService.discardOne(this.options.path, coords)
+          }
+          callback()
         } else if (error instanceof Error) {
           callback(error)
         } else {
@@ -90,9 +86,9 @@ export class VectorTileService {
     })
   }
 
-  private async render(options: RenderOptions): Promise<Uint8Array> {
+  private async renderMap(options: RenderOptions): Promise<Uint8Array> {
     const map = new Map({
-      request: this.request.bind(this)
+      request: this.requestTile.bind(this)
     })
     map.load(this.mapStyle)
 
@@ -106,10 +102,10 @@ export class VectorTileService {
 
     return await new Promise<Uint8Array>((resolve, reject) => {
       map.render(options, (error, buffer) => {
+        map.release()
         if (error != null) {
           reject(error)
         } else {
-          map.release()
           resolve(buffer)
         }
       })
@@ -118,18 +114,17 @@ export class VectorTileService {
 
   async renderTile(
     coords: Coordinates,
-    { format = 'png' }: RenderTileOptions = {}
-  ): Promise<Sharp | Readable | string | undefined> {
-    const { x, y, level } = coords
-    if (level > this.options.maximumLevel) {
+    options: RenderTileOptions = {}
+  ): Promise<Readable | string | undefined> {
+    if (coords.level > this.options.maximumLevel) {
       return
     }
-
-    if (this.cache != null) {
-      const cache = await this.cache.get(this.options.path, coords, format)
-      if (cache != null) {
-        return cache
-      }
+    const [cache, discarded] = await Promise.all([
+      this.cacheService.findOne(this.options.path, coords),
+      this.cacheService.isDiscarded(this.options.path, coords)
+    ])
+    if (cache != null || discarded) {
+      return cache
     }
 
     const {
@@ -139,6 +134,7 @@ export class VectorTileService {
       WebMercatorTilingScheme
     } = this.cesium
 
+    const { x, y, level } = coords
     const tilingScheme = new WebMercatorTilingScheme()
     const rectangle = tilingScheme.tileXYToRectangle(x, y, level)
     const projection = tilingScheme.projection
@@ -146,7 +142,7 @@ export class VectorTileService {
     const y2 = projection.project(new Cartographic(0, rectangle.south)).y
     const { latitude } = projection.unproject(new Cartesian3(0, (y1 + y2) / 2))
 
-    const buffer = await this.render({
+    const buffer = await this.renderMap({
       zoom: level,
       center: [
         toDegrees((rectangle.east + rectangle.west) / 2),
@@ -162,29 +158,11 @@ export class VectorTileService {
       }
     })
 
-    if (this.cache != null) {
-      ;(async () => {
-        invariant(this.cache != null)
-        await this.cache.set(
-          this.options.path,
-          coords,
-          format,
-          applyFormat(
-            sharp(buffer, {
-              raw: {
-                width: tileSize,
-                height: tileSize,
-                channels: 4
-              }
-            }),
-            format
-          )
-        )
-      })().catch(error => {
-        console.error(error)
-      })
-    }
-
-    return applyFormat(image, format)
+    return await this.cacheService.createOne(
+      image,
+      this.options.path,
+      coords,
+      options
+    )
   }
 }

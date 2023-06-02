@@ -1,15 +1,21 @@
 import { Module } from '@nestjs/common'
 import path from 'path'
 
+import { FirestoreModule } from '@takram/plateau-nest-firestore'
+import { TileCacheModule } from '@takram/plateau-nest-tile-cache'
 import { VectorTileModule } from '@takram/plateau-nest-vector-tile'
 
 import { AppController } from './AppController'
 
 @Module({
   imports: [
-    VectorTileModule.forRoot({
-      cacheRoot: process.env.VECTOR_TILE_CACHE_ROOT
+    FirestoreModule.forRoot({
+      rootPath: 'api'
     }),
+    TileCacheModule.forRoot({
+      cacheRoot: process.env.TILE_CACHE_ROOT
+    }),
+    VectorTileModule.forRoot({}),
     VectorTileModule.forFeature({
       path: 'light',
       mapStyle: path.resolve(

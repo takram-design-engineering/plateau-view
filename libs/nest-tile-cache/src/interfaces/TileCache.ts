@@ -2,18 +2,18 @@ import { type Sharp } from 'sharp'
 import { type Readable } from 'stream'
 
 import { type Coordinates } from './Coordinates'
-import { type VectorTileRenderFormat } from './VectorTileFormat'
+import { type TileFormat } from './TileFormat'
 
-export interface VectorTileCache {
+export interface TileCache {
   get: (
     name: string,
     coords: Coordinates,
-    format: VectorTileRenderFormat
+    format: TileFormat
   ) => Promise<Readable | string | undefined>
   set: (
     name: string,
     coords: Coordinates,
-    format: VectorTileRenderFormat,
+    format: TileFormat,
     image: Sharp
   ) => Promise<void>
 }
