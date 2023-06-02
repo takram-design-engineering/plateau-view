@@ -1,4 +1,3 @@
-import { Injectable } from '@nestjs/common'
 import { createReadStream } from 'fs'
 import { open } from 'fs/promises'
 import { mkdirp } from 'mkdirp'
@@ -10,7 +9,6 @@ import { type Coordinates } from './interfaces/Coordinates'
 import { type TileCache } from './interfaces/TileCache'
 import { type TileFormat } from './interfaces/TileFormat'
 
-@Injectable()
 export class FileCache implements TileCache {
   constructor(private readonly cacheRoot: string) {}
 

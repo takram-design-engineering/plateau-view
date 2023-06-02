@@ -1,5 +1,4 @@
 import { Storage, type Bucket } from '@google-cloud/storage'
-import { Injectable } from '@nestjs/common'
 import path from 'path'
 import { type Sharp } from 'sharp'
 import { type Readable } from 'stream'
@@ -9,7 +8,6 @@ import { type Coordinates } from './interfaces/Coordinates'
 import { type TileCache } from './interfaces/TileCache'
 import { type TileFormat } from './interfaces/TileFormat'
 
-@Injectable()
 export class BucketCache implements TileCache {
   private readonly storage = new Storage()
   private readonly bucket: Bucket
