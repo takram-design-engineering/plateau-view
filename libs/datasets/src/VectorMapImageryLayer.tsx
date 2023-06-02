@@ -1,4 +1,7 @@
-import { UrlTemplateImageryProvider } from '@cesium/engine'
+import {
+  DiscardEmptyTileImagePolicy,
+  UrlTemplateImageryProvider
+} from '@cesium/engine'
 import { type FC } from 'react'
 
 import { ImageryLayer, type ImageryLayerProps } from '@takram/plateau-cesium'
@@ -13,11 +16,14 @@ export const VectorMapImageryLayer: FC<VectorMapImageryLayerProps> = ({
   baseUrl,
   ...props
 }) => {
-  const imageryProvider = useConstant(
-    () =>
-      new UrlTemplateImageryProvider({
-        url: `${baseUrl}/light/{z}/{x}/{y}.webp`
-      })
-  )
+  const imageryProvider = useConstant(() => {
+    const imageryProvider = new UrlTemplateImageryProvider({
+      url: `${baseUrl}/light/{z}/{x}/{y}.webp`,
+      maximumLevel: 24,
+      tileDiscardPolicy: new DiscardEmptyTileImagePolicy()
+    })
+    imageryProvider.errorEvent.addEventListener(() => {}) // Suppress error log
+    return imageryProvider
+  })
   return <ImageryLayer imageryProvider={imageryProvider} {...props} />
 }
