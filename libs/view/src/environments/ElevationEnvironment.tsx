@@ -6,6 +6,7 @@ import invariant from 'tiny-invariant'
 import {
   Environment,
   StringMatcher,
+  useCesium,
   type EnvironmentProps
 } from '@takram/plateau-cesium'
 import {
@@ -14,7 +15,10 @@ import {
 } from '@takram/plateau-datasets'
 import { useConstant } from '@takram/plateau-react-helpers'
 
-import { enableTerrainLightingAtom } from '../states/app'
+import {
+  enableTerrainLightingAtom,
+  terrainElevationHeightRangeAtom
+} from '../states/app'
 
 const sphericalHarmonicCoefficients = [
   new Cartesian3(0.82368016242981, 0.89996325969696, 1.057950735092163), // L00, irradiance, pre-scaled base
@@ -60,6 +64,14 @@ export const ElevationEnvironment: FC<EnvironmentProps> = props => {
       }`
     )
   }))
+
+  const terrainElevationHeightRange = useAtomValue(
+    terrainElevationHeightRangeAtom
+  )
+  globeShader.material.uniforms.minHeight = terrainElevationHeightRange[0]
+  globeShader.material.uniforms.maxHeight = terrainElevationHeightRange[1]
+  const scene = useCesium(({ scene }) => scene)
+  scene.requestRender()
 
   const enableTerrainLighting = useAtomValue(enableTerrainLightingAtom)
   return (

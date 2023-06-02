@@ -13,6 +13,7 @@ import {
   DeveloperPanel,
   ParameterList,
   SelectParameterItem,
+  SliderParameterItem,
   SwitchParameterItem,
   ValueParameterItem
 } from '@takram/plateau-ui-components'
@@ -25,6 +26,7 @@ import {
   showAreaEntitiesAtom,
   showDataFormatsAtom,
   showSelectionBoundingSphereAtom,
+  terrainElevationHeightRangeAtom,
   terrainTypeAtom
 } from '../states/app'
 
@@ -38,6 +40,7 @@ const resetAtom = atomWithResettableAtoms([
   showDataFormatsAtom,
   showSelectionBoundingSphereAtom,
   showTilesetTextureAtom,
+  terrainElevationHeightRangeAtom,
   terrainTypeAtom
 ])
 
@@ -82,6 +85,13 @@ export const AppPanel: FC = () => {
           <SwitchParameterItem
             label='Terrain Lighting'
             atom={enableTerrainLightingAtom}
+          />
+          <SliderParameterItem
+            label='Terrain Elevation Height Range'
+            min={0}
+            max={4000}
+            atom={terrainElevationHeightRangeAtom}
+            disabled={environmentType !== 'elevation'}
           />
           <SwitchParameterItem
             label='Tileset Texture'

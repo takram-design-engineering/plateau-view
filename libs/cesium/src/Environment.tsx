@@ -1,5 +1,5 @@
 import { Cartesian3, Color } from '@cesium/engine'
-import { useMemo, type FC } from 'react'
+import { memo, useMemo, type FC } from 'react'
 
 import { useCesium } from './useCesium'
 import { useModifyGlobeShaders, type GlobeShader } from './useGlobeShader'
@@ -70,99 +70,101 @@ export interface EnvironmentProps {
   groundAtmosphereBrightnessShift?: number
 }
 
-export const Environment: FC<EnvironmentProps> = ({
-  backgroundColor = Color.BLACK,
-  globeBaseColor = Color.BLACK,
-  showGlobe = true,
-  enableGlobeLighting = false,
-  globeImageBasedLightingFactor = 0.3,
-  globeShader,
-  lightColor = Color.WHITE,
-  lightIntensity = 2,
-  shadowDarkness = 0.3,
-  imageBasedLightingIntensity = 1,
-  sphericalHarmonicCoefficients,
-  debugSphericalHarmonics = false,
-  showSun = true,
-  showMoon = false,
-  showSkyBox = true,
-  enableFog = true,
-  fogDensity = 0.0002,
-  showSkyAtmosphere = true,
-  showGroundAtmosphere = true,
-  atmosphereSaturationShift = 0,
-  atmosphereBrightnessShift = 0,
-  skyAtmosphereSaturationShift,
-  skyAtmosphereBrightnessShift,
-  groundAtmosphereSaturationShift,
-  groundAtmosphereBrightnessShift
-}) => {
-  const scene = useCesium(({ scene }) => scene)
+export const Environment: FC<EnvironmentProps> = memo(
+  ({
+    backgroundColor = Color.BLACK,
+    globeBaseColor = Color.BLACK,
+    showGlobe = true,
+    enableGlobeLighting = false,
+    globeImageBasedLightingFactor = 0.3,
+    globeShader,
+    lightColor = Color.WHITE,
+    lightIntensity = 2,
+    shadowDarkness = 0.3,
+    imageBasedLightingIntensity = 1,
+    sphericalHarmonicCoefficients,
+    debugSphericalHarmonics = false,
+    showSun = true,
+    showMoon = false,
+    showSkyBox = true,
+    enableFog = true,
+    fogDensity = 0.0002,
+    showSkyAtmosphere = true,
+    showGroundAtmosphere = true,
+    atmosphereSaturationShift = 0,
+    atmosphereBrightnessShift = 0,
+    skyAtmosphereSaturationShift,
+    skyAtmosphereBrightnessShift,
+    groundAtmosphereSaturationShift,
+    groundAtmosphereBrightnessShift
+  }) => {
+    const scene = useCesium(({ scene }) => scene)
 
-  cloneColor(backgroundColor, scene.backgroundColor)
-  scene.globe.baseColor = cloneColor(globeBaseColor)
-  scene.globe.show = showGlobe
-  scene.globe.enableLighting = enableGlobeLighting
-  // This uniform is used as the factor of IBL, so that I don't have to create
-  // and bind a new uniform.
-  scene.globe.vertexShadowDarkness = globeImageBasedLightingFactor
+    cloneColor(backgroundColor, scene.backgroundColor)
+    scene.globe.baseColor = cloneColor(globeBaseColor)
+    scene.globe.show = showGlobe
+    scene.globe.enableLighting = enableGlobeLighting
+    // This uniform is used as the factor of IBL, so that I don't have to create
+    // and bind a new uniform.
+    scene.globe.vertexShadowDarkness = globeImageBasedLightingFactor
 
-  // Light and shadow
-  cloneColor(lightColor, scene.light.color)
-  scene.light.intensity = debugSphericalHarmonics ? 0.5 : lightIntensity
-  scene.shadowMap.darkness = shadowDarkness
+    // Light and shadow
+    cloneColor(lightColor, scene.light.color)
+    scene.light.intensity = debugSphericalHarmonics ? 0.5 : lightIntensity
+    scene.shadowMap.darkness = shadowDarkness
 
-  // Image-based lighting
-  const scaledSphericalHarmonicCoefficients = useMemo(
-    () =>
-      sphericalHarmonicCoefficients != null
-        ? sphericalHarmonicCoefficients.map((cartesian, index) =>
-            Cartesian3.multiplyByScalar(
-              cartesian,
-              imageBasedLightingIntensity,
-              sphericalHarmonicCoefficientsScratch[index]
+    // Image-based lighting
+    const scaledSphericalHarmonicCoefficients = useMemo(
+      () =>
+        sphericalHarmonicCoefficients != null
+          ? sphericalHarmonicCoefficients.map((cartesian, index) =>
+              Cartesian3.multiplyByScalar(
+                cartesian,
+                imageBasedLightingIntensity,
+                sphericalHarmonicCoefficientsScratch[index]
+              )
             )
-          )
-        : undefined,
-    [imageBasedLightingIntensity, sphericalHarmonicCoefficients]
-  )
-  scene.sphericalHarmonicCoefficients = debugSphericalHarmonics
-    ? debugSphericalHarmonicCoefficients
-    : scaledSphericalHarmonicCoefficients ?? []
-
-  // Celestial
-  if (scene.skyBox != null) {
-    scene.sun.show = showSun
-    scene.moon.show = showMoon
-    scene.skyBox.show = showSkyBox
-  }
-
-  // Fog
-  scene.fog.enabled = enableFog
-  scene.fog.density = fogDensity
-
-  // Sky atmosphere
-  scene.skyAtmosphere.show = showSkyAtmosphere
-  scene.skyAtmosphere.saturationShift =
-    skyAtmosphereSaturationShift ?? atmosphereSaturationShift
-  scene.skyAtmosphere.brightnessShift =
-    skyAtmosphereBrightnessShift ?? atmosphereBrightnessShift
-
-  // Ground atmosphere
-  scene.globe.showGroundAtmosphere = showGroundAtmosphere
-  scene.globe.atmosphereSaturationShift =
-    groundAtmosphereSaturationShift ?? atmosphereSaturationShift
-  scene.globe.atmosphereBrightnessShift =
-    groundAtmosphereBrightnessShift ?? atmosphereBrightnessShift
-
-  scene.requestRender()
-
-  useModifyGlobeShaders({
-    sphericalHarmonicCoefficients: debugSphericalHarmonics
+          : undefined,
+      [imageBasedLightingIntensity, sphericalHarmonicCoefficients]
+    )
+    scene.sphericalHarmonicCoefficients = debugSphericalHarmonics
       ? debugSphericalHarmonicCoefficients
-      : scaledSphericalHarmonicCoefficients ?? [],
-    shader: globeShader
-  })
+      : scaledSphericalHarmonicCoefficients ?? []
 
-  return null
-}
+    // Celestial
+    if (scene.skyBox != null) {
+      scene.sun.show = showSun
+      scene.moon.show = showMoon
+      scene.skyBox.show = showSkyBox
+    }
+
+    // Fog
+    scene.fog.enabled = enableFog
+    scene.fog.density = fogDensity
+
+    // Sky atmosphere
+    scene.skyAtmosphere.show = showSkyAtmosphere
+    scene.skyAtmosphere.saturationShift =
+      skyAtmosphereSaturationShift ?? atmosphereSaturationShift
+    scene.skyAtmosphere.brightnessShift =
+      skyAtmosphereBrightnessShift ?? atmosphereBrightnessShift
+
+    // Ground atmosphere
+    scene.globe.showGroundAtmosphere = showGroundAtmosphere
+    scene.globe.atmosphereSaturationShift =
+      groundAtmosphereSaturationShift ?? atmosphereSaturationShift
+    scene.globe.atmosphereBrightnessShift =
+      groundAtmosphereBrightnessShift ?? atmosphereBrightnessShift
+
+    scene.requestRender()
+
+    useModifyGlobeShaders({
+      sphericalHarmonicCoefficients: debugSphericalHarmonics
+        ? debugSphericalHarmonicCoefficients
+        : scaledSphericalHarmonicCoefficients ?? [],
+      shader: globeShader
+    })
+
+    return null
+  }
+)

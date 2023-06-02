@@ -5,7 +5,6 @@ import { colorSchemeTurbo } from '@takram/plateau-color-schemes'
 import { JapanSeaLevelEllipsoid } from './JapanSeaLevelEllipsoid'
 import source from './shaders/vertexTerrainElevationMaterial.glsl?raw'
 
-// TODO: Connect uniforms to state.
 export class VertexTerrainElevationMaterial extends Material {
   constructor() {
     super({
