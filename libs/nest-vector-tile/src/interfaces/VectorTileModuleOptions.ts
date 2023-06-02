@@ -1,4 +1,1 @@
-export interface VectorTileModuleOptions {
-  useCache?: boolean
-  cacheRoot?: string
-}
+export interface VectorTileModuleOptions {}

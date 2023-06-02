@@ -1,31 +1,21 @@
 import {
-  BadRequestException,
   Controller,
   Get,
-  Injectable,
   Param,
   ParseIntPipe,
   Res,
   StreamableFile,
-  type ArgumentMetadata,
-  type PipeTransform,
   type Type
 } from '@nestjs/common'
 import { type Response } from 'express'
 
-import { VectorTileService } from './VectorTileService'
-import { VectorTileRenderFormat } from './interfaces/VectorTileFormat'
-import { type VectorTileOptions } from './interfaces/VectorTileOptions'
+import {
+  TileFormatValidationPipe,
+  type TileFormat
+} from '@takram/plateau-nest-tile-cache'
 
-@Injectable()
-class FormatValidationPipe implements PipeTransform {
-  transform(value: unknown, metadata: ArgumentMetadata): string {
-    if (value !== 'png' && value !== 'webp') {
-      throw new BadRequestException('Invalid format')
-    }
-    return value
-  }
-}
+import { VectorTileService } from './VectorTileService'
+import { type VectorTileOptions } from './interfaces/VectorTileOptions'
 
 export function createVectorTileController(options: VectorTileOptions): Type {
   @Controller(options.path)
@@ -33,11 +23,11 @@ export function createVectorTileController(options: VectorTileOptions): Type {
     constructor(private readonly service: VectorTileService) {}
 
     @Get(':level/:x/:y.:format')
-    async renderTilePng(
+    async renderTile(
       @Param('x', ParseIntPipe) x: number,
       @Param('y', ParseIntPipe) y: number,
       @Param('level', ParseIntPipe) level: number,
-      @Param('format', FormatValidationPipe) format: VectorTileRenderFormat,
+      @Param('format', TileFormatValidationPipe) format: TileFormat,
       @Res({ passthrough: true }) res: Response
     ): Promise<StreamableFile | undefined> {
       const result = await this.service.renderTile({ x, y, level }, { format })

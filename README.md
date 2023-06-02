@@ -37,6 +37,7 @@ This repository consists of the following apps and libraries. The README for eac
 | [cesium-helpers](libs/cesium-helpers)                 | Helper functions for Cesium                                                                           |
 | [cesium-vector-imagery](libs/cesium-vector-imagery)   | [ImageryProvider](https://cesium.com/learn/cesiumjs/ref-doc/ImageryProvider.html) for drawing MVT     |
 | [cesium](libs/cesium)                                 | React components for Cesium                                                                           |
+| [color-schemes](libs/color-schemes)                   | Collection of color schemes                                                                           |
 | [data-sources](libs/data-sources)                     | Several [DataSources](https://cesium.com/learn/cesiumjs/ref-doc/DataSource.html) used in PLATEAU VIEW |
 | [datasets](libs/datasets)                             | Classes and components that represent PLATEAU and other datasets                                      |
 | [geocoder](libs/geocoder)                             | Simple geocoding functions                                                                            |
@@ -45,6 +46,8 @@ This repository consists of the following apps and libraries. The README for eac
 | [nest-cesium](libs/nest-cesium)                       | Module for using Cesium in NestJS                                                                     |
 | [nest-firestore](libs/nest-firestore)                 | Module for using Google Firestore in NestJS                                                           |
 | [nest-plateau](libs/nest-plateau)                     | NestJS module for PLATEAU datasets                                                                    |
+| [nest-terrain-tile](libs/nest-terrain-tile)           | NestJS module for rendering DEM terrain tiles                                                         |
+| [nest-tile-cache](libs/nest-tile-cache)               | NestJS module for caching tile images                                                                 |
 | [nest-vector-tile](libs/nest-vector-tile)             | NestJS module for rendering vector map tiles                                                          |
 | [react-helpers](libs/react-helpers)                   | Helper functions and hooks for React                                                                  |
 | [screen-space-selection](libs/screen-space-selection) | Screen-space selection for Cesium                                                                     |

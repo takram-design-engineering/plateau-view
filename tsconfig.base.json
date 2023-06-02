@@ -22,6 +22,7 @@
       "@takram/plateau-cesium-vector-imagery": [
         "libs/cesium-vector-imagery/src/index.ts"
       ],
+      "@takram/plateau-color-schemes": ["libs/color-schemes/src/index.ts"],
       "@takram/plateau-data-sources": ["libs/data-sources/src/index.ts"],
       "@takram/plateau-datasets": ["libs/datasets/src/index.ts"],
       "@takram/plateau-geocoder": ["libs/geocoder/src/index.ts"],
@@ -30,6 +31,10 @@
       "@takram/plateau-nest-cesium": ["libs/nest-cesium/src/index.ts"],
       "@takram/plateau-nest-firestore": ["libs/nest-firestore/src/index.ts"],
       "@takram/plateau-nest-plateau": ["libs/nest-plateau/src/index.ts"],
+      "@takram/plateau-nest-terrain-tile": [
+        "libs/nest-terrain-tile/src/index.ts"
+      ],
+      "@takram/plateau-nest-tile-cache": ["libs/nest-tile-cache/src/index.ts"],
       "@takram/plateau-nest-vector-tile": [
         "libs/nest-vector-tile/src/index.ts"
       ],
