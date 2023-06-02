@@ -114,7 +114,7 @@ export class VectorTileService {
 
   async renderTile(
     coords: Coordinates,
-    options: RenderTileOptions = {}
+    options?: RenderTileOptions
   ): Promise<Readable | string | undefined> {
     if (coords.level > this.options.maximumLevel) {
       return
