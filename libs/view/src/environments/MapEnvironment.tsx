@@ -1,8 +1,10 @@
 import { Cartesian3, Color } from '@cesium/engine'
 import { useAtomValue } from 'jotai'
 import { type FC } from 'react'
+import invariant from 'tiny-invariant'
 
 import { Environment, type EnvironmentProps } from '@takram/plateau-cesium'
+import { VectorMapImageryLayer } from '@takram/plateau-datasets'
 import { type ColorMode } from '@takram/plateau-shared-states'
 
 import { enableTerrainLightingAtom } from '../states/app'
@@ -28,30 +30,49 @@ export const MapEnvironment: FC<MapEnvironmentProps> = ({
   colorMode = 'light',
   ...props
 }) => {
+  invariant(
+    process.env.NEXT_PUBLIC_TILES_BASE_URL != null,
+    'Missing environment variable: NEXT_PUBLIC_TILES_BASE_URL'
+  )
   const enableTerrainLighting = useAtomValue(enableTerrainLightingAtom)
   return (
-    <Environment
-      // TODO: Define in theme
-      // TODO: Swap background when view is ready
-      backgroundColor={
-        colorMode === 'light'
-          ? Color.fromCssColorString('#f7f7f7')
-          : Color.fromCssColorString('#000000')
-      }
-      globeBaseColor={
-        colorMode === 'light'
-          ? Color.fromCssColorString('#f7f7f7')
-          : Color.fromCssColorString('#000000')
-      }
-      enableGlobeLighting={enableTerrainLighting}
-      lightIntensity={10}
-      shadowDarkness={colorMode === 'light' ? 0.7 : 0.3}
-      imageBasedLightingIntensity={1}
-      sphericalHarmonicCoefficients={sphericalHarmonicCoefficients}
-      showSkyBox={false}
-      atmosphereSaturationShift={-1}
-      groundAtmosphereBrightnessShift={2}
-      {...props}
-    />
+    <>
+      <Environment
+        // TODO: Define in theme
+        // TODO: Swap background when view is ready
+        backgroundColor={
+          colorMode === 'light'
+            ? Color.fromCssColorString('#f7f7f7')
+            : Color.fromCssColorString('#000000')
+        }
+        globeBaseColor={
+          colorMode === 'light'
+            ? Color.fromCssColorString('#f7f7f7')
+            : Color.fromCssColorString('#000000')
+        }
+        enableGlobeLighting={enableTerrainLighting}
+        lightIntensity={10}
+        shadowDarkness={colorMode === 'light' ? 0.7 : 0.3}
+        imageBasedLightingIntensity={1}
+        sphericalHarmonicCoefficients={sphericalHarmonicCoefficients}
+        showSkyBox={false}
+        atmosphereSaturationShift={-1}
+        groundAtmosphereBrightnessShift={2}
+        {...props}
+      />
+      <VectorMapImageryLayer
+        baseUrl={process.env.NEXT_PUBLIC_TILES_BASE_URL}
+        {...{
+          light: {
+            contrast: 0.5,
+            brightness: 1.5
+          },
+          dark: {
+            contrast: 1.5,
+            brightness: 0.3
+          }
+        }[colorMode]}
+      />
+    </>
   )
 }

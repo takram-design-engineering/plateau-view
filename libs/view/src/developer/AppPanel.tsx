@@ -57,6 +57,7 @@ export const AppPanel: FC = () => {
             items={[
               ['map', 'Map'],
               ['satellite', 'Satellite'],
+              ['elevation', 'Elevation'],
               ['google-photorealistic', 'Google Photorealistic']
             ]}
           />

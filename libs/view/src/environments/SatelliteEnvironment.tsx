@@ -1,7 +1,9 @@
 import { Cartesian3 } from '@cesium/engine'
 import { type FC } from 'react'
+import invariant from 'tiny-invariant'
 
 import { Environment, type EnvironmentProps } from '@takram/plateau-cesium'
+import { BingMapsImageryLayer } from '@takram/plateau-datasets'
 
 // TODO: Create time-based interpolation of sky atmosphere.
 // Spherical harmonic coefficients generated from a modified version of:
@@ -19,12 +21,21 @@ const sphericalHarmonicCoefficients = [
 ]
 
 export const SatelliteEnvironment: FC<EnvironmentProps> = props => {
+  invariant(
+    process.env.NEXT_PUBLIC_BING_MAPS_APP_KEY != null,
+    'Missing environment variable: NEXT_PUBLIC_BING_MAPS_APP_KEY'
+  )
   return (
-    <Environment
-      lightIntensity={1}
-      shadowDarkness={0.5}
-      sphericalHarmonicCoefficients={sphericalHarmonicCoefficients}
-      {...props}
-    />
+    <>
+      <Environment
+        lightIntensity={1}
+        shadowDarkness={0.5}
+        sphericalHarmonicCoefficients={sphericalHarmonicCoefficients}
+        {...props}
+      />
+      <BingMapsImageryLayer
+        appKey={process.env.NEXT_PUBLIC_BING_MAPS_APP_KEY}
+      />
+    </>
   )
 }
