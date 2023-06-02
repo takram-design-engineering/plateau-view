@@ -23,14 +23,14 @@ export function createVectorTileController(options: VectorTileOptions): Type {
     constructor(private readonly service: VectorTileService) {}
 
     @Get(':level/:x/:y.:format')
-    async renderTilePng(
+    async renderTile(
       @Param('x', ParseIntPipe) x: number,
       @Param('y', ParseIntPipe) y: number,
       @Param('level', ParseIntPipe) level: number,
       @Param('format', TileFormatValidationPipe) format: TileFormat,
       @Res({ passthrough: true }) res: Response
     ): Promise<StreamableFile | undefined> {
-      const result = await this.service.findTile({ x, y, level }, { format })
+      const result = await this.service.renderTile({ x, y, level }, { format })
       if (result == null) {
         return
       }

@@ -1,15 +1,16 @@
 import { Inject, Injectable, Logger } from '@nestjs/common'
 import axios from 'axios'
-import sharp, { type Sharp } from 'sharp'
+import sharp from 'sharp'
+import { type Readable } from 'stream'
 
 import {
-  CachedTileRenderer,
+  TileCacheService,
   type Coordinates,
-  type TileCache
+  type RenderTileOptions
 } from '@takram/plateau-nest-tile-cache'
 import { isNotNullish } from '@takram/plateau-type-helpers'
 
-import { TERRAIN_TILE_CACHE, TERRAIN_TILE_MODULE_OPTIONS } from './constants'
+import { TERRAIN_TILE_MODULE_OPTIONS } from './constants'
 import { TerrainTileModuleOptions } from './interfaces/TerrainTileModuleOptions'
 
 function packHeightRGB(value: number, buffer: Buffer, offset: number): void {
@@ -29,29 +30,16 @@ function packHeightRGB(value: number, buffer: Buffer, offset: number): void {
 }
 
 @Injectable()
-export class TerrainTileService extends CachedTileRenderer {
+export class TerrainTileService {
   private readonly logger = new Logger(TerrainTileService.name)
 
   readonly byteLength = 256 * 256 * 3
-  readonly emptyBuffer: Buffer
 
   constructor(
     @Inject(TERRAIN_TILE_MODULE_OPTIONS)
-    options: TerrainTileModuleOptions,
-    @Inject(TERRAIN_TILE_CACHE)
-    cache: TileCache | undefined
-  ) {
-    super({
-      path: options.path,
-      maximumLevel: 15,
-      cache
-    })
-
-    this.emptyBuffer = Buffer.alloc(this.byteLength)
-    for (let offset = 0; offset < this.byteLength; offset += 3) {
-      packHeightRGB(0, this.emptyBuffer, offset)
-    }
-  }
+    private readonly options: TerrainTileModuleOptions,
+    private readonly cacheService: TileCacheService
+  ) {}
 
   private async requestBuffers({
     x,
@@ -114,17 +102,39 @@ export class TerrainTileService extends CachedTileRenderer {
     return result
   }
 
-  override async renderTile(coords: Coordinates): Promise<Sharp | undefined> {
-    const result = await this.requestTile(coords)
-    if (result == null) {
+  async renderTile(
+    coords: Coordinates,
+    options: RenderTileOptions = {}
+  ): Promise<Readable | string | undefined> {
+    if (coords.level > 15) {
       return
     }
-    return sharp(result, {
+    const [cache, discarded] = await Promise.all([
+      this.cacheService.findOne(this.options.path, coords),
+      this.cacheService.isDiscarded(this.options.path, coords)
+    ])
+    if (cache != null || discarded) {
+      return cache
+    }
+    const result = await this.requestTile(coords)
+    if (result == null) {
+      await this.cacheService.discardOne(this.options.path, coords)
+      return
+    }
+
+    const image = sharp(result, {
       raw: {
         width: 256,
         height: 256,
         channels: 3
       }
     })
+
+    return await this.cacheService.createOne(
+      image,
+      this.options.path,
+      coords,
+      options
+    )
   }
 }

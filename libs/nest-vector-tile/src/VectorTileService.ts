@@ -6,20 +6,18 @@ import {
 import { Inject, Injectable } from '@nestjs/common'
 import axios, { isAxiosError } from 'axios'
 import { type CustomLayerInterface, type Style } from 'mapbox-gl'
-import sharp, { type Sharp } from 'sharp'
+import sharp from 'sharp'
+import { type Readable } from 'stream'
+import invariant from 'tiny-invariant'
 
 import { CESIUM, type Cesium } from '@takram/plateau-nest-cesium'
 import {
-  CachedTileRenderer,
+  TileCacheService,
   type Coordinates,
-  type TileCache
+  type RenderTileOptions
 } from '@takram/plateau-nest-tile-cache'
 
-import {
-  VECTOR_TILE_CACHE,
-  VECTOR_TILE_MAP_STYLE,
-  VECTOR_TILE_OPTIONS
-} from './constants'
+import { VECTOR_TILE_MAP_STYLE, VECTOR_TILE_OPTIONS } from './constants'
 import { VectorTileOptions } from './interfaces/VectorTileOptions'
 
 interface MapRequest {
@@ -42,25 +40,18 @@ type MapStyle = Omit<Style, 'layers'> & {
 }
 
 @Injectable()
-export class VectorTileService extends CachedTileRenderer {
+export class VectorTileService {
   constructor(
-    @Inject(VECTOR_TILE_CACHE)
-    cache: TileCache | undefined,
     @Inject(VECTOR_TILE_OPTIONS)
     private readonly options: VectorTileOptions,
+    private readonly cacheService: TileCacheService,
     @Inject(VECTOR_TILE_MAP_STYLE)
     private readonly mapStyle: MapStyle,
     @Inject(CESIUM)
     private readonly cesium: Cesium
-  ) {
-    super({
-      cache,
-      path: options.path,
-      maximumLevel: options.maximumLevel
-    })
-  }
+  ) {}
 
-  private request(
+  private requestTile(
     req: MapRequest,
     callback: Parameters<MapOptions['request']>[1]
   ): void {
@@ -74,9 +65,16 @@ export class VectorTileService extends CachedTileRenderer {
         })
       } catch (error) {
         if (isAxiosError(error) && error.response?.status === 404) {
-          callback(undefined, {
-            data: Buffer.alloc(0)
-          })
+          if (req.kind === 3 /* ResourceKind.Tile */) {
+            const [level, x, y] = new URL(req.url).pathname
+              .split('/')
+              .slice(-3)
+              .map(value => +value.split('.')[0])
+            invariant(!isNaN(level) && !isNaN(x) && !isNaN(y))
+            const coords = { x, y, level }
+            await this.cacheService.discardOne(this.options.path, coords)
+          }
+          callback()
         } else if (error instanceof Error) {
           callback(error)
         } else {
@@ -90,7 +88,7 @@ export class VectorTileService extends CachedTileRenderer {
 
   private async renderMap(options: RenderOptions): Promise<Uint8Array> {
     const map = new Map({
-      request: this.request.bind(this)
+      request: this.requestTile.bind(this)
     })
     map.load(this.mapStyle)
 
@@ -104,17 +102,31 @@ export class VectorTileService extends CachedTileRenderer {
 
     return await new Promise<Uint8Array>((resolve, reject) => {
       map.render(options, (error, buffer) => {
+        map.release()
         if (error != null) {
           reject(error)
         } else {
-          map.release()
           resolve(buffer)
         }
       })
     })
   }
 
-  override async renderTile({ x, y, level }: Coordinates): Promise<Sharp> {
+  async renderTile(
+    coords: Coordinates,
+    options: RenderTileOptions = {}
+  ): Promise<Readable | string | undefined> {
+    if (coords.level > this.options.maximumLevel) {
+      return
+    }
+    const [cache, discarded] = await Promise.all([
+      this.cacheService.findOne(this.options.path, coords),
+      this.cacheService.isDiscarded(this.options.path, coords)
+    ])
+    if (cache != null || discarded) {
+      return cache
+    }
+
     const {
       Cartesian3,
       Cartographic,
@@ -122,6 +134,7 @@ export class VectorTileService extends CachedTileRenderer {
       WebMercatorTilingScheme
     } = this.cesium
 
+    const { x, y, level } = coords
     const tilingScheme = new WebMercatorTilingScheme()
     const rectangle = tilingScheme.tileXYToRectangle(x, y, level)
     const projection = tilingScheme.projection
@@ -137,12 +150,19 @@ export class VectorTileService extends CachedTileRenderer {
       ]
     })
     const tileSize = this.options.tileSize ?? 512
-    return sharp(buffer, {
+    const image = sharp(buffer, {
       raw: {
         width: tileSize,
         height: tileSize,
         channels: 4
       }
     })
+
+    return await this.cacheService.createOne(
+      image,
+      this.options.path,
+      coords,
+      options
+    )
   }
 }
