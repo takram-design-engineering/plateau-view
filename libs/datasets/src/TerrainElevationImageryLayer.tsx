@@ -1,5 +1,7 @@
 import {
   DiscardEmptyTileImagePolicy,
+  TextureMagnificationFilter,
+  TextureMinificationFilter,
   UrlTemplateImageryProvider
 } from '@cesium/engine'
 import { type FC } from 'react'
@@ -25,5 +27,12 @@ export const TerrainElevationImageryLayer: FC<
     return imageryProvider
   })
 
-  return <ImageryLayer imageryProvider={imageryProvider} {...props} />
+  return (
+    <ImageryLayer
+      imageryProvider={imageryProvider}
+      magnificationFilter={TextureMagnificationFilter.NEAREST}
+      minificationFilter={TextureMinificationFilter.NEAREST}
+      {...props}
+    />
+  )
 }
