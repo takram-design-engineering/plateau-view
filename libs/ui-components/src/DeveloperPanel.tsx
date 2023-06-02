@@ -1,13 +1,11 @@
 import RestartAltIcon from '@mui/icons-material/RestartAlt'
 import { Button, Stack, Typography, buttonClasses, styled } from '@mui/material'
-import { forwardRef, type ReactNode } from 'react'
+import { forwardRef, type ComponentPropsWithRef, type ReactNode } from 'react'
 
-import { FloatingPanel, type FloatingPanelProps } from './FloatingPanel'
-
-const Root = styled(FloatingPanel)(({ theme }) => ({
+const Root = styled('div')(({ theme }) => ({
   ...theme.typography.body2,
   padding: theme.spacing(2),
-  backgroundColor: theme.palette.background.paper
+  color: theme.palette.text.primary
 }))
 
 const ResetButton = styled(Button)(({ theme }) => ({
@@ -21,7 +19,8 @@ const ResetButton = styled(Button)(({ theme }) => ({
   }
 }))
 
-export interface DeveloperPanelProps extends Omit<FloatingPanelProps, 'title'> {
+export interface DeveloperPanelProps
+  extends Omit<ComponentPropsWithRef<typeof Root>, 'title'> {
   title?: ReactNode
   onReset?: () => void
 }
