@@ -30,7 +30,7 @@ export const TerrainElevationImageryLayer: FC<
   return (
     <ImageryLayer
       imageryProvider={imageryProvider}
-      magnificationFilter={TextureMagnificationFilter.NEAREST}
+      magnificationFilter={TextureMagnificationFilter.LINEAR}
       minificationFilter={TextureMinificationFilter.NEAREST}
       {...props}
     />
