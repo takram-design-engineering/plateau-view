@@ -1,5 +1,4 @@
 import {
-  Color,
   DiscardEmptyTileImagePolicy,
   UrlTemplateImageryProvider
 } from '@cesium/engine'
@@ -26,12 +25,5 @@ export const TerrainElevationImageryLayer: FC<
     return imageryProvider
   })
 
-  return (
-    <ImageryLayer
-      imageryProvider={imageryProvider}
-      {...props}
-      colorToAlpha={Color.WHITE}
-      colorToAlphaThreshold={1}
-    />
-  )
+  return <ImageryLayer imageryProvider={imageryProvider} {...props} />
 }

@@ -45,11 +45,18 @@ export const ElevationEnvironment: FC<EnvironmentProps> = props => {
         '#endif'
       ],
       /* glsl */ `
+      // colorToAlpha is used as an identification of imagery layer here.
       if (colorToAlpha == vec4(1.0)) {
         float decodedValue = dot(color, vec3(16711680.0, 65280.0, 255.0));
         float height = (decodedValue - 8388607.0) * 0.01;
-        float scaledHeight = clamp((height - minimumHeight_1) / (maximumHeight_2 - minimumHeight_1), 0.0, 1.0);
-        color = texture(image_0, vec2(scaledHeight, 0.5)).rgb;
+        float scaledHeight = clamp(
+          (height - minHeight_1) / (maxHeight_2 - minHeight_1),
+          0.0,
+          1.0
+        );
+        vec4 mappedColor = texture(image_0, vec2(scaledHeight, 0.5));
+        color = mappedColor.rgb;
+        alpha = mappedColor.a;
       }`
     )
   }))
@@ -73,6 +80,8 @@ export const ElevationEnvironment: FC<EnvironmentProps> = props => {
       />
       <TerrainElevationImageryLayer
         baseUrl={process.env.NEXT_PUBLIC_API_BASE_URL}
+        colorToAlpha={Color.WHITE}
+        colorToAlphaThreshold={1}
       />
     </>
   )
