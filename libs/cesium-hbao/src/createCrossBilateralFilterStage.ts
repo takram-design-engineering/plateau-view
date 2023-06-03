@@ -5,8 +5,9 @@ import {
 } from '@cesium/engine'
 import { defaults } from 'lodash'
 
+import { createUniforms } from '@takram/plateau-cesium-helpers'
+
 import { type AmbientOcclusionOutputType } from './AmbientOcclusionOutputType'
-import { createUniforms } from './createUniforms'
 import crossBilateralFilter from './shaders/crossBilateralFilter.glsl?raw'
 import depth from './shaders/depth.glsl?raw'
 import globeDepth from './shaders/globeDepth.glsl?raw'

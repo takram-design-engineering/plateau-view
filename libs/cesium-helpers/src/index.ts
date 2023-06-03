@@ -1,5 +1,6 @@
 export * from './convertPolygonToHierarchyArray'
 export * from './convertPolygonToPositionsArray'
+export * from './createUniforms'
 export * from './flyToBoundingSphere'
 export * from './flyToPolygonEntity'
 export * from './forEachTileFeature'
