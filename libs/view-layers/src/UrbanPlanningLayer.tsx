@@ -37,7 +37,13 @@ export function createUrbanPlanningLayer(
 
 export const UrbanPlanningLayer: FC<
   LayerProps<typeof URBAN_PLANNING_LAYER>
-> = ({ titleAtom, hiddenAtom, municipalityCode, datumIdAtom }) => {
+> = ({
+  titleAtom,
+  hiddenAtom,
+  boundingSphereAtom,
+  municipalityCode,
+  datumIdAtom
+}) => {
   const query = useMunicipalityDatasetsQuery({
     variables: {
       municipalityCode,
@@ -78,6 +84,7 @@ export const UrbanPlanningLayer: FC<
         // TODO: Infer type
         datum={datum as DatasetDatum<PlateauDatasetFormat.Mvt>}
         styles={styles}
+        boundingSphereAtom={boundingSphereAtom}
       />
     )
   }

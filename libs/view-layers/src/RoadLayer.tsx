@@ -36,6 +36,7 @@ export function createRoadLayer(
 export const RoadLayer: FC<LayerProps<typeof ROAD_LAYER>> = ({
   titleAtom,
   hiddenAtom,
+  boundingSphereAtom,
   municipalityCode,
   datumIdAtom
 }) => {
@@ -79,6 +80,7 @@ export const RoadLayer: FC<LayerProps<typeof ROAD_LAYER>> = ({
         // TODO: Infer type
         datum={datum as DatasetDatum<PlateauDatasetFormat.Mvt>}
         styles={styles}
+        boundingSphereAtom={boundingSphereAtom}
       />
     )
   }
