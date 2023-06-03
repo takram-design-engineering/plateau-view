@@ -142,9 +142,12 @@ export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
   }, [version, lod, textured, query.data])
 
   useEffect(() => {
-    setVersion(datum?.version ?? null)
-    setLod(datum?.lod ?? null)
-    setTextured(datum?.textured ?? null)
+    if (datum == null) {
+      return
+    }
+    setVersion(datum.version)
+    setLod(datum.lod)
+    setTextured(datum.textured)
   }, [setVersion, setLod, setTextured, datum])
 
   if (hidden || datum == null) {
