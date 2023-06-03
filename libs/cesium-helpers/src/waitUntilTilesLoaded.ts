@@ -48,7 +48,7 @@ export function waitUntilTilesLoaded(
               }
               if (count > remainingTileCount) {
                 onProgress?.(count)
-              } else if (started) {
+              } else if (started || scene.globe.tilesLoaded) {
                 removeListener()
                 resolve()
               }

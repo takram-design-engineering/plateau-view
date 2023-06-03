@@ -17,7 +17,6 @@ import {
 import { JapanSeaLevelEllipsoid } from '@takram/plateau-datasets'
 import { withDeferredProps } from '@takram/plateau-react-helpers'
 
-import { readyAtom } from '../states/app'
 import {
   ambientOcclusionAccurateNormalReconstructionAtom,
   ambientOcclusionBiasAtom,
@@ -125,7 +124,6 @@ export const Canvas = forwardRef<HTMLDivElement, CanvasProps>(
       []
     )
 
-    const ready = useAtomValue(readyAtom)
     const nativeResolutionEnabled = useAtomValue(nativeResolutionEnabledAtom)
     const explicitRenderingEnabled = useAtomValue(explicitRenderingEnabledAtom)
     const antialiasType = useAtomValue(antialiasTypeAtom)
@@ -138,7 +136,6 @@ export const Canvas = forwardRef<HTMLDivElement, CanvasProps>(
         constructorOptions={constructorOptions}
         msaaSamples={msaaSamples[antialiasType] ?? 0}
         useBrowserRecommendedResolution={!nativeResolutionEnabled}
-        resolutionScale={ready ? undefined : 0.1}
         requestRenderMode={explicitRenderingEnabled}
         shouldAnimate
         maximumRenderTimeChange={1}

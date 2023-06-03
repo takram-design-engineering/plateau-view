@@ -98,8 +98,8 @@ export const PlateauView: FC<PlateauViewProps> = () => {
         </Suspense>
         <Suspense>
           <SuspendUntilTilesLoaded
-            initialTileCount={40}
-            remainingTileCount={25}
+            initialTileCount={35}
+            remainingTileCount={30}
             onComplete={handleTilesLoadComplete}
           >
             <LayersRenderer components={layerComponents} />
