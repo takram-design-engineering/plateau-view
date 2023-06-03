@@ -11,6 +11,7 @@ import {
 } from 'react'
 
 import { ParameterItem } from './ParameterItem'
+import { inversePseudoLog, pseudoLog } from './helpers/pseudoLog'
 
 const StyledSlider = styled(Slider)({
   width: 'calc(100% - 12px)',
@@ -27,11 +28,14 @@ const Value = styled('div')(({ theme }) => ({
 
 export interface SliderParameterItemProps<
   T extends number | number[] = number | number[]
-> extends PropsWithoutRef<Omit<SliderProps, 'value'>> {
+> extends PropsWithoutRef<Omit<SliderProps, 'value' | 'step'>> {
   label?: ReactNode
   description?: ReactNode
+  step?: number
   decimalPlaces?: number
   unit?: ReactNode
+  logarithmic?: boolean
+  logarithmicBase?: number
   atom: PrimitiveAtom<T>
 }
 
@@ -45,8 +49,11 @@ export const SliderParameterItem = forwardRef<
       description,
       min = 0,
       max = 10,
+      step = Number.EPSILON,
       decimalPlaces = 0,
       unit,
+      logarithmic = false,
+      logarithmicBase = 10,
       atom,
       onChange,
       ...props
@@ -57,10 +64,21 @@ export const SliderParameterItem = forwardRef<
 
     const handleChange = useCallback(
       (event: Event, value: number | number[], activeThumb: number) => {
-        setValue(value)
-        onChange?.(event, value, activeThumb)
+        if (logarithmic) {
+          const scaledValue = logarithmic
+            ? inversePseudoLog(value, logarithmicBase)
+            : value
+          const stepValue = Array.isArray(scaledValue)
+            ? scaledValue.map(value => Math.round(value / step) * step)
+            : Math.round(scaledValue / step) * step
+          setValue(stepValue)
+          onChange?.(event, stepValue, activeThumb)
+        } else {
+          setValue(value)
+          onChange?.(event, value, activeThumb)
+        }
       },
-      [onChange, setValue]
+      [logarithmic, logarithmicBase, onChange, setValue, step]
     )
 
     const marks = useMemo(
@@ -68,8 +86,25 @@ export const SliderParameterItem = forwardRef<
         scaleLinear()
           .domain([min, max])
           .ticks()
-          .map(value => ({ value })),
-      [min, max]
+          .map(
+            logarithmic
+              ? value => ({ value: pseudoLog(value, logarithmicBase) })
+              : value => ({ value })
+          ),
+      [min, max, logarithmic, logarithmicBase]
+    )
+
+    const scaledMin = useMemo(
+      () => (logarithmic ? pseudoLog(min, logarithmicBase) : min),
+      [min, logarithmic, logarithmicBase]
+    )
+    const scaledMax = useMemo(
+      () => (logarithmic ? pseudoLog(max, logarithmicBase) : max),
+      [max, logarithmic, logarithmicBase]
+    )
+    const scaledValue = useMemo(
+      () => (logarithmic ? pseudoLog(value, logarithmicBase) : value),
+      [value, logarithmic, logarithmicBase]
     )
 
     return (
@@ -81,7 +116,7 @@ export const SliderParameterItem = forwardRef<
           <Value>
             {typeof value === 'number'
               ? value.toFixed(decimalPlaces)
-              : value.map(value => value.toFixed(decimalPlaces)).join(' - ')}
+              : value.map(value => value.toFixed(decimalPlaces)).join(' ~ ')}
             {unit != null && <> {unit}</>}
           </Value>
         }
@@ -89,12 +124,12 @@ export const SliderParameterItem = forwardRef<
         <StyledSlider
           size='small'
           marks={marks}
-          min={min}
-          max={max}
-          step={Number.EPSILON}
+          min={scaledMin}
+          max={scaledMax}
+          step={logarithmic ? Number.EPSILON : step}
           disableSwap
           {...props}
-          value={value}
+          value={scaledValue}
           onChange={handleChange}
         />
       </ParameterItem>

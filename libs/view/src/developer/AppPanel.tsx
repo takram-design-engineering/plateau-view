@@ -87,9 +87,12 @@ export const AppPanel: FC = () => {
             atom={enableTerrainLightingAtom}
           />
           <SliderParameterItem
-            label='Terrain Elevation Height Range'
-            min={0}
+            label='Terrain Elevation Height'
+            min={-10}
             max={4000}
+            step={1}
+            unit='m'
+            logarithmic
             atom={terrainElevationHeightRangeAtom}
             disabled={environmentType !== 'elevation'}
           />
