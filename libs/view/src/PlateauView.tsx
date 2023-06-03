@@ -1,15 +1,12 @@
 import { Cartesian3, HeadingPitchRoll } from '@cesium/engine'
 import { styled } from '@mui/material'
-import { useAtomValue, useSetAtom } from 'jotai'
+import { useSetAtom } from 'jotai'
 import { Suspense, useCallback, useEffect, type FC } from 'react'
 
 import { CurrentTime, ViewLocator } from '@takram/plateau-cesium'
 import { SuspendUntilTilesLoaded } from '@takram/plateau-cesium-helpers'
-import { GooglePhotorealisticTileset } from '@takram/plateau-datasets'
 import { LayersRenderer, useAddLayer } from '@takram/plateau-layers'
-import {
-  AppLayout
-} from '@takram/plateau-ui-components'
+import { AppLayout } from '@takram/plateau-ui-components'
 import {
   BUILDING_LAYER,
   createViewLayer,
@@ -32,7 +29,7 @@ import { LocationContextBar } from './panels/LocationContextBar'
 import { MainPanel } from './panels/MainPanel'
 import { SelectionPanel } from './panels/SelectionPanel'
 import { Toolbar } from './panels/Toolbar'
-import { environmentTypeAtom, readyAtom } from './states/app'
+import { readyAtom } from './states/app'
 
 const initialDestination = Cartesian3.fromDegrees(139.755, 35.675, 1000)
 const initialOrientation = new HeadingPitchRoll(Math.PI * 0.4, -Math.PI * 0.2)
@@ -84,8 +81,6 @@ export const PlateauView: FC<PlateauViewProps> = () => {
     setReady(true)
   }, [setReady])
 
-  const environmentType = useAtomValue(environmentTypeAtom)
-
   return (
     <Root>
       <Canvas>
@@ -101,21 +96,15 @@ export const PlateauView: FC<PlateauViewProps> = () => {
         <Suspense>
           <Terrains />
         </Suspense>
-        {environmentType !== 'google-photorealistic' ? (
-          <Suspense>
-            <SuspendUntilTilesLoaded
-              initialTileCount={40}
-              remainingTileCount={25}
-              onComplete={handleTilesLoadComplete}
-            >
-              <LayersRenderer components={layerComponents} />
-            </SuspendUntilTilesLoaded>
-          </Suspense>
-        ) : (
-          <GooglePhotorealisticTileset
-            apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAP_TILES_API_KEY}
-          />
-        )}
+        <Suspense>
+          <SuspendUntilTilesLoaded
+            initialTileCount={40}
+            remainingTileCount={25}
+            onComplete={handleTilesLoadComplete}
+          >
+            <LayersRenderer components={layerComponents} />
+          </SuspendUntilTilesLoaded>
+        </Suspense>
         <Areas />
         <ReverseGeocoding />
         <ToolMachineEvents />

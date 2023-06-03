@@ -1,5 +1,4 @@
 import escapeStringRegexp from 'escape-string-regexp'
-import { type SetRequired } from 'type-fest'
 
 type Command = (source: string) => string
 
@@ -19,7 +18,7 @@ export class StringMatcher {
     source: string,
     search: string | string[],
     multiple = false
-  ): Array<SetRequired<RegExpMatchArray, 'index'>> {
+  ): Array<RegExpMatchArray & { index: number }> {
     const pattern = Array.isArray(search)
       ? new RegExp(
           search.map(string => escapeStringRegexp(string)).join('\\s*'),
@@ -28,7 +27,7 @@ export class StringMatcher {
       : new RegExp(escapeStringRegexp(search), 'g')
 
     const matches = [...source.matchAll(pattern)].filter(
-      (match): match is SetRequired<RegExpMatchArray, 'index'> =>
+      (match): match is RegExpMatchArray & { index: number } =>
         match.index != null
     )
     if (matches == null || matches.length === 0) {
