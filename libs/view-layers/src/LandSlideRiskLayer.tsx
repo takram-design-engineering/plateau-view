@@ -38,6 +38,7 @@ export function createLandSlideRiskLayer(
 export const LandSlideRiskLayer: FC<LayerProps<typeof LANDSLIDE_LAYER>> = ({
   titleAtom,
   hiddenAtom,
+  boundingSphereAtom,
   municipalityCode,
   datumIdAtom
 }) => {
@@ -81,6 +82,7 @@ export const LandSlideRiskLayer: FC<LayerProps<typeof LANDSLIDE_LAYER>> = ({
         // TODO: Infer type
         datum={datum as DatasetDatum<PlateauDatasetFormat.Mvt>}
         styles={styles}
+        boundingSphereAtom={boundingSphereAtom}
       />
     )
   }

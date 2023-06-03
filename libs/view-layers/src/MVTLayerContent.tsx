@@ -1,9 +1,14 @@
-import { useAtomValue } from 'jotai'
-import { useMemo, type FC } from 'react'
+import { BoundingSphere } from '@cesium/engine'
+import { useAtomValue, useSetAtom } from 'jotai'
+import { useEffect, useMemo, type FC } from 'react'
 
-import { VectorImageryLayer } from '@takram/plateau-datasets'
+import {
+  JapanSeaLevelEllipsoid,
+  VectorImageryLayer
+} from '@takram/plateau-datasets'
 import { type PlateauDatasetFormat } from '@takram/plateau-graphql'
 
+import { type DatasetLayerModel } from './createDatasetLayerBase'
 import { pixelRatioAtom } from './states'
 import { type DatasetDatum } from './useDatasetDatum'
 import { useMVTMetadata } from './useMVTMetadata'
@@ -15,14 +20,16 @@ export interface MVTLayerContentStyle {
   paint: any
 }
 
-export interface MVTLayerContentProps {
+export interface MVTLayerContentProps
+  extends Pick<DatasetLayerModel, 'boundingSphereAtom'> {
   datum: DatasetDatum<PlateauDatasetFormat.Mvt>
   styles: readonly MVTLayerContentStyle[]
 }
 
 export const MVTLayerContent: FC<MVTLayerContentProps> = ({
   datum,
-  styles
+  styles,
+  boundingSphereAtom
 }) => {
   const metadata = useMVTMetadata(datum?.url)
   const style = useMemo(() => {
@@ -41,6 +48,16 @@ export const MVTLayerContent: FC<MVTLayerContentProps> = ({
       )
     }
   }, [metadata, styles])
+
+  const setBoundingSphere = useSetAtom(boundingSphereAtom)
+  useEffect(() => {
+    if (metadata == null) {
+      return
+    }
+    setBoundingSphere(
+      BoundingSphere.fromRectangle3D(metadata.rectangle, JapanSeaLevelEllipsoid)
+    )
+  }, [metadata, setBoundingSphere])
 
   const pixelRatio = useAtomValue(pixelRatioAtom)
 

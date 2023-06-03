@@ -92,6 +92,7 @@ export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
   id,
   titleAtom,
   hiddenAtom,
+  boundingSphereAtom,
   municipalityCode,
   versionAtom,
   lodAtom,
@@ -160,6 +161,7 @@ export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
         // TODO: Infer type
         datum={datum as DatasetDatum<PlateauDatasetFormat.Cesium3DTiles>}
         component={PlateauBuildingTileset}
+        boundingSphereAtom={boundingSphereAtom}
         featureIndexAtom={featureIndexAtom}
         hiddenFeaturesAtom={hiddenFeaturesAtom}
       />

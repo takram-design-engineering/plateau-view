@@ -41,6 +41,7 @@ export const RiverFloodingRiskLayer: FC<
   id,
   titleAtom,
   hiddenAtom,
+  boundingSphereAtom,
   municipalityCode,
   datumIdAtom,
   featureIndexAtom,
@@ -87,6 +88,7 @@ export const RiverFloodingRiskLayer: FC<
         // TODO: Infer type
         datum={datum as DatasetDatum<PlateauDatasetFormat.Cesium3DTiles>}
         component={PlateauWaterSurfaceTileset}
+        boundingSphereAtom={boundingSphereAtom}
         featureIndexAtom={featureIndexAtom}
         hiddenFeaturesAtom={hiddenFeaturesAtom}
       />

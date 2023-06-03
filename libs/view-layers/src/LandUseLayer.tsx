@@ -37,6 +37,7 @@ export function createLandUseLayer(
 export const LandUseLayer: FC<LayerProps<typeof LAND_USE_LAYER>> = ({
   titleAtom,
   hiddenAtom,
+  boundingSphereAtom,
   municipalityCode,
   datumIdAtom
 }) => {
@@ -80,6 +81,7 @@ export const LandUseLayer: FC<LayerProps<typeof LAND_USE_LAYER>> = ({
         // TODO: Infer type
         datum={datum as DatasetDatum<PlateauDatasetFormat.Mvt>}
         styles={styles}
+        boundingSphereAtom={boundingSphereAtom}
       />
     )
   }
