@@ -1,3 +1,4 @@
+import { type BoundingSphere } from '@cesium/engine'
 import { atom } from 'jotai'
 import { type SetOptional } from 'type-fest'
 
@@ -20,6 +21,7 @@ export function createViewLayerBase(
     isViewLayer: true,
     titleAtom: atom<LayerTitle | null>(params.title ?? null),
     loadingAtom: atom(false),
-    hiddenAtom: atom(false)
+    hiddenAtom: atom(false),
+    boundingSphereAtom: atom<BoundingSphere | null>(null)
   }
 }

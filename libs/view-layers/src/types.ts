@@ -1,3 +1,4 @@
+import { type BoundingSphere } from '@cesium/engine'
 import { type PrimitiveAtom } from 'jotai'
 
 import { type LayerListItemProps } from '@takram/plateau-ui-components'
@@ -40,6 +41,7 @@ declare module '@takram/plateau-layers' {
     titleAtom: PrimitiveAtom<LayerTitle | null>
     loadingAtom: PrimitiveAtom<boolean>
     hiddenAtom: PrimitiveAtom<boolean>
+    boundingSphereAtom: PrimitiveAtom<BoundingSphere | null>
   }
 
   interface LayerModelOverrides {
