@@ -7898,6 +7898,7 @@ __metadata:
     "@vitejs/plugin-react": ^3.0.0
     "@vitest/ui": 0.31.0
     "@xstate/react": ^3.2.2
+    astronomy-engine: ^2.1.17
     axios: ^1.4.0
     axios-hooks: ^4.0.0
     babel-jest: ^29.4.1
@@ -11985,6 +11986,13 @@ __metadata:
   version: 2.0.0
   resolution: "astral-regex@npm:2.0.0"
   checksum: 876231688c66400473ba505731df37ea436e574dd524520294cc3bbc54ea40334865e01fa0d074d74d036ee874ee7e62f486ea38bc421ee8e6a871c06f011766
+  languageName: node
+  linkType: hard
+
+"astronomy-engine@npm:^2.1.17":
+  version: 2.1.17
+  resolution: "astronomy-engine@npm:2.1.17"
+  checksum: a43de58252c280ba6bed9da44562a7b5991a0e3d2ba9f92b6369e65fe97b809a3c4d4b4473be1bffc6fe8803567955ac538ca092177ac76ca57ab52ea839fa9b
   languageName: node
   linkType: hard
 
