@@ -166,7 +166,7 @@ const Graph: FC<
   const scaleY = useMemo(
     () =>
       scaleLinear()
-        .domain([-90, 90])
+        .domain([-100, 100])
         .range([height - borderRadius, borderRadius]),
     [height]
   )
@@ -277,6 +277,38 @@ const Graph: FC<
         fill={theme.palette.primary.main}
         stroke='none'
       />
+      {[90, 45, 0, -45, -90].map(altitude => (
+        <text
+          key={`y:${altitude}`}
+          x={width}
+          y={scaleY(altitude)}
+          dx={borderRadius}
+          textAnchor='start'
+          dominantBaseline='central'
+          fill={theme.palette.text.secondary}
+          fontFamily={theme.typography.caption.fontFamily}
+          fontSize={theme.typography.caption.fontSize}
+        >
+          {altitude}°
+        </text>
+      ))}
+      {[...Array(7)].map((_, index) => {
+        const hours = index * 4
+        return (
+          <text
+            key={`x:${index}`}
+            x={scaleX(+startOfDay(date) + hours * 3600000)}
+            y={height + borderRadius}
+            textAnchor='middle'
+            dominantBaseline='text-before-edge'
+            fill={theme.palette.text.secondary}
+            fontFamily={theme.typography.caption.fontFamily}
+            fontSize={theme.typography.caption.fontSize}
+          >
+            {`${hours}:00`}
+          </text>
+        )
+      })}
     </svg>
   )
 }
