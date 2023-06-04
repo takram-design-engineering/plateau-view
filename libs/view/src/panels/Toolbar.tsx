@@ -1,5 +1,4 @@
 import {
-  Popover,
   Stack,
   ToggleButton,
   Tooltip,
@@ -117,11 +116,9 @@ export const Toolbar: FC = () => {
         </span>
       </Tooltip>
       <Tooltip title='日時'>
-        <span>
-          <FloatingButton aria-label='日時' {...bindTrigger(datePopupState)}>
-            <TimelineIcon fontSize='medium' />
-          </FloatingButton>
-        </span>
+        <FloatingButton aria-label='日時' {...bindTrigger(datePopupState)}>
+          <TimelineIcon fontSize='medium' />
+        </FloatingButton>
       </Tooltip>
       <OverlayPopover {...bindPopover(datePopupState)}>
         <DateControlPanel />

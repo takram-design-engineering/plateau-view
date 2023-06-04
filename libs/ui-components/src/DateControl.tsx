@@ -1,10 +1,12 @@
 import { Stack, styled } from '@mui/material'
 import { endOfYear, format, set, startOfDay, startOfYear } from 'date-fns'
+import { omit } from 'lodash'
 import {
   forwardRef,
   useCallback,
   useRef,
   type ComponentPropsWithRef,
+  type MouseEvent,
   type SyntheticEvent
 } from 'react'
 import invariant from 'tiny-invariant'
@@ -51,6 +53,16 @@ export const DateControl = forwardRef<HTMLDivElement, DateControlProps>(
     const dateRef = useRef(date)
     dateRef.current = date
 
+    const handleListChange = useCallback(
+      (
+        event: MouseEvent<HTMLDivElement>,
+        values: Parameters<typeof set>[1]
+      ) => {
+        onChange?.(event, set(dateRef.current, values))
+      },
+      [onChange]
+    )
+
     const handleSliderChange = useCallback(
       (event: Event, value: number | number[]) => {
         invariant(!Array.isArray(value))
@@ -91,7 +103,10 @@ export const DateControl = forwardRef<HTMLDivElement, DateControlProps>(
               <DateText>{format(date, 'MMMM d, yyyy')}</DateText>
               <TimeText>{format(date, 'HH:mm')}</TimeText>
             </Stack>
-            <DateControlList {...state} onChange={onChange} />
+            <DateControlList
+              {...omit(state, ['dateAtom', 'observerAtom'])}
+              onChange={handleListChange}
+            />
           </Stack>
           <Stack width='100%' spacing={2}>
             <DateSlider

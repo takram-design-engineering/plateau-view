@@ -4,12 +4,13 @@ import {
   area as createArea,
   line as createLine,
   path as createPath,
+  curveCatmullRom,
   scaleLinear,
   type ScaleLinear
 } from 'd3'
 import { endOfDay, set, startOfDay } from 'date-fns'
+import { useAtomValue } from 'jotai'
 import {
-  memo,
   useEffect,
   useId,
   useMemo,
@@ -44,7 +45,7 @@ export function createAltitudeData(
   start: Date | number,
   end: Date | number,
   observer: Observer,
-  subdivision = 80
+  subdivision = 50
 ): Altitude[] {
   const interval = (+end - +start) / (subdivision - 1)
   return [...Array(subdivision)].map((_, index) => {
@@ -70,74 +71,72 @@ const RiseSetGradient: FC<{
   scaleX: ScaleLinear<number, number>
   skirt?: number
   opacity?: number
-}> = memo(
-  ({ width, height, sunrise, sunset, scaleX, skirt = 20, opacity = 1 }) => {
-    const id = useId()
-    const rect = useMemo(() => {
-      const radius = 5
-      const path = createPath()
-      path.moveTo(radius, 0)
-      path.lineTo(width - radius, 0)
-      path.arcTo(width, 0, width, radius, radius)
-      path.lineTo(width, height - radius)
-      path.arcTo(width, height, width - radius, height, radius)
-      path.lineTo(radius, height)
-      path.arcTo(0, height, 0, height - radius, radius)
-      path.lineTo(0, radius)
-      path.arcTo(0, 0, radius, 0, radius)
-      path.closePath()
-      return path.toString()
-    }, [width, height])
+}> = ({ width, height, sunrise, sunset, scaleX, skirt = 20, opacity = 1 }) => {
+  const id = useId()
+  const rect = useMemo(() => {
+    const radius = 5
+    const path = createPath()
+    path.moveTo(radius, 0)
+    path.lineTo(width - radius, 0)
+    path.arcTo(width, 0, width, radius, radius)
+    path.lineTo(width, height - radius)
+    path.arcTo(width, height, width - radius, height, radius)
+    path.lineTo(radius, height)
+    path.arcTo(0, height, 0, height - radius, radius)
+    path.lineTo(0, radius)
+    path.arcTo(0, 0, radius, 0, radius)
+    path.closePath()
+    return path.toString()
+  }, [width, height])
 
-    const theme = useTheme()
-    if (sunrise == null && sunset == null) {
-      return null
-    }
-
-    const sunriseX = sunrise != null ? scaleX(+sunrise) : undefined
-    const sunsetX = sunset != null ? scaleX(+sunset) : undefined
-    const color = theme.palette.text.primary
-    return (
-      <>
-        <defs>
-          <linearGradient id={id} x1={0} x2={1} y1={0} y2={0}>
-            <stop offset={0} stopColor={color} stopOpacity={opacity} />
-            {sunriseX != null && (
-              <>
-                <stop
-                  offset={(sunriseX - skirt / 2) / width}
-                  stopColor={color}
-                  stopOpacity={opacity}
-                />
-                <stop
-                  offset={(sunriseX + skirt / 2) / width}
-                  stopColor={color}
-                  stopOpacity={0}
-                />
-              </>
-            )}
-            {sunsetX != null && (
-              <>
-                <stop
-                  offset={(sunsetX - skirt / 2) / width}
-                  stopColor={color}
-                  stopOpacity={0}
-                />
-                <stop
-                  offset={(sunsetX + skirt / 2) / width}
-                  stopColor={color}
-                  stopOpacity={opacity}
-                />
-              </>
-            )}
-            <stop offset={width} stopColor={color} stopOpacity={opacity} />
-          </linearGradient>
-        </defs>
-        <path d={rect} fill={`url(#${id})`} />
-      </>
-    )
+  const theme = useTheme()
+  if (sunrise == null && sunset == null) {
+    return null
   }
-)
+
+  const sunriseX = sunrise != null ? scaleX(+sunrise) : undefined
+  const sunsetX = sunset != null ? scaleX(+sunset) : undefined
+  const color = theme.palette.text.primary
+  return (
+    <>
+      <defs>
+        <linearGradient id={id} x1={0} x2={1} y1={0} y2={0}>
+          <stop offset={0} stopColor={color} stopOpacity={opacity} />
+          {sunriseX != null && (
+            <>
+              <stop
+                offset={(sunriseX - skirt / 2) / width}
+                stopColor={color}
+                stopOpacity={opacity}
+              />
+              <stop
+                offset={(sunriseX + skirt / 2) / width}
+                stopColor={color}
+                stopOpacity={0}
+              />
+            </>
+          )}
+          {sunsetX != null && (
+            <>
+              <stop
+                offset={(sunsetX - skirt / 2) / width}
+                stopColor={color}
+                stopOpacity={0}
+              />
+              <stop
+                offset={(sunsetX + skirt / 2) / width}
+                stopColor={color}
+                stopOpacity={opacity}
+              />
+            </>
+          )}
+          <stop offset={width} stopColor={color} stopOpacity={opacity} />
+        </linearGradient>
+      </defs>
+      <path d={rect} fill={`url(#${id})`} />
+    </>
+  )
+}
 
 const borderRadius = 5
 
@@ -146,16 +145,13 @@ const Graph: FC<
     width: number
     height: number
   }
-> = ({
-  width,
-  height,
-  date,
-  observer,
-  summerSolstice,
-  winterSolstice,
-  sunrise,
-  sunset
-}) => {
+> = ({ width, height, dateAtom, observerAtom, solsticesAtom, riseSetAtom }) => {
+  const date = useAtomValue(dateAtom)
+  const observer = useAtomValue(observerAtom)
+  const { summer: summerSolstice, winter: winterSolstice } =
+    useAtomValue(solsticesAtom)
+  const { rise: sunrise, set: sunset } = useAtomValue(riseSetAtom)
+
   const scaleX = useMemo(
     () =>
       scaleLinear()
@@ -213,7 +209,8 @@ const Graph: FC<
     () =>
       createLine<Altitude>()
         .x(({ date }) => scaleX(+date))
-        .y(({ altitude }) => scaleY(altitude)),
+        .y(({ altitude }) => scaleY(altitude))
+        .curve(curveCatmullRom),
     [scaleX, scaleY]
   )
   const area = useMemo(
@@ -221,7 +218,8 @@ const Graph: FC<
       createArea<SolsticeAltitude>()
         .x(({ date }) => scaleX(+date))
         .y0(({ summer }) => scaleY(summer))
-        .y1(({ winter }) => scaleY(winter)),
+        .y1(({ winter }) => scaleY(winter))
+        .curve(curveCatmullRom),
     [scaleX, scaleY]
   )
 
@@ -282,7 +280,7 @@ const Graph: FC<
           key={`y:${altitude}`}
           x={width}
           y={scaleY(altitude)}
-          dx={borderRadius}
+          dx={parseInt(theme.spacing(1))}
           textAnchor='start'
           dominantBaseline='central'
           fill={theme.palette.text.secondary}
@@ -298,7 +296,7 @@ const Graph: FC<
           <text
             key={`x:${index}`}
             x={scaleX(+startOfDay(date) + hours * 3600000)}
-            y={height + borderRadius}
+            y={height + parseInt(theme.spacing(1))}
             textAnchor='middle'
             dominantBaseline='text-before-edge'
             fill={theme.palette.text.secondary}

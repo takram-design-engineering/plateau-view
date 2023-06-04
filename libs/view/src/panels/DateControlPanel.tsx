@@ -5,6 +5,7 @@ import {
   JulianDate
 } from '@cesium/engine'
 import { styled } from '@mui/material'
+import { startOfMinute } from 'date-fns'
 import { useCallback, useLayoutEffect, useState, type FC } from 'react'
 
 import { useCameraEvent, useCesium, useClockTick } from '@takram/plateau-cesium'
@@ -33,7 +34,12 @@ export const DateControlPanel: FC = () => {
     if (clock == null) {
       return
     }
-    setDate(JulianDate.toDate(clock.currentTime))
+    setDate(prevValue => {
+      const nextValue = startOfMinute(JulianDate.toDate(clock.currentTime))
+      return prevValue == null || +nextValue !== +prevValue
+        ? nextValue
+        : prevValue
+    })
   }, [clock])
 
   useClockTick(handleClockChange)

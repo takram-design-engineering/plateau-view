@@ -1,5 +1,6 @@
 import { Slider, alpha, sliderClasses, styled } from '@mui/material'
-import { endOfDay, startOfDay } from 'date-fns'
+import { endOfDay, startOfDay, startOfMinute } from 'date-fns'
+import { useAtomValue } from 'jotai'
 import { type FC } from 'react'
 
 import {
@@ -68,20 +69,20 @@ export interface DateControlSliderGraphProps
 }
 
 export const DateControlSliderGraph: FC<DateControlSliderGraphProps> = ({
-  date,
+  dateAtom,
   onChange,
   ...props
 }) => {
+  const date = useAtomValue(dateAtom)
   return (
     <Root>
       <StyledSlider
         min={+startOfDay(date)}
-        max={+endOfDay(date)}
+        max={+startOfMinute(endOfDay(date))}
         value={+date}
-        step={Number.EPSILON}
         onChange={onChange}
       />
-      <StyledDateControlGraph {...props} date={date} />
+      <StyledDateControlGraph {...props} dateAtom={dateAtom} />
     </Root>
   )
 }
