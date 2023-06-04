@@ -19,6 +19,7 @@ import {
   FloatingButton,
   FloatingToolbar,
   HandToolIcon,
+  OverlayPopover,
   PedestrianToolIcon,
   SelectToolIcon,
   SettingsIcon,
@@ -115,30 +116,16 @@ export const Toolbar: FC = () => {
           </FloatingButton>
         </span>
       </Tooltip>
-      <Tooltip title='タイムライン'>
+      <Tooltip title='日時'>
         <span>
-          <FloatingButton
-            aria-label='タイムライン'
-            {...bindTrigger(datePopupState)}
-          >
+          <FloatingButton aria-label='日時' {...bindTrigger(datePopupState)}>
             <TimelineIcon fontSize='medium' />
           </FloatingButton>
         </span>
       </Tooltip>
-      <Popover
-        {...bindPopover(datePopupState)}
-        transitionDuration={0}
-        anchorOrigin={{
-          horizontal: 'center',
-          vertical: 'top'
-        }}
-        transformOrigin={{
-          horizontal: 'center',
-          vertical: 'bottom'
-        }}
-      >
+      <OverlayPopover {...bindPopover(datePopupState)}>
         <DateControlPanel />
-      </Popover>
+      </OverlayPopover>
     </Stack>
   )
 }

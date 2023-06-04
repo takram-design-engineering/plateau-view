@@ -18,7 +18,9 @@ import {
 } from './useDateControlState'
 
 const Root = styled('div')(({ theme }) => ({
-  padding: theme.spacing(3)
+  padding: theme.spacing(3),
+  paddingRight: theme.spacing(6),
+  paddingBottom: theme.spacing(5)
 }))
 
 const DateText = styled('div')(({ theme }) => ({
