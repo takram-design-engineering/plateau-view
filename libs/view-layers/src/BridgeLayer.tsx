@@ -39,6 +39,7 @@ export const BridgeLayer: FC<LayerProps<typeof BRIDGE_LAYER>> = ({
   id,
   titleAtom,
   hiddenAtom,
+  boundingSphereAtom,
   municipalityCode,
   datumIdAtom,
   featureIndexAtom,
@@ -80,6 +81,7 @@ export const BridgeLayer: FC<LayerProps<typeof BRIDGE_LAYER>> = ({
         // TODO: Infer type
         datum={datum as DatasetDatum<PlateauDatasetFormat.Cesium3DTiles>}
         component={PlateauBridgeTileset}
+        boundingSphereAtom={boundingSphereAtom}
         featureIndexAtom={featureIndexAtom}
         hiddenFeaturesAtom={hiddenFeaturesAtom}
       />

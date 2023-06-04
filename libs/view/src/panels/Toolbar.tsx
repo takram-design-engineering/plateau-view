@@ -6,13 +6,19 @@ import {
   type ToggleButtonProps
 } from '@mui/material'
 import { useAtomValue, useSetAtom } from 'jotai'
-import { forwardRef, useCallback, type FC } from 'react'
+import {
+  bindPopover,
+  bindTrigger,
+  usePopupState
+} from 'material-ui-popup-state/hooks'
+import { forwardRef, useCallback, useId, type FC } from 'react'
 
 import { platformAtom } from '@takram/plateau-shared-states'
 import {
   FloatingButton,
   FloatingToolbar,
   HandToolIcon,
+  OverlayPopover,
   PedestrianToolIcon,
   SelectToolIcon,
   SettingsIcon,
@@ -25,6 +31,7 @@ import {
 
 import { toolAtom, toolMachineAtom, type Tool } from '../states/tool'
 import { type EventObject } from '../states/toolMachine'
+import { DateControlPanel } from './DateControlPanel'
 
 const TooltipContent = styled('div')({
   display: 'inline-flex',
@@ -70,6 +77,12 @@ export const Toolbar: FC = () => {
     [send]
   )
 
+  const id = useId()
+  const datePopupState = usePopupState({
+    variant: 'popover',
+    popupId: `${id}:date`
+  })
+
   // TODO: Introduce icons.
   return (
     <Stack direction='row' spacing={1}>
@@ -102,13 +115,14 @@ export const Toolbar: FC = () => {
           </FloatingButton>
         </span>
       </Tooltip>
-      <Tooltip title='タイムライン'>
-        <span>
-          <FloatingButton aria-label='タイムライン' disabled>
-            <TimelineIcon fontSize='medium' />
-          </FloatingButton>
-        </span>
+      <Tooltip title='日時'>
+        <FloatingButton aria-label='日時' {...bindTrigger(datePopupState)}>
+          <TimelineIcon fontSize='medium' />
+        </FloatingButton>
       </Tooltip>
+      <OverlayPopover {...bindPopover(datePopupState)}>
+        <DateControlPanel />
+      </OverlayPopover>
     </Stack>
   )
 }

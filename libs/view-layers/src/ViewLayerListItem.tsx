@@ -1,6 +1,8 @@
 import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { memo, useCallback, useMemo, type FC } from 'react'
 
+import { useCesium } from '@takram/plateau-cesium'
+import { flyToBoundingSphere } from '@takram/plateau-cesium-helpers'
 import {
   removeLayerAtom,
   type LayerProps,
@@ -22,6 +24,7 @@ export const ViewLayerListItem: FC<ViewLayerListItemProps> = memo(
     titleAtom,
     loadingAtom,
     hiddenAtom,
+    boundingSphereAtom,
     itemProps
   }: ViewLayerListItemProps) => {
     const title = useAtomValue(titleAtom)
@@ -33,6 +36,15 @@ export const ViewLayerListItem: FC<ViewLayerListItemProps> = memo(
       [id]
     )
     const highlighted = useAtomValue(highlightedAtom)
+
+    const boundingSphere = useAtomValue(boundingSphereAtom)
+    const scene = useCesium(({ scene }) => scene, { indirect: true })
+    const handleDoubleClick = useCallback(() => {
+      if (boundingSphere == null || scene == null) {
+        return
+      }
+      void flyToBoundingSphere(scene, boundingSphere)
+    }, [boundingSphere, scene])
 
     const [hidden, setHidden] = useAtom(hiddenAtom)
     const handleToggleHidden = useCallback(() => {
@@ -53,6 +65,7 @@ export const ViewLayerListItem: FC<ViewLayerListItemProps> = memo(
         selected={selected}
         loading={loading}
         hidden={hidden}
+        onDoubleClick={handleDoubleClick}
         onRemove={handleRemove}
         onToggleHidden={handleToggleHidden}
       />

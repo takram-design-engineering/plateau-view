@@ -60,7 +60,6 @@ export const ElevationEnvironment: FC<EnvironmentProps> = props => {
         );
         vec4 mappedColor = texture(image_0, vec2(scaledHeight, 0.5));
         color = mappedColor.rgb;
-        alpha = mappedColor.a;
       }`
     )
   }))

@@ -1,4 +1,4 @@
-import { Cesium3DTileset, ShadowMode } from '@cesium/engine'
+import { ShadowMode, createGooglePhotorealistic3DTileset } from '@cesium/engine'
 import { useAtomValue } from 'jotai'
 import { type FC } from 'react'
 
@@ -39,16 +39,13 @@ const GooglePhotorealisticTilesetContent = withEphemerality(
       owner: scene.primitives,
       keys: [apiKey, scene],
       create: async () =>
-        await Cesium3DTileset.fromUrl(
-          `https://tile.googleapis.com/v1/3dtiles/root.json?key=${apiKey}`,
-          {
-            // @ts-expect-error missing type
-            customShader: !showTexture ? LambertDiffuseShader : undefined,
-            debugWireframe: showWireframe,
-            debugShowBoundingVolume: showBoundingVolume,
-            shadows: showWireframe ? ShadowMode.DISABLED : ShadowMode.ENABLED
-          }
-        ),
+        await createGooglePhotorealistic3DTileset(apiKey, {
+          // @ts-expect-error missing type
+          customShader: !showTexture ? LambertDiffuseShader : undefined,
+          debugWireframe: showWireframe,
+          debugShowBoundingVolume: showBoundingVolume,
+          shadows: showWireframe ? ShadowMode.DISABLED : ShadowMode.ENABLED
+        }),
       transferOwnership: (tileset, primitives) => {
         primitives.add(tileset)
         return () => {
