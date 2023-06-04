@@ -1,9 +1,11 @@
 import { Stack, styled } from '@mui/material'
-import { Observer } from 'astronomy-engine'
-import { endOfYear, format, startOfYear } from 'date-fns'
+import { Observer, Seasons } from 'astronomy-engine'
+import { endOfYear, format, set, startOfYear } from 'date-fns'
 import {
   forwardRef,
   useCallback,
+  useMemo,
+  useRef,
   type ComponentPropsWithRef,
   type SyntheticEvent
 } from 'react'
@@ -11,8 +13,8 @@ import invariant from 'tiny-invariant'
 
 import { useConstant } from '@takram/plateau-react-helpers'
 
-import { DateControlGraph } from './DateControlGraph'
 import { DateControlList } from './DateControlList'
+import { DateControlSliderGraph } from './DateControlSliderGraph'
 import { DateSlider } from './DateSlider'
 
 const Root = styled('div')(({ theme }) => ({
@@ -28,6 +30,16 @@ const TimeText = styled('div')(({ theme }) => ({
   ...theme.typography.h4,
   fontVariantNumeric: 'tabular-nums'
 }))
+
+function findSolstices(year: number): {
+  summer: Date
+  winter: Date
+} {
+  const seasons = Seasons(year)
+  const summer = seasons.jun_solstice.date
+  const winter = seasons.dec_solstice.date
+  return { summer, winter }
+}
 
 export interface DateControlProps
   extends Omit<ComponentPropsWithRef<typeof Root>, 'children' | 'onChange'> {
@@ -47,10 +59,42 @@ export const DateControl = forwardRef<HTMLDivElement, DateControlProps>(
     observer.latitude = latitude
     observer.height = height
 
+    const { summer: summerSolstice, winter: winterSolstice } = useMemo(
+      () => findSolstices(date.getFullYear()),
+      [date]
+    )
+
+    const dateRef = useRef(date)
+    dateRef.current = date
+
     const handleSliderChange = useCallback(
       (event: Event, value: number | number[]) => {
         invariant(!Array.isArray(value))
-        onChange?.(event, new Date(value))
+        const date = new Date(value)
+        onChange?.(
+          event,
+          set(dateRef.current, {
+            month: date.getMonth(),
+            date: date.getDate()
+          })
+        )
+      },
+      [onChange]
+    )
+
+    const handleGraphSliderChange = useCallback(
+      (event: Event, value: number | number[]) => {
+        invariant(!Array.isArray(value))
+        const date = new Date(value)
+        onChange?.(
+          event,
+          set(dateRef.current, {
+            hours: date.getHours(),
+            minutes: date.getMinutes(),
+            seconds: date.getSeconds(),
+            milliseconds: date.getMilliseconds()
+          })
+        )
       },
       [onChange]
     )
@@ -66,6 +110,8 @@ export const DateControl = forwardRef<HTMLDivElement, DateControlProps>(
             <DateControlList
               date={date}
               observer={observer}
+              summerSolstice={summerSolstice}
+              winterSolstice={winterSolstice}
               onChange={onChange}
             />
           </Stack>
@@ -76,7 +122,13 @@ export const DateControl = forwardRef<HTMLDivElement, DateControlProps>(
               value={+date}
               onChange={handleSliderChange}
             />
-            <DateControlGraph />
+            <DateControlSliderGraph
+              date={date}
+              observer={observer}
+              summerSolstice={summerSolstice}
+              winterSolstice={winterSolstice}
+              onChange={handleGraphSliderChange}
+            />
           </Stack>
         </Stack>
       </Root>

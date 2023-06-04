@@ -3,7 +3,6 @@ import {
   Body,
   SearchHourAngle,
   SearchRiseSet,
-  Seasons,
   type Observer
 } from 'astronomy-engine'
 import { format, set, startOfDay } from 'date-fns'
@@ -11,13 +10,9 @@ import { useCallback, useMemo, useRef, type FC, type MouseEvent } from 'react'
 
 import { DateControlListItem } from './DateControlListItem'
 
-function findCulmination(
-  body: Body,
-  observer: Observer,
-  referenceDate: Date
-): Date {
+function findCulmination(referenceDate: Date, observer: Observer): Date {
   const date = startOfDay(referenceDate)
-  const hourAngle = SearchHourAngle(body, observer, 0, date)
+  const hourAngle = SearchHourAngle(Body.Sun, observer, 0, date)
   return hourAngle.time.date
 }
 
@@ -26,59 +21,36 @@ export interface RiseSet {
   set?: Date
 }
 
-function findRiseSet(
-  body: Body,
-  observer: Observer,
-  referenceDate: Date
-): RiseSet {
+function findRiseSet(referenceDate: Date, observer: Observer): RiseSet {
   const date = startOfDay(referenceDate)
-  const rise = SearchRiseSet(body, observer, 1, date, 1)
-  const set = SearchRiseSet(body, observer, -1, date, 1)
+  const rise = SearchRiseSet(Body.Sun, observer, 1, date, 1)
+  const set = SearchRiseSet(Body.Sun, observer, -1, date, 1)
   return { rise: rise?.date, set: set?.date }
-}
-
-export interface Solstices {
-  summer: Date
-  winter: Date
-}
-
-function findSolstices(year: number): Solstices {
-  const seasons = Seasons(year)
-  const summer = seasons.jun_solstice.date
-  const winter = seasons.dec_solstice.date
-  return { summer, winter }
 }
 
 export interface DateControlListProps extends Omit<StackProps, 'onChange'> {
   date: Date
   observer: Observer
+  summerSolstice: Date
+  winterSolstice: Date
   onChange?: (event: MouseEvent<HTMLDivElement>, date: Date) => void
 }
 
 export const DateControlList: FC<DateControlListProps> = ({
   date,
   observer,
+  summerSolstice,
+  winterSolstice,
   onChange,
   ...props
 }) => {
-  const { summerSolstice, winterSolstice } = useMemo(() => {
-    const { summer, winter } = findSolstices(date.getFullYear())
-    return {
-      summerSolstice: summer,
-      winterSolstice: winter
-    }
-  }, [date])
-
   const { culmination, sunrise, sunset } = useMemo(() => {
-    const culmination = findCulmination(Body.Sun, observer, date)
-    const { rise, set } = findRiseSet(Body.Sun, observer, date)
-    const { summer, winter } = findSolstices(date.getFullYear())
+    const culmination = findCulmination(date, observer)
+    const { rise, set } = findRiseSet(date, observer)
     return {
       culmination,
       sunrise: rise,
-      sunset: set,
-      summerSolstice: summer,
-      winterSolstice: winter
+      sunset: set
     }
   }, [date, observer])
 

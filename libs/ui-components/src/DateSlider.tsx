@@ -5,8 +5,8 @@ import { forwardRef, useMemo } from 'react'
 import { type SetRequired } from 'type-fest'
 
 const Root = styled(Slider)(({ theme }) => {
-  const borderRadius = 6
-  const thumbSize = 12
+  const borderRadius = 5
+  const thumbSize = 8
   return {
     width: `calc(100% - ${thumbSize}px)`,
     marginLeft: thumbSize / 2,
