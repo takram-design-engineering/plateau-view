@@ -6,14 +6,13 @@ import { type SetRequired } from 'type-fest'
 
 const Root = styled(Slider)(({ theme }) => {
   const borderRadius = 5
-  const thumbSize = 8
   return {
-    width: `calc(100% - ${thumbSize}px)`,
-    marginLeft: thumbSize / 2,
+    width: `calc(100% - ${borderRadius * 2}px)`,
+    marginLeft: borderRadius,
     marginBottom: 0,
     borderRadius,
     [`& .${sliderClasses.thumb}`]: {
-      width: thumbSize,
+      width: borderRadius * 2,
       height: '100%',
       borderRadius
     },
@@ -31,16 +30,16 @@ const Root = styled(Slider)(({ theme }) => {
     },
     [`& .${sliderClasses.rail}`]: {
       height: '100%',
-      width: `calc(100% + ${thumbSize}px)`,
-      marginRight: -thumbSize / 2,
-      marginLeft: -thumbSize / 2,
+      width: `calc(100% + ${borderRadius * 2}px)`,
+      marginRight: -borderRadius,
+      marginLeft: -borderRadius,
       backgroundColor: theme.palette.text.primary,
       opacity: theme.palette.action.hoverOpacity
     },
     [`& .${sliderClasses.track}`]: {
       height: '100%',
-      marginLeft: -thumbSize / 2,
-      paddingLeft: thumbSize / 2,
+      marginLeft: -borderRadius,
+      paddingLeft: borderRadius,
       border: 0,
       backgroundColor: theme.palette.text.primary,
       opacity: theme.palette.action.hoverOpacity,

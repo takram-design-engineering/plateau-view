@@ -1,59 +1,27 @@
 import { List, Stack, type StackProps } from '@mui/material'
-import {
-  Body,
-  SearchHourAngle,
-  SearchRiseSet,
-  type Observer
-} from 'astronomy-engine'
-import { format, set, startOfDay } from 'date-fns'
-import { useCallback, useMemo, useRef, type FC, type MouseEvent } from 'react'
+import { format, set } from 'date-fns'
+import { useCallback, useRef, type FC, type MouseEvent } from 'react'
 
 import { DateControlListItem } from './DateControlListItem'
+import { type DateControlState } from './useDateControlState'
 
-function findCulmination(referenceDate: Date, observer: Observer): Date {
-  const date = startOfDay(referenceDate)
-  const hourAngle = SearchHourAngle(Body.Sun, observer, 0, date)
-  return hourAngle.time.date
-}
-
-export interface RiseSet {
-  rise?: Date
-  set?: Date
-}
-
-function findRiseSet(referenceDate: Date, observer: Observer): RiseSet {
-  const date = startOfDay(referenceDate)
-  const rise = SearchRiseSet(Body.Sun, observer, 1, date, 1)
-  const set = SearchRiseSet(Body.Sun, observer, -1, date, 1)
-  return { rise: rise?.date, set: set?.date }
-}
-
-export interface DateControlListProps extends Omit<StackProps, 'onChange'> {
+export interface DateControlListProps
+  extends Omit<StackProps, 'onChange'>,
+    DateControlState {
   date: Date
-  observer: Observer
-  summerSolstice: Date
-  winterSolstice: Date
   onChange?: (event: MouseEvent<HTMLDivElement>, date: Date) => void
 }
 
 export const DateControlList: FC<DateControlListProps> = ({
   date,
-  observer,
   summerSolstice,
   winterSolstice,
+  culmination,
+  sunrise,
+  sunset,
   onChange,
   ...props
 }) => {
-  const { culmination, sunrise, sunset } = useMemo(() => {
-    const culmination = findCulmination(date, observer)
-    const { rise, set } = findRiseSet(date, observer)
-    return {
-      culmination,
-      sunrise: rise,
-      sunset: set
-    }
-  }, [date, observer])
-
   const dateRef = useRef(date)
   dateRef.current = date
 

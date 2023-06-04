@@ -16,40 +16,45 @@ const Root = styled('div')(({ theme }) => ({
   boxShadow: `inset 0 0 0 1px ${alpha(theme.palette.divider, 0.08)}`
 }))
 
-const StyledSlider = styled(Slider)(({ theme }) => ({
-  position: 'absolute',
-  inset: 0,
-  width: 'auto',
-  height: 'auto',
-  borderRadius: 0,
-  [`& .${sliderClasses.thumb}`]: {
-    width: 1,
-    height: '100%',
-    color: theme.palette.primary.main,
-    borderRadius: 1,
-    boxShadow: 'none',
-    '&:before': {
+const StyledSlider = styled(Slider)(({ theme }) => {
+  const borderRadius = 5
+  return {
+    position: 'absolute',
+    inset: 0,
+    right: borderRadius,
+    left: borderRadius,
+    width: 'auto',
+    height: 'auto',
+    borderRadius: 0,
+    [`& .${sliderClasses.thumb}`]: {
+      width: 1,
+      height: '100%',
+      color: theme.palette.primary.main,
+      borderRadius: 1,
+      boxShadow: 'none',
+      '&:before': {
+        display: 'none'
+      },
+      [`&:hover, &.${sliderClasses.focusVisible}`]: {
+        boxShadow: 'none'
+      },
+      [`&.${sliderClasses.active}, &.${sliderClasses.focusVisible}`]: {
+        boxShadow: `0px 0px 0px 8px ${alpha(theme.palette.primary.main, 0.08)}`
+      },
+      [`&.${sliderClasses.disabled}`]: {
+        '&:hover': {
+          boxShadow: 'none'
+        }
+      }
+    },
+    [`& .${sliderClasses.rail}`]: {
       display: 'none'
     },
-    [`&:hover, &.${sliderClasses.focusVisible}`]: {
-      boxShadow: 'none'
-    },
-    [`&.${sliderClasses.active}, &.${sliderClasses.focusVisible}`]: {
-      boxShadow: `0px 0px 0px 8px ${alpha(theme.palette.primary.main, 0.08)}`
-    },
-    [`&.${sliderClasses.disabled}`]: {
-      '&:hover': {
-        boxShadow: 'none'
-      }
+    [`& .${sliderClasses.track}`]: {
+      display: 'none'
     }
-  },
-  [`& .${sliderClasses.rail}`]: {
-    display: 'none'
-  },
-  [`& .${sliderClasses.track}`]: {
-    display: 'none'
   }
-}))
+})
 
 const StyledDateControlGraph = styled(DateControlGraph)({
   position: 'absolute',
