@@ -96,12 +96,12 @@ export const DateControlList: FC<DateControlListProps> = ({
       <List dense disablePadding>
         <DateControlListItem
           label='夏至'
-          value={format(summerSolstice, 'MMMM d')}
+          value={format(summerSolstice, "M'月'd'日'")}
           onClick={handleSummerSolsticeClick}
         />
         <DateControlListItem
           label='冬至'
-          value={format(winterSolstice, 'MMMM d')}
+          value={format(winterSolstice, "M'月'd'日'")}
           onClick={handleWinterSolsticeClick}
         />
       </List>
@@ -113,13 +113,13 @@ export const DateControlList: FC<DateControlListProps> = ({
         />
         <DateControlListItem
           label='日の出'
-          value={sunrise != null ? format(sunrise, 'HH:mm') : ''}
+          value={sunrise != null ? format(sunrise, 'H:mm') : ''}
           disabled={sunrise == null}
           onClick={handleSunriseClick}
         />
         <DateControlListItem
           label='日の入'
-          value={sunset != null ? format(sunset, 'HH:mm') : ''}
+          value={sunset != null ? format(sunset, 'H:mm') : ''}
           disabled={sunset == null}
           onClick={handleSunsetClick}
         />
