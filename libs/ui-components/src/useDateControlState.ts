@@ -1,6 +1,7 @@
 import {
   Body,
   Observer,
+  SearchAltitude,
   SearchHourAngle,
   SearchRiseSet,
   Seasons
@@ -20,13 +21,29 @@ function findCulmination(referenceDate: Date, observer: Observer): Date {
 export interface RiseSet {
   rise?: Date
   set?: Date
+  dawn?: Date
+  dusk?: Date
 }
 
 function findRiseSet(referenceDate: Date, observer: Observer): RiseSet {
   const date = startOfDay(referenceDate)
-  const rise = SearchRiseSet(Body.Sun, observer, 1, date, 1)
-  const set = SearchRiseSet(Body.Sun, observer, -1, date, 1)
-  return { rise: rise?.date, set: set?.date }
+  const rise = SearchRiseSet(Body.Sun, observer, 1, date, 2)
+  const set = SearchRiseSet(Body.Sun, observer, -1, date, 2)
+  const twilightAngle = 6 // Civil twilight
+  const dawn =
+    rise != null
+      ? SearchAltitude(Body.Sun, observer, 1, rise.date, -1, -twilightAngle)
+      : undefined
+  const dusk =
+    set != null
+      ? SearchAltitude(Body.Sun, observer, -1, set.date, 1, -twilightAngle)
+      : undefined
+  return {
+    rise: rise?.date,
+    set: set?.date,
+    dawn: dawn?.date,
+    dusk: dusk?.date
+  }
 }
 
 export interface Solstices {
