@@ -27,7 +27,6 @@ export const DateControlPanel: FC = () => {
   const [coords, setCoords] = useState<{
     longitude: number
     latitude: number
-    height: number
   }>()
 
   const handleClockChange = useCallback(() => {
@@ -51,15 +50,17 @@ export const DateControlPanel: FC = () => {
     try {
       getCameraEllipsoidIntersection(scene, cartesianScratch)
       const ellipsoid = scene.globe.ellipsoid
-      Cartographic.fromCartesian(
+      const cartographic = Cartographic.fromCartesian(
         cartesianScratch,
         ellipsoid,
         cartographicScratch
       )
+      if (cartographic == null) {
+        return
+      }
       setCoords({
-        longitude: CesiumMath.toDegrees(cartographicScratch.longitude),
-        latitude: CesiumMath.toDegrees(cartographicScratch.latitude),
-        height: cartographicScratch.height
+        longitude: CesiumMath.toDegrees(cartographic.longitude),
+        latitude: CesiumMath.toDegrees(cartographic.latitude)
       })
     } catch (error) {
       console.error(error)
