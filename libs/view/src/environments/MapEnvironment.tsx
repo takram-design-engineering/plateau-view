@@ -40,11 +40,6 @@ export const MapEnvironment: FC<MapEnvironmentProps> = ({
       <Environment
         // TODO: Define in theme
         // TODO: Swap background when view is ready
-        backgroundColor={
-          colorMode === 'light'
-            ? Color.fromCssColorString('#f7f7f7')
-            : Color.fromCssColorString('#000000')
-        }
         globeBaseColor={
           colorMode === 'light'
             ? Color.fromCssColorString('#f7f7f7')
