@@ -29,23 +29,21 @@ export const Default: Story = {
       }
       context={
         <ContextBar>
-          <Stack direction='row' spacing={2}>
-            <Button sx={{ flexShrink: 0 }} variant='text'>
-              Context
-            </Button>
-            <Button sx={{ flexShrink: 0 }} variant='text'>
-              Context
-            </Button>
-            <Button sx={{ flexShrink: 0 }} variant='text'>
-              Context
-            </Button>
-            <Button sx={{ flexShrink: 0 }} variant='text'>
-              Context
-            </Button>
-            <Button sx={{ flexShrink: 0 }} variant='text'>
-              Context
-            </Button>
-          </Stack>
+          <Button sx={{ flexShrink: 0 }} variant='text'>
+            Context
+          </Button>
+          <Button sx={{ flexShrink: 0 }} variant='text'>
+            Context
+          </Button>
+          <Button sx={{ flexShrink: 0 }} variant='text'>
+            Context
+          </Button>
+          <Button sx={{ flexShrink: 0 }} variant='text'>
+            Context
+          </Button>
+          <Button sx={{ flexShrink: 0 }} variant='text'>
+            Context
+          </Button>
         </ContextBar>
       }
       bottomLeft={
@@ -78,23 +76,21 @@ export const Inspector: Story = {
       }
       context={
         <ContextBar>
-          <Stack direction='row' spacing={2}>
-            <Button sx={{ flexShrink: 0 }} variant='text'>
-              Context
-            </Button>
-            <Button sx={{ flexShrink: 0 }} variant='text'>
-              Context
-            </Button>
-            <Button sx={{ flexShrink: 0 }} variant='text'>
-              Context
-            </Button>
-            <Button sx={{ flexShrink: 0 }} variant='text'>
-              Context
-            </Button>
-            <Button sx={{ flexShrink: 0 }} variant='text'>
-              Context
-            </Button>
-          </Stack>
+          <Button sx={{ flexShrink: 0 }} variant='text'>
+            Context
+          </Button>
+          <Button sx={{ flexShrink: 0 }} variant='text'>
+            Context
+          </Button>
+          <Button sx={{ flexShrink: 0 }} variant='text'>
+            Context
+          </Button>
+          <Button sx={{ flexShrink: 0 }} variant='text'>
+            Context
+          </Button>
+          <Button sx={{ flexShrink: 0 }} variant='text'>
+            Context
+          </Button>
         </ContextBar>
       }
       aside={
@@ -133,23 +129,21 @@ export const InspectorFitHeight: Story = {
       }
       context={
         <ContextBar>
-          <Stack direction='row' spacing={2}>
-            <Button sx={{ flexShrink: 0 }} variant='text'>
-              Context
-            </Button>
-            <Button sx={{ flexShrink: 0 }} variant='text'>
-              Context
-            </Button>
-            <Button sx={{ flexShrink: 0 }} variant='text'>
-              Context
-            </Button>
-            <Button sx={{ flexShrink: 0 }} variant='text'>
-              Context
-            </Button>
-            <Button sx={{ flexShrink: 0 }} variant='text'>
-              Context
-            </Button>
-          </Stack>
+          <Button sx={{ flexShrink: 0 }} variant='text'>
+            Context
+          </Button>
+          <Button sx={{ flexShrink: 0 }} variant='text'>
+            Context
+          </Button>
+          <Button sx={{ flexShrink: 0 }} variant='text'>
+            Context
+          </Button>
+          <Button sx={{ flexShrink: 0 }} variant='text'>
+            Context
+          </Button>
+          <Button sx={{ flexShrink: 0 }} variant='text'>
+            Context
+          </Button>
         </ContextBar>
       }
       aside={
@@ -188,23 +182,21 @@ export const Developer: Story = {
       }
       context={
         <ContextBar>
-          <Stack direction='row' spacing={2}>
-            <Button sx={{ flexShrink: 0 }} variant='text'>
-              Context
-            </Button>
-            <Button sx={{ flexShrink: 0 }} variant='text'>
-              Context
-            </Button>
-            <Button sx={{ flexShrink: 0 }} variant='text'>
-              Context
-            </Button>
-            <Button sx={{ flexShrink: 0 }} variant='text'>
-              Context
-            </Button>
-            <Button sx={{ flexShrink: 0 }} variant='text'>
-              Context
-            </Button>
-          </Stack>
+          <Button sx={{ flexShrink: 0 }} variant='text'>
+            Context
+          </Button>
+          <Button sx={{ flexShrink: 0 }} variant='text'>
+            Context
+          </Button>
+          <Button sx={{ flexShrink: 0 }} variant='text'>
+            Context
+          </Button>
+          <Button sx={{ flexShrink: 0 }} variant='text'>
+            Context
+          </Button>
+          <Button sx={{ flexShrink: 0 }} variant='text'>
+            Context
+          </Button>
         </ContextBar>
       }
       bottomLeft={

@@ -1,4 +1,4 @@
-import { Box, Stack, Typography, type SelectChangeEvent } from '@mui/material'
+import { Box, Typography, type SelectChangeEvent } from '@mui/material'
 import { type Meta, type StoryObj } from '@storybook/react'
 import { useCallback, useState, type FC } from 'react'
 
@@ -79,41 +79,35 @@ const SelectComponent: FC = () => {
 export const Default: Story = {
   render: () => (
     <ContextBar>
-      <Stack direction='row' spacing={1}>
-        <ButtonComponent />
-        <ButtonSelectComponent />
-        <SelectComponent />
-      </Stack>
+      <ButtonComponent />
+      <ButtonSelectComponent />
+      <SelectComponent />
     </ContextBar>
   )
 }
 
 const OverflowContextBar: FC = () => {
   const [expanded, setExpanded] = useState(false)
-  const handleClick = useCallback(() => {
-    setExpanded(value => !value)
+  const handleCollapse = useCallback(() => {
+    setExpanded(false)
+  }, [])
+  const handleExpand = useCallback(() => {
+    setExpanded(true)
   }, [])
 
   return (
-    <Box height={200}>
-      <ContextBar overflow expanded={expanded} onClickOverflow={handleClick}>
-        <Stack
-          direction='row'
-          spacing={1}
-          useFlexGap
-          rowGap={0}
-          width={500}
-          {...(expanded && {
-            flexWrap: 'wrap'
-          })}
-        >
-          <ButtonComponent />
-          <ButtonSelectComponent />
-          <SelectComponent />
-          <ButtonComponent />
-          <ButtonSelectComponent />
-          <SelectComponent />
-        </Stack>
+    <Box maxWidth={theme => `calc(100vw + ${theme.spacing(-4)})`} height={200}>
+      <ContextBar
+        expanded={expanded}
+        onCollapse={handleCollapse}
+        onExpand={handleExpand}
+      >
+        <ButtonComponent />
+        <ButtonSelectComponent />
+        <SelectComponent />
+        <ButtonComponent />
+        <ButtonSelectComponent />
+        <SelectComponent />
       </ContextBar>
     </Box>
   )
@@ -121,4 +115,69 @@ const OverflowContextBar: FC = () => {
 
 export const Overflow: Story = {
   render: () => <OverflowContextBar />
+}
+
+const StartAdornmentContextBar: FC = () => {
+  const [expanded, setExpanded] = useState(false)
+  const handleCollapse = useCallback(() => {
+    setExpanded(false)
+  }, [])
+  const handleExpand = useCallback(() => {
+    setExpanded(true)
+  }, [])
+
+  return (
+    <Box maxWidth={theme => `calc(100vw + ${theme.spacing(-4)})`} height={200}>
+      <ContextBar
+        expanded={expanded}
+        onCollapse={handleCollapse}
+        onExpand={handleExpand}
+        startAdornment={<ButtonComponent />}
+      >
+        <ButtonComponent />
+        <ButtonSelectComponent />
+        <SelectComponent />
+        <ButtonComponent />
+        <ButtonSelectComponent />
+        <SelectComponent />
+      </ContextBar>
+    </Box>
+  )
+}
+
+export const StartAdornment: Story = {
+  render: () => <StartAdornmentContextBar />
+}
+
+const VerticalStartAdornmentContextBar: FC = () => {
+  const [expanded, setExpanded] = useState(false)
+  const handleCollapse = useCallback(() => {
+    setExpanded(false)
+  }, [])
+  const handleExpand = useCallback(() => {
+    setExpanded(true)
+  }, [])
+
+  return (
+    <Box maxWidth={theme => `calc(100vw + ${theme.spacing(-4)})`} height={200}>
+      <ContextBar
+        orientation='vertical'
+        expanded={expanded}
+        onCollapse={handleCollapse}
+        onExpand={handleExpand}
+        startAdornment={<ButtonComponent />}
+      >
+        <ButtonComponent />
+        <ButtonSelectComponent />
+        <SelectComponent />
+        <ButtonComponent />
+        <ButtonSelectComponent />
+        <SelectComponent />
+      </ContextBar>
+    </Box>
+  )
+}
+
+export const VerticalStartAdornment: Story = {
+  render: () => <VerticalStartAdornmentContextBar />
 }

@@ -1,4 +1,4 @@
-import { Stack, alpha, styled } from '@mui/material'
+import { styled } from '@mui/material'
 import {
   useCallback,
   useEffect,
@@ -9,7 +9,7 @@ import {
 } from 'react'
 import invariant from 'tiny-invariant'
 
-import { ContextBar } from '@takram/plateau-ui-components'
+import { ContextBar, type ContextBarProps } from '@takram/plateau-ui-components'
 
 import { useLocationContextState } from '../hooks/useLocationContextState'
 import { BuildingDatasetButtonSelect } from './LocationContextBar/BuildingDatasetButtonSelect'
@@ -17,20 +17,11 @@ import { DefaultDatasetButton } from './LocationContextBar/DefaultDatasetButton'
 import { DefaultDatasetSelect } from './LocationContextBar/DefaultDatasetSelect'
 import { LocationBreadcrumbs } from './LocationContextBar/LocationBreadcrumbs'
 
-const Controls = styled('div')(({ theme }) => ({
-  position: 'relative',
-  '&:before': {
-    content: '""',
-    position: 'absolute',
-    display: 'block',
-    top: theme.spacing(-0.5),
-    left: theme.spacing(-1),
-    height: `calc(100% + ${theme.spacing(1)})`,
-    // Match the light style of divider.
-    // https://github.com/mui/material-ui/blob/v5.13.1/packages/mui-material/src/Divider/Divider.js#L71
-    borderLeft: `solid 1px ${alpha(theme.palette.divider, 0.08)}`
-  }
-}))
+const Probe = styled('div')({
+  position: 'absolute',
+  inset: 0,
+  height: 0
+})
 
 export const LocationContextBar: FC = () => {
   const {
@@ -49,118 +40,86 @@ export const LocationContextBar: FC = () => {
     [areas, focusedAreaCode]
   )
 
-  const [overflow, setOverflow] = useState(false)
   const [expanded, setExpanded] = useState(false)
-  const expandedRef = useRef(expanded)
-  expandedRef.current = expanded
+  const handleCollapse = useCallback(() => {
+    setExpanded(false)
+  }, [])
+  const handleExpand = useCallback(() => {
+    setExpanded(true)
+  }, [])
 
-  const containerRef = useRef<HTMLDivElement>(null)
-  const contentRef = useRef<HTMLDivElement>(null)
+  const [orientation, setOrientation] =
+    useState<NonNullable<ContextBarProps['orientation']>>('horizontal')
+  const probeRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
-    const container = containerRef.current
-    const content = contentRef.current
-    invariant(container != null)
-    invariant(content != null)
+    const element = probeRef.current
+    invariant(element != null)
 
-    const intrinsicHeight = container.getBoundingClientRect().height
-    // Initial test intentionally omitted.
-
-    let containerRect: DOMRect | undefined
-    let contentRect: DOMRect | undefined
-    const observer = new ResizeObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.target === container) {
-          containerRect = entry.contentRect
-        } else if (entry.target === content) {
-          contentRect = entry.contentRect
-        }
-      })
-      if (containerRect == null || contentRect == null) {
-        return
-      }
-      if (!expandedRef.current) {
-        setOverflow(containerRect.width < contentRect.width)
-      } else {
-        setOverflow(contentRect.height > intrinsicHeight)
-      }
+    const observer = new ResizeObserver(([entry]) => {
+      setOrientation(entry.contentRect.width > 500 ? 'horizontal' : 'vertical')
     })
-
-    observer.observe(container)
-    observer.observe(content)
+    observer.observe(element)
     return () => {
       observer.disconnect()
     }
   }, [])
 
-  const handleClickOverflow = useCallback(() => {
-    setExpanded(value => !value)
-  }, [])
-
   return (
-    <ContextBar
-      ref={containerRef}
-      hidden={areas == null}
-      overflow={overflow}
-      expanded={expanded}
-      onClickOverflow={handleClickOverflow}
-      onMouseEnter={preventChanges}
-      onMouseLeave={approveChanges}
-    >
-      <Stack ref={contentRef} direction='row' spacing={1.5}>
-        {areas != null && (
-          <LocationBreadcrumbs
-            areas={areas}
-            focusedAreaCode={focusedAreaCode}
-            focusArea={focusArea}
-          />
-        )}
-        {datasetGroups != null && municipalityCode != null && (
-          <Controls>
-            <Stack
-              direction='row'
-              spacing={0.5}
-              useFlexGap
-              rowGap={0.5}
-              {...(expanded && {
-                flexWrap: 'wrap'
-              })}
-            >
-              {datasetGroups.map(datasets => {
-                if (datasets.length > 1) {
-                  return (
-                    <DefaultDatasetSelect
-                      key={datasets[0].id}
-                      datasets={datasets}
-                      municipalityCode={municipalityCode}
-                    />
-                  )
-                }
-                invariant(datasets.length === 1)
-                const [dataset] = datasets
-                return dataset.__typename === 'PlateauBuildingDataset' ? (
-                  <BuildingDatasetButtonSelect
-                    key={dataset.id}
-                    dataset={dataset}
-                    municipalityCode={municipalityCode}
-                  />
-                ) : dataset.data.length === 1 ? (
-                  <DefaultDatasetButton
-                    key={dataset.id}
-                    dataset={dataset}
-                    municipalityCode={municipalityCode}
-                  />
-                ) : (
-                  <DefaultDatasetSelect
-                    key={dataset.id}
-                    datasets={[dataset]}
-                    municipalityCode={municipalityCode}
-                  />
-                )
-              })}
-            </Stack>
-          </Controls>
-        )}
-      </Stack>
-    </ContextBar>
+    <>
+      <Probe ref={probeRef} />
+      <ContextBar
+        hidden={areas == null}
+        orientation={orientation}
+        expanded={expanded}
+        onCollapse={handleCollapse}
+        onExpand={handleExpand}
+        onMouseEnter={preventChanges}
+        onMouseLeave={approveChanges}
+        startAdornment={
+          areas != null && (
+            <LocationBreadcrumbs
+              areas={areas}
+              focusedAreaCode={focusedAreaCode}
+              focusArea={focusArea}
+            />
+          )
+        }
+      >
+        {datasetGroups != null &&
+          municipalityCode != null &&
+          datasetGroups.map(datasets => {
+            if (datasets.length > 1) {
+              return (
+                <DefaultDatasetSelect
+                  key={datasets[0].id}
+                  datasets={datasets}
+                  municipalityCode={municipalityCode}
+                />
+              )
+            }
+            invariant(datasets.length === 1)
+            const [dataset] = datasets
+            return dataset.__typename === 'PlateauBuildingDataset' ? (
+              <BuildingDatasetButtonSelect
+                key={dataset.id}
+                dataset={dataset}
+                municipalityCode={municipalityCode}
+              />
+            ) : dataset.data.length === 1 ? (
+              <DefaultDatasetButton
+                key={dataset.id}
+                dataset={dataset}
+                municipalityCode={municipalityCode}
+              />
+            ) : (
+              <DefaultDatasetSelect
+                key={dataset.id}
+                datasets={[dataset]}
+                municipalityCode={municipalityCode}
+              />
+            )
+          })}
+      </ContextBar>
+    </>
   )
 }
