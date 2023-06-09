@@ -15,7 +15,7 @@ import {
   type RefAttributes
 } from 'react'
 
-import { ParameterItem } from './ParameterItem'
+import { ParameterItem, type ParameterItemProps } from './ParameterItem'
 
 const StyledToggleButton = styled(ToggleButton)({
   display: 'block',
@@ -27,13 +27,13 @@ const StyledToggleButton = styled(ToggleButton)({
 export interface SegmentParameterItemProps<
   T extends string | number = string | number,
   Exclusive extends boolean = boolean
-> extends PropsWithoutRef<Omit<ToggleButtonGroupProps, 'value'>> {
-  label?: ReactNode
-  description?: ReactNode
+> extends PropsWithoutRef<Omit<ToggleButtonGroupProps, 'value'>>,
+    Pick<ParameterItemProps, 'label' | 'labelFontSize' | 'description'> {
   exclusive?: Exclusive
   atom: PrimitiveAtom<Exclusive extends true ? T : T[]>
   items?: ReadonlyArray<
-    [T, ReactNode] | [T, ReactNode, Partial<ToggleButtonProps>]
+    | readonly [T, ReactNode]
+    | readonly [T, ReactNode, Partial<ToggleButtonProps>]
   >
 }
 
@@ -44,6 +44,7 @@ export const SegmentParameterItem = forwardRef<
   (
     {
       label,
+      labelFontSize,
       description,
       exclusive = false,
       atom,
@@ -71,6 +72,7 @@ export const SegmentParameterItem = forwardRef<
       <ParameterItem
         ref={ref}
         label={label}
+        labelFontSize={labelFontSize}
         description={description}
         gutterBottom
       >
