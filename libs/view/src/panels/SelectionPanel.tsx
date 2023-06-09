@@ -3,7 +3,7 @@ import { useAtomValue } from 'jotai'
 import { type FC } from 'react'
 
 import { PLATEAU_TILE_FEATURE } from '@takram/plateau-datasets'
-import { FloatingPanel } from '@takram/plateau-ui-components'
+import { AutoHeight, FloatingPanel } from '@takram/plateau-ui-components'
 
 import {
   LAYER_SELECTION,
@@ -41,8 +41,10 @@ export const SelectionPanel: FC = () => {
     return null
   }
   return (
-    <Root scrollable>
-      <div>{content}</div>
-    </Root>
+    <AutoHeight>
+      <Root scrollable>
+        <div>{content}</div>
+      </Root>
+    </AutoHeight>
   )
 }
