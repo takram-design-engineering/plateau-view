@@ -1,4 +1,5 @@
 export * from './atomsWithSelection'
 export * from './atomsWithTransformSelection'
 export * from './atomWithResettableAtoms'
+export * from './atomWithStorageValidation'
 export * from './states'
