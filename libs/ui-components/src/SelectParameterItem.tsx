@@ -15,7 +15,7 @@ import {
   type RefAttributes
 } from 'react'
 
-import { ParameterItem } from './ParameterItem'
+import { ParameterItem, type ParameterItemProps } from './ParameterItem'
 import { SelectItem, type SelectItemProps } from './SelectItem'
 
 const StyledSelect = styled(Select)(({ theme }) => ({
@@ -24,9 +24,8 @@ const StyledSelect = styled(Select)(({ theme }) => ({
 
 export interface SelectParameterItemProps<
   T extends string | number | null = string | number | null
-> extends PropsWithoutRef<Omit<SelectProps<T>, 'value'>> {
-  label?: ReactNode
-  description?: ReactNode
+> extends PropsWithoutRef<Omit<SelectProps<T>, 'value'>>,
+    Pick<ParameterItemProps, 'label' | 'labelFontSize' | 'description'> {
   layout?: 'inline' | 'stack'
   atom: PrimitiveAtom<T>
   items?: ReadonlyArray<
@@ -41,6 +40,7 @@ export const SelectParameterItem = forwardRef<
   (
     {
       label,
+      labelFontSize,
       description,
       layout = 'inline',
       atom,
@@ -97,6 +97,7 @@ export const SelectParameterItem = forwardRef<
       <ParameterItem
         ref={ref}
         label={label}
+        labelFontSize={labelFontSize}
         description={description}
         {...(layout === 'inline'
           ? { control: select }

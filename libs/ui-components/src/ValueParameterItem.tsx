@@ -5,7 +5,7 @@ import {
   type ReactNode
 } from 'react'
 
-import { ParameterItem } from './ParameterItem'
+import { ParameterItem, type ParameterItemProps } from './ParameterItem'
 
 const Value = styled('span')(({ theme }) => ({
   ...theme.typography.body2,
@@ -13,19 +13,19 @@ const Value = styled('span')(({ theme }) => ({
 }))
 
 export interface ValueParameterItemProps
-  extends Omit<ComponentPropsWithoutRef<typeof Value>, 'children'> {
-  label?: ReactNode
-  description?: ReactNode
+  extends Omit<ComponentPropsWithoutRef<typeof Value>, 'children'>,
+    Pick<ParameterItemProps, 'label' | 'labelFontSize' | 'description'> {
   value: ReactNode
 }
 
 export const ValueParameterItem = forwardRef<
   HTMLDivElement,
   ValueParameterItemProps
->(({ label, description, value, onChange, ...props }, ref) => (
+>(({ label, labelFontSize, description, value, onChange, ...props }, ref) => (
   <ParameterItem
     ref={ref}
     label={label}
+    labelFontSize={labelFontSize}
     description={description}
     control={<Value {...props}>{value}</Value>}
   />

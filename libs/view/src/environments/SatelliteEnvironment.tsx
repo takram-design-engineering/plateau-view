@@ -1,9 +1,12 @@
 import { Cartesian3 } from '@cesium/engine'
+import { useAtomValue } from 'jotai'
 import { type FC } from 'react'
 import invariant from 'tiny-invariant'
 
 import { Environment, type EnvironmentProps } from '@takram/plateau-cesium'
 import { BingMapsImageryLayer } from '@takram/plateau-datasets'
+
+import { enableTerrainLightingAtom } from '../states/app'
 
 // TODO: Create time-based interpolation of sky atmosphere.
 // Spherical harmonic coefficients generated from a modified version of:
@@ -25,9 +28,11 @@ export const SatelliteEnvironment: FC<EnvironmentProps> = props => {
     process.env.NEXT_PUBLIC_BING_MAPS_APP_KEY != null,
     'Missing environment variable: NEXT_PUBLIC_BING_MAPS_APP_KEY'
   )
+  const enableTerrainLighting = useAtomValue(enableTerrainLightingAtom)
   return (
     <>
       <Environment
+        enableGlobeLighting={enableTerrainLighting}
         lightIntensity={1}
         shadowDarkness={0.5}
         sphericalHarmonicCoefficients={sphericalHarmonicCoefficients}
