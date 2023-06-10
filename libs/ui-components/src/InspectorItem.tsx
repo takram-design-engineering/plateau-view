@@ -1,4 +1,4 @@
-import { Stack, styled } from '@mui/material'
+import { styled } from '@mui/material'
 import { type FC, type ReactNode } from 'react'
 
 const Root = styled('div')(({ theme }) => ({
