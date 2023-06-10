@@ -2,7 +2,11 @@ import { type SvgIconProps } from '@mui/material'
 import { type ComponentType } from 'react'
 
 import { type LayerType } from '@takram/plateau-layers'
-import { BuildingIcon, LayerIcon } from '@takram/plateau-ui-components/icons'
+import {
+  BuildingIcon,
+  LayerIcon,
+  PedestrianToolIcon
+} from '@takram/plateau-ui-components/icons'
 
 import {
   BORDER_LAYER,
@@ -17,6 +21,7 @@ import {
   LANDSLIDE_LAYER,
   LAND_USE_LAYER,
   PARK_LAYER,
+  PEDESTRIAN_LAYER,
   RAILWAY_LAYER,
   RIVER_FLOODING_RISK_LAYER,
   ROAD_LAYER,
@@ -29,6 +34,8 @@ import {
 } from './layerTypes'
 
 export const layerTypeIcons: Record<LayerType, ComponentType<SvgIconProps>> = {
+  [PEDESTRIAN_LAYER]: PedestrianToolIcon,
+  // Dataset layers
   [BORDER_LAYER]: LayerIcon,
   [BRIDGE_LAYER]: LayerIcon,
   [BUILDING_LAYER]: BuildingIcon,

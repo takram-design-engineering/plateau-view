@@ -1,3 +1,5 @@
+export const PEDESTRIAN_LAYER = 'PEDESTRIAN_LAYER'
+// Dataset layers
 export const BORDER_LAYER = 'BORDER_LAYER'
 export const BRIDGE_LAYER = 'BRIDGE_LAYER'
 export const BUILDING_LAYER = 'BUILDING_LAYER'

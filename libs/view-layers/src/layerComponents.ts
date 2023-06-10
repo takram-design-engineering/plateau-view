@@ -4,6 +4,7 @@ import { BridgeLayer } from './BridgeLayer'
 import { BuildingLayer } from './BuildingLayer'
 import { LandSlideRiskLayer } from './LandSlideRiskLayer'
 import { LandUseLayer } from './LandUseLayer'
+import { PedestrianLayer } from './PedestrianLayer'
 import { RiverFloodingRiskLayer } from './RiverFloodingRiskLayer'
 import { RoadLayer } from './RoadLayer'
 import { UrbanPlanningLayer } from './UrbanPlanningLayer'
@@ -20,6 +21,7 @@ import {
   LANDSLIDE_LAYER,
   LAND_USE_LAYER,
   PARK_LAYER,
+  PEDESTRIAN_LAYER,
   RAILWAY_LAYER,
   RIVER_FLOODING_RISK_LAYER,
   ROAD_LAYER,
@@ -32,6 +34,8 @@ import {
 } from './layerTypes'
 
 export const layerComponents: LayerComponents = {
+  [PEDESTRIAN_LAYER]: PedestrianLayer,
+  // Dataset layers
   [BORDER_LAYER]: undefined,
   [BRIDGE_LAYER]: BridgeLayer,
   [BUILDING_LAYER]: BuildingLayer,

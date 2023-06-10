@@ -13,6 +13,7 @@ import {
   LANDSLIDE_LAYER,
   LAND_USE_LAYER,
   PARK_LAYER,
+  PEDESTRIAN_LAYER,
   RAILWAY_LAYER,
   RIVER_FLOODING_RISK_LAYER,
   ROAD_LAYER,
@@ -25,6 +26,8 @@ import {
 } from './layerTypes'
 
 export const layerTypeNames: Record<LayerType, string> = {
+  [PEDESTRIAN_LAYER]: '歩行者視点',
+  // Dataset layers
   [BORDER_LAYER]: '行政界',
   [BRIDGE_LAYER]: '橋梁',
   [BUILDING_LAYER]: '建築物',
