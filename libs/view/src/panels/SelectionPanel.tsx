@@ -42,7 +42,7 @@ export const SelectionPanel: FC = () => {
   }
   return (
     <AutoHeight>
-      <Root scrollable>
+      <Root scrollable deferScrollable>
         <div>{content}</div>
       </Root>
     </AutoHeight>
