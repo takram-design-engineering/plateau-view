@@ -2,13 +2,11 @@ import { isBoolean, isNumber } from 'class-validator'
 import { atom, type SetStateAction } from 'jotai'
 import { atomWithReset, type RESET } from 'jotai/utils'
 import { fromPairs, isEqual } from 'lodash'
-import { type UnionToIntersection } from 'type-fest'
 
 import { AmbientOcclusionOutputType } from '@takram/plateau-cesium-hbao'
 import {
   atomWithStorageValidation,
-  type AtomValue,
-  type STORAGE_KEY
+  type AtomValue
 } from '@takram/plateau-shared-states'
 
 export type AntialiasType = 'none' | 'fxaa' | 'msaa2x' | 'msaa4x' | 'msaa8x'
@@ -140,17 +138,11 @@ const graphicsQualityAtoms = {
     ambientOcclusionAccurateNormalReconstructionAtom
 }
 
-type GraphicsQualityAtomValues = UnionToIntersection<
-  {
-    [K in keyof typeof graphicsQualityAtoms]: (typeof graphicsQualityAtoms)[K] extends {
-      [STORAGE_KEY]: infer Key
-    }
-      ? Key extends K
-        ? Partial<Record<Key, AtomValue<(typeof graphicsQualityAtoms)[K]>>>
-        : never
-      : never
-  }[keyof typeof graphicsQualityAtoms]
->
+type GraphicsQualityAtomValues = {
+  [K in keyof typeof graphicsQualityAtoms]?: AtomValue<
+    (typeof graphicsQualityAtoms)[K]
+  >
+}
 
 const graphicQualityAtomValues: Record<
   GraphicsQuality,
