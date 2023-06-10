@@ -24,7 +24,7 @@ import {
   type ScreenSpaceSelectionEntry
 } from '@takram/plateau-screen-space-selection'
 
-import icon from './assets/icon.png'
+import billboard from './assets/billboard.png'
 
 export const PEDESTRIAN_ENTITY = 'PEDESTRIAN_ENTITY'
 
@@ -32,6 +32,12 @@ declare module '@takram/plateau-screen-space-selection' {
   interface ScreenSpaceSelectionOverrides {
     [PEDESTRIAN_ENTITY]: string
   }
+}
+
+export interface PedestrianEntityProperties {
+  longitude: number
+  latitude: number
+  height: number
 }
 
 interface PedestrianEntityProps {
@@ -51,6 +57,11 @@ const PedestrianEntity: FC<PedestrianEntityProps> = ({
 }) => {
   const defaultId = useConstant(() => nanoid())
   const entityOptions = useMemo<EntityProps>(() => {
+    const properties: PedestrianEntityProperties = {
+      longitude,
+      latitude,
+      height
+    }
     return {
       id: `Pedestrian:${id ?? defaultId}`,
       position: Cartesian3.fromDegrees(
@@ -60,13 +71,14 @@ const PedestrianEntity: FC<PedestrianEntityProps> = ({
         JapanSeaLevelEllipsoid
       ),
       billboard: {
-        image: icon.src,
-        width: 32,
-        height: 32,
-        pixelOffset: new Cartesian2(16, -16),
-        imageSubRegion: new BoundingRectangle(0, 72, 64, 64),
+        image: billboard.src,
+        width: 64,
+        height: 64,
+        pixelOffset: new Cartesian2(32, -32),
+        imageSubRegion: new BoundingRectangle(0, 128, 128, 128),
         heightReference: HeightReference.RELATIVE_TO_GROUND
-      }
+      },
+      properties
     }
   }, [longitude, latitude, height, id, defaultId])
 
@@ -82,9 +94,9 @@ const PedestrianEntity: FC<PedestrianEntityProps> = ({
       return
     }
     if (selected) {
-      imageSubRegion.setValue(new BoundingRectangle(0, 0, 64, 64))
+      imageSubRegion.setValue(new BoundingRectangle(0, 0, 128, 128))
     } else {
-      imageSubRegion.setValue(new BoundingRectangle(0, 72, 64, 64))
+      imageSubRegion.setValue(new BoundingRectangle(0, 128, 128, 128))
     }
     requestRenderInNextFrame(scene)
   }, [selected, scene])
