@@ -8,7 +8,8 @@ import {
   ConstantProperty,
   HeightReference
 } from '@cesium/engine'
-import { useMemo, useRef, type FC } from 'react'
+import { nanoid } from 'nanoid'
+import { useEffect, useMemo, useRef, useState, type FC } from 'react'
 
 import {
   Entity,
@@ -17,6 +18,7 @@ import {
   type EntityProps
 } from '@takram/plateau-cesium'
 import { JapanSeaLevelEllipsoid } from '@takram/plateau-datasets'
+import { useConstant, withEphemerality } from '@takram/plateau-react-helpers'
 import {
   useScreenSpaceSelectionResponder,
   type ScreenSpaceSelectionEntry
@@ -32,23 +34,25 @@ declare module '@takram/plateau-screen-space-selection' {
   }
 }
 
-export interface PedestrianProps {
+interface PedestrianEntityProps {
+  id?: string
   longitude: number
   latitude: number
   height?: number
+  selected?: boolean
 }
 
-const cartographicScratch = new Cartographic()
-
-export const Pedestrian: FC<PedestrianProps> = ({
+const PedestrianEntity: FC<PedestrianEntityProps> = ({
+  id,
   longitude,
   latitude,
-  height = 2
+  height = 2,
+  selected = false
 }) => {
-  const entityRef = useRef<CesiumEntity>(null)
-
+  const defaultId = useConstant(() => nanoid())
   const entityOptions = useMemo<EntityProps>(() => {
     return {
+      id: `Pedestrian:${id ?? defaultId}`,
       position: Cartesian3.fromDegrees(
         longitude,
         latitude,
@@ -64,62 +68,86 @@ export const Pedestrian: FC<PedestrianProps> = ({
         heightReference: HeightReference.RELATIVE_TO_GROUND
       }
     }
-  }, [longitude, latitude, height])
+  }, [longitude, latitude, height, id, defaultId])
 
+  const entityRef = useRef<CesiumEntity>(null)
   const scene = useCesium(({ scene }) => scene)
-  useScreenSpaceSelectionResponder({
-    type: PEDESTRIAN_ENTITY,
-    transform: object => {
-      if (entityRef.current == null) {
-        return
-      }
-      return 'id' in object &&
-        object.id instanceof CesiumEntity &&
-        object.id.id === entityRef.current.id
-        ? {
-            type: PEDESTRIAN_ENTITY,
-            value: entityRef.current.id
-          }
-        : undefined
-    },
-    predicate: (
-      value
-    ): value is ScreenSpaceSelectionEntry<typeof PEDESTRIAN_ENTITY> => {
-      return value.type === PEDESTRIAN_ENTITY
-    },
-    onSelect: value => {
-      const imageSubRegion = entityRef.current?.billboard?.imageSubRegion
-      if (imageSubRegion instanceof ConstantProperty) {
-        imageSubRegion.setValue(new BoundingRectangle(0, 0, 64, 64))
-        requestRenderInNextFrame(scene)
-      }
-    },
-    onDeselect: value => {
-      const imageSubRegion = entityRef.current?.billboard?.imageSubRegion
-      if (imageSubRegion instanceof ConstantProperty) {
-        imageSubRegion.setValue(new BoundingRectangle(0, 72, 64, 64))
-        requestRenderInNextFrame(scene)
-      }
-    },
-    computeBoundingSphere: (value, result = new BoundingSphere()) => {
-      Cartesian3.fromDegrees(
-        longitude,
-        latitude,
-        (scene.globe.getHeight(
-          Cartographic.fromDegrees(
-            longitude,
-            latitude,
-            height,
-            cartographicScratch
-          )
-        ) ?? 0) + height,
-        undefined,
-        result.center
-      )
-      result.radius = 50 // Arbitrary size
-      return result
+  useEffect(() => {
+    const entity = entityRef.current
+    if (entity == null) {
+      return
     }
-  })
+    const imageSubRegion = entity.billboard?.imageSubRegion
+    if (!(imageSubRegion instanceof ConstantProperty)) {
+      return
+    }
+    if (selected) {
+      imageSubRegion.setValue(new BoundingRectangle(0, 0, 64, 64))
+    } else {
+      imageSubRegion.setValue(new BoundingRectangle(0, 72, 64, 64))
+    }
+    requestRenderInNextFrame(scene)
+  }, [selected, scene])
 
   return <Entity ref={entityRef} {...entityOptions} />
 }
+
+export interface PedestrianProps
+  extends Omit<PedestrianEntityProps, 'selected'> {}
+
+const cartographicScratch = new Cartographic()
+
+export const Pedestrian: FC<PedestrianProps> = withEphemerality(
+  () => useCesium(({ scene }) => scene),
+  [],
+  props => {
+    const [selected, setSelected] = useState(false)
+    const scene = useCesium(({ scene }) => scene)
+
+    useScreenSpaceSelectionResponder({
+      type: PEDESTRIAN_ENTITY,
+      transform: object => {
+        return 'id' in object &&
+          object.id instanceof CesiumEntity &&
+          object.id.id.startsWith('Pedestrian:')
+          ? {
+              type: PEDESTRIAN_ENTITY,
+              value: object.id.id
+            }
+          : undefined
+      },
+      predicate: (
+        value
+      ): value is ScreenSpaceSelectionEntry<typeof PEDESTRIAN_ENTITY> => {
+        return value.type === PEDESTRIAN_ENTITY
+      },
+      onSelect: () => {
+        setSelected(true)
+      },
+      onDeselect: () => {
+        setSelected(false)
+      },
+      computeBoundingSphere: (value, result = new BoundingSphere()) => {
+        const { longitude, latitude, height = 0 } = props
+        Cartesian3.fromDegrees(
+          longitude,
+          latitude,
+          (scene.globe.getHeight(
+            Cartographic.fromDegrees(
+              longitude,
+              latitude,
+              height,
+              cartographicScratch
+            )
+          ) ?? 0) + height,
+          undefined,
+          result.center
+        )
+        result.radius = 50 // Arbitrary size
+        return result
+      }
+    })
+
+    return <PedestrianEntity {...props} selected={selected} />
+  }
+)

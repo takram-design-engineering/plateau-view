@@ -44,6 +44,7 @@ export function createPedestrianLayer(
 }
 
 export const PedestrianLayer: FC<LayerProps<typeof PEDESTRIAN_LAYER>> = ({
+  id,
   hiddenAtom,
   boundingSphereAtom,
   locationAtom
@@ -54,5 +55,5 @@ export const PedestrianLayer: FC<LayerProps<typeof PEDESTRIAN_LAYER>> = ({
   if (hidden) {
     return null
   }
-  return <Pedestrian longitude={longitude} latitude={latitude} />
+  return <Pedestrian id={id} longitude={longitude} latitude={latitude} />
 }
