@@ -5,7 +5,7 @@ import {
   type ToggleButtonGroupProps,
   type ToggleButtonProps
 } from '@mui/material'
-import { useAtom, type PrimitiveAtom } from 'jotai'
+import { useAtom, type WritableAtom } from 'jotai'
 import {
   forwardRef,
   useCallback,
@@ -30,7 +30,11 @@ export interface SegmentParameterItemProps<
 > extends PropsWithoutRef<Omit<ToggleButtonGroupProps, 'value'>>,
     Pick<ParameterItemProps, 'label' | 'labelFontSize' | 'description'> {
   exclusive?: Exclusive
-  atom: PrimitiveAtom<Exclusive extends true ? T : T[]>
+  atom: WritableAtom<
+    Exclusive extends true ? T | null : T[] | null,
+    [Exclusive extends true ? T : T[]],
+    void
+  >
   items?: ReadonlyArray<
     | readonly [T, ReactNode]
     | readonly [T, ReactNode, Partial<ToggleButtonProps>]

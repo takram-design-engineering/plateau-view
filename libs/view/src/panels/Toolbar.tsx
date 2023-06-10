@@ -32,6 +32,7 @@ import {
 import { toolAtom, toolMachineAtom, type Tool } from '../states/tool'
 import { type EventObject } from '../states/toolMachine'
 import { DateControlPanel } from './DateControlPanel'
+import { SettingsPanel } from './SettingsPanel'
 
 const TooltipContent = styled('div')({
   display: 'inline-flex',
@@ -78,10 +79,17 @@ export const Toolbar: FC = () => {
   )
 
   const id = useId()
-  const datePopupState = usePopupState({
+  const settingsPopupState = usePopupState({
     variant: 'popover',
-    popupId: `${id}:date`
+    popupId: `${id}:settings`
   })
+  const dateControlPopupState = usePopupState({
+    variant: 'popover',
+    popupId: `${id}:dateControl`
+  })
+
+  const settingsPopoverProps = bindPopover(settingsPopupState)
+  const dateControlPopoverProps = bindPopover(dateControlPopupState)
 
   // TODO: Introduce icons.
   return (
@@ -109,18 +117,27 @@ export const Toolbar: FC = () => {
         </ToolbarItem>
       </FloatingToolbar>
       <Tooltip title='設定'>
-        <span>
-          <FloatingButton aria-label='設定' disabled>
-            <SettingsIcon fontSize='medium' />
-          </FloatingButton>
-        </span>
+        <FloatingButton
+          selected={settingsPopoverProps.open}
+          aria-label='設定'
+          {...bindTrigger(settingsPopupState)}
+        >
+          <SettingsIcon fontSize='medium' />
+        </FloatingButton>
       </Tooltip>
+      <OverlayPopover {...settingsPopoverProps}>
+        <SettingsPanel />
+      </OverlayPopover>
       <Tooltip title='日時'>
-        <FloatingButton aria-label='日時' {...bindTrigger(datePopupState)}>
+        <FloatingButton
+          selected={dateControlPopoverProps.open}
+          aria-label='日時'
+          {...bindTrigger(dateControlPopupState)}
+        >
           <TimelineIcon fontSize='medium' />
         </FloatingButton>
       </Tooltip>
-      <OverlayPopover {...bindPopover(datePopupState)}>
+      <OverlayPopover {...dateControlPopoverProps}>
         <DateControlPanel />
       </OverlayPopover>
     </Stack>
