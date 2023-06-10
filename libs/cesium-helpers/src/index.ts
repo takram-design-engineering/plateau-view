@@ -1,3 +1,7 @@
+import * as DMS from './DMS'
+
+export { DMS }
+
 export * from './convertPolygonToHierarchyArray'
 export * from './convertPolygonToPositionsArray'
 export * from './createUniforms'
