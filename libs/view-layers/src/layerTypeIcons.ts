@@ -5,7 +5,7 @@ import { type LayerType } from '@takram/plateau-layers'
 import {
   BuildingIcon,
   LayerIcon,
-  PedestrianToolIcon
+  PedestrianIcon
 } from '@takram/plateau-ui-components/icons'
 
 import {
@@ -34,7 +34,7 @@ import {
 } from './layerTypes'
 
 export const layerTypeIcons: Record<LayerType, ComponentType<SvgIconProps>> = {
-  [PEDESTRIAN_LAYER]: PedestrianToolIcon,
+  [PEDESTRIAN_LAYER]: PedestrianIcon,
   // Dataset layers
   [BORDER_LAYER]: LayerIcon,
   [BRIDGE_LAYER]: LayerIcon,

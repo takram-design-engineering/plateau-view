@@ -19,7 +19,7 @@ import {
   FloatingToolbar,
   HandToolIcon,
   OverlayPopover,
-  PedestrianToolIcon,
+  PedestrianIcon,
   SelectToolIcon,
   SettingsIcon,
   ShortcutTooltip,
@@ -107,13 +107,8 @@ export const Toolbar: FC = () => {
         <ToolbarItem value='story' title='ストーリー' shortcutKey='T' disabled>
           <StoryToolIcon fontSize='medium' />
         </ToolbarItem>
-        <ToolbarItem
-          value='pedestrian'
-          title='歩行者視点'
-          shortcutKey='P'
-          disabled
-        >
-          <PedestrianToolIcon fontSize='medium' />
+        <ToolbarItem value='pedestrian' title='歩行者視点' shortcutKey='P'>
+          <PedestrianIcon fontSize='medium' />
         </ToolbarItem>
       </FloatingToolbar>
       <Tooltip title='設定'>
