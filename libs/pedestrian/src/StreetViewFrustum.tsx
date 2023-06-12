@@ -46,7 +46,9 @@ function createQuaternionFromHeadingPitch(
 interface StreetViewFrustumProps {
   location: Location
   headingPitch: HeadingPitch
-  frustumLength?: number
+  zoom?: number
+  aspectRatio?: number
+  length?: number
 }
 
 const cartesianScratch = new Cartesian3()
@@ -55,16 +57,22 @@ const quaternionScratch = new Quaternion()
 export const StreetViewFrustum: FC<StreetViewFrustumProps> = ({
   location,
   headingPitch,
-  frustumLength = 200
+  zoom = 1,
+  aspectRatio = 3 / 2,
+  length = 200
 }) => {
   const geometryInstance = useMemo(() => {
+    // TODO: Zoom to FOV translation doesn't look correct especially when
+    // it's zoomed in.
+    const fovX = Math.PI / Math.pow(2, zoom)
+    const fovY = 2 * Math.atan(aspectRatio * Math.tan(fovX / 2))
     const geometry = FrustumGeometry.createGeometry(
       new FrustumGeometry({
         frustum: new PerspectiveFrustum({
-          fov: 1,
-          aspectRatio: 2 / 3,
-          near: 0.1,
-          far: frustumLength
+          fov: aspectRatio > 1 ? fovX : fovY,
+          aspectRatio: 1 / aspectRatio,
+          near: 0.01,
+          far: length
         }),
         origin: Cartesian3.ZERO,
         orientation: Quaternion.IDENTITY,
@@ -106,7 +114,7 @@ export const StreetViewFrustum: FC<StreetViewFrustumProps> = ({
       )
     })
     return new GeometryInstance({ geometry })
-  }, [frustumLength])
+  }, [zoom, aspectRatio, length])
 
   const theme = useTheme()
 
