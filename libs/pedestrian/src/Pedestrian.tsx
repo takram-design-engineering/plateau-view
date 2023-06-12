@@ -1,4 +1,4 @@
-import { Billboard, BoundingSphere } from '@cesium/engine'
+import { BoundingSphere } from '@cesium/engine'
 import { nanoid } from 'nanoid'
 import { useState, type FC } from 'react'
 
@@ -87,18 +87,11 @@ export const Pedestrian: FC<PedestrianProps> = withEphemerality(
         {(selected || highlighted) &&
           streetViewLocation != null &&
           streetViewHeadingPitch != null && (
-            <>
-              {/* <StreetViewEntity
-                targetLocation={location}
-                location={streetViewLocation}
-                headingPitch={streetViewHeadingPitch}
-              /> */}
-              <StreetViewFrustum
-                location={streetViewLocation}
-                headingPitch={streetViewHeadingPitch}
-                zoom={streetViewZoom}
-              />
-            </>
+            <StreetViewFrustum
+              location={streetViewLocation}
+              headingPitch={streetViewHeadingPitch}
+              zoom={streetViewZoom}
+            />
           )}
       </>
     )
