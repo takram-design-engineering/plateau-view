@@ -14,7 +14,6 @@ import {
   Transforms
 } from '@cesium/engine'
 import { useTheme } from '@mui/material'
-import { animate, useSpring, useTransform } from 'framer-motion'
 import { useEffect, useMemo, type FC } from 'react'
 import invariant from 'tiny-invariant'
 
@@ -23,6 +22,7 @@ import { useCesium, useInstance, usePreRender } from '@takram/plateau-cesium'
 import { FrustumAppearance } from './FrustumAppearance'
 import { getPosition } from './getPosition'
 import { type HeadingPitch, type Location } from './types'
+import { useMotionLocation } from './useMotionLocation'
 
 const roll = Quaternion.fromHeadingPitchRoll(
   new HeadingPitchRoll(0, 0, CesiumMath.PI_OVER_TWO)
@@ -153,40 +153,7 @@ export const StreetViewFrustum: FC<StreetViewFrustumProps> = ({
   const scene = useCesium(({ scene }) => scene)
   scene.requestRender()
 
-  const motionLongitude = useSpring(location.longitude)
-  const motionLatitude = useSpring(location.latitude)
-  const motionHeight = useSpring(location.height ?? 0)
-
-  useEffect(() => {
-    return animate(motionLongitude, location.longitude, {
-      type: 'tween',
-      ease: 'easeOut',
-      duration: 0.2
-    }).stop
-  }, [location.longitude, motionLongitude])
-  useEffect(() => {
-    return animate(motionLatitude, location.latitude, {
-      type: 'tween',
-      ease: 'easeOut',
-      duration: 0.2
-    }).stop
-  }, [location.latitude, motionLatitude])
-  useEffect(() => {
-    return animate(motionHeight, location.height ?? 0, {
-      type: 'tween',
-      ease: 'easeOut',
-      duration: 0.2
-    }).stop
-  }, [location.height, motionHeight])
-
-  const motionLocation = useTransform(
-    [motionLongitude, motionLatitude, motionHeight],
-    (values: number[]) => ({
-      longitude: values[0],
-      latitude: values[1],
-      height: values[2]
-    })
-  )
+  const motionLocation = useMotionLocation(location)
 
   useEffect(() => {
     return motionLocation.on('change', () => {
