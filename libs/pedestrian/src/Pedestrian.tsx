@@ -1,165 +1,106 @@
-import {
-  BoundingRectangle,
-  BoundingSphere,
-  Cartesian2,
-  Cartesian3,
-  Cartographic,
-  Entity as CesiumEntity,
-  ConstantProperty,
-  HeightReference
-} from '@cesium/engine'
+import { Billboard, BoundingSphere } from '@cesium/engine'
 import { nanoid } from 'nanoid'
-import { useEffect, useMemo, useRef, useState, type FC } from 'react'
+import { useState, type FC } from 'react'
 
-import {
-  Entity,
-  requestRenderInNextFrame,
-  useCesium,
-  type EntityProps
-} from '@takram/plateau-cesium'
-import { JapanSeaLevelEllipsoid } from '@takram/plateau-datasets'
+import { useCesium } from '@takram/plateau-cesium'
 import { useConstant, withEphemerality } from '@takram/plateau-react-helpers'
 import {
   useScreenSpaceSelectionResponder,
   type ScreenSpaceSelectionEntry
 } from '@takram/plateau-screen-space-selection'
 
-import billboard from './assets/billboard.png'
+import { PedestrianObject } from './PedestrianObject'
+import { StreetViewFrustum } from './StreetViewFrustum'
+import { getPosition } from './getPosition'
+import { type HeadingPitch, type Location } from './types'
 
-export const PEDESTRIAN_ENTITY = 'PEDESTRIAN_ENTITY'
+export const PEDESTRIAN_OBJECT = 'PEDESTRIAN_OBJECT'
 
 declare module '@takram/plateau-screen-space-selection' {
   interface ScreenSpaceSelectionOverrides {
-    [PEDESTRIAN_ENTITY]: string
+    [PEDESTRIAN_OBJECT]: string
   }
 }
 
-export interface PedestrianEntityProperties {
-  longitude: number
-  latitude: number
-  height: number
-}
-
-interface PedestrianEntityProps {
+export interface PedestrianProps {
   id?: string
-  longitude: number
-  latitude: number
-  height?: number
   selected?: boolean
+  location: Location
+  streetViewLocation?: Location
+  streetViewHeadingPitch?: HeadingPitch
+  streetViewZoom?: number
+  onChange?: (location: Location) => void
 }
-
-const PedestrianEntity: FC<PedestrianEntityProps> = ({
-  id,
-  longitude,
-  latitude,
-  height = 2,
-  selected = false
-}) => {
-  const defaultId = useConstant(() => nanoid())
-  const entityOptions = useMemo<EntityProps>(() => {
-    const properties: PedestrianEntityProperties = {
-      longitude,
-      latitude,
-      height
-    }
-    return {
-      id: `Pedestrian:${id ?? defaultId}`,
-      position: Cartesian3.fromDegrees(
-        longitude,
-        latitude,
-        height,
-        JapanSeaLevelEllipsoid
-      ),
-      billboard: {
-        image: billboard.src,
-        width: 64,
-        height: 64,
-        pixelOffset: new Cartesian2(32, -32),
-        imageSubRegion: new BoundingRectangle(0, 128, 128, 128),
-        heightReference: HeightReference.RELATIVE_TO_GROUND
-      },
-      properties
-    }
-  }, [longitude, latitude, height, id, defaultId])
-
-  const entityRef = useRef<CesiumEntity>(null)
-  const scene = useCesium(({ scene }) => scene)
-  useEffect(() => {
-    const entity = entityRef.current
-    if (entity == null) {
-      return
-    }
-    const imageSubRegion = entity.billboard?.imageSubRegion
-    if (!(imageSubRegion instanceof ConstantProperty)) {
-      return
-    }
-    if (selected) {
-      imageSubRegion.setValue(new BoundingRectangle(0, 0, 128, 128))
-    } else {
-      imageSubRegion.setValue(new BoundingRectangle(0, 128, 128, 128))
-    }
-    requestRenderInNextFrame(scene)
-  }, [selected, scene])
-
-  return <Entity ref={entityRef} {...entityOptions} />
-}
-
-export interface PedestrianProps
-  extends Omit<PedestrianEntityProps, 'selected'> {}
-
-const cartographicScratch = new Cartographic()
 
 export const Pedestrian: FC<PedestrianProps> = withEphemerality(
   () => useCesium(({ scene }) => scene),
   [],
-  props => {
-    const [selected, setSelected] = useState(false)
+  ({
+    id,
+    selected = false,
+    location,
+    streetViewLocation,
+    streetViewHeadingPitch,
+    streetViewZoom
+  }) => {
+    const defaultId = useConstant(() => nanoid())
+    const objectId = `Pedestrian:${id ?? defaultId}`
+
+    const [highlighted, setHighlighted] = useState(false)
     const scene = useCesium(({ scene }) => scene)
 
     useScreenSpaceSelectionResponder({
-      type: PEDESTRIAN_ENTITY,
+      type: PEDESTRIAN_OBJECT,
       transform: object => {
-        return 'id' in object &&
-          object.id instanceof CesiumEntity &&
-          object.id.id.startsWith('Pedestrian:')
+        return 'id' in object && object.id === objectId
           ? {
-              type: PEDESTRIAN_ENTITY,
-              value: object.id.id
+              type: PEDESTRIAN_OBJECT,
+              value: objectId
             }
           : undefined
       },
       predicate: (
         value
-      ): value is ScreenSpaceSelectionEntry<typeof PEDESTRIAN_ENTITY> => {
-        return value.type === PEDESTRIAN_ENTITY
+      ): value is ScreenSpaceSelectionEntry<typeof PEDESTRIAN_OBJECT> => {
+        return value.type === PEDESTRIAN_OBJECT && value.value === objectId
       },
       onSelect: () => {
-        setSelected(true)
+        setHighlighted(true)
       },
       onDeselect: () => {
-        setSelected(false)
+        setHighlighted(false)
       },
       computeBoundingSphere: (value, result = new BoundingSphere()) => {
-        const { longitude, latitude, height = 0 } = props
-        Cartesian3.fromDegrees(
-          longitude,
-          latitude,
-          (scene.globe.getHeight(
-            Cartographic.fromDegrees(
-              longitude,
-              latitude,
-              height,
-              cartographicScratch
-            )
-          ) ?? 0) + height,
-          undefined,
-          result.center
-        )
+        getPosition(location, scene, result.center)
         result.radius = 50 // Arbitrary size
         return result
       }
     })
 
-    return <PedestrianEntity {...props} selected={selected} />
+    return (
+      <>
+        <PedestrianObject
+          id={objectId}
+          location={streetViewLocation ?? location}
+          selected={selected || highlighted}
+        />
+        {(selected || highlighted) &&
+          streetViewLocation != null &&
+          streetViewHeadingPitch != null && (
+            <>
+              {/* <StreetViewEntity
+                targetLocation={location}
+                location={streetViewLocation}
+                headingPitch={streetViewHeadingPitch}
+              /> */}
+              <StreetViewFrustum
+                location={streetViewLocation}
+                headingPitch={streetViewHeadingPitch}
+                zoom={streetViewZoom}
+              />
+            </>
+          )}
+      </>
+    )
   }
 )
