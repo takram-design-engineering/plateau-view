@@ -1,4 +1,3 @@
-import { Loader } from '@googlemaps/js-api-loader'
 import { styled } from '@mui/material'
 import {
   useEffect,
@@ -6,17 +5,13 @@ import {
   type ComponentPropsWithoutRef,
   type FC
 } from 'react'
-import { suspend } from 'suspend-react'
 import invariant from 'tiny-invariant'
 
 import { type HeadingPitch, type Location } from './types'
 import { usePanoramaHeadingPitchChange } from './usePanoramaHeadingPitchChange'
 import { usePanoramaLocationChange } from './usePanoramaLocationChange'
 import { usePanoramaZoomChange } from './usePanoramaZoomChange'
-
-let container: HTMLDivElement | undefined
-let panorama: google.maps.StreetViewPanorama | undefined
-let service: google.maps.StreetViewService | undefined
+import { useStreetView } from './useStreetView'
 
 const Root = styled('div')({})
 
@@ -38,31 +33,10 @@ export const StreetView: FC<StreetViewProps> = ({
   onZoomChange,
   ...props
 }) => {
-  const { StreetViewPanorama, StreetViewService } = suspend(async () => {
-    const loader = new Loader({
-      apiKey,
-      version: 'weekly'
-    })
-    return await loader.importLibrary('streetView')
-  }, [StreetView])
+  const { container, panorama, service } = useStreetView(apiKey)
 
   const ref = useRef<HTMLDivElement>(null)
-
   useEffect(() => {
-    if (container == null || panorama == null) {
-      invariant(container == null && panorama == null)
-      container = document.createElement('div')
-      container.style.width = '100%'
-      container.style.height = '100%'
-      panorama = new StreetViewPanorama(container, {
-        zoomControl: false,
-        panControl: false,
-        addressControl: false,
-        fullscreenControl: false,
-        imageDateControl: false,
-        motionTrackingControl: false
-      })
-    }
     const element = ref.current
     invariant(element != null)
     element.appendChild(container)
@@ -70,16 +44,10 @@ export const StreetView: FC<StreetViewProps> = ({
       invariant(container != null)
       element.removeChild(container)
     }
-  }, [StreetViewPanorama])
+  }, [container])
 
   // Load street view panorama.
   useEffect(() => {
-    if (panorama == null) {
-      return
-    }
-    if (service == null) {
-      service = new StreetViewService()
-    }
     let canceled = false
     ;(async () => {
       const { data } = await service.getPanorama({
@@ -102,7 +70,7 @@ export const StreetView: FC<StreetViewProps> = ({
     return () => {
       canceled = true
     }
-  }, [location, radius, StreetViewService])
+  }, [location, radius, panorama, service])
 
   usePanoramaLocationChange(panorama, onLocationChange)
   usePanoramaHeadingPitchChange(panorama, onHeadingPitchChange)

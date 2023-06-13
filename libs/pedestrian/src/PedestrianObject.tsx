@@ -20,7 +20,7 @@ export interface PedestrianObjectProps {
   selected?: boolean
 }
 
-const cartesianScratch = new Cartesian3()
+const positionScratch = new Cartesian3()
 
 export const PedestrianObject: FC<PedestrianObjectProps> = ({
   id,
@@ -92,7 +92,7 @@ export const PedestrianObject: FC<PedestrianObjectProps> = ({
     billboard.position = getPosition(
       motionLocation.get(),
       scene,
-      cartesianScratch
+      positionScratch
     )
   })
 
