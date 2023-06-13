@@ -25,9 +25,6 @@ import { getPosition } from './getPosition'
 import { type HeadingPitch, type Location } from './types'
 import { useMotionLocation } from './useMotionLocation'
 
-const roll = Quaternion.fromHeadingPitchRoll(
-  new HeadingPitchRoll(0, 0, CesiumMath.PI_OVER_TWO)
-)
 const headingPitchRollScratch = new HeadingPitchRoll()
 
 function createQuaternionFromHeadingPitch(
@@ -37,18 +34,13 @@ function createQuaternionFromHeadingPitch(
 ): Quaternion {
   const heading = CesiumMath.toRadians(headingPitch.heading)
   const pitch = CesiumMath.toRadians(headingPitch.pitch)
-  headingPitchRollScratch.heading = heading + Math.PI
-  headingPitchRollScratch.pitch = 0
-  headingPitchRollScratch.roll = -pitch
-  return Quaternion.multiply(
-    Transforms.headingPitchRollQuaternion(
-      position,
-      headingPitchRollScratch,
-      undefined,
-      undefined,
-      result
-    ),
-    roll,
+  headingPitchRollScratch.heading = heading + CesiumMath.PI_OVER_TWO
+  headingPitchRollScratch.pitch = CesiumMath.PI_OVER_TWO - pitch
+  return Transforms.headingPitchRollQuaternion(
+    position,
+    headingPitchRollScratch,
+    undefined,
+    undefined,
     result
   )
 }
@@ -60,6 +52,8 @@ interface StreetViewFrustumProps {
   aspectRatio?: number
   length?: number
 }
+
+const TAN_PI_OVER_FOUR = Math.tan(CesiumMath.PI_OVER_FOUR)
 
 const positionScratch = new Cartesian3()
 const scaleScratch = new Cartesian3()
@@ -107,18 +101,13 @@ export const StreetViewFrustum: FC<StreetViewFrustumProps> = ({
   length = 200
 }) => {
   const geometryInstance = useMemo(() => {
-    // TODO: Zoom to FOV translation doesn't look correct especially when
-    // it's zoomed in.
-    // TODO: Change FOV by scale of model matrix.
-    const fovX = Math.PI / Math.pow(2, zoom)
-    const fovY = 2 * Math.atan(aspectRatio * Math.tan(fovX / 2))
     const geometry = FrustumGeometry.createGeometry(
       new FrustumGeometry({
         frustum: new PerspectiveFrustum({
-          fov: aspectRatio > 1 ? fovX : fovY,
-          aspectRatio,
-          near: 0.01,
-          far: length
+          fov: CesiumMath.PI_OVER_TWO,
+          aspectRatio: 1,
+          near: 0.0001,
+          far: 1
         }),
         origin: Cartesian3.ZERO,
         orientation: Quaternion.IDENTITY,
@@ -128,7 +117,7 @@ export const StreetViewFrustum: FC<StreetViewFrustumProps> = ({
     invariant(geometry != null)
     geometry.attributes.color = colorGeometryAttribute
     return new GeometryInstance({ geometry })
-  }, [zoom, aspectRatio, length])
+  }, [])
 
   const theme = useTheme()
 
@@ -199,9 +188,11 @@ export const StreetViewFrustum: FC<StreetViewFrustumProps> = ({
       position,
       rotationScratch
     )
-    scaleScratch.x = visibility
-    scaleScratch.y = visibility
-    scaleScratch.z = visibility
+    const fovX = Math.PI / Math.pow(2, zoom)
+    const farWidth = (Math.tan(fovX / 2) / TAN_PI_OVER_FOUR) * length
+    scaleScratch.x = (visibility * farWidth) / aspectRatio
+    scaleScratch.y = visibility * farWidth
+    scaleScratch.z = visibility * length
     Matrix4.fromTranslationQuaternionRotationScale(
       position,
       rotation,
@@ -209,6 +200,12 @@ export const StreetViewFrustum: FC<StreetViewFrustumProps> = ({
       primitive.modelMatrix
     )
   })
+
+  useEffect(() => {
+    return () => {
+      scene.requestRender()
+    }
+  }, [scene])
 
   return null
 }

@@ -96,5 +96,11 @@ export const PedestrianObject: FC<PedestrianObjectProps> = ({
     )
   })
 
+  useEffect(() => {
+    return () => {
+      scene.requestRender()
+    }
+  }, [scene])
+
   return null
 }
