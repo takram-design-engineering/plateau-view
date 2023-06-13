@@ -16,12 +16,12 @@ import {
 import { Areas } from './containers/Areas'
 import { Canvas } from './containers/Canvas'
 import { Environments } from './containers/Environments'
-import { ExclusiveSelection } from './containers/ExclusiveSelection'
 import { KeyBindings } from './containers/KeyBindings'
 import { ReverseGeocoding } from './containers/ReverseGeocoding'
 import { ScreenSpaceCamera } from './containers/ScreenSpaceCamera'
 import { ScreenSpaceSelection } from './containers/ScreenSpaceSelection'
 import { SelectionBoundingSphere } from './containers/SelectionBoundingSphere'
+import { SelectionCoordinator } from './containers/SelectionCoordinator'
 import { Terrains } from './containers/Terrains'
 import { ToolMachineEvents } from './containers/ToolMachineEvents'
 import { DeveloperPanels } from './developer/DeveloperPanels'
@@ -112,7 +112,7 @@ export const PlateauView: FC<PlateauViewProps> = () => {
       </Canvas>
       <KeyBindings />
       <ScreenSpaceSelection />
-      <ExclusiveSelection />
+      <SelectionCoordinator />
       <AppLayout
         main={<MainPanel />}
         context={<LocationContextBar />}
