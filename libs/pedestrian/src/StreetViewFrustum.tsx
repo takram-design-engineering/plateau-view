@@ -64,32 +64,11 @@ const colorGeometryAttribute = new GeometryAttribute({
   componentsPerAttribute: 3,
   normalize: true,
   values: new Uint8Array(
+    // Colors of vertices adjacent to the near plane are 255. 0 otherwise.
     [
-      [0xff, 0, 0],
-      [0xff, 0, 0],
-      [0xff, 0, 0],
-      [0xff, 0, 0],
-      [0, 0, 0],
-      [0, 0, 0],
-      [0, 0, 0],
-      [0, 0, 0],
-      [0, 0, 0],
-      [0xff, 0, 0],
-      [0xff, 0, 0],
-      [0, 0, 0],
-      [0, 0, 0],
-      [0xff, 0, 0],
-      [0xff, 0, 0],
-      [0, 0, 0],
-      [0xff, 0, 0],
-      [0, 0, 0],
-      [0, 0, 0],
-      [0xff, 0, 0],
-      [0xff, 0, 0],
-      [0, 0, 0],
-      [0, 0, 0],
-      [0xff, 0, 0]
-    ].flat()
+      0xff, 0xff, 0xff, 0xff, 0, 0, 0, 0, 0, 0xff, 0xff, 0, 0, 0xff, 0xff, 0,
+      0xff, 0, 0, 0xff, 0xff, 0, 0, 0xff
+    ].flatMap(value => [value, value, value])
   )
 })
 

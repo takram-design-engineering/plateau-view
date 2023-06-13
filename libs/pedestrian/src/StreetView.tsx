@@ -39,6 +39,9 @@ export const StreetView: FC<StreetViewProps> = ({
   useEffect(() => {
     const element = ref.current
     invariant(element != null)
+
+    // TODO: Prevent street view container from being appended to multiple
+    // elements at the same time.
     element.appendChild(container)
     return () => {
       invariant(container != null)
@@ -46,7 +49,6 @@ export const StreetView: FC<StreetViewProps> = ({
     }
   }, [container])
 
-  // Load street view panorama.
   useEffect(() => {
     let canceled = false
     ;(async () => {
