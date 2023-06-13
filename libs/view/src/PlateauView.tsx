@@ -9,6 +9,7 @@ import { LayersRenderer, useAddLayer } from '@takram/plateau-layers'
 import { AppLayout } from '@takram/plateau-ui-components'
 import {
   BUILDING_LAYER,
+  PEDESTRIAN_LAYER,
   createViewLayer,
   layerComponents
 } from '@takram/plateau-view-layers'
@@ -61,6 +62,13 @@ const InitialLayers: FC = () => {
           lod: 2,
           textured: false
         })
+      ),
+      addLayer(
+        createViewLayer({
+          type: PEDESTRIAN_LAYER,
+          longitude: 139.769,
+          latitude: 35.68
+        })
       )
     ]
     return () => {
@@ -108,11 +116,11 @@ export const PlateauView: FC<PlateauViewProps> = () => {
         <Areas />
         <ReverseGeocoding />
         <ToolMachineEvents />
+        <SelectionCoordinator />
         <SelectionBoundingSphere />
       </Canvas>
       <KeyBindings />
       <ScreenSpaceSelection />
-      <SelectionCoordinator />
       <AppLayout
         main={<MainPanel />}
         context={<LocationContextBar />}
