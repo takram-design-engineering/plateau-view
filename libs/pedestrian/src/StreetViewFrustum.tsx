@@ -14,6 +14,7 @@ import {
   Transforms
 } from '@cesium/engine'
 import { useTheme } from '@mui/material'
+import { animate, useMotionValue } from 'framer-motion'
 import { useEffect, useMemo, type FC } from 'react'
 import invariant from 'tiny-invariant'
 
@@ -60,8 +61,9 @@ interface StreetViewFrustumProps {
   length?: number
 }
 
-const cartesianScratch = new Cartesian3()
-const quaternionScratch = new Quaternion()
+const positionScratch = new Cartesian3()
+const scaleScratch = new Cartesian3()
+const rotationScratch = new Quaternion()
 
 const colorGeometryAttribute = new GeometryAttribute({
   componentDatatype: ComponentDatatype.UNSIGNED_BYTE,
@@ -153,6 +155,32 @@ export const StreetViewFrustum: FC<StreetViewFrustumProps> = ({
   const scene = useCesium(({ scene }) => scene)
   scene.requestRender()
 
+  const motionVisibility = useMotionValue(0)
+  useEffect(() => {
+    let canceled = false
+    let stop: (() => void) | undefined
+    void primitive.readyPromise.then(() => {
+      if (canceled) {
+        return
+      }
+      stop = animate(motionVisibility, 1, {
+        type: 'tween',
+        ease: 'easeOut',
+        duration: 0.2
+      }).stop
+    })
+    return () => {
+      canceled = true
+      stop?.()
+    }
+  }, [primitive, motionVisibility])
+
+  useEffect(() => {
+    return motionVisibility.on('change', () => {
+      scene.requestRender()
+    })
+  }, [scene, motionVisibility])
+
   const motionLocation = useMotionLocation(location)
 
   useEffect(() => {
@@ -162,17 +190,22 @@ export const StreetViewFrustum: FC<StreetViewFrustumProps> = ({
   }, [scene, motionLocation])
 
   usePreRender(() => {
+    const visibility = motionVisibility.get()
+    primitive.appearance.material.uniforms.opacity = visibility
     const location = motionLocation.get()
-    const position = getPosition(location, scene, cartesianScratch)
+    const position = getPosition(location, scene, positionScratch)
     const rotation = createQuaternionFromHeadingPitch(
       headingPitch,
       position,
-      quaternionScratch
+      rotationScratch
     )
+    scaleScratch.x = visibility
+    scaleScratch.y = visibility
+    scaleScratch.z = visibility
     Matrix4.fromTranslationQuaternionRotationScale(
       position,
       rotation,
-      Cartesian3.ONE,
+      scaleScratch,
       primitive.modelMatrix
     )
   })

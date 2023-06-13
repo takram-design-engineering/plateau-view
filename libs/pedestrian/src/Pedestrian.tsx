@@ -84,7 +84,7 @@ export const Pedestrian: FC<PedestrianProps> = withEphemerality(
           location={streetViewLocation ?? location}
           selected={selected || highlighted}
         />
-        {(selected || highlighted) &&
+        {selected &&
           streetViewLocation != null &&
           streetViewHeadingPitch != null && (
             <StreetViewFrustum
