@@ -6,12 +6,10 @@ import {
   FrustumGeometry,
   GeometryAttribute,
   GeometryInstance,
-  HeadingPitchRoll,
   Matrix4,
   PerspectiveFrustum,
   Primitive,
-  Quaternion,
-  Transforms
+  Quaternion
 } from '@cesium/engine'
 import { useTheme } from '@mui/material'
 import { animate, useMotionValue } from 'framer-motion'
@@ -21,29 +19,10 @@ import invariant from 'tiny-invariant'
 import { useCesium, useInstance, usePreRender } from '@takram/plateau-cesium'
 
 import { FrustumAppearance } from './FrustumAppearance'
+import { createQuaternionFromHeadingPitch } from './createQuaternionFromHeadingPitch'
 import { getPosition } from './getPosition'
 import { type HeadingPitch, type Location } from './types'
 import { useMotionLocation } from './useMotionLocation'
-
-const headingPitchRollScratch = new HeadingPitchRoll()
-
-function createQuaternionFromHeadingPitch(
-  headingPitch: HeadingPitch,
-  position: Cartesian3,
-  result = new Quaternion()
-): Quaternion {
-  const heading = CesiumMath.toRadians(headingPitch.heading)
-  const pitch = CesiumMath.toRadians(headingPitch.pitch)
-  headingPitchRollScratch.heading = heading + CesiumMath.PI_OVER_TWO
-  headingPitchRollScratch.pitch = CesiumMath.PI_OVER_TWO - pitch
-  return Transforms.headingPitchRollQuaternion(
-    position,
-    headingPitchRollScratch,
-    undefined,
-    undefined,
-    result
-  )
-}
 
 interface StreetViewFrustumProps {
   location: Location
@@ -122,6 +101,11 @@ export const StreetViewFrustum: FC<StreetViewFrustumProps> = ({
 
   const scene = useCesium(({ scene }) => scene)
   scene.requestRender()
+  useEffect(() => {
+    return () => {
+      scene.requestRender()
+    }
+  }, [scene])
 
   const motionVisibility = useMotionValue(0)
   useEffect(() => {
@@ -179,12 +163,6 @@ export const StreetViewFrustum: FC<StreetViewFrustumProps> = ({
       primitive.modelMatrix
     )
   })
-
-  useEffect(() => {
-    return () => {
-      scene.requestRender()
-    }
-  }, [scene])
 
   return null
 }

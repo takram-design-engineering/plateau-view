@@ -19,7 +19,14 @@ export function useSceneEvent(
   useEffect(() => {
     return scene?.[type].addEventListener(
       (scene: Scene, currentTime: JulianDate) => {
-        callbackRef.current(scene, currentTime)
+        try {
+          callbackRef.current(scene, currentTime)
+        } catch (error) {
+          // WORKAROUND: Errors in scene event listeners silently terminates
+          // rendering.
+          // TODO: Maybe a configuration issue.
+          console.error(error)
+        }
       }
     )
   }, [type, scene])

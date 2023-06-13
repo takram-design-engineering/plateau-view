@@ -1,15 +1,18 @@
 import {
-  BoundingRectangle,
   Cartesian2,
   Cartesian3,
+  Color,
+  DistanceDisplayCondition,
   HeightReference,
   type Billboard
 } from '@cesium/engine'
+import { useTheme } from '@mui/material'
 import { useEffect, useRef, type FC } from 'react'
 
 import { useCesium, usePreRender } from '@takram/plateau-cesium'
 
-import billboardImage from './assets/billboard.png'
+import balloonImage from './assets/balloon.png'
+import iconImage from './assets/icon.png'
 import { getPosition } from './getPosition'
 import { type Location } from './types'
 import { useMotionLocation } from './useMotionLocation'
@@ -28,53 +31,70 @@ export const PedestrianObject: FC<PedestrianObjectProps> = ({
   selected = false
 }) => {
   const billboards = useCesium(({ billboards }) => billboards)
-  const billboardRef = useRef<Billboard>()
+  const balloonRef = useRef<Billboard>()
+  const iconRef = useRef<Billboard>()
 
   useEffect(() => {
     if (billboards.isDestroyed()) {
       return
     }
-    const billboard = billboards.add({
+    const distanceDisplayCondition = new DistanceDisplayCondition(0, 1e4)
+    const balloon = billboards.add({
       id,
       // @ts-expect-error TODO: Declare Next.js image type
-      image: billboardImage.src,
+      image: balloonImage.src,
       width: 64,
       height: 64,
       pixelOffset: new Cartesian2(16, -16),
-      imageSubRegion: new BoundingRectangle(0, 128, 128, 128),
-      heightReference: HeightReference.NONE
+      heightReference: HeightReference.NONE,
+      distanceDisplayCondition,
+      eyeOffset: new Cartesian3(0, 0, -10)
     })
-    billboardRef.current = billboard
+    const icon = billboards.add({
+      id,
+      // @ts-expect-error TODO: Declare Next.js image type
+      image: iconImage.src,
+      width: 24,
+      height: 24,
+      pixelOffset: new Cartesian2(16, -16),
+      heightReference: HeightReference.NONE,
+      distanceDisplayCondition,
+      // WORKAROUND: Render above balloon.
+      eyeOffset: new Cartesian3(0, 0, -10.1)
+    })
+    balloonRef.current = balloon
+    iconRef.current = icon
     return () => {
       if (!billboards.isDestroyed()) {
-        billboards.remove(billboard)
+        billboards.remove(balloon)
+        billboards.remove(icon)
       }
-      billboardRef.current = undefined
+      balloonRef.current = undefined
+      iconRef.current = undefined
     }
   }, [id, billboards])
 
   const scene = useCesium(({ scene }) => scene)
-
+  scene.requestRender()
   useEffect(() => {
-    const billboard = billboardRef.current
-    if (billboard == null) {
+    return () => {
+      scene.requestRender()
+    }
+  }, [scene])
+
+  const theme = useTheme()
+  useEffect(() => {
+    const balloon = balloonRef.current
+    if (balloon == null) {
       return
     }
     if (selected) {
-      billboard.setImageSubRegion(
-        // @ts-expect-error TODO: Declare Next.js image type
-        billboardImage.src,
-        new BoundingRectangle(0, 0, 128, 128)
-      )
+      balloon.color = Color.fromCssColorString(theme.palette.primary.main)
     } else {
-      billboard.setImageSubRegion(
-        // @ts-expect-error TODO: Declare Next.js image type
-        billboardImage.src,
-        new BoundingRectangle(0, 128, 128, 128)
-      )
+      balloon.color = Color.BLACK
     }
     scene.requestRender()
-  }, [selected, scene])
+  }, [selected, scene, theme])
 
   const motionLocation = useMotionLocation(location)
 
@@ -85,22 +105,16 @@ export const PedestrianObject: FC<PedestrianObjectProps> = ({
   }, [scene, motionLocation])
 
   usePreRender(() => {
-    const billboard = billboardRef.current
-    if (billboard == null) {
-      return
+    const position = getPosition(motionLocation.get(), scene, positionScratch)
+    const balloon = balloonRef.current
+    if (balloon != null) {
+      balloon.position = position
     }
-    billboard.position = getPosition(
-      motionLocation.get(),
-      scene,
-      positionScratch
-    )
+    const icon = iconRef.current
+    if (icon != null) {
+      icon.position = position
+    }
   })
-
-  useEffect(() => {
-    return () => {
-      scene.requestRender()
-    }
-  }, [scene])
 
   return null
 }
