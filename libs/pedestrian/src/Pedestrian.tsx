@@ -1,4 +1,5 @@
 import { BoundingSphere } from '@cesium/engine'
+import { AnimatePresence } from 'framer-motion'
 import { nanoid } from 'nanoid'
 import { useState, type FC } from 'react'
 
@@ -84,15 +85,17 @@ export const Pedestrian: FC<PedestrianProps> = withEphemerality(
           location={streetViewLocation ?? location}
           selected={selected || highlighted}
         />
-        {selected &&
-          streetViewLocation != null &&
-          streetViewHeadingPitch != null && (
-            <StreetViewFrustum
-              location={streetViewLocation}
-              headingPitch={streetViewHeadingPitch}
-              zoom={streetViewZoom}
-            />
-          )}
+        <AnimatePresence>
+          {selected &&
+            streetViewLocation != null &&
+            streetViewHeadingPitch != null && (
+              <StreetViewFrustum
+                location={streetViewLocation}
+                headingPitch={streetViewHeadingPitch}
+                zoom={streetViewZoom}
+              />
+            )}
+        </AnimatePresence>
       </>
     )
   }

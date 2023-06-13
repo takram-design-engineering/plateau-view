@@ -12,11 +12,12 @@ import {
   Quaternion
 } from '@cesium/engine'
 import { useTheme } from '@mui/material'
-import { animate, useMotionValue } from 'framer-motion'
+import { animate, useMotionValue, usePresence } from 'framer-motion'
 import { useEffect, useMemo, type FC } from 'react'
 import invariant from 'tiny-invariant'
 
 import { useCesium, useInstance, usePreRender } from '@takram/plateau-cesium'
+import { useReady } from '@takram/plateau-cesium-helpers'
 
 import { FrustumAppearance } from './FrustumAppearance'
 import { createQuaternionFromHeadingPitch } from './createQuaternionFromHeadingPitch'
@@ -101,31 +102,25 @@ export const StreetViewFrustum: FC<StreetViewFrustumProps> = ({
 
   const scene = useCesium(({ scene }) => scene)
   scene.requestRender()
-  useEffect(() => {
-    return () => {
-      scene.requestRender()
-    }
-  }, [scene])
 
   const motionVisibility = useMotionValue(0)
+  const ready = useReady(primitive)
+  const [present, safeToRemove] = usePresence()
   useEffect(() => {
-    let canceled = false
-    let stop: (() => void) | undefined
-    void primitive.readyPromise.then(() => {
-      if (canceled) {
-        return
-      }
-      stop = animate(motionVisibility, 1, {
-        type: 'tween',
-        ease: 'easeOut',
-        duration: 0.2
-      }).stop
-    })
-    return () => {
-      canceled = true
-      stop?.()
+    if (!ready) {
+      return
     }
-  }, [primitive, motionVisibility])
+    return animate(motionVisibility, present ? 1 : 0, {
+      type: 'tween',
+      ease: 'easeOut',
+      duration: 0.2,
+      onComplete: () => {
+        if (!present) {
+          safeToRemove()
+        }
+      }
+    }).stop
+  }, [primitive, motionVisibility, ready, present, safeToRemove])
 
   useEffect(() => {
     return motionVisibility.on('change', () => {
