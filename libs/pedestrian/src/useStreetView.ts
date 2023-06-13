@@ -1,8 +1,7 @@
 import { Loader } from '@googlemaps/js-api-loader'
-import { useMemo, useRef } from 'react'
 import { suspend } from 'suspend-react'
 
-export interface StreetViewPanorama {
+export interface StreetView {
   container: HTMLDivElement
   panorama: google.maps.StreetViewPanorama
   service: google.maps.StreetViewService
@@ -18,26 +17,21 @@ export function useStreetView(
     imageDateControl: false,
     motionTrackingControl: false
   }
-): StreetViewPanorama {
-  const library = suspend(async () => {
+): StreetView {
+  return suspend(async () => {
     const loader = new Loader({
       apiKey,
       version: 'weekly'
     })
-    return await loader.importLibrary('streetView')
-  }, [useStreetView, apiKey])
-
-  const optionsRef = useRef(options)
-  optionsRef.current = options
-
-  return useMemo(() => {
+    const library = await loader.importLibrary('streetView')
     const container = document.createElement('div')
     container.style.width = '100%'
     container.style.height = '100%'
+
     return {
       container,
-      panorama: new library.StreetViewPanorama(container, optionsRef.current),
+      panorama: new library.StreetViewPanorama(container, options),
       service: new library.StreetViewService()
     }
-  }, [library])
+  }, [apiKey])
 }
