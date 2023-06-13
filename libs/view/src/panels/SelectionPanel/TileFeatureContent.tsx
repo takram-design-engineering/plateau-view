@@ -43,7 +43,7 @@ export const TileFeatureContent: FC<TileFeatureContentProps> = withEphemerality(
     }, [values, showFeatures])
 
     return (
-      <Inspector>
+      <Inspector sx={{ width: 360 }}>
         <InspectorHeader
           // TODO: Change name and icon according to the feature type.
           title={`${values.length}個の建築物`}

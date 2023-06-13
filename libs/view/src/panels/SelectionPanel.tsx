@@ -1,9 +1,9 @@
-import { styled } from '@mui/material'
 import { useAtomValue } from 'jotai'
 import { type FC } from 'react'
 
 import { PLATEAU_TILE_FEATURE } from '@takram/plateau-datasets'
 import { AutoHeight, FloatingPanel } from '@takram/plateau-ui-components'
+import { PEDESTRIAN_LAYER } from '@takram/plateau-view-layers'
 
 import {
   LAYER_SELECTION,
@@ -11,11 +11,8 @@ import {
   selectionGroupsAtom
 } from '../states/selection'
 import { LayerContent } from './SelectionPanel/LayerContent'
+import { PedestrianLayerContent } from './SelectionPanel/PedestrianLayerContent'
 import { TileFeatureContent } from './SelectionPanel/TileFeatureContent'
-
-const Root = styled(FloatingPanel)({
-  width: 360
-})
 
 export const SelectionPanel: FC = () => {
   let content = null
@@ -25,7 +22,14 @@ export const SelectionPanel: FC = () => {
     const { type, subtype } = selectionGroup
     switch (type) {
       case LAYER_SELECTION:
-        content = <LayerContent values={selectionGroup.values} />
+        switch (subtype) {
+          case PEDESTRIAN_LAYER:
+            content = <PedestrianLayerContent values={selectionGroup.values} />
+            break
+          default:
+            content = <LayerContent values={selectionGroup.values} />
+            break
+        }
         break
       case SCREEN_SPACE_SELECTION:
         switch (subtype) {
@@ -42,9 +46,9 @@ export const SelectionPanel: FC = () => {
   }
   return (
     <AutoHeight>
-      <Root scrollable deferScrollable>
+      <FloatingPanel scrollable deferScrollable>
         <div>{content}</div>
-      </Root>
+      </FloatingPanel>
     </AutoHeight>
   )
 }
