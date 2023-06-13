@@ -88,7 +88,7 @@ export function LayerContent<T extends LayerType>({
   const type = values[0].type
 
   return (
-    <Inspector sx={{ width: 360 }}>
+    <Inspector>
       <InspectorHeader
         title={
           values.length === 1

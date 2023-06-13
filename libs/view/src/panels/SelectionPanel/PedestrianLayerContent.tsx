@@ -79,7 +79,7 @@ export const PedestrianLayerContent: FC<PedestrianLayerContentProps> = ({
     'Missing environment variable: NEXT_PUBLIC_GOOGLE_MAP_TILES_API_KEY'
   )
   return (
-    <Inspector sx={{ width: 480 }}>
+    <Inspector>
       <InspectorHeader title='歩行者視点' iconComponent={PedestrianIcon} />
       <Divider light />
       <LayerActions values={values} />

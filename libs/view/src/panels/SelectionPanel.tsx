@@ -1,4 +1,5 @@
 import { useAtomValue } from 'jotai'
+import { Resizable } from 're-resizable'
 import { type FC } from 'react'
 
 import { PLATEAU_TILE_FEATURE } from '@takram/plateau-datasets'
@@ -47,7 +48,25 @@ export const SelectionPanel: FC = () => {
   return (
     <AutoHeight>
       <FloatingPanel scrollable deferScrollable>
-        <div>{content}</div>
+        <Resizable
+          defaultSize={{
+            width: 360,
+            height: 'auto'
+          }}
+          minWidth={360}
+          enable={{
+            top: false,
+            right: false,
+            bottom: false,
+            left: true,
+            topRight: false,
+            bottomRight: false,
+            bottomLeft: false,
+            topLeft: false
+          }}
+        >
+          <div>{content}</div>
+        </Resizable>
       </FloatingPanel>
     </AutoHeight>
   )
