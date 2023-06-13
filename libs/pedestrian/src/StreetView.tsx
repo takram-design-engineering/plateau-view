@@ -10,10 +10,13 @@ import { suspend } from 'suspend-react'
 import invariant from 'tiny-invariant'
 
 import { type HeadingPitch, type Location } from './types'
+import { usePanoramaHeadingPitchChange } from './usePanoramaHeadingPitchChange'
+import { usePanoramaLocationChange } from './usePanoramaLocationChange'
+import { usePanoramaZoomChange } from './usePanoramaZoomChange'
 
-let container: HTMLDivElement
-let panorama: google.maps.StreetViewPanorama
-let service: google.maps.StreetViewService
+let container: HTMLDivElement | undefined
+let panorama: google.maps.StreetViewPanorama | undefined
+let service: google.maps.StreetViewService | undefined
 
 const Root = styled('div')({})
 
@@ -64,6 +67,7 @@ export const StreetView: FC<StreetViewProps> = ({
     invariant(element != null)
     element.appendChild(container)
     return () => {
+      invariant(container != null)
       element.removeChild(container)
     }
   }, [StreetViewPanorama])
@@ -100,106 +104,9 @@ export const StreetView: FC<StreetViewProps> = ({
     }
   }, [location, radius, StreetViewService])
 
-  const handlerRefs = useRef({
-    onLocationChange,
-    onHeadingPitchChange,
-    onZoomChange
-  })
-  Object.assign(handlerRefs.current, {
-    onLocationChange,
-    onHeadingPitchChange,
-    onZoomChange
-  })
-
-  useEffect(() => {
-    const { onLocationChange, onHeadingPitchChange, onZoomChange } =
-      handlerRefs.current
-
-    let prevPosition = panorama.getPosition()
-    const handlePositionChange = (): void => {
-      const nextPosition = panorama.getPosition()
-      if (nextPosition?.equals(prevPosition) === true) {
-        return
-      }
-      prevPosition = nextPosition
-      onLocationChange?.(
-        prevPosition != null
-          ? {
-              longitude: prevPosition.lng(),
-              latitude: prevPosition.lat(),
-              height: 2 // TODO: Make this configurable
-            }
-          : undefined
-      )
-    }
-
-    let prevPov = panorama.getPov()
-    const handlePovChange = (): void => {
-      const nextPov = panorama.getPov()
-      if (
-        nextPov?.heading === prevPov.heading &&
-        nextPov?.pitch === prevPov.pitch
-      ) {
-        return
-      }
-      prevPov = nextPov
-      onHeadingPitchChange?.(
-        prevPov != null
-          ? {
-              heading: prevPov.heading,
-              pitch: prevPov.pitch
-            }
-          : undefined
-      )
-    }
-
-    let prevZoom = panorama.getZoom()
-    const handleZoomChange = (): void => {
-      const nextZoom = panorama.getZoom()
-      if (nextZoom === prevZoom) {
-        return
-      }
-      prevZoom = nextZoom
-      onZoomChange?.(nextZoom)
-    }
-
-    onLocationChange?.(
-      prevPosition != null
-        ? {
-            longitude: prevPosition.lng(),
-            latitude: prevPosition.lat(),
-            height: 2 // TODO: Make this configurable
-          }
-        : undefined
-    )
-    onHeadingPitchChange?.(
-      prevPov != null
-        ? {
-            heading: prevPov.heading,
-            pitch: prevPov.pitch
-          }
-        : undefined
-    )
-    onZoomChange?.(prevZoom)
-
-    const positionChangeListener = panorama.addListener(
-      'position_changed',
-      handlePositionChange
-    )
-    const povChangeListener = panorama.addListener(
-      'pov_changed',
-      handlePovChange
-    )
-    const zoomChangeListener = panorama.addListener(
-      'zoom_changed',
-      handleZoomChange
-    )
-    return () => {
-      positionChangeListener.remove()
-      povChangeListener.remove()
-      zoomChangeListener.remove()
-    }
-  }, [])
+  usePanoramaLocationChange(panorama, onLocationChange)
+  usePanoramaHeadingPitchChange(panorama, onHeadingPitchChange)
+  usePanoramaZoomChange(panorama, onZoomChange)
 
   return <Root ref={ref} {...props} />
 }
