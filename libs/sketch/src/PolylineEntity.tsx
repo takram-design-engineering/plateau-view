@@ -42,7 +42,7 @@ export const PolylineEntity: FC<PolylineEntityProps> = ({
     return positionsArray.map(
       (positions, index): EntityProps => ({
         ...(feature.id != null && {
-          id: `${PolylineEntity}:${feature.id}:${index}`
+          id: `PolylineEntity:${feature.id}:${index}`
         }),
         polyline: {
           positions,

@@ -42,7 +42,7 @@ export const PolygonEntity: FC<PolygonEntityProps> = ({
     return hierarchyArray.map(
       (hierarchy, index): EntityProps => ({
         ...(feature.id != null && {
-          id: `${PolygonEntity}:${feature.id}:${index}`
+          id: `PolygonEntity:${feature.id}:${index}`
         }),
         polygon: {
           hierarchy,

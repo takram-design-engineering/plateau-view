@@ -1,12 +1,11 @@
 import { Cartesian2 } from '@cesium/engine'
 import { useSetAtom } from 'jotai'
-import { useCallback, useEffect, useMemo, type FC } from 'react'
+import { useEffect, useMemo, type FC } from 'react'
 
 import { useCesium } from '@takram/plateau-cesium'
 import { assignPropertyProps } from '@takram/plateau-react-helpers'
 
 import { Marquee } from './Marquee'
-import { type ScreenSpaceSelectionEventHandler } from './ScreenSpaceSelectionEvent'
 import { ScreenSpaceSelectionHandler } from './ScreenSpaceSelectionHandler'
 import { pickMany } from './pickMany'
 import {
@@ -45,12 +44,12 @@ export const ScreenSpaceSelection: FC<ScreenSpaceSelectionProps> = ({
     setHandler(handler ?? null)
   }, [handler, setHandler])
 
-  // Move to context perhaps?
   const replace = useSetAtom(replaceScreenSpaceSelectionObjectsAtom)
   const add = useSetAtom(addScreenSpaceSelectionObjectsAtom)
   const remove = useSetAtom(removeScreenSpaceSelectionObjectsAtom)
-  const handleEvent: ScreenSpaceSelectionEventHandler = useCallback(
-    event => {
+
+  useEffect(() => {
+    return handler?.change.addEventListener(event => {
       if (scene == null) {
         return
       }
@@ -74,13 +73,8 @@ export const ScreenSpaceSelection: FC<ScreenSpaceSelectionProps> = ({
         }
       }
       ;({ replace, add, remove })[event.action](objects)
-    },
-    [scene, replace, add, remove]
-  )
-
-  useEffect(() => {
-    return handler?.change.addEventListener(handleEvent)
-  }, [handler, handleEvent])
+    })
+  }, [scene, handler, replace, add, remove])
 
   return <Marquee />
 }
