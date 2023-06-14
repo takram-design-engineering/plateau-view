@@ -53,7 +53,7 @@ export const Pedestrian: FC<PedestrianProps> = withEphemerality(
 
     useScreenSpaceSelectionResponder({
       type: PEDESTRIAN_OBJECT,
-      transform: object => {
+      convertToSelection: object => {
         return 'id' in object && object.id === objectId
           ? {
               type: PEDESTRIAN_OBJECT,
@@ -61,7 +61,7 @@ export const Pedestrian: FC<PedestrianProps> = withEphemerality(
             }
           : undefined
       },
-      predicate: (
+      shouldRespondToSelection: (
         value
       ): value is ScreenSpaceSelectionEntry<typeof PEDESTRIAN_OBJECT> => {
         return value.type === PEDESTRIAN_OBJECT && value.value === objectId

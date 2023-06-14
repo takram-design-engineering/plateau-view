@@ -111,7 +111,7 @@ function useSelectionResponder({
   const scene = useCesium(({ scene }) => scene)
   useScreenSpaceSelectionResponder({
     type: PLATEAU_TILE_FEATURE,
-    transform: object => {
+    convertToSelection: object => {
       if (
         !(object instanceof Cesium3DTileFeature) ||
         object.tileset !== tileset
@@ -129,7 +129,7 @@ function useSelectionResponder({
           }
         : undefined
     },
-    predicate: (
+    shouldRespondToSelection: (
       value
     ): value is ScreenSpaceSelectionEntry<typeof PLATEAU_TILE_FEATURE> => {
       return (

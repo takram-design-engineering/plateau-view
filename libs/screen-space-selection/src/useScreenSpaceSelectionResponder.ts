@@ -27,11 +27,13 @@ export function useScreenSpaceSelectionResponder<
   paramsRef.current = params
 
   const responder = useConstant<ScreenSpaceSelectionResponder<T>>(() => ({
-    transform: object => {
-      return paramsRef.current.transform(object)
+    convertToSelection: object => {
+      return paramsRef.current.convertToSelection(object)
     },
-    predicate: (value): value is ScreenSpaceSelectionEntry<T> => {
-      return paramsRef.current.predicate(value)
+    shouldRespondToSelection: (
+      value
+    ): value is ScreenSpaceSelectionEntry<T> => {
+      return paramsRef.current.shouldRespondToSelection(value)
     },
     onSelect: value => {
       paramsRef.current.onSelect?.(value)
