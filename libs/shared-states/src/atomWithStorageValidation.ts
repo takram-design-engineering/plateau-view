@@ -39,10 +39,10 @@ export function atomWithStorageValidation<T, Options = never>({
         return initialValue
       }
     },
-    setItem: async (key, value) => {
+    setItem: (key, value) => {
       localStorage.setItem(key, JSON.stringify(value))
     },
-    removeItem: async key => {
+    removeItem: key => {
       localStorage.removeItem(key)
     }
   })
