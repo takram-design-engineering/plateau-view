@@ -1,9 +1,9 @@
 import { atom } from 'jotai'
 import { fromPairs, uniq, without } from 'lodash'
 
-import { pedestrianSelectionAtom } from '@takram/plateau-pedestrian'
 import { featureSelectionAtom } from '@takram/plateau-datasets'
 import { layersAtom } from '@takram/plateau-layers'
+import { pedestrianSelectionAtom } from '@takram/plateau-pedestrian'
 import { isNotNullish } from '@takram/plateau-type-helpers'
 
 import { type PedestrianLayerModel } from './PedestrianLayer'

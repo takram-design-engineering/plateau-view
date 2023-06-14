@@ -41,7 +41,6 @@ export const PedestrianObject: FC<PedestrianObjectProps> = ({
     const distanceDisplayCondition = new DistanceDisplayCondition(0, 1e4)
     const balloon = billboards.add({
       id,
-      // @ts-expect-error TODO: Declare Next.js image type
       image: balloonImage.src,
       width: 64,
       height: 64,
@@ -52,7 +51,6 @@ export const PedestrianObject: FC<PedestrianObjectProps> = ({
     })
     const icon = billboards.add({
       id,
-      // @ts-expect-error TODO: Declare Next.js image type
       image: iconImage.src,
       width: 24,
       height: 24,
