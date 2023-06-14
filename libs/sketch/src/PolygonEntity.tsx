@@ -7,7 +7,10 @@ import { type Feature, type MultiPolygon, type Polygon } from 'geojson'
 import { useEffect, useMemo, type FC } from 'react'
 
 import { Entity, useCesium, type EntityProps } from '@takram/plateau-cesium'
-import { convertPolygonToHierarchyArray } from '@takram/plateau-cesium-helpers'
+import {
+  compose,
+  convertPolygonToHierarchyArray
+} from '@takram/plateau-cesium-helpers'
 
 export interface PolygonEntityProps {
   feature: Feature<Polygon | MultiPolygon>
@@ -42,7 +45,7 @@ export const PolygonEntity: FC<PolygonEntityProps> = ({
     return hierarchyArray.map(
       (hierarchy, index): EntityProps => ({
         ...(feature.id != null && {
-          id: `PolygonEntity:${feature.id}:${index}`
+          id: compose({ type: 'PolygonEntity', key: feature.id, index })
         }),
         polygon: {
           hierarchy,

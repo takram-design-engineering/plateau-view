@@ -4,6 +4,7 @@ import { nanoid } from 'nanoid'
 import { useState, type FC } from 'react'
 
 import { useCesium } from '@takram/plateau-cesium'
+import { compose } from '@takram/plateau-cesium-helpers'
 import { useConstant, withEphemerality } from '@takram/plateau-react-helpers'
 import {
   useScreenSpaceSelectionResponder,
@@ -45,7 +46,7 @@ export const Pedestrian: FC<PedestrianProps> = withEphemerality(
     streetViewZoom
   }) => {
     const defaultId = useConstant(() => nanoid())
-    const objectId = `Pedestrian:${id ?? defaultId}`
+    const objectId = compose({ type: 'Pedestrian', key: id ?? defaultId })
 
     const [highlighted, setHighlighted] = useState(false)
     const scene = useCesium(({ scene }) => scene)

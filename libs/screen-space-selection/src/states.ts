@@ -1,6 +1,7 @@
 import { BoundingSphere } from '@cesium/engine'
 import { atom } from 'jotai'
 
+import { compose } from '@takram/plateau-cesium-helpers'
 import {
   atomsWithSelection,
   atomsWithTransformSelection
@@ -44,11 +45,13 @@ function transform(object: object): ScreenSpaceSelectionEntry | undefined {
 const selectionAtoms = atomsWithSelection<ScreenSpaceSelectionEntry>({
   getKey: value => {
     // Don't remove type assertion.
-    return `${value.type}:${
-      typeof value.value === 'object'
-        ? String((value.value as unknown as ScreenSpaceSelectionKeyedValue).key)
-        : String(value.value)
-    }`
+    return compose({
+      type: value.type,
+      key:
+        typeof value.value === 'object'
+          ? (value.value as unknown as ScreenSpaceSelectionKeyedValue).key
+          : value.value
+    })
   },
   onSelect: value => {
     for (const responder of responders) {
