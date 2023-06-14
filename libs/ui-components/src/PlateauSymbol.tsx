@@ -1,6 +1,6 @@
-import { createSvgIcon } from '@mui/material'
+import { createSvgIcon, styled } from '@mui/material'
 
-export const PlateauSymbol = createSvgIcon(
+const Root = createSvgIcon(
   <>
     <path
       d='M11.7514 9.63769L9.91274 8.57611L3.65234 4.96173V14.3138L20.3469 23.9523V14.6003L17.008 12.6726L16.0492 12.119L13.669 10.7448L11.7514 9.63769Z'
@@ -21,3 +21,11 @@ export const PlateauSymbol = createSvgIcon(
   </>,
   'Symbol'
 )
+
+export const PlateauSymbol = styled(Root)(({ theme }) => ({
+  ...(theme.palette.mode === 'dark' && {
+    '& path': {
+      fill: theme.palette.text.primary
+    }
+  })
+}))
