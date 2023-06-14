@@ -6,7 +6,6 @@ import { type PLATEAU_TILE_FEATURE } from '@takram/plateau-datasets'
 import { withEphemerality } from '@takram/plateau-react-helpers'
 import {
   BuildingIcon,
-  Inspector,
   InspectorActions,
   InspectorHeader,
   VisibilityOffIcon,
@@ -43,7 +42,7 @@ export const TileFeatureContent: FC<TileFeatureContentProps> = withEphemerality(
     }, [values, showFeatures])
 
     return (
-      <Inspector sx={{ width: 360 }}>
+      <>
         <InspectorHeader
           // TODO: Change name and icon according to the feature type.
           title={`${values.length}個の建築物`}
@@ -61,7 +60,7 @@ export const TileFeatureContent: FC<TileFeatureContentProps> = withEphemerality(
             </IconButton>
           </Tooltip>
         </InspectorActions>
-      </Inspector>
+      </>
     )
   }
 )

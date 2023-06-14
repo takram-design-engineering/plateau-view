@@ -9,7 +9,6 @@ import {
   type Location
 } from '@takram/plateau-pedestrian'
 import {
-  Inspector,
   InspectorHeader,
   InspectorItem,
   PedestrianIcon
@@ -63,14 +62,11 @@ export const PedestrianLayerContent: FC<PedestrianLayerContentProps> = ({
 
   if (values.length > 1) {
     return (
-      <Inspector>
-        <InspectorHeader
-          // TODO: Change name and icon according to the feature type.
-          title={`${values.length}個の歩行者視点`}
-          iconComponent={PedestrianIcon}
-        />
-        <Divider light />
-      </Inspector>
+      <InspectorHeader
+        // TODO: Change name and icon according to the feature type.
+        title={`${values.length}個の歩行者視点`}
+        iconComponent={PedestrianIcon}
+      />
     )
   }
 
@@ -79,7 +75,7 @@ export const PedestrianLayerContent: FC<PedestrianLayerContentProps> = ({
     'Missing environment variable: NEXT_PUBLIC_GOOGLE_MAP_TILES_API_KEY'
   )
   return (
-    <Inspector>
+    <>
       <InspectorHeader title='歩行者視点' iconComponent={PedestrianIcon} />
       <Divider light />
       <LayerActions values={values} />
@@ -95,6 +91,6 @@ export const PedestrianLayerContent: FC<PedestrianLayerContentProps> = ({
           />
         </Suspense>
       </InspectorItem>
-    </Inspector>
+    </>
   )
 }

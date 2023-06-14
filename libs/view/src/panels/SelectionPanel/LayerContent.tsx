@@ -7,7 +7,6 @@ import invariant from 'tiny-invariant'
 
 import { type LayerModel, type LayerType } from '@takram/plateau-layers'
 import {
-  Inspector,
   InspectorHeader,
   InspectorItem,
   ParameterList,
@@ -88,7 +87,7 @@ export function LayerContent<T extends LayerType>({
   const type = values[0].type
 
   return (
-    <Inspector>
+    <>
       <InspectorHeader
         title={
           values.length === 1
@@ -107,6 +106,6 @@ export function LayerContent<T extends LayerType>({
           />
         </>
       )}
-    </Inspector>
+    </>
   )
 }

@@ -1,12 +1,12 @@
 {
   "name": "@takram/plateau-pedestrian",
-  "version": "0.0.1",
-  "main": "./index.js",
-  "types": "./index.d.ts",
+  "version": "0.0.0",
+  "sideEffects": false,
   "exports": {
     ".": {
-      "import": "./index.mjs",
       "require": "./index.js"
     }
-  }
+  },
+  "main": "./index.js",
+  "types": "./index.d.ts"
 }

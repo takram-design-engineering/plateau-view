@@ -1,9 +1,8 @@
 import { useAtomValue } from 'jotai'
-import { Resizable } from 're-resizable'
 import { type FC } from 'react'
 
 import { PLATEAU_TILE_FEATURE } from '@takram/plateau-datasets'
-import { AutoHeight, FloatingPanel } from '@takram/plateau-ui-components'
+import { Inspector } from '@takram/plateau-ui-components'
 import { PEDESTRIAN_LAYER } from '@takram/plateau-view-layers'
 
 import {
@@ -46,28 +45,8 @@ export const SelectionPanel: FC = () => {
     return null
   }
   return (
-    <AutoHeight>
-      <FloatingPanel scrollable deferScrollable>
-        <Resizable
-          defaultSize={{
-            width: 360,
-            height: 'auto'
-          }}
-          minWidth={360}
-          enable={{
-            top: false,
-            right: false,
-            bottom: false,
-            left: true,
-            topRight: false,
-            bottomRight: false,
-            bottomLeft: false,
-            topLeft: false
-          }}
-        >
-          <div>{content}</div>
-        </Resizable>
-      </FloatingPanel>
-    </AutoHeight>
+    <Inspector>
+      <div>{content}</div>
+    </Inspector>
   )
 }
