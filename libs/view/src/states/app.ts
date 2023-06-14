@@ -31,3 +31,5 @@ export const showDataFormatsAtom = atomWithReset(false)
 export const showAreaEntitiesAtom = atomWithReset(false)
 
 export const showSelectionBoundingSphereAtom = atomWithReset(false)
+
+export const inspectorWidthAtom = atomWithReset(360)

@@ -1,10 +1,14 @@
 import { useAtomValue } from 'jotai'
 import { type FC } from 'react'
+import { useAtom, useAtomValue } from 'jotai'
+import { type ResizeCallback } from 're-resizable'
+import { useCallback, type FC } from 'react'
 
 import { PLATEAU_TILE_FEATURE } from '@takram/plateau-datasets'
 import { Inspector } from '@takram/plateau-ui-components'
 import { PEDESTRIAN_LAYER } from '@takram/plateau-view-layers'
 
+import { inspectorWidthAtom } from '../states/app'
 import {
   LAYER_SELECTION,
   SCREEN_SPACE_SELECTION,
@@ -41,11 +45,20 @@ export const SelectionPanel: FC = () => {
   } else if (selectionGroups.length > 1) {
     content = null // TODO: Show mixed content
   }
+
+  const [inspectorWidth, setInspectorWidth] = useAtom(inspectorWidthAtom)
+  const handleResizeStop: ResizeCallback = useCallback(
+    (event, direction, element, delta) => {
+      setInspectorWidth(prevValue => prevValue + delta.width)
+    },
+    [setInspectorWidth]
+  )
+
   if (content == null) {
     return null
   }
   return (
-    <Inspector>
+    <Inspector defaultWidth={inspectorWidth} onResizeStop={handleResizeStop}>
       <div>{content}</div>
     </Inspector>
   )
