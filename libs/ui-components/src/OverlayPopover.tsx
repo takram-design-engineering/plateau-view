@@ -17,6 +17,7 @@ const Root = styled(Popover, {
   [`& .${popoverClasses.paper}`]: {
     overflow: 'visible',
     backgroundColor: 'transparent',
+    backgroundImage: 'none',
     borderRadius: 0,
     boxShadow: 'none',
     pointerEvents: 'auto',
