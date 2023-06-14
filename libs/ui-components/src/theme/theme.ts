@@ -26,13 +26,6 @@ import { MuiTooltip } from './components/MuiTooltip'
 const theme = createTheme()
 
 export const themeOptions: ThemeOptions = {
-  shadows: [
-    'none',
-    '0 0 0 1px rgba(0, 0, 0, 0.05), 0 1px 12px 0 rgba(0, 0, 0, 0.05)',
-    ...Array<string>(23).fill(
-      '0 0 2px 0 rgba(0, 0, 0, 0.15), 0 4px 32px rgba(0, 0, 0, 0.2)'
-    )
-  ] as Shadows,
   shape: {
     borderRadius: 10
   },
@@ -134,7 +127,14 @@ export const lightThemeOptions = merge<unknown, unknown, ThemeOptions>(
       text: {
         secondary: alpha(theme.palette.common.black, 0.45)
       }
-    }
+    },
+    shadows: [
+      'none',
+      '0 0 0 1px rgba(0, 0, 0, 0.05), 0 1px 12px 0 rgba(0, 0, 0, 0.05)',
+      ...Array<string>(23).fill(
+        '0 0 2px 0 rgba(0, 0, 0, 0.15), 0 4px 32px rgba(0, 0, 0, 0.2)'
+      )
+    ] as Shadows
   }
 )
 
@@ -150,7 +150,14 @@ export const darkThemeOptions = merge<unknown, unknown, ThemeOptions>(
       text: {
         secondary: alpha(theme.palette.common.white, 0.45)
       }
-    }
+    },
+    shadows: [
+      'none',
+      '0 1px 12px 0 rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(255, 255, 255, 0.05)',
+      ...Array<string>(23).fill(
+        '0 4px 32px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.05)'
+      )
+    ] as Shadows
   }
 )
 
