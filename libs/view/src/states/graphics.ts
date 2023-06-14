@@ -72,7 +72,7 @@ export const ambientOcclusionDirectionsAtom = atomWithStorageValidation({
 })
 export const ambientOcclusionStepsAtom = atomWithStorageValidation({
   key: 'ambientOcclusionSteps',
-  initialValue: 4,
+  initialValue: 8,
   validate: isNumber
 })
 
