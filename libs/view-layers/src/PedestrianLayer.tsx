@@ -1,13 +1,16 @@
 import { atom, useAtom, useAtomValue, type PrimitiveAtom } from 'jotai'
-import { type FC } from 'react'
+import { useMemo, type FC } from 'react'
 import { type SetOptional } from 'type-fest'
 
+import { match } from '@takram/plateau-cesium-helpers'
 import { type LayerProps } from '@takram/plateau-layers'
 import {
+  PEDESTRIAN_OBJECT,
   Pedestrian,
   type HeadingPitch,
   type Location
 } from '@takram/plateau-pedestrian'
+import { screenSpaceSelectionAtom } from '@takram/plateau-screen-space-selection'
 
 import {
   createViewLayerBase,
@@ -62,6 +65,17 @@ export const PedestrianLayer: FC<LayerProps<typeof PEDESTRIAN_LAYER>> = ({
   const streetViewHeadingPitch = useAtomValue(streetViewHeadingPitchAtom)
   const streetViewZoom = useAtomValue(streetViewZoomAtom)
 
+  const selection = useAtomValue(screenSpaceSelectionAtom)
+  const objectSelected = useMemo(
+    () =>
+      selection.length > 0 &&
+      selection.every(
+        ({ type, value }) =>
+          type === PEDESTRIAN_OBJECT && match(value, { key: id })
+      ),
+    [id, selection]
+  )
+
   const hidden = useAtomValue(hiddenAtom)
   if (hidden) {
     return null
@@ -69,7 +83,7 @@ export const PedestrianLayer: FC<LayerProps<typeof PEDESTRIAN_LAYER>> = ({
   return (
     <Pedestrian
       id={id}
-      selected={selected}
+      selected={selected === true || objectSelected}
       location={location}
       streetViewLocation={streetViewLocation ?? undefined}
       streetViewHeadingPitch={streetViewHeadingPitch ?? undefined}
