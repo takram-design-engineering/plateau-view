@@ -19,9 +19,9 @@ export interface StreetViewProps extends ComponentPropsWithoutRef<typeof Root> {
   apiKey: string
   location: Location
   radius?: number
-  onLocationChange?: (location?: Location) => void
-  onHeadingPitchChange?: (headingPitch?: HeadingPitch) => void
-  onZoomChange?: (zoom?: number) => void
+  onLocationChange?: (location: Location | null) => void
+  onHeadingPitchChange?: (headingPitch: HeadingPitch) => void
+  onZoomChange?: (zoom: number) => void
 }
 
 export const StreetView: FC<StreetViewProps> = ({
@@ -57,6 +57,7 @@ export const StreetView: FC<StreetViewProps> = ({
           lng: location.longitude,
           lat: location.latitude
         },
+        preference: google.maps.StreetViewPreference.BEST,
         radius,
         source: google.maps.StreetViewSource.OUTDOOR
       })

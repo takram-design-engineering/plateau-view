@@ -73,7 +73,7 @@ export const Pedestrian: FC<PedestrianProps> = withEphemerality(
         setHighlighted(false)
       },
       computeBoundingSphere: (value, result = new BoundingSphere()) => {
-        getPosition(location, scene, result.center)
+        getPosition(scene, location, result.center)
         result.radius = 50 // Arbitrary size
         return result
       }

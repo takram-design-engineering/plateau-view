@@ -14,7 +14,7 @@ export function useMotionLocation(
   options: ValueAnimationTransition<number> = {
     type: 'tween',
     ease: 'easeOut',
-    duration: 0.2
+    duration: 0.3
   }
 ): MotionValue<Required<Location>> {
   const motionLongitude = useMotionValue(location.longitude)

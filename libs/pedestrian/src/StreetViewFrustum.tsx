@@ -1,4 +1,5 @@
 import {
+  Cartesian2,
   Cartesian3,
   Math as CesiumMath,
   Color,
@@ -21,6 +22,7 @@ import { useReady } from '@takram/plateau-cesium-helpers'
 
 import { FrustumAppearance } from './FrustumAppearance'
 import { createQuaternionFromHeadingPitch } from './createQuaternionFromHeadingPitch'
+import { getFieldOfViewSeparate } from './getFieldOfView'
 import { getPosition } from './getPosition'
 import { type HeadingPitch, type Location } from './types'
 import { useMotionLocation } from './useMotionLocation'
@@ -38,6 +40,7 @@ const TAN_PI_OVER_FOUR = Math.tan(CesiumMath.PI_OVER_FOUR)
 const positionScratch = new Cartesian3()
 const scaleScratch = new Cartesian3()
 const rotationScratch = new Quaternion()
+const fovScratch = new Cartesian2()
 
 const colorGeometryAttribute = new GeometryAttribute({
   componentDatatype: ComponentDatatype.UNSIGNED_BYTE,
@@ -140,14 +143,14 @@ export const StreetViewFrustum: FC<StreetViewFrustumProps> = ({
     const visibility = motionVisibility.get()
     primitive.appearance.material.uniforms.opacity = visibility
     const location = motionLocation.get()
-    const position = getPosition(location, scene, positionScratch)
+    const position = getPosition(scene, location, positionScratch)
     const rotation = createQuaternionFromHeadingPitch(
       headingPitch,
       position,
       rotationScratch
     )
-    const fovX = Math.PI / Math.pow(2, zoom)
-    const farWidth = (Math.tan(fovX / 2) / TAN_PI_OVER_FOUR) * length
+    const fov = getFieldOfViewSeparate(zoom, fovScratch)
+    const farWidth = (Math.tan(fov.x / 2) / TAN_PI_OVER_FOUR) * length
     scaleScratch.x = (visibility * farWidth) / aspectRatio
     scaleScratch.y = visibility * farWidth
     scaleScratch.z = visibility * length
