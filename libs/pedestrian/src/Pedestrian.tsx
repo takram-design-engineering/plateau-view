@@ -13,7 +13,7 @@ import {
 
 import { PedestrianObject } from './PedestrianObject'
 import { StreetViewFrustum } from './StreetViewFrustum'
-import { getPosition } from './getPosition'
+import { computeCartographicToCartesian } from './computeCartographicToCartesian'
 import { type HeadingPitch, type Location } from './types'
 
 export const PEDESTRIAN_OBJECT = 'PEDESTRIAN_OBJECT'
@@ -75,7 +75,7 @@ export const Pedestrian: FC<PedestrianProps> = withEphemerality(
         setHighlighted(false)
       },
       computeBoundingSphere: (value, result = new BoundingSphere()) => {
-        getPosition(scene, location, result.center)
+        computeCartographicToCartesian(scene, location, result.center)
         result.radius = 50 // Arbitrary size
         return result
       }

@@ -21,11 +21,11 @@ import { useCesium, useInstance, usePreRender } from '@takram/plateau-cesium'
 import { useReady } from '@takram/plateau-cesium-helpers'
 
 import { FrustumAppearance } from './FrustumAppearance'
+import { computeCartographicToCartesian } from './computeCartographicToCartesian'
 import { createQuaternionFromHeadingPitch } from './createQuaternionFromHeadingPitch'
 import { getFieldOfViewSeparate } from './getFieldOfView'
-import { getPosition } from './getPosition'
 import { type HeadingPitch, type Location } from './types'
-import { useMotionLocation } from './useMotionLocation'
+import { useMotionPosition } from './useMotionPosition'
 
 interface StreetViewFrustumProps {
   location: Location
@@ -131,22 +131,25 @@ export const StreetViewFrustum: FC<StreetViewFrustumProps> = ({
     })
   }, [scene, motionVisibility])
 
-  const motionLocation = useMotionLocation(location)
+  const position = useMemo(
+    () => computeCartographicToCartesian(scene, location),
+    [scene, location]
+  )
+  const motionPosition = useMotionPosition(position)
 
   useEffect(() => {
-    return motionLocation.on('change', () => {
+    return motionPosition.on('change', () => {
       scene.requestRender()
     })
-  }, [scene, motionLocation])
+  }, [scene, motionPosition])
 
   usePreRender(() => {
     const visibility = motionVisibility.get()
     primitive.appearance.material.uniforms.opacity = visibility
-    const location = motionLocation.get()
-    const position = getPosition(scene, location, positionScratch)
+    Object.assign(positionScratch, motionPosition.get())
     const rotation = createQuaternionFromHeadingPitch(
       headingPitch,
-      position,
+      positionScratch,
       rotationScratch
     )
     const fov = getFieldOfViewSeparate(zoom, fovScratch)
@@ -155,7 +158,7 @@ export const StreetViewFrustum: FC<StreetViewFrustumProps> = ({
     scaleScratch.y = visibility * farWidth
     scaleScratch.z = visibility * length
     Matrix4.fromTranslationQuaternionRotationScale(
-      position,
+      positionScratch,
       rotation,
       scaleScratch,
       primitive.modelMatrix

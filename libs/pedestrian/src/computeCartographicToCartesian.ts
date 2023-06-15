@@ -4,7 +4,7 @@ import { type Location } from './types'
 
 const cartographicScratch = new Cartographic()
 
-export function getPosition(
+export function computeCartographicToCartesian(
   scene: Scene,
   { longitude, latitude, height = 0 }: Location,
   result?: Cartesian3

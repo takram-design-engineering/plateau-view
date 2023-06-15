@@ -7,16 +7,16 @@ import {
   type Billboard
 } from '@cesium/engine'
 import { useTheme } from '@mui/material'
-import { useEffect, useRef, type FC } from 'react'
+import { useEffect, useMemo, useRef, type FC } from 'react'
 
 import { useCesium, usePreRender } from '@takram/plateau-cesium'
 import { withEphemerality } from '@takram/plateau-react-helpers'
 
 import balloonImage from './assets/balloon.png'
 import iconImage from './assets/icon.png'
-import { getPosition } from './getPosition'
+import { computeCartographicToCartesian } from './computeCartographicToCartesian'
 import { type Location } from './types'
-import { useMotionLocation } from './useMotionLocation'
+import { useMotionPosition } from './useMotionPosition'
 
 export interface PedestrianObjectProps {
   id?: string
@@ -94,23 +94,27 @@ export const PedestrianObject: FC<PedestrianObjectProps> = withEphemerality(
       scene.requestRender()
     }, [selected, scene, theme])
 
-    const motionLocation = useMotionLocation(location)
+    const position = useMemo(
+      () => computeCartographicToCartesian(scene, location),
+      [scene, location]
+    )
+    const motionPosition = useMotionPosition(position)
 
     useEffect(() => {
-      return motionLocation.on('change', () => {
+      return motionPosition.on('change', () => {
         scene.requestRender()
       })
-    }, [scene, motionLocation])
+    }, [scene, motionPosition])
 
     usePreRender(() => {
-      const position = getPosition(scene, motionLocation.get(), positionScratch)
+      Object.assign(positionScratch, motionPosition.get())
       const balloon = balloonRef.current
       if (balloon != null) {
-        balloon.position = position
+        balloon.position = positionScratch
       }
       const icon = iconRef.current
       if (icon != null) {
-        icon.position = position
+        icon.position = positionScratch
       }
     })
 

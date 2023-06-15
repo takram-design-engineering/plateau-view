@@ -4,6 +4,12 @@ export interface Location {
   height?: number
 }
 
+export interface Position {
+  x: number
+  y: number
+  z: number
+}
+
 export interface HeadingPitch {
   heading: number
   pitch: number

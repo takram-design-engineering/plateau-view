@@ -1,7 +1,7 @@
 import {
+  Cartesian3,
   Math as CesiumMath,
-  PerspectiveFrustum,
-  type Cartesian3
+  PerspectiveFrustum
 } from '@cesium/engine'
 import {
   animate,
@@ -16,8 +16,8 @@ import invariant from 'tiny-invariant'
 import { useCesium } from '@takram/plateau-cesium'
 import { flyToDestination } from '@takram/plateau-cesium-helpers'
 
+import { computeCartographicToCartesian } from './computeCartographicToCartesian'
 import { getFieldOfView } from './getFieldOfView'
-import { getPosition } from './getPosition'
 import { type HeadingPitch, type HeadingPitchFov, type Location } from './types'
 
 export interface StreetViewStateParams {
@@ -38,6 +38,8 @@ interface CameraState {
   position: Cartesian3
   headingPitchFov: HeadingPitchFov
 }
+
+const cartesianScratch = new Cartesian3()
 
 export function useStreetViewState(
   params: StreetViewStateParams
@@ -84,7 +86,7 @@ export function useStreetViewState(
           if (location == null || headingPitch == null || zoom == null) {
             return
           }
-          const position = getPosition(scene, location)
+          const position = computeCartographicToCartesian(scene, location)
           void flyToDestination(scene, position, {
             heading: CesiumMath.toRadians(headingPitch.heading),
             pitch: CesiumMath.toRadians(headingPitch.pitch),
@@ -117,32 +119,40 @@ export function useStreetViewState(
         }
         if (get(params.synchronizeAtom)) {
           if (prevValue != null) {
-            const motionLongitude = motionValue(prevValue.longitude)
-            const motionLatitude = motionValue(prevValue.latitude)
-            const motionHeight = motionValue(prevValue.height ?? 0)
+            const prevPosition = computeCartographicToCartesian(
+              scene,
+              prevValue,
+              cartesianScratch
+            )
+            const motionX = motionValue(prevPosition.x)
+            const motionY = motionValue(prevPosition.y)
+            const motionZ = motionValue(prevPosition.z)
 
             const options: ValueAnimationTransition<number> = {
               type: 'tween',
               ease: 'easeInOut',
               duration: 0.3,
               onUpdate: debounce(() => {
-                getPosition(
-                  scene,
-                  {
-                    longitude: motionLongitude.get(),
-                    latitude: motionLatitude.get(),
-                    height: motionHeight.get()
-                  },
-                  scene.camera.position
-                )
+                scene.camera.position.x = motionX.get()
+                scene.camera.position.y = motionY.get()
+                scene.camera.position.z = motionZ.get()
               })
             }
 
-            void animate(motionLongitude, nextValue.longitude, options)
-            void animate(motionLatitude, nextValue.latitude, options)
-            void animate(motionHeight, nextValue.height ?? 0, options)
+            const nextPosition = computeCartographicToCartesian(
+              scene,
+              nextValue,
+              cartesianScratch
+            )
+            void animate(motionX, nextPosition.x, options)
+            void animate(motionY, nextPosition.y, options)
+            void animate(motionZ, nextPosition.z, options)
           } else {
-            getPosition(scene, nextValue, scene.camera.position)
+            computeCartographicToCartesian(
+              scene,
+              nextValue,
+              scene.camera.position
+            )
           }
         }
       }
