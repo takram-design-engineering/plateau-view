@@ -1,10 +1,9 @@
-import { useAtomValue } from 'jotai'
-import { type FC } from 'react'
 import { useAtom, useAtomValue } from 'jotai'
 import { type ResizeCallback } from 're-resizable'
 import { useCallback, type FC } from 'react'
 
 import { PLATEAU_TILE_FEATURE } from '@takram/plateau-datasets'
+import { PEDESTRIAN_OBJECT } from '@takram/plateau-pedestrian'
 import { Inspector } from '@takram/plateau-ui-components'
 import { PEDESTRIAN_LAYER } from '@takram/plateau-view-layers'
 
@@ -39,6 +38,9 @@ export const SelectionPanel: FC = () => {
         switch (subtype) {
           case PLATEAU_TILE_FEATURE:
             content = <TileFeatureContent values={selectionGroup.values} />
+            break
+          case PEDESTRIAN_OBJECT:
+            content = <PedestrianLayerContent values={selectionGroup.values} />
             break
         }
     }

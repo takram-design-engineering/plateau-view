@@ -25,6 +25,7 @@ export interface PedestrianLayerModelParams
 
 export interface PedestrianLayerModel extends ViewLayerModel {
   locationAtom: PrimitiveAtom<Location>
+  synchronizeStreetViewAtom: PrimitiveAtom<boolean>
   streetViewLocationAtom: PrimitiveAtom<Location | null>
   streetViewHeadingPitchAtom: PrimitiveAtom<HeadingPitch | null>
   streetViewZoomAtom: PrimitiveAtom<number | null>
@@ -44,6 +45,7 @@ export function createPedestrianLayer(
       latitude: params.latitude,
       height: 5
     }),
+    synchronizeStreetViewAtom: atom(false),
     streetViewLocationAtom: atom<Location | null>(null),
     streetViewHeadingPitchAtom: atom<HeadingPitch | null>(null),
     streetViewZoomAtom: atom<number | null>(null)
@@ -56,11 +58,13 @@ export const PedestrianLayer: FC<LayerProps<typeof PEDESTRIAN_LAYER>> = ({
   hiddenAtom,
   boundingSphereAtom,
   locationAtom,
+  synchronizeStreetViewAtom,
   streetViewLocationAtom,
   streetViewHeadingPitchAtom,
   streetViewZoomAtom
 }) => {
   const [location] = useAtom(locationAtom)
+  const synchronizeStreetView = useAtomValue(synchronizeStreetViewAtom)
   const streetViewLocation = useAtomValue(streetViewLocationAtom)
   const streetViewHeadingPitch = useAtomValue(streetViewHeadingPitchAtom)
   const streetViewZoom = useAtomValue(streetViewZoomAtom)
@@ -88,6 +92,7 @@ export const PedestrianLayer: FC<LayerProps<typeof PEDESTRIAN_LAYER>> = ({
       streetViewLocation={streetViewLocation ?? undefined}
       streetViewHeadingPitch={streetViewHeadingPitch ?? undefined}
       streetViewZoom={streetViewZoom ?? undefined}
+      hideFrustum={synchronizeStreetView}
     />
   )
 }

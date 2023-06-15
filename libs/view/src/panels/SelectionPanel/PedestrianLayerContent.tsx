@@ -1,95 +1,96 @@
-import { Divider, styled } from '@mui/material'
-import { useAtom, useSetAtom } from 'jotai'
-import { Suspense, useCallback, type FC } from 'react'
+import { styled } from '@mui/material'
+import { useAtomValue, useSetAtom } from 'jotai'
+import { Suspense, type FC } from 'react'
 import invariant from 'tiny-invariant'
 
+import { parse } from '@takram/plateau-cesium-helpers'
+import { layersAtom, useFindLayer } from '@takram/plateau-layers'
 import {
   StreetView,
-  type HeadingPitch,
-  type Location
+  useStreetViewState,
+  type PEDESTRIAN_OBJECT
 } from '@takram/plateau-pedestrian'
 import {
-  InspectorHeader,
   InspectorItem,
-  PedestrianIcon
+  ParameterList,
+  SwitchParameterItem
 } from '@takram/plateau-ui-components'
-import { type PEDESTRIAN_LAYER } from '@takram/plateau-view-layers'
+import { PEDESTRIAN_LAYER } from '@takram/plateau-view-layers'
 
 import {
   type LAYER_SELECTION,
+  type SCREEN_SPACE_SELECTION,
   type SelectionGroup
 } from '../../states/selection'
-import { LayerActions } from './LayerActions'
 
 const StyledStreetView = styled(StreetView)({
   aspectRatio: '3 / 2'
 })
 
 export interface PedestrianLayerContentProps {
-  values: (SelectionGroup & {
-    type: typeof LAYER_SELECTION
-    subtype: typeof PEDESTRIAN_LAYER
-  })['values']
+  values: (SelectionGroup &
+    (
+      | {
+          type: typeof LAYER_SELECTION
+          subtype: typeof PEDESTRIAN_LAYER
+        }
+      | {
+          type: typeof SCREEN_SPACE_SELECTION
+          subtype: typeof PEDESTRIAN_OBJECT
+        }
+    ))['values']
 }
 
 export const PedestrianLayerContent: FC<PedestrianLayerContentProps> = ({
   values
 }) => {
-  const [layer] = values
-  const [location] = useAtom(layer.locationAtom)
-  const setStreetViewLocation = useSetAtom(layer.streetViewLocationAtom)
-  const setStreetViewHeadingPitch = useSetAtom(layer.streetViewHeadingPitchAtom)
-  const setStreetViewZoom = useSetAtom(layer.streetViewZoomAtom)
+  const layers = useAtomValue(layersAtom)
+  const findLayer = useFindLayer()
+  // TODO: Support multiple layers
+  const layer =
+    typeof values[0] === 'string'
+      ? findLayer(layers, {
+          type: PEDESTRIAN_LAYER,
+          id: parse(values[0]).key
+        })
+      : values[0]
+  invariant(layer != null)
 
-  const handleLocationChange = useCallback(
-    (location?: Location) => {
-      setStreetViewLocation(location ?? null)
-    },
-    [setStreetViewLocation]
-  )
-  const handleHeadingPitchChange = useCallback(
-    (headingPitch?: HeadingPitch) => {
-      setStreetViewHeadingPitch(headingPitch ?? null)
-    },
-    [setStreetViewHeadingPitch]
-  )
-  const handleZoomChange = useCallback(
-    (zoom?: number) => {
-      setStreetViewZoom(zoom ?? null)
-    },
-    [setStreetViewZoom]
-  )
+  const { synchronizeAtom, locationAtom, headingPitchAtom, zoomAtom } =
+    useStreetViewState({
+      synchronizeAtom: layer.synchronizeStreetViewAtom,
+      locationAtom: layer.streetViewLocationAtom,
+      headingPitchAtom: layer.streetViewHeadingPitchAtom,
+      zoomAtom: layer.streetViewZoomAtom
+    })
 
-  if (values.length > 1) {
-    return (
-      <InspectorHeader
-        // TODO: Change name and icon according to the feature type.
-        title={`${values.length}個の歩行者視点`}
-        iconComponent={PedestrianIcon}
-      />
-    )
-  }
+  const location = useAtomValue(layer.locationAtom)
+  const setLocation = useSetAtom(locationAtom)
+  const setHeadingPitch = useSetAtom(headingPitchAtom)
+  const setZoom = useSetAtom(zoomAtom)
 
   invariant(
-    process.env.NEXT_PUBLIC_GOOGLE_MAP_TILES_API_KEY != null,
-    'Missing environment variable: NEXT_PUBLIC_GOOGLE_MAP_TILES_API_KEY'
+    process.env.NEXT_PUBLIC_GOOGLE_STREET_VIEW_API_KEY != null,
+    'Missing environment variable: NEXT_PUBLIC_GOOGLE_STREET_VIEW_API_KEY'
   )
   return (
     <>
-      <InspectorHeader title='歩行者視点' iconComponent={PedestrianIcon} />
-      <Divider light />
-      <LayerActions values={values} />
-      <Divider light />
-      <InspectorItem disablePadding>
-        <Suspense>
-          <StyledStreetView
-            apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAP_TILES_API_KEY}
-            location={location}
-            onLocationChange={handleLocationChange}
-            onHeadingPitchChange={handleHeadingPitchChange}
-            onZoomChange={handleZoomChange}
+      <Suspense>
+        <StyledStreetView
+          apiKey={process.env.NEXT_PUBLIC_GOOGLE_STREET_VIEW_API_KEY}
+          location={location}
+          onLocationChange={setLocation}
+          onHeadingPitchChange={setHeadingPitch}
+          onZoomChange={setZoom}
+        />
+      </Suspense>
+      <InspectorItem>
+        <ParameterList>
+          <SwitchParameterItem
+            label='カメラを歩行者視点と同期'
+            atom={synchronizeAtom}
           />
-        </Suspense>
+        </ParameterList>
       </InspectorItem>
     </>
   )

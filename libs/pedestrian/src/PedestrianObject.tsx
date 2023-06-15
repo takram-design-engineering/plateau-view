@@ -38,7 +38,7 @@ export const PedestrianObject: FC<PedestrianObjectProps> = withEphemerality(
       if (billboards.isDestroyed()) {
         return
       }
-      const distanceDisplayCondition = new DistanceDisplayCondition(0, 1e4)
+      const distanceDisplayCondition = new DistanceDisplayCondition(10, 1e4)
       const balloon = billboards.add({
         id,
         image: balloonImage.src,

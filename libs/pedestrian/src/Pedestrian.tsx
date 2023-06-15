@@ -31,6 +31,7 @@ export interface PedestrianProps {
   streetViewLocation?: Location
   streetViewHeadingPitch?: HeadingPitch
   streetViewZoom?: number
+  hideFrustum?: boolean
   onChange?: (location: Location) => void
 }
 
@@ -43,7 +44,8 @@ export const Pedestrian: FC<PedestrianProps> = withEphemerality(
     location,
     streetViewLocation,
     streetViewHeadingPitch,
-    streetViewZoom
+    streetViewZoom,
+    hideFrustum = false
   }) => {
     const defaultId = useConstant(() => nanoid())
     const objectId = compose({ type: 'Pedestrian', key: id ?? defaultId })
@@ -88,6 +90,7 @@ export const Pedestrian: FC<PedestrianProps> = withEphemerality(
         />
         <AnimatePresence>
           {selected &&
+            !hideFrustum &&
             streetViewLocation != null &&
             streetViewHeadingPitch != null && (
               <StreetViewFrustum
