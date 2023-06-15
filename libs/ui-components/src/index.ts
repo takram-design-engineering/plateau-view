@@ -1,6 +1,7 @@
 export * from './AntIcon'
 export * from './AppLayout'
 export * from './AutoHeight'
+export * from './ButtonInspectorItem'
 export * from './ContextBar'
 export * from './ContextButton'
 export * from './ContextButtonSelect'
