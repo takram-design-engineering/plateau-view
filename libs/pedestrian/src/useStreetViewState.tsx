@@ -1,4 +1,8 @@
-import { Math as CesiumMath, PerspectiveFrustum } from '@cesium/engine'
+import {
+  Math as CesiumMath,
+  PerspectiveFrustum,
+  type Cartesian3
+} from '@cesium/engine'
 import {
   animate,
   motionValue,
@@ -14,7 +18,7 @@ import { flyToDestination } from '@takram/plateau-cesium-helpers'
 
 import { getFieldOfView } from './getFieldOfView'
 import { getPosition } from './getPosition'
-import { type HeadingPitch, type Location } from './types'
+import { type HeadingPitch, type HeadingPitchFov, type Location } from './types'
 
 export interface StreetViewStateParams {
   synchronizeAtom: PrimitiveAtom<boolean>
@@ -30,6 +34,11 @@ export interface StreetViewState {
   zoomAtom: PrimitiveAtom<number | null>
 }
 
+interface CameraState {
+  position: Cartesian3
+  headingPitchFov: HeadingPitchFov
+}
+
 export function useStreetViewState(
   params: StreetViewStateParams
 ): StreetViewState {
@@ -41,6 +50,8 @@ export function useStreetViewState(
   paramsRef.current = params
 
   return useMemo(() => {
+    const cameraStateAtom = atom<CameraState | null>(null)
+
     const synchronizeAtom = atom(
       get => get(paramsRef.current.synchronizeAtom),
       (get, set, value: SetStateAction<boolean>) => {
@@ -50,21 +61,45 @@ export function useStreetViewState(
         set(params.synchronizeAtom, nextValue)
 
         const scene = sceneRef.current
-        if (!nextValue || scene == null) {
+        if (scene == null) {
           return
         }
-        const location = get(params.locationAtom)
-        const headingPitch = get(params.headingPitchAtom)
-        const zoom = get(params.zoomAtom)
-        if (location == null || headingPitch == null || zoom == null) {
-          return
+        if (nextValue) {
+          // Remember the current camera's heading, pitch and roll to restore
+          // them later.
+          const frustum = scene.camera.frustum
+          invariant(frustum instanceof PerspectiveFrustum)
+          set(cameraStateAtom, {
+            position: scene.camera.position.clone(),
+            headingPitchFov: {
+              heading: scene.camera.heading,
+              pitch: scene.camera.pitch,
+              fov: frustum.fov
+            }
+          })
+
+          const location = get(params.locationAtom)
+          const headingPitch = get(params.headingPitchAtom)
+          const zoom = get(params.zoomAtom)
+          if (location == null || headingPitch == null || zoom == null) {
+            return
+          }
+          const position = getPosition(scene, location)
+          void flyToDestination(scene, position, {
+            heading: CesiumMath.toRadians(headingPitch.heading),
+            pitch: CesiumMath.toRadians(headingPitch.pitch),
+            fov: getFieldOfView(scene, zoom)
+          })
+        } else {
+          const state = get(cameraStateAtom)
+          if (state == null) {
+            console.warn(
+              'Camera state before synchronization unexpectedly not found.'
+            )
+            return
+          }
+          void flyToDestination(scene, state.position, state.headingPitchFov)
         }
-        const position = getPosition(scene, location)
-        void flyToDestination(scene, position, {
-          heading: CesiumMath.toRadians(headingPitch.heading),
-          pitch: CesiumMath.toRadians(headingPitch.pitch),
-          fov: getFieldOfView(scene, zoom)
-        })
       }
     )
 
