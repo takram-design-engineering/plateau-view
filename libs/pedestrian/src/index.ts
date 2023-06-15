@@ -1,3 +1,6 @@
+export * from './createQuaternionFromHeadingPitch'
+export * from './getFieldOfView'
+export * from './getPosition'
 export * from './Pedestrian'
 export * from './states'
 export * from './StreetView'
