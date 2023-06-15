@@ -57,7 +57,6 @@ export const StreetView: FC<StreetViewProps> = ({
           lng: location.longitude,
           lat: location.latitude
         },
-        preference: google.maps.StreetViewPreference.BEST,
         radius,
         source: google.maps.StreetViewSource.OUTDOOR
       })
