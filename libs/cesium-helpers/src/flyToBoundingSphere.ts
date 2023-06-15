@@ -32,7 +32,7 @@ export async function flyToBoundingSphere(
         pitch: scene.camera.pitch,
         range
       },
-      ...defaults(options, defaultOptions),
+      ...defaults({}, options, defaultOptions),
       complete: resolve,
       cancel: resolve
     })
