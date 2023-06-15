@@ -6,7 +6,8 @@ export const MuiToggleButton: Components<Theme>['MuiToggleButton'] = {
       textTransform: 'none'
     },
     sizeSmall: ({ theme }) => ({
-      ...theme.typography.body2
+      ...theme.typography.body2,
+      padding: theme.spacing(1)
     })
   }
 }

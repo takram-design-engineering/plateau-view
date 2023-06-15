@@ -14,6 +14,8 @@ export const MuiSelect: Components<Theme>['MuiSelect'] = {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'flex-start',
+      paddingTop: theme.spacing(1),
+      paddingBottom: theme.spacing(1),
       [`&.${filledInputClasses.input}`]: {
         ...((ownerState.size ?? 'small') === 'small' && {
           paddingRight: theme.spacing(3)
@@ -23,7 +25,7 @@ export const MuiSelect: Components<Theme>['MuiSelect'] = {
     icon: ({ theme, ownerState }) => ({
       color: theme.palette.text.secondary,
       ...((ownerState.size ?? 'small') === 'small' && {
-        right: 0
+        right: 2
       })
     })
   }
