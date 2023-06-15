@@ -2,13 +2,13 @@ import { useEffect, useRef } from 'react'
 
 export type PanoramaChangeHook<T> = (
   panorama?: google.maps.StreetViewPanorama,
-  callback?: (value?: T) => void
+  callback?: (value: T) => void
 ) => void
 
 export interface PanoramaChangeHookOptions<T, U> {
   eventType: string
   getter: (panorama: google.maps.StreetViewPanorama) => T
-  transform: (value: NonNullable<T>) => U
+  transform: (value: T) => U
   compare: (prevValue: T, nextValue: T) => boolean
 }
 
@@ -33,14 +33,10 @@ export function createPanoramaChangeHook<T, U>({
           return
         }
         prevValue = nextValue
-        callbackRef.current?.(
-          prevValue != null ? transform(prevValue) : undefined
-        )
+        callbackRef.current?.(transform(prevValue))
       }
 
-      callbackRef.current?.(
-        prevValue != null ? transform(prevValue) : undefined
-      )
+      callbackRef.current?.(transform(prevValue))
 
       const listener = panorama.addListener(eventType, handleChange)
       return () => {
