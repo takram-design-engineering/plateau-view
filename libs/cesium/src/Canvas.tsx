@@ -139,7 +139,7 @@ export const Canvas = forwardRef<HTMLDivElement, CanvasProps>(
         // false is passed to `baseLayer` above.
         cesium.scene.imageryLayers.removeAll()
 
-        // Reading pixel values from the GPU buffer is not a trivial process,
+        // Reading pixel values from the GPU buffer is not a trivial task,
         // and I cannot afford to do so every frame by camera controller.
         cesium.scene.useDepthPicking = false
 
