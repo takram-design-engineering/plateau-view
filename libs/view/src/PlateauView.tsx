@@ -26,6 +26,7 @@ import { SelectionCoordinator } from './containers/SelectionCoordinator'
 import { Terrains } from './containers/Terrains'
 import { ToolMachineEvents } from './containers/ToolMachineEvents'
 import { DeveloperPanels } from './developer/DeveloperPanels'
+import { CameraToolbar } from './panels/CameraToolbar'
 import { LocationContextBar } from './panels/LocationContextBar'
 import { MainPanel } from './panels/MainPanel'
 import { SelectionPanel } from './panels/SelectionPanel'
@@ -126,6 +127,7 @@ export const PlateauView: FC<PlateauViewProps> = () => {
         context={<LocationContextBar />}
         aside={<SelectionPanel />}
         bottomLeft={<Toolbar />}
+        bottomRight={<CameraToolbar />}
         developer={<DeveloperPanels />}
       />
       <InitialLayers />

@@ -35,6 +35,8 @@ export const showAreaEntitiesAtom = atomWithReset(false)
 
 export const showSelectionBoundingSphereAtom = atomWithReset(false)
 
+export const enableKeyboardCameraControlAtom = atomWithReset(false)
+
 export const inspectorWidthAtom = atomWithStorageValidation({
   key: 'inspectorWidth',
   initialValue: 360,

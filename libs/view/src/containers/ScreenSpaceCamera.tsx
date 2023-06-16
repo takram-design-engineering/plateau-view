@@ -6,6 +6,7 @@ import {
   type ScreenSpaceCameraProps as CesiumScreenSpaceCameraProps
 } from '@takram/plateau-cesium'
 
+import { enableKeyboardCameraControlAtom } from '../states/app'
 import { toolAtom } from '../states/tool'
 
 export interface ScreenSpaceCameraProps
@@ -14,11 +15,13 @@ export interface ScreenSpaceCameraProps
 export const ScreenSpaceCamera: FC<ScreenSpaceCameraProps> = props => {
   const tool = useAtomValue(toolAtom)
   const isHand = tool === 'hand'
+  const useKeyboard = useAtomValue(enableKeyboardCameraControlAtom)
   return (
     <CesiumScreenSpaceCamera
       {...props}
       enableRotate={isHand}
       enableLook={isHand}
+      useKeyboard={useKeyboard}
     />
   )
 }
