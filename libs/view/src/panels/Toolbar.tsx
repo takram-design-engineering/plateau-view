@@ -1,61 +1,30 @@
-import {
-  Stack,
-  styled,
-  ToggleButton,
-  Tooltip,
-  type ToggleButtonProps
-} from '@mui/material'
+import { Stack, Tooltip } from '@mui/material'
 import { useAtomValue, useSetAtom } from 'jotai'
 import {
   bindPopover,
   bindTrigger,
   usePopupState
 } from 'material-ui-popup-state/hooks'
-import { forwardRef, useCallback, useId, type FC } from 'react'
+import { useCallback, useId, type FC } from 'react'
 
-import { platformAtom } from '@takram/plateau-shared-states'
 import {
   FloatingButton,
   FloatingToolbar,
+  FloatingToolbarItem,
   HandIcon,
   OverlayPopover,
   PedestrianIcon,
   PointerArrowIcon,
   SettingsIcon,
-  ShortcutTooltip,
   SketchIcon,
   StoryIcon,
-  TimelineIcon,
-  type ShortcutTooltipProps
+  TimelineIcon
 } from '@takram/plateau-ui-components'
 
 import { toolAtom, toolMachineAtom, type Tool } from '../states/tool'
 import { type EventObject } from '../states/toolMachine'
 import { DateControlPanel } from './DateControlPanel'
 import { SettingsPanel } from './SettingsPanel'
-
-const TooltipContent = styled('div')({
-  display: 'inline-flex',
-  height: '100%'
-})
-
-export const ToolbarItem = forwardRef<
-  HTMLButtonElement,
-  ToggleButtonProps & Omit<ShortcutTooltipProps, 'children'>
->(({ title, shortcutKey, ...props }, ref) => {
-  const platform = useAtomValue(platformAtom)
-  return (
-    <ShortcutTooltip
-      title={title}
-      platform={platform}
-      shortcutKey={shortcutKey}
-    >
-      <TooltipContent>
-        <ToggleButton ref={ref} aria-label={title} {...props} />
-      </TooltipContent>
-    </ShortcutTooltip>
-  )
-})
 
 const eventTypes: Record<Tool, EventObject['type']> = {
   hand: 'HAND',
@@ -91,25 +60,38 @@ export const Toolbar: FC = () => {
   const settingsPopoverProps = bindPopover(settingsPopupState)
   const dateControlPopoverProps = bindPopover(dateControlPopupState)
 
-  // TODO: Introduce icons.
   return (
     <Stack direction='row' spacing={1}>
       <FloatingToolbar value={tool} onChange={handleChange}>
-        <ToolbarItem value='hand' title='移動' shortcutKey='H'>
+        <FloatingToolbarItem value='hand' title='移動' shortcutKey='H'>
           <HandIcon fontSize='medium' />
-        </ToolbarItem>
-        <ToolbarItem value='select' title='選択' shortcutKey='V'>
+        </FloatingToolbarItem>
+        <FloatingToolbarItem value='select' title='選択' shortcutKey='V'>
           <PointerArrowIcon fontSize='medium' />
-        </ToolbarItem>
-        <ToolbarItem value='sketch' title='作図' shortcutKey='G' disabled>
+        </FloatingToolbarItem>
+        <FloatingToolbarItem
+          value='sketch'
+          title='作図'
+          shortcutKey='G'
+          disabled
+        >
           <SketchIcon fontSize='medium' />
-        </ToolbarItem>
-        <ToolbarItem value='story' title='ストーリー' shortcutKey='T' disabled>
+        </FloatingToolbarItem>
+        <FloatingToolbarItem
+          value='story'
+          title='ストーリー'
+          shortcutKey='T'
+          disabled
+        >
           <StoryIcon fontSize='medium' />
-        </ToolbarItem>
-        <ToolbarItem value='pedestrian' title='歩行者視点' shortcutKey='P'>
+        </FloatingToolbarItem>
+        <FloatingToolbarItem
+          value='pedestrian'
+          title='歩行者視点'
+          shortcutKey='P'
+        >
           <PedestrianIcon fontSize='medium' />
-        </ToolbarItem>
+        </FloatingToolbarItem>
       </FloatingToolbar>
       <Tooltip title='設定'>
         <FloatingButton
