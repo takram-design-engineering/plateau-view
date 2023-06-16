@@ -2,12 +2,15 @@ import {
   CameraEventType,
   Cartesian3,
   Math as CesiumMath,
-  KeyboardEventModifier
+  JulianDate,
+  KeyboardEventModifier,
+  type Scene
 } from '@cesium/engine'
 import { useEffect, useRef, type FC } from 'react'
 
 import {
   assignPropertyProps,
+  useConstant,
   useWindowEvent
 } from '@takram/plateau-react-helpers'
 
@@ -15,7 +18,28 @@ import { adjustHeightForTerrain } from './adjustHeightForTerrain'
 import { useCesium } from './useCesium'
 import { usePreRender, usePreUpdate } from './useSceneEvent'
 
-const ROLL_EPSILON = Math.PI / 86400
+type Direction = 'forward' | 'backward' | 'right' | 'left' | 'up' | 'down'
+
+const keyAssignments: Record<string, Direction | undefined> = {
+  KeyW: 'forward',
+  KeyS: 'backward',
+  KeyA: 'left',
+  KeyD: 'right',
+  Space: 'up',
+  ControlLeft: 'down'
+}
+
+function timeStampsToSign(positive?: number, negative?: number): number {
+  return positive != null
+    ? negative != null
+      ? positive > negative
+        ? 1
+        : -1
+      : 1
+    : negative != null
+    ? -1
+    : 0
+}
 
 const defaultOptions = {
   enableInputs: true,
@@ -62,41 +86,24 @@ export interface ScreenSpaceCameraProps extends ScreenSpaceCameraOptions {
   minimumZoomDistance?: number
   maximumZoomDistance?: number
   useKeyboard?: boolean
-}
-
-type Direction = 'forward' | 'backward' | 'right' | 'left' | 'up' | 'down'
-
-const keyAssignments: Record<string, Direction | undefined> = {
-  KeyW: 'forward',
-  KeyS: 'backward',
-  KeyA: 'left',
-  KeyD: 'right',
-  Space: 'up',
-  ShiftLeft: 'down'
-}
-
-function getDirection(positive?: number, negative?: number): number {
-  return positive != null
-    ? negative != null
-      ? positive > negative
-        ? 1
-        : -1
-      : 1
-    : negative != null
-    ? -1
-    : 0
+  acceleration?: number
+  damping?: number
+  maximumSpeed?: number
 }
 
 const forwardScratch = new Cartesian3()
 const rightScratch = new Cartesian3()
 const upScratch = new Cartesian3()
-const directionScratch = new Cartesian3()
+const timeScratch = new JulianDate()
 
 export const ScreenSpaceCamera: FC<ScreenSpaceCameraProps> = ({
   tiltByRightButton = false,
-  useKeyboard = false,
   minimumZoomDistance = 1.5,
   maximumZoomDistance = Infinity,
+  useKeyboard = false,
+  acceleration = 0.1,
+  damping = 0.3,
+  maximumSpeed = 3,
   ...options
 }) => {
   const controller = useCesium(({ scene }) => scene.screenSpaceCameraController)
@@ -111,7 +118,13 @@ export const ScreenSpaceCamera: FC<ScreenSpaceCameraProps> = ({
         zoomEventTypes: [],
         rotateEventTypes: [],
         tiltEventTypes: [],
-        lookEventTypes: CameraEventType.LEFT_DRAG
+        lookEventTypes: [
+          CameraEventType.LEFT_DRAG,
+          {
+            eventType: CameraEventType.LEFT_DRAG,
+            modifier: KeyboardEventModifier.SHIFT
+          }
+        ]
       })
     } else if (tiltByRightButton) {
       Object.assign(controller, {
@@ -152,7 +165,7 @@ export const ScreenSpaceCamera: FC<ScreenSpaceCameraProps> = ({
   // Maintain horizontal roll.
   const camera = useCesium(({ camera }) => camera)
   usePreRender(() => {
-    if (Math.abs(CesiumMath.negativePiToPi(camera.roll)) > ROLL_EPSILON) {
+    if (Math.abs(CesiumMath.negativePiToPi(camera.roll)) > Math.PI / 86400) {
       camera.setView({
         orientation: {
           heading: camera.heading,
@@ -170,18 +183,27 @@ export const ScreenSpaceCamera: FC<ScreenSpaceCameraProps> = ({
     left?: number
     up?: number
     down?: number
+    sprint?: boolean
   }>({})
 
   useWindowEvent('keydown', event => {
     const direction = keyAssignments[event.code]
     if (direction != null) {
       keysRef.current[direction] = event.timeStamp
+      event.preventDefault()
+    } else if (event.code === 'ShiftLeft') {
+      keysRef.current.sprint = true
+      event.preventDefault()
     }
   })
   useWindowEvent('keyup', event => {
     const direction = keyAssignments[event.code]
     if (direction != null) {
       keysRef.current[direction] = undefined
+      event.preventDefault()
+    } else if (event.code === 'ShiftLeft') {
+      keysRef.current.sprint = false
+      event.preventDefault()
     }
   })
   useWindowEvent('blur', () => {
@@ -189,20 +211,48 @@ export const ScreenSpaceCamera: FC<ScreenSpaceCameraProps> = ({
   })
 
   const scene = useCesium(({ scene }) => scene)
+  const state = useConstant(() => ({
+    time: new JulianDate(),
+    direction: new Cartesian3(),
+    speed: 0
+  }))
+
   usePreUpdate(() => {
+    const time = JulianDate.now(timeScratch)
+    const deltaSeconds = JulianDate.secondsDifference(time, state.time)
+    time.clone(state.time)
+
     const keys = keysRef.current
-    const forward = getDirection(keys.forward, keys.backward)
-    const right = getDirection(keys.right, keys.left)
-    const up = getDirection(keys.up, keys.down)
+    const forward = timeStampsToSign(keys.forward, keys.backward)
+    const right = timeStampsToSign(keys.right, keys.left)
+    const up = timeStampsToSign(keys.up, keys.down)
+
     if (forward !== 0 || right !== 0 || up !== 0) {
       Cartesian3.multiplyByScalar(camera.direction, forward, forwardScratch)
       Cartesian3.multiplyByScalar(camera.right, right, rightScratch)
       Cartesian3.multiplyByScalar(camera.up, up, upScratch)
-      Cartesian3.add(forwardScratch, rightScratch, directionScratch)
-      Cartesian3.add(directionScratch, upScratch, directionScratch)
-      Cartesian3.normalize(directionScratch, directionScratch)
-      // TODO: Delta from previous time.
-      camera.move(directionScratch, 1)
+      Cartesian3.add(forwardScratch, rightScratch, state.direction)
+      Cartesian3.add(state.direction, upScratch, state.direction)
+      Cartesian3.normalize(state.direction, state.direction)
+      if (keys.sprint === true) {
+        state.speed = Math.min(maximumSpeed * 2, state.speed + acceleration)
+      } else if (state.speed > 1) {
+        state.speed = Math.max(maximumSpeed, state.speed - damping)
+      } else {
+        state.speed = Math.min(maximumSpeed, state.speed + acceleration)
+      }
+    } else {
+      state.speed = Math.max(0, state.speed - damping)
+    }
+
+    if (state.speed > 0.01) {
+      let speed = state.speed
+      const { globeHeight } = scene as Scene & { globeHeight?: number }
+      if (globeHeight != null) {
+        const cameraHeight = scene.camera.positionCartographic.height
+        speed *= 1 + Math.max(0, cameraHeight - globeHeight) * 0.1
+      }
+      camera.move(state.direction, speed * deltaSeconds)
       adjustHeightForTerrain(scene, minimumZoomDistance)
     }
   })
