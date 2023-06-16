@@ -22,7 +22,7 @@ import { AppController } from './AppController'
         process.env.PROJECT_ROOT,
         'apps/app/public/assets/mapStyles/light.json'
       ),
-      maximumLevel: 24,
+      maximumLevel: 22,
       nativeMaximumLevel: 16
     })
   ],
