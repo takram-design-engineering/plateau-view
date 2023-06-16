@@ -10,9 +10,17 @@
   "tabWidth": 2,
   "trailingComma": "none",
   "useTabs": false,
-  "importOrder": ["^(@takram)(/.*|$)", "^\\.", "^.+\\.[^/.]+$"],
-  "importOrderSeparation": true,
-  "importOrderSortSpecifiers": true,
+  "importOrder": [
+    "<BUILTIN_MODULES>",
+    "",
+    "<THIRD_PARTY_MODULES>",
+    "",
+    "^(@takram)(/.*)$",
+    "",
+    "^(?!.*\\.css$)[./].*$",
+    "",
+    "(\\.(css))$"
+  ],
   "importOrderParserPlugins": [
     "typescript",
     "jsx",
