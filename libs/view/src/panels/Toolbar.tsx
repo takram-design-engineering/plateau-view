@@ -17,14 +17,14 @@ import { platformAtom } from '@takram/plateau-shared-states'
 import {
   FloatingButton,
   FloatingToolbar,
-  HandToolIcon,
+  HandIcon,
   OverlayPopover,
   PedestrianIcon,
-  SelectToolIcon,
+  PointerArrowIcon,
   SettingsIcon,
   ShortcutTooltip,
-  SketchToolIcon,
-  StoryToolIcon,
+  SketchIcon,
+  StoryIcon,
   TimelineIcon,
   type ShortcutTooltipProps
 } from '@takram/plateau-ui-components'
@@ -96,16 +96,16 @@ export const Toolbar: FC = () => {
     <Stack direction='row' spacing={1}>
       <FloatingToolbar value={tool} onChange={handleChange}>
         <ToolbarItem value='hand' title='移動' shortcutKey='H'>
-          <HandToolIcon fontSize='medium' />
+          <HandIcon fontSize='medium' />
         </ToolbarItem>
         <ToolbarItem value='select' title='選択' shortcutKey='V'>
-          <SelectToolIcon fontSize='medium' />
+          <PointerArrowIcon fontSize='medium' />
         </ToolbarItem>
         <ToolbarItem value='sketch' title='作図' shortcutKey='G' disabled>
-          <SketchToolIcon fontSize='medium' />
+          <SketchIcon fontSize='medium' />
         </ToolbarItem>
         <ToolbarItem value='story' title='ストーリー' shortcutKey='T' disabled>
-          <StoryToolIcon fontSize='medium' />
+          <StoryIcon fontSize='medium' />
         </ToolbarItem>
         <ToolbarItem value='pedestrian' title='歩行者視点' shortcutKey='P'>
           <PedestrianIcon fontSize='medium' />
