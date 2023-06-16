@@ -1,8 +1,9 @@
-import { styled } from '@mui/material'
+import { PerspectiveFrustum } from '@cesium/engine'
 import { useAtomValue, useSetAtom } from 'jotai'
-import { Suspense, type FC } from 'react'
+import { Suspense, type FC, useRef } from 'react'
 import invariant from 'tiny-invariant'
 
+import { useCesium, usePreRender } from '@takram/plateau-cesium'
 import { parse } from '@takram/plateau-cesium-helpers'
 import { layersAtom, useFindLayer } from '@takram/plateau-layers'
 import {
@@ -22,10 +23,6 @@ import {
   type SCREEN_SPACE_SELECTION,
   type SelectionGroup
 } from '../../states/selection'
-
-const StyledStreetView = styled(StreetView)({
-  aspectRatio: '3 / 2'
-})
 
 export interface PedestrianLayerContentProps {
   values: (SelectionGroup &
@@ -69,6 +66,18 @@ export const PedestrianLayerContent: FC<PedestrianLayerContentProps> = ({
   const setHeadingPitch = useSetAtom(headingPitchAtom)
   const setZoom = useSetAtom(zoomAtom)
 
+  const streetViewRef = useRef<HTMLDivElement>(null)
+  const camera = useCesium(({ camera }) => camera, { indirect: true })
+  usePreRender(() => {
+    if (streetViewRef.current == null || camera == null) {
+      return
+    }
+    const frustum = camera.frustum
+    if (frustum instanceof PerspectiveFrustum) {
+      streetViewRef.current.style.aspectRatio = `${frustum.aspectRatio}`
+    }
+  })
+
   invariant(
     process.env.NEXT_PUBLIC_GOOGLE_STREET_VIEW_API_KEY != null,
     'Missing environment variable: NEXT_PUBLIC_GOOGLE_STREET_VIEW_API_KEY'
@@ -76,7 +85,8 @@ export const PedestrianLayerContent: FC<PedestrianLayerContentProps> = ({
   return (
     <>
       <Suspense>
-        <StyledStreetView
+        <StreetView
+          ref={streetViewRef}
           apiKey={process.env.NEXT_PUBLIC_GOOGLE_STREET_VIEW_API_KEY}
           location={location}
           onLocationChange={setLocation}
