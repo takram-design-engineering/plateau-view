@@ -20,9 +20,9 @@ import invariant from 'tiny-invariant'
 import { useCesium, useInstance, usePreRender } from '@takram/plateau-cesium'
 import { useReady } from '@takram/plateau-cesium-helpers'
 
+import { FrustumAppearance } from './FrustumAppearance'
 import { computeCartographicToCartesian } from './computeCartographicToCartesian'
 import { createQuaternionFromHeadingPitch } from './createQuaternionFromHeadingPitch'
-import { FrustumAppearance } from './FrustumAppearance'
 import { getFieldOfViewSeparate } from './getFieldOfView'
 import { type HeadingPitch, type Location } from './types'
 import { useMotionPosition } from './useMotionPosition'
@@ -152,7 +152,7 @@ export const StreetViewFrustum: FC<StreetViewFrustumProps> = ({
       positionScratch,
       rotationScratch
     )
-    const fov = getFieldOfViewSeparate(zoom, fovScratch)
+    const fov = getFieldOfViewSeparate(scene.camera, zoom, fovScratch)
     const farWidth = (Math.tan(fov.x / 2) / TAN_PI_OVER_FOUR) * length
     scaleScratch.x = (visibility * farWidth) / aspectRatio
     scaleScratch.y = visibility * farWidth

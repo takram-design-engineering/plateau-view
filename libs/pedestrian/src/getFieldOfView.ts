@@ -1,20 +1,23 @@
-import { Cartesian2, PerspectiveFrustum, type Scene } from '@cesium/engine'
+import { Cartesian2, PerspectiveFrustum, type Camera } from '@cesium/engine'
 import invariant from 'tiny-invariant'
 
 const cartesianScratch = new Cartesian2()
 
-export function getFieldOfView(scene: Scene, zoom: number): number {
-  const fov = getFieldOfViewSeparate(zoom, cartesianScratch)
-  const frustum = scene.camera.frustum
+export function getFieldOfView(camera: Camera, zoom: number): number {
+  const fov = getFieldOfViewSeparate(camera, zoom, cartesianScratch)
+  const frustum = camera.frustum
   invariant(frustum instanceof PerspectiveFrustum)
   return frustum.aspectRatio > 1 ? fov.x : fov.y
 }
 
 export function getFieldOfViewSeparate(
+  camera: Camera,
   zoom: number,
   result = new Cartesian2()
 ): Cartesian2 {
-  result.x = Math.PI / Math.pow(2, zoom)
-  result.y = 2 * Math.atan((3 / 2) * Math.tan(result.x / 2))
+  const frustum = camera.frustum
+  invariant(frustum instanceof PerspectiveFrustum)
+  result.x = Math.atan(Math.pow(2, 1 - zoom)) * 2
+  result.y = 2 * Math.atan(frustum.aspectRatio * Math.tan(result.x / 2))
   return result
 }

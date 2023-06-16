@@ -90,7 +90,7 @@ export function useStreetViewState(
           void flyToDestination(scene, position, {
             heading: CesiumMath.toRadians(headingPitch.heading),
             pitch: CesiumMath.toRadians(headingPitch.pitch),
-            fov: getFieldOfView(scene, zoom)
+            fov: getFieldOfView(scene.camera, zoom)
           })
         } else {
           const state = get(cameraStateAtom)
@@ -196,7 +196,7 @@ export function useStreetViewState(
         if (get(params.synchronizeAtom)) {
           const frustum = scene.camera.frustum
           invariant(frustum instanceof PerspectiveFrustum)
-          frustum.fov = getFieldOfView(scene, nextValue)
+          frustum.fov = getFieldOfView(scene.camera, nextValue)
         }
       }
     )
