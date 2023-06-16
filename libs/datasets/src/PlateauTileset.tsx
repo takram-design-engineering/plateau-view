@@ -27,13 +27,13 @@ import {
   type ScreenSpaceSelectionEntry
 } from '@takram/plateau-screen-space-selection'
 
-import { LambertDiffuseShader } from './LambertDiffuseShader'
-import { TileFeatureIndex } from './TileFeatureIndex'
 import { getGMLId } from './getGMLId'
+import { LambertDiffuseShader } from './LambertDiffuseShader'
 import {
   showTilesetBoundingVolumeAtom,
   showTilesetWireframeAtom
 } from './states'
+import { TileFeatureIndex } from './TileFeatureIndex'
 import { type TilesetPrimitiveConstructorOptions } from './types'
 
 export const PLATEAU_TILE_FEATURE = 'PLATEAU_TILE_FEATURE'

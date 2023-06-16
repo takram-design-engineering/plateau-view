@@ -16,19 +16,6 @@ import {
   type LandUseLayerModelParams
 } from './LandUseLayer'
 import {
-  createPedestrianLayer,
-  type PedestrianLayerModelParams
-} from './PedestrianLayer'
-import {
-  createRiverFloodingRiskLayer,
-  type RiverFloodingRiskLayerModelParams
-} from './RiverFloodingRiskLayer'
-import { createRoadLayer, type RoadLayerModelParams } from './RoadLayer'
-import {
-  createUrbanPlanningLayer,
-  type UrbanPlanningLayerModelParams
-} from './UrbanPlanningLayer'
-import {
   BORDER_LAYER,
   BRIDGE_LAYER,
   BUILDING_LAYER,
@@ -37,9 +24,9 @@ import {
   GENERIC_CITY_OBJECT_LAYER,
   HIGH_TIDE_RISK_LAYER,
   INLAND_FLOODING_RISK_LAYER,
+  LAND_USE_LAYER,
   LANDMARK_LAYER,
   LANDSLIDE_LAYER,
-  LAND_USE_LAYER,
   PARK_LAYER,
   PEDESTRIAN_LAYER,
   RAILWAY_LAYER,
@@ -52,6 +39,19 @@ import {
   USE_CASE_LAYER,
   VEGETATION_LAYER
 } from './layerTypes'
+import {
+  createPedestrianLayer,
+  type PedestrianLayerModelParams
+} from './PedestrianLayer'
+import {
+  createRiverFloodingRiskLayer,
+  type RiverFloodingRiskLayerModelParams
+} from './RiverFloodingRiskLayer'
+import { createRoadLayer, type RoadLayerModelParams } from './RoadLayer'
+import {
+  createUrbanPlanningLayer,
+  type UrbanPlanningLayerModelParams
+} from './UrbanPlanningLayer'
 
 // prettier-ignore
 type ViewLayerModelParams<T extends LayerType> =

@@ -1,5 +1,9 @@
-import { outlinedInputClasses } from '@mui/material'
-import { alpha, type Components, type Theme } from '@mui/material'
+import {
+  alpha,
+  outlinedInputClasses,
+  type Components,
+  type Theme
+} from '@mui/material'
 
 export const MuiOutlinedInput: Components<Theme>['MuiOutlinedInput'] = {
   styleOverrides: {

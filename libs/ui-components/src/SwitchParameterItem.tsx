@@ -1,4 +1,4 @@
-import { Switch, styled, type SwitchProps } from '@mui/material'
+import { styled, Switch, type SwitchProps } from '@mui/material'
 import { useAtom, type PrimitiveAtom } from 'jotai'
 import {
   forwardRef,

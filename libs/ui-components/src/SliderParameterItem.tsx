@@ -10,8 +10,8 @@ import {
   type RefAttributes
 } from 'react'
 
-import { ParameterItem, type ParameterItemProps } from './ParameterItem'
 import { inversePseudoLog, pseudoLog } from './helpers/pseudoLog'
+import { ParameterItem, type ParameterItemProps } from './ParameterItem'
 
 const StyledSlider = styled(Slider)({
   width: 'calc(100% - 12px)',

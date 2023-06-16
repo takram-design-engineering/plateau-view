@@ -1,7 +1,7 @@
 import {
+  styled,
   ToggleButton,
   ToggleButtonGroup,
-  styled,
   type ToggleButtonGroupProps,
   type ToggleButtonProps
 } from '@mui/material'

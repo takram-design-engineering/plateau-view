@@ -9,9 +9,9 @@ import { LayersRenderer, useAddLayer } from '@takram/plateau-layers'
 import { AppLayout } from '@takram/plateau-ui-components'
 import {
   BUILDING_LAYER,
-  PEDESTRIAN_LAYER,
   createViewLayer,
-  layerComponents
+  layerComponents,
+  PEDESTRIAN_LAYER
 } from '@takram/plateau-view-layers'
 
 import { Areas } from './containers/Areas'

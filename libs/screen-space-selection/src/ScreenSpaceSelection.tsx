@@ -6,8 +6,8 @@ import { useCesium } from '@takram/plateau-cesium'
 import { assignPropertyProps } from '@takram/plateau-react-helpers'
 
 import { Marquee } from './Marquee'
-import { ScreenSpaceSelectionHandler } from './ScreenSpaceSelectionHandler'
 import { pickMany } from './pickMany'
+import { ScreenSpaceSelectionHandler } from './ScreenSpaceSelectionHandler'
 import {
   addScreenSpaceSelectionObjectsAtom,
   removeScreenSpaceSelectionObjectsAtom,

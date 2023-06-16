@@ -7,10 +7,6 @@ import { type BridgeLayerModel } from './BridgeLayer'
 import { type BuildingLayerModel } from './BuildingLayer'
 import { type LandSlideRiskLayerModel } from './LandSlideRiskLayer'
 import { type LandUseLayerModel } from './LandUseLayer'
-import { type PedestrianLayerModel } from './PedestrianLayer'
-import { type RiverFloodingRiskLayerModel } from './RiverFloodingRiskLayer'
-import { type RoadLayerModel } from './RoadLayer'
-import { type UrbanPlanningLayerModel } from './UrbanPlanningLayer'
 import {
   type BORDER_LAYER,
   type BRIDGE_LAYER,
@@ -20,9 +16,9 @@ import {
   type GENERIC_CITY_OBJECT_LAYER,
   type HIGH_TIDE_RISK_LAYER,
   type INLAND_FLOODING_RISK_LAYER,
+  type LAND_USE_LAYER,
   type LANDMARK_LAYER,
   type LANDSLIDE_LAYER,
-  type LAND_USE_LAYER,
   type PARK_LAYER,
   type PEDESTRIAN_LAYER,
   type RAILWAY_LAYER,
@@ -35,6 +31,10 @@ import {
   type USE_CASE_LAYER,
   type VEGETATION_LAYER
 } from './layerTypes'
+import { type PedestrianLayerModel } from './PedestrianLayer'
+import { type RiverFloodingRiskLayerModel } from './RiverFloodingRiskLayer'
+import { type RoadLayerModel } from './RoadLayer'
+import { type UrbanPlanningLayerModel } from './UrbanPlanningLayer'
 
 export type LayerTitle = LayerListItemProps['title']
 

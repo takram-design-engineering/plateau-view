@@ -4,6 +4,13 @@ import { atom } from 'jotai'
 
 import { ButtonParameterItem } from './ButtonInspectorItem'
 import { FloatingPanel } from './FloatingPanel'
+import {
+  BuildingIcon,
+  LocationIcon,
+  SearchIcon,
+  TrashIcon,
+  VisibilityOnIcon
+} from './icons'
 import { Inspector } from './Inspector'
 import { InspectorActions } from './InspectorActions'
 import { InspectorHeader } from './InspectorHeader'
@@ -13,13 +20,6 @@ import { SegmentParameterItem } from './SegmentParameterItem'
 import { SelectParameterItem } from './SelectParameterItem'
 import { SliderParameterItem } from './SliderParameterItem'
 import { SwitchParameterItem } from './SwitchParameterItem'
-import {
-  BuildingIcon,
-  LocationIcon,
-  SearchIcon,
-  TrashIcon,
-  VisibilityOnIcon
-} from './icons'
 
 const meta: Meta<typeof Inspector> = {
   title: 'Inspector',

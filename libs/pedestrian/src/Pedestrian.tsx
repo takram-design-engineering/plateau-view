@@ -11,9 +11,9 @@ import {
   type ScreenSpaceSelectionEntry
 } from '@takram/plateau-screen-space-selection'
 
+import { computeCartographicToCartesian } from './computeCartographicToCartesian'
 import { PedestrianObject } from './PedestrianObject'
 import { StreetViewFrustum } from './StreetViewFrustum'
-import { computeCartographicToCartesian } from './computeCartographicToCartesian'
 import { type HeadingPitch, type Location } from './types'
 
 export const PEDESTRIAN_OBJECT = 'PEDESTRIAN_OBJECT'

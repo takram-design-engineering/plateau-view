@@ -1,18 +1,18 @@
 import {
+  alpha,
   Divider,
   IconButton,
   List,
   ListItem,
-  ListItemText,
-  alpha,
   listItemSecondaryActionClasses,
+  ListItemText,
   styled,
   type ListProps
 } from '@mui/material'
 import { forwardRef, type MouseEventHandler, type ReactNode } from 'react'
 
-import { Scrollable } from './Scrollable'
 import { ExpandArrowIcon } from './icons'
+import { Scrollable } from './Scrollable'
 
 const Root = styled(List)({
   position: 'relative',

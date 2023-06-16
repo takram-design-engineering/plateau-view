@@ -12,20 +12,29 @@ export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
   [SubKey in K]: Maybe<T[SubKey]>
 }
+export type MakeEmpty<
+  T extends { [key: string]: unknown },
+  K extends keyof T
+> = { [_ in K]?: never }
+export type Incremental<T> =
+  | T
+  | {
+      [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never
+    }
 const defaultOptions = {} as const
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: string
-  String: string
-  Boolean: boolean
-  Int: number
-  Float: number
+  ID: { input: string | number; output: string }
+  String: { input: string; output: string }
+  Boolean: { input: boolean; output: boolean }
+  Int: { input: number; output: number }
+  Float: { input: number; output: number }
 }
 
 export type PlateauArea = {
-  code: Scalars['String']
-  id: Scalars['ID']
-  name: Scalars['String']
+  code: Scalars['String']['output']
+  id: Scalars['ID']['output']
+  name: Scalars['String']['output']
   parents: Array<PlateauArea>
   type: PlateauAreaType
 }
@@ -38,40 +47,40 @@ export enum PlateauAreaType {
 export type PlateauBuildingDataset = PlateauDataset & {
   __typename?: 'PlateauBuildingDataset'
   data: Array<PlateauBuildingDatasetDatum>
-  description?: Maybe<Scalars['String']>
-  id: Scalars['ID']
+  description?: Maybe<Scalars['String']['output']>
+  id: Scalars['ID']['output']
   municipality?: Maybe<PlateauMunicipality>
-  name: Scalars['String']
+  name: Scalars['String']['output']
   type: PlateauDatasetType
-  typeName: Scalars['String']
+  typeName: Scalars['String']['output']
 }
 
 export type PlateauBuildingDatasetDatum = PlateauDatasetDatum & {
   __typename?: 'PlateauBuildingDatasetDatum'
   format: PlateauDatasetFormat
-  id: Scalars['ID']
-  lod: Scalars['Float']
-  name: Scalars['String']
-  textured: Scalars['Boolean']
-  url: Scalars['String']
-  version: Scalars['String']
+  id: Scalars['ID']['output']
+  lod: Scalars['Float']['output']
+  name: Scalars['String']['output']
+  textured: Scalars['Boolean']['output']
+  url: Scalars['String']['output']
+  version: Scalars['String']['output']
 }
 
 export type PlateauDataset = {
   data: Array<PlateauDatasetDatum>
-  description?: Maybe<Scalars['String']>
-  id: Scalars['ID']
+  description?: Maybe<Scalars['String']['output']>
+  id: Scalars['ID']['output']
   municipality?: Maybe<PlateauMunicipality>
-  name: Scalars['String']
+  name: Scalars['String']['output']
   type: PlateauDatasetType
-  typeName: Scalars['String']
+  typeName: Scalars['String']['output']
 }
 
 export type PlateauDatasetDatum = {
   format: PlateauDatasetFormat
-  id: Scalars['ID']
-  name: Scalars['String']
-  url: Scalars['String']
+  id: Scalars['ID']['output']
+  name: Scalars['String']['output']
+  url: Scalars['String']['output']
 }
 
 export enum PlateauDatasetFormat {
@@ -114,28 +123,28 @@ export enum PlateauDatasetType {
 export type PlateauDefaultDataset = PlateauDataset & {
   __typename?: 'PlateauDefaultDataset'
   data: Array<PlateauDefaultDatasetDatum>
-  description?: Maybe<Scalars['String']>
-  id: Scalars['ID']
+  description?: Maybe<Scalars['String']['output']>
+  id: Scalars['ID']['output']
   municipality?: Maybe<PlateauMunicipality>
-  name: Scalars['String']
+  name: Scalars['String']['output']
   type: PlateauDatasetType
-  typeName: Scalars['String']
+  typeName: Scalars['String']['output']
 }
 
 export type PlateauDefaultDatasetDatum = PlateauDatasetDatum & {
   __typename?: 'PlateauDefaultDatasetDatum'
   format: PlateauDatasetFormat
-  id: Scalars['ID']
-  name: Scalars['String']
-  url: Scalars['String']
+  id: Scalars['ID']['output']
+  name: Scalars['String']['output']
+  url: Scalars['String']['output']
 }
 
 export type PlateauMunicipality = PlateauArea & {
   __typename?: 'PlateauMunicipality'
-  code: Scalars['String']
+  code: Scalars['String']['output']
   datasets: Array<PlateauDataset>
-  id: Scalars['ID']
-  name: Scalars['String']
+  id: Scalars['ID']['output']
+  name: Scalars['String']['output']
   parents: Array<PlateauArea>
   prefecture: PlateauPrefecture
   type: PlateauAreaType
@@ -148,10 +157,10 @@ export type PlateauMunicipalityDatasetsArgs = {
 
 export type PlateauPrefecture = PlateauArea & {
   __typename?: 'PlateauPrefecture'
-  code: Scalars['String']
-  id: Scalars['ID']
+  code: Scalars['String']['output']
+  id: Scalars['ID']['output']
   municipalities: Array<PlateauMunicipality>
-  name: Scalars['String']
+  name: Scalars['String']['output']
   parents: Array<PlateauArea>
   type: PlateauAreaType
 }
@@ -165,15 +174,15 @@ export type Query = {
 }
 
 export type QueryMunicipalitiesArgs = {
-  prefectureCode?: InputMaybe<Scalars['String']>
+  prefectureCode?: InputMaybe<Scalars['String']['input']>
 }
 
 export type QueryMunicipalityArgs = {
-  code: Scalars['String']
+  code: Scalars['String']['input']
 }
 
 export type QueryPrefectureArgs = {
-  code: Scalars['String']
+  code: Scalars['String']['input']
 }
 
 export type PlateauPrefectureFragment = {
@@ -273,7 +282,7 @@ export type PlateauDatasetFragment =
   | PlateauDataset_PlateauDefaultDataset_Fragment
 
 export type MunicipalityDatasetsQueryVariables = Exact<{
-  municipalityCode: Scalars['String']
+  municipalityCode: Scalars['String']['input']
   includeTypes?: InputMaybe<Array<PlateauDatasetType> | PlateauDatasetType>
   excludeTypes?: InputMaybe<Array<PlateauDatasetType> | PlateauDatasetType>
 }>

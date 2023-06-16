@@ -6,9 +6,9 @@ import { layersAtom } from '@takram/plateau-layers'
 import { pedestrianSelectionAtom } from '@takram/plateau-pedestrian'
 import { isNotNullish } from '@takram/plateau-type-helpers'
 
-import { type PedestrianLayerModel } from './PedestrianLayer'
 import { type PlateauTilesetLayerModel } from './createPlateauTilesetLayerBase'
 import { PEDESTRIAN_LAYER } from './layerTypes'
+import { type PedestrianLayerModel } from './PedestrianLayer'
 
 export const pixelRatioAtom = atom(2)
 

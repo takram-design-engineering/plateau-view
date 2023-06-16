@@ -5,8 +5,8 @@ import { type SetOptional } from 'type-fest'
 import { match } from '@takram/plateau-cesium-helpers'
 import { type LayerProps } from '@takram/plateau-layers'
 import {
-  PEDESTRIAN_OBJECT,
   Pedestrian,
+  PEDESTRIAN_OBJECT,
   type HeadingPitch,
   type Location
 } from '@takram/plateau-pedestrian'
