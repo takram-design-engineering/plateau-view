@@ -1,0 +1,12 @@
+{
+  "name": "@takram/plateau-screen-space-entity",
+  "version": "0.0.0",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "import": "./index.mjs"
+    }
+  },
+  "main": "./index.js",
+  "types": "./index.d.ts"
+}
