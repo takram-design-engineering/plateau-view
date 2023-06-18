@@ -1,10 +1,21 @@
-import { Cartesian3, Matrix4, Transforms, type Scene } from '@cesium/engine'
+import {
+  Cartesian3,
+  Math as CesiumMath,
+  Matrix4,
+  PerspectiveFrustum,
+  ScreenSpaceEventType,
+  Transforms,
+  type Scene
+} from '@cesium/engine'
 import { useRef, type FC } from 'react'
+import invariant from 'tiny-invariant'
 
 import { useConstant, useWindowEvent } from '@takram/plateau-react-helpers'
 
 import { useCesium } from '../useCesium'
 import { usePreUpdate } from '../useSceneEvent'
+import { useScreenSpaceEvent } from '../useScreenSpaceEvent'
+import { useScreenSpaceEventHandler } from '../useScreenSpaceEventHandler'
 import { adjustHeightForTerrain } from './adjustHeightForTerrain'
 
 const directions = [
@@ -119,6 +130,17 @@ export const KeyboardHandlers: FC<KeyboardHandlersProps> = ({
   const scene = useCesium(({ scene }) => scene)
   const camera = scene.camera
 
+  const handler = useScreenSpaceEventHandler()
+  useScreenSpaceEvent(handler, ScreenSpaceEventType.WHEEL, value => {
+    const frustum = camera.frustum
+    invariant(frustum instanceof PerspectiveFrustum)
+    frustum.fov = CesiumMath.clamp(
+      frustum.fov - value / 5000,
+      Math.PI * 0.1,
+      Math.PI * 0.75
+    )
+  })
+
   const state = useConstant(() => ({
     time: Date.now(),
     direction: new Cartesian3(),
@@ -166,10 +188,13 @@ export const KeyboardHandlers: FC<KeyboardHandlersProps> = ({
       Cartesian3.subtract(camera.right, right, right)
       Cartesian3.normalize(right, right)
 
-      Cartesian3.multiplyByScalar(forward, forwardSign, forward)
       Cartesian3.multiplyByScalar(right, rightSign, right)
       Cartesian3.multiplyByScalar(up, upSign, up)
-      Cartesian3.add(forward, right, state.direction)
+      Cartesian3.add(
+        Cartesian3.multiplyByScalar(forward, forwardSign, forward),
+        right,
+        state.direction
+      )
       Cartesian3.add(state.direction, up, state.direction)
       Cartesian3.normalize(state.direction, state.direction)
       if (flags.sprint === true) {
