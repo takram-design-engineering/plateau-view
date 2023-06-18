@@ -1,4 +1,5 @@
 import { BoundingSphere } from '@cesium/engine'
+import { DndContext } from '@dnd-kit/core'
 import { AnimatePresence } from 'framer-motion'
 import { nanoid } from 'nanoid'
 import { useState, type FC } from 'react'
@@ -82,7 +83,7 @@ export const Pedestrian: FC<PedestrianProps> = withEphemerality(
     })
 
     return (
-      <>
+      <DndContext>
         <PedestrianObject
           id={objectId}
           location={streetViewLocation ?? location}
@@ -100,7 +101,7 @@ export const Pedestrian: FC<PedestrianProps> = withEphemerality(
               />
             )}
         </AnimatePresence>
-      </>
+      </DndContext>
     )
   }
 )

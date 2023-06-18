@@ -6,22 +6,62 @@ import {
   HeightReference,
   type Billboard
 } from '@cesium/engine'
+import { useDraggable } from '@dnd-kit/core'
 import { useTheme } from '@mui/material'
 import { useEffect, useMemo, useRef, type FC } from 'react'
 
 import { useCesium, usePreRender } from '@takram/plateau-cesium'
+import { ScreenSpaceElement } from '@takram/plateau-cesium-helpers'
 import { withEphemerality } from '@takram/plateau-react-helpers'
 
 import balloonImage from './assets/balloon.png'
 import iconImage from './assets/icon.png'
 import { computeCartographicToCartesian } from './computeCartographicToCartesian'
+import { convertScreenToPositionOffset } from './convertScreenToPositionOffset'
 import { type Location } from './types'
 import { useMotionPosition } from './useMotionPosition'
 
+interface SensorProps {
+  id: string
+  position: Cartesian3
+  offset: Cartesian3
+}
+
+const Sensor: FC<SensorProps> = ({ id, position, offset }) => {
+  const { setNodeRef, transform, listeners } = useDraggable({ id })
+
+  const scene = useCesium(({ scene }) => scene)
+  useEffect(() => {
+    if (transform != null) {
+      convertScreenToPositionOffset(scene, position, transform, offset)
+    } else {
+      Cartesian3.ZERO.clone(offset)
+    }
+    scene.requestRender()
+  }, [position, offset, transform, scene])
+
+  return (
+    <ScreenSpaceElement
+      ref={setNodeRef}
+      position={position}
+      style={{
+        width: 32,
+        height: 32,
+        top: -16 + (transform?.y ?? 0),
+        left: 16 + (transform?.x ?? 0),
+        cursor: 'pointer'
+      }}
+      {...listeners}
+    />
+  )
+}
+
 export interface PedestrianObjectProps {
-  id?: string
+  id: string
   location: Location
   selected?: boolean
+  levitated?: boolean
+  levitationHeight?: number
 }
 
 const positionScratch = new Cartesian3()
@@ -29,7 +69,13 @@ const positionScratch = new Cartesian3()
 export const PedestrianObject: FC<PedestrianObjectProps> = withEphemerality(
   () => useCesium(({ scene }) => scene),
   ['id'],
-  ({ id, location, selected = false }) => {
+  ({
+    id,
+    location,
+    selected = false,
+    levitated = true,
+    levitationHeight = 10
+  }) => {
     const billboards = useCesium(({ billboards }) => billboards)
     const balloonRef = useRef<Billboard>()
     const iconRef = useRef<Billboard>()
@@ -81,6 +127,7 @@ export const PedestrianObject: FC<PedestrianObjectProps> = withEphemerality(
     }, [scene])
 
     const theme = useTheme()
+
     useEffect(() => {
       const balloon = balloonRef.current
       if (balloon == null) {
@@ -99,6 +146,7 @@ export const PedestrianObject: FC<PedestrianObjectProps> = withEphemerality(
       [scene, location]
     )
     const motionPosition = useMotionPosition(position)
+    const offset = useMemo(() => new Cartesian3(), [])
 
     useEffect(() => {
       return motionPosition.on('change', () => {
@@ -108,16 +156,20 @@ export const PedestrianObject: FC<PedestrianObjectProps> = withEphemerality(
 
     usePreRender(() => {
       Object.assign(positionScratch, motionPosition.get())
+      const position = positionScratch
+      Cartesian3.add(position, offset, position)
       const balloon = balloonRef.current
       if (balloon != null) {
-        balloon.position = positionScratch
+        balloon.position = position
       }
       const icon = iconRef.current
       if (icon != null) {
-        icon.position = positionScratch
+        icon.position = position
       }
     })
 
-    return null
+    return selected ? (
+      <Sensor id={id} position={position} offset={offset} />
+    ) : null
   }
 )
