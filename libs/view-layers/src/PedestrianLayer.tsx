@@ -1,5 +1,11 @@
-import { atom, useAtom, useAtomValue, type PrimitiveAtom } from 'jotai'
-import { useMemo, type FC } from 'react'
+import {
+  atom,
+  useAtom,
+  useAtomValue,
+  type PrimitiveAtom,
+  type SetStateAction
+} from 'jotai'
+import { useCallback, useMemo, type FC } from 'react'
 import { type SetOptional } from 'type-fest'
 
 import { match } from '@takram/plateau-cesium-helpers'
@@ -34,19 +40,36 @@ export interface PedestrianLayerModel extends ViewLayerModel {
 export function createPedestrianLayer(
   params: PedestrianLayerModelParams
 ): SetOptional<PedestrianLayerModel, 'id'> {
+  const locationAtom = atom<Location>({
+    longitude: params.longitude,
+    latitude: params.latitude,
+    height: 2.5
+  })
+  const streetViewTargetLocationAtom = atom<Location | null>(null)
+  const streetViewActualLocationAtom = atom<Location | null>(null)
+  const streetViewLocationAtom = atom(
+    get => {
+      const target = get(streetViewTargetLocationAtom)
+      const location = get(locationAtom)
+      return target?.longitude === location.longitude &&
+        target?.latitude === location.latitude
+        ? get(streetViewActualLocationAtom)
+        : null
+    },
+    (get, set, value: SetStateAction<Location | null>) => {
+      set(streetViewTargetLocationAtom, get(locationAtom))
+      set(streetViewActualLocationAtom, value)
+    }
+  )
   return {
     ...createViewLayerBase({
       ...params,
       title: '歩行者視点'
     }),
     type: PEDESTRIAN_LAYER,
-    locationAtom: atom<Location>({
-      longitude: params.longitude,
-      latitude: params.latitude,
-      height: 5
-    }),
+    locationAtom,
     synchronizeStreetViewAtom: atom(false),
-    streetViewLocationAtom: atom<Location | null>(null),
+    streetViewLocationAtom,
     streetViewHeadingPitchAtom: atom<HeadingPitch | null>(null),
     streetViewZoomAtom: atom<number | null>(null)
   }
@@ -63,7 +86,7 @@ export const PedestrianLayer: FC<LayerProps<typeof PEDESTRIAN_LAYER>> = ({
   streetViewHeadingPitchAtom,
   streetViewZoomAtom
 }) => {
-  const [location] = useAtom(locationAtom)
+  const [location, setLocation] = useAtom(locationAtom)
   const synchronizeStreetView = useAtomValue(synchronizeStreetViewAtom)
   const streetViewLocation = useAtomValue(streetViewLocationAtom)
   const streetViewHeadingPitch = useAtomValue(streetViewHeadingPitchAtom)
@@ -80,6 +103,13 @@ export const PedestrianLayer: FC<LayerProps<typeof PEDESTRIAN_LAYER>> = ({
     [id, selection]
   )
 
+  const handleChange = useCallback(
+    (location: Location) => {
+      setLocation(location)
+    },
+    [setLocation]
+  )
+
   const hidden = useAtomValue(hiddenAtom)
   if (hidden) {
     return null
@@ -93,6 +123,7 @@ export const PedestrianLayer: FC<LayerProps<typeof PEDESTRIAN_LAYER>> = ({
       streetViewHeadingPitch={streetViewHeadingPitch ?? undefined}
       streetViewZoom={streetViewZoom ?? undefined}
       hideFrustum={synchronizeStreetView}
+      onChange={handleChange}
     />
   )
 }
