@@ -1,9 +1,9 @@
 import { styled } from '@mui/material'
 import {
+  forwardRef,
   useEffect,
   useRef,
-  type ComponentPropsWithRef,
-  forwardRef
+  type ComponentPropsWithRef
 } from 'react'
 import { mergeRefs } from 'react-merge-refs'
 import invariant from 'tiny-invariant'
@@ -53,6 +53,17 @@ export const StreetView = forwardRef<HTMLDivElement, StreetViewProps>(
         element.removeChild(container)
       }
     }, [container])
+
+    const callbackRefs = useRef({
+      onLocationChange,
+      onHeadingPitchChange,
+      onZoomChange
+    })
+    Object.assign(callbackRefs.current, {
+      onLocationChange,
+      onHeadingPitchChange,
+      onZoomChange
+    })
 
     useEffect(() => {
       let canceled = false

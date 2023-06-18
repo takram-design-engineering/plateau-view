@@ -1,34 +1,26 @@
 import {
-  CallbackProperty,
   Cartesian2,
   Cartesian3,
   Cartographic,
-  ClassificationType,
   Color,
-  ColorMaterialProperty,
   DistanceDisplayCondition,
   HeightReference,
-  type Billboard,
-  type PositionProperty
+  type Billboard
 } from '@cesium/engine'
 import { useDraggable } from '@dnd-kit/core'
 import { useTheme } from '@mui/material'
-import { animate, useMotionValue } from 'framer-motion'
+import { AnimatePresence } from 'framer-motion'
 import { useEffect, useMemo, useRef, type FC, type MouseEvent } from 'react'
 
-import {
-  Entity,
-  useCesium,
-  usePreRender,
-  type EntityProps
-} from '@takram/plateau-cesium'
+import { useCesium, usePreRender } from '@takram/plateau-cesium'
 import { ScreenSpaceElement } from '@takram/plateau-cesium-helpers'
-import { useConstant, withEphemerality } from '@takram/plateau-react-helpers'
+import { withEphemerality } from '@takram/plateau-react-helpers'
 
 import balloonImage from './assets/balloon.png'
 import iconImage from './assets/icon.png'
 import { computeCartographicToCartesian } from './computeCartographicToCartesian'
 import { convertScreenToPositionOffset } from './convertScreenToPositionOffset'
+import { LevitationCircle } from './LevitationCircle'
 import { type Location } from './types'
 import { useMotionPosition } from './useMotionPosition'
 
@@ -43,7 +35,10 @@ interface SensorProps {
 }
 
 const Sensor: FC<SensorProps> = ({ id, position, offset }) => {
-  const { setNodeRef, transform, listeners } = useDraggable({ id })
+  const { setNodeRef, transform, listeners } = useDraggable({
+    id,
+    data: offset
+  })
 
   const scene = useCesium(({ scene }) => scene)
   useEffect(() => {
@@ -75,9 +70,9 @@ const Sensor: FC<SensorProps> = ({ id, position, offset }) => {
 export interface PedestrianObjectProps {
   id: string
   location: Location
+  streetViewLocation?: Location
   selected?: boolean
   levitated?: boolean
-  levitationHeight?: number
 }
 
 const positionScratch = new Cartesian3()
@@ -85,13 +80,13 @@ const cartographicScratch = new Cartographic()
 
 export const PedestrianObject: FC<PedestrianObjectProps> = withEphemerality(
   () => useCesium(({ scene }) => scene),
-  ['id'],
+  ['id', 'location'],
   ({
     id,
     location,
+    streetViewLocation,
     selected = false,
-    levitated = true,
-    levitationHeight = 10
+    levitated = true
   }) => {
     const billboards = useCesium(({ billboards }) => billboards)
     const balloonRef = useRef<Billboard>()
@@ -159,10 +154,23 @@ export const PedestrianObject: FC<PedestrianObjectProps> = withEphemerality(
 
     const position = useMemo(
       () => computeCartographicToCartesian(scene, location),
-      [scene, location]
+      [location, scene]
     )
+    const streetViewPosition = useMemo(
+      () =>
+        streetViewLocation != null
+          ? computeCartographicToCartesian(scene, streetViewLocation)
+          : undefined,
+      [streetViewLocation, scene]
+    )
+
     const motionPosition = useMotionPosition(position)
-    const offset = useMemo(() => new Cartesian3(), [])
+
+    useEffect(() => {
+      if (streetViewPosition != null) {
+        return motionPosition.animatePosition(streetViewPosition)
+      }
+    }, [streetViewPosition, motionPosition])
 
     useEffect(() => {
       return motionPosition.on('change', () => {
@@ -170,75 +178,22 @@ export const PedestrianObject: FC<PedestrianObjectProps> = withEphemerality(
       })
     }, [scene, motionPosition])
 
-    const motionLevitation = useMotionValue(0)
+    const offset = useMemo(() => new Cartesian3(), [])
 
-    useEffect(() => {
-      return animate(motionLevitation, levitated ? 1 : 0, {
-        type: 'tween',
-        duration: 0.3
-      }).stop
-    }, [levitated, motionLevitation])
-
-    useEffect(() => {
-      return motionLevitation.on('change', () => {
-        scene.requestRender()
-      })
-    }, [scene, motionLevitation])
-
-    const getGroundPosition = (result = new Cartesian3()): Cartesian3 => {
-      Object.assign(result, motionPosition.get())
-      Cartesian3.add(result, offset, result)
+    usePreRender(() => {
+      const position = Cartesian3.fromElements(
+        ...motionPosition.get(),
+        positionScratch
+      )
+      Cartesian3.add(position, offset, position)
       const cartographic = Cartographic.fromCartesian(
-        result,
+        position,
         scene.globe.ellipsoid,
         cartographicScratch
       )
       cartographic.height = location.height ?? 0
-      Cartographic.toCartesian(cartographic, scene.globe.ellipsoid, result)
-      return result
-    }
+      Cartographic.toCartesian(cartographic, scene.globe.ellipsoid, position)
 
-    const positionPropertyCallback = (): Cartesian3 => {
-      return getGroundPosition(positionScratch)
-    }
-    const positionPropertyCallbackRef = useRef(positionPropertyCallback)
-    positionPropertyCallbackRef.current = positionPropertyCallback
-
-    const positionProperty = useConstant(
-      () =>
-        new CallbackProperty(
-          () => positionPropertyCallbackRef.current(),
-          false
-        ) as unknown as PositionProperty
-    )
-
-    const semiAxisProperty = useMemo(
-      () =>
-        new CallbackProperty(
-          () => Math.max(0.1, motionLevitation.get() * 25),
-          false
-        ),
-      [motionLevitation]
-    )
-
-    const entityOptions = useMemo(
-      (): EntityProps => ({
-        position: positionProperty,
-        ellipse: {
-          semiMajorAxis: semiAxisProperty,
-          semiMinorAxis: semiAxisProperty,
-          fill: true,
-          material: new ColorMaterialProperty(
-            Color.fromCssColorString(theme.palette.primary.main).withAlpha(0.5)
-          ),
-          classificationType: ClassificationType.TERRAIN
-        }
-      }),
-      [theme, positionProperty, semiAxisProperty]
-    )
-
-    usePreRender(() => {
-      const position = getGroundPosition(positionScratch)
       const balloon = balloonRef.current
       if (balloon != null) {
         balloon.position = position
@@ -251,8 +206,18 @@ export const PedestrianObject: FC<PedestrianObjectProps> = withEphemerality(
 
     return (
       <>
-        {selected && <Sensor id={id} position={position} offset={offset} />}
-        {levitated && <Entity {...entityOptions} />}
+        {selected && (
+          <Sensor
+            id={id}
+            position={streetViewPosition ?? position}
+            offset={offset}
+          />
+        )}
+        <AnimatePresence>
+          {levitated && (
+            <LevitationCircle motionPosition={motionPosition} offset={offset} />
+          )}
+        </AnimatePresence>
       </>
     )
   }

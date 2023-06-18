@@ -8,7 +8,7 @@ import {
 
 import { type Position } from './types'
 
-export interface MotionPosition extends MotionValue<Position> {
+export interface MotionPosition extends MotionValue<[number, number, number]> {
   setPosition: (position: Position) => void
   animatePosition: (position: Position) => () => void
 }
@@ -19,11 +19,10 @@ export function useMotionPosition(position?: Position): MotionPosition {
   const motionZ = useMotionValue(position?.z ?? 0)
 
   return Object.assign(
-    useTransform([motionX, motionY, motionZ], (values: number[]) => ({
-      x: values[0],
-      y: values[1],
-      z: values[2]
-    })),
+    useTransform(
+      [motionX, motionY, motionZ],
+      values => values as [number, number, number]
+    ),
     {
       setPosition: (position: Position) => {
         motionX.set(position.x)

@@ -1,4 +1,9 @@
-import { BoundingSphere } from '@cesium/engine'
+import {
+  BoundingSphere,
+  Cartesian3,
+  Cartographic,
+  Math as CesiumMath
+} from '@cesium/engine'
 import {
   DndContext,
   type DragEndEvent,
@@ -7,6 +12,7 @@ import {
 import { AnimatePresence } from 'framer-motion'
 import { nanoid } from 'nanoid'
 import { useCallback, useState, type FC } from 'react'
+import invariant from 'tiny-invariant'
 
 import { useCesium } from '@takram/plateau-cesium'
 import { compose } from '@takram/plateau-cesium-helpers'
@@ -50,7 +56,8 @@ export const Pedestrian: FC<PedestrianProps> = withEphemerality(
     streetViewLocation,
     streetViewHeadingPitch,
     streetViewZoom,
-    hideFrustum = false
+    hideFrustum = false,
+    onChange
   }) => {
     const defaultId = useConstant(() => nanoid())
     const objectId = compose({ type: 'Pedestrian', key: id ?? defaultId })
@@ -90,25 +97,50 @@ export const Pedestrian: FC<PedestrianProps> = withEphemerality(
     const handleDragStart = useCallback((event: DragStartEvent) => {
       setLevitated(true)
     }, [])
-    const handleDragEnd = useCallback((event: DragEndEvent) => {
-      setLevitated(false)
-    }, [])
+    const handleDragEnd = useCallback(
+      (event: DragEndEvent) => {
+        const referenceLocation = streetViewLocation ?? location
+        const offset = event.active.data.current
+        invariant(offset instanceof Cartesian3)
+        const position = Cartesian3.fromDegrees(
+          referenceLocation.longitude,
+          referenceLocation.latitude,
+          referenceLocation.height
+        )
+        Cartesian3.add(position, offset, position)
+        const cartographic = Cartographic.fromCartesian(position)
+        setLevitated(false)
+        onChange?.({
+          longitude: CesiumMath.toDegrees(cartographic.longitude),
+          latitude: CesiumMath.toDegrees(cartographic.latitude),
+          height: referenceLocation.height
+        })
+      },
+      [location, streetViewLocation, onChange]
+    )
 
     return (
-      <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+      <DndContext
+        autoScroll={false}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+      >
         <PedestrianObject
           id={objectId}
-          location={streetViewLocation ?? location}
+          location={location}
+          streetViewLocation={streetViewLocation}
           selected={selected || highlighted}
           levitated={levitated}
         />
         <AnimatePresence>
           {selected &&
+            !levitated &&
             !hideFrustum &&
             streetViewLocation != null &&
             streetViewHeadingPitch != null && (
               <StreetViewFrustum
-                location={streetViewLocation}
+                location={location}
+                streetViewLocation={streetViewLocation}
                 headingPitch={streetViewHeadingPitch}
                 zoom={streetViewZoom}
               />

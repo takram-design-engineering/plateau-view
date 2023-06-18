@@ -1,6 +1,6 @@
 import { PerspectiveFrustum } from '@cesium/engine'
 import { useAtomValue, useSetAtom } from 'jotai'
-import { Suspense, type FC, useRef } from 'react'
+import { Suspense, useRef, type FC } from 'react'
 import invariant from 'tiny-invariant'
 
 import { useCesium, usePreRender } from '@takram/plateau-cesium'

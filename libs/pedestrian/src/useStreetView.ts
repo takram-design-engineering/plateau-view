@@ -21,7 +21,7 @@ export function useStreetView(
   return suspend(async () => {
     const loader = new Loader({
       apiKey,
-      version: 'weekly'
+      version: '3.53' // As of May 2023
     })
     const library = await loader.importLibrary('streetView')
     const container = document.createElement('div')

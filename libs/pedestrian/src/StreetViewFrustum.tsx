@@ -29,6 +29,7 @@ import { useMotionPosition } from './useMotionPosition'
 
 interface StreetViewFrustumProps {
   location: Location
+  streetViewLocation: Location
   headingPitch: HeadingPitch
   zoom?: number
   aspectRatio?: number
@@ -57,6 +58,7 @@ const colorGeometryAttribute = new GeometryAttribute({
 
 export const StreetViewFrustum: FC<StreetViewFrustumProps> = ({
   location,
+  streetViewLocation,
   headingPitch,
   zoom = 1,
   aspectRatio = 3 / 2,
@@ -135,10 +137,14 @@ export const StreetViewFrustum: FC<StreetViewFrustumProps> = ({
     () => computeCartographicToCartesian(scene, location),
     [scene, location]
   )
+  const streetViewPosition = useMemo(
+    () => computeCartographicToCartesian(scene, streetViewLocation),
+    [scene, streetViewLocation]
+  )
   const motionPosition = useMotionPosition(position)
   useEffect(() => {
-    return motionPosition.animatePosition(position)
-  }, [position, motionPosition])
+    return motionPosition.animatePosition(streetViewPosition)
+  }, [streetViewPosition, motionPosition])
 
   useEffect(() => {
     return motionPosition.on('change', () => {
@@ -149,10 +155,14 @@ export const StreetViewFrustum: FC<StreetViewFrustumProps> = ({
   usePreRender(() => {
     const visibility = motionVisibility.get()
     primitive.appearance.material.uniforms.opacity = visibility
-    Object.assign(positionScratch, motionPosition.get())
+
+    const position = Cartesian3.fromElements(
+      ...motionPosition.get(),
+      positionScratch
+    )
     const rotation = createQuaternionFromHeadingPitch(
       headingPitch,
-      positionScratch,
+      position,
       rotationScratch
     )
     const fov = getFieldOfViewSeparate(scene.camera, zoom, fovScratch)
@@ -161,7 +171,7 @@ export const StreetViewFrustum: FC<StreetViewFrustumProps> = ({
     scaleScratch.y = visibility * farWidth
     scaleScratch.z = visibility * length
     Matrix4.fromTranslationQuaternionRotationScale(
-      positionScratch,
+      position,
       rotation,
       scaleScratch,
       primitive.modelMatrix
