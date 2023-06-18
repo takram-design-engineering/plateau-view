@@ -18,7 +18,7 @@ export function computeCartographicToCartesian(
     (scene.globe.getHeight(
       Cartographic.fromDegrees(longitude, latitude, height, cartographicScratch)
     ) ?? 0) + height,
-    undefined,
+    scene.globe.ellipsoid,
     result
   )
 }

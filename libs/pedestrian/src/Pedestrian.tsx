@@ -1,8 +1,12 @@
 import { BoundingSphere } from '@cesium/engine'
-import { DndContext } from '@dnd-kit/core'
+import {
+  DndContext,
+  type DragEndEvent,
+  type DragStartEvent
+} from '@dnd-kit/core'
 import { AnimatePresence } from 'framer-motion'
 import { nanoid } from 'nanoid'
-import { useState, type FC } from 'react'
+import { useCallback, useState, type FC } from 'react'
 
 import { useCesium } from '@takram/plateau-cesium'
 import { compose } from '@takram/plateau-cesium-helpers'
@@ -82,12 +86,21 @@ export const Pedestrian: FC<PedestrianProps> = withEphemerality(
       }
     })
 
+    const [levitated, setLevitated] = useState(false)
+    const handleDragStart = useCallback((event: DragStartEvent) => {
+      setLevitated(true)
+    }, [])
+    const handleDragEnd = useCallback((event: DragEndEvent) => {
+      setLevitated(false)
+    }, [])
+
     return (
-      <DndContext>
+      <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         <PedestrianObject
           id={objectId}
           location={streetViewLocation ?? location}
           selected={selected || highlighted}
+          levitated={levitated}
         />
         <AnimatePresence>
           {selected &&

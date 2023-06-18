@@ -164,7 +164,7 @@ export const KeyboardHandlers: FC<KeyboardHandlersProps> = ({
     if (forwardSign !== 0 || rightSign !== 0 || upSign !== 0) {
       const matrix = Transforms.eastNorthUpToFixedFrame(
         camera.position,
-        undefined,
+        scene.globe.ellipsoid,
         matrixScratch
       )
       const up = Cartesian3.fromElements(
