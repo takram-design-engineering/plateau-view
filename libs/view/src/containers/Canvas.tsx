@@ -15,6 +15,10 @@ import {
 import { withDeferredProps } from '@takram/plateau-react-helpers'
 
 import {
+  showShadowMapCascadeColorsAtom,
+  showShadowMapDepthAtom
+} from '../states/app'
+import {
   ambientOcclusionAccurateNormalReconstructionAtom,
   ambientOcclusionBiasAtom,
   ambientOcclusionBlackPointAtom,
@@ -92,6 +96,10 @@ export const Canvas = forwardRef<HTMLDivElement, CanvasProps>(
     const antialiasType = useAtomValue(antialiasTypeAtom)
     const shadowMapProps = useAtomValue(shadowMapPropsAtom)
     const ambientOcclusionProps = useAtomValue(ambientOcclusionPropsAtom)
+    const showShadowMapDepth = useAtomValue(showShadowMapDepthAtom)
+    const showShadowMapCascadeColors = useAtomValue(
+      showShadowMapCascadeColorsAtom
+    )
 
     return (
       <Root
@@ -103,7 +111,12 @@ export const Canvas = forwardRef<HTMLDivElement, CanvasProps>(
         maximumRenderTimeChange={1}
         {...props}
       >
-        <ShadowMap {...shadowMapProps} maximumDistance={10000} />
+        <ShadowMap
+          {...shadowMapProps}
+          maximumDistance={10000}
+          debugShowDepth={showShadowMapDepth}
+          debugShowCascadeColors={showShadowMapCascadeColors}
+        />
         <AmbientOcclusion {...ambientOcclusionProps} />
         <SceneCoordinator />
         {children}

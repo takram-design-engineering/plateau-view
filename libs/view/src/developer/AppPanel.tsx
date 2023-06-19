@@ -22,10 +22,11 @@ import {
   debugSphericalHarmonicsAtom,
   enableTerrainLightingAtom,
   environmentTypeAtom,
-  plateauDataSourceAtom,
   showAreaEntitiesAtom,
   showDataFormatsAtom,
   showSelectionBoundingSphereAtom,
+  showShadowMapCascadeColorsAtom,
+  showShadowMapDepthAtom,
   terrainElevationHeightRangeAtom,
   terrainTypeAtom
 } from '../states/app'
@@ -35,10 +36,11 @@ const resetAtom = atomWithResettableAtoms([
   debugSphericalHarmonicsAtom,
   enableTerrainLightingAtom,
   environmentTypeAtom,
-  plateauDataSourceAtom,
   showAreaEntitiesAtom,
   showDataFormatsAtom,
   showSelectionBoundingSphereAtom,
+  showShadowMapCascadeColorsAtom,
+  showShadowMapDepthAtom,
   showTilesetTextureAtom,
   terrainElevationHeightRangeAtom,
   terrainTypeAtom
@@ -104,18 +106,17 @@ export const AppPanel: FC = () => {
             label='Debug Spherical Harmonics'
             atom={debugSphericalHarmonicsAtom}
           />
+          <SwitchParameterItem
+            label='Debug Shadow Map Depth'
+            atom={showShadowMapDepthAtom}
+          />
+          <SwitchParameterItem
+            label='Debug Shadow Map Cascades'
+            atom={showShadowMapCascadeColorsAtom}
+          />
         </ParameterList>
         <Divider />
         <ParameterList>
-          <SelectParameterItem
-            label='Plateau Data Source'
-            atom={plateauDataSourceAtom}
-            items={[
-              ['2020', 'Hosted 2020'],
-              ['2022', 'Hosted 2022'],
-              ['cms', 'CMS Assets']
-            ]}
-          />
           <SwitchParameterItem
             label='Show Data Formats'
             atom={showDataFormatsAtom}
