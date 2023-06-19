@@ -10,8 +10,8 @@ import { useEffect, useRef } from 'react'
 
 import { assertType } from '@takram/plateau-type-helpers'
 
-import { StringMatcher } from './StringMatcher'
 import imageBasedLightingStage from './shaders/imageBasedLightingStage.glsl?raw'
+import { StringMatcher } from './StringMatcher'
 import { useCesium } from './useCesium'
 import { usePreRender } from './useSceneEvent'
 

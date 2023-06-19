@@ -19,9 +19,7 @@ export interface ScreenSpaceSelectionResponderParams<
 
 export function useScreenSpaceSelectionResponder<
   T extends ScreenSpaceSelectionType
->(
-  params: ScreenSpaceSelectionResponderParams<T>
-): ReadonlySet<ScreenSpaceSelectionEntry<T>> {
+>(params: ScreenSpaceSelectionResponderParams<T>): void {
   const scene = useCesium(({ scene }) => scene, { indirect: true })
   const selection = useConstant(() => new Set<ScreenSpaceSelectionEntry<T>>())
 
@@ -29,11 +27,13 @@ export function useScreenSpaceSelectionResponder<
   paramsRef.current = params
 
   const responder = useConstant<ScreenSpaceSelectionResponder<T>>(() => ({
-    transform: object => {
-      return paramsRef.current.transform(object)
+    convertToSelection: object => {
+      return paramsRef.current.convertToSelection(object)
     },
-    predicate: (value): value is ScreenSpaceSelectionEntry<T> => {
-      return paramsRef.current.predicate(value)
+    shouldRespondToSelection: (
+      value
+    ): value is ScreenSpaceSelectionEntry<T> => {
+      return paramsRef.current.shouldRespondToSelection(value)
     },
     onSelect: value => {
       paramsRef.current.onSelect?.(value)
@@ -61,6 +61,4 @@ export function useScreenSpaceSelectionResponder<
       }
     }
   }, [selection, responder, remove])
-
-  return selection
 }

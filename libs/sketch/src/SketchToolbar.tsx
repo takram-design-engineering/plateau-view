@@ -1,8 +1,8 @@
 import {
   Paper,
+  styled,
   ToggleButton,
   ToggleButtonGroup,
-  styled,
   toggleButtonGroupClasses
 } from '@mui/material'
 import { useAtom } from 'jotai'

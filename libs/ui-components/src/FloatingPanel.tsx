@@ -35,13 +35,16 @@ const ScrollableRoundedBox = styled(Scrollable)(({ theme }) => ({
 
 export interface FloatingPanelProps extends PaperProps {
   scrollable?: boolean
+  deferScrollable?: boolean
 }
 
 export const FloatingPanel = forwardRef<HTMLDivElement, FloatingPanelProps>(
-  ({ scrollable = false, children, ...props }, ref) => (
+  ({ scrollable = false, deferScrollable, children, ...props }, ref) => (
     <StyledPaper ref={ref} {...props}>
       {scrollable ? (
-        <ScrollableRoundedBox>{children}</ScrollableRoundedBox>
+        <ScrollableRoundedBox defer={deferScrollable}>
+          {children}
+        </ScrollableRoundedBox>
       ) : (
         <RoundedBox>{children}</RoundedBox>
       )}

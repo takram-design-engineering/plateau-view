@@ -4,13 +4,13 @@ import {
   area as createArea,
   line as createLine,
   path as createPath,
-  curveCatmullRom,
   scaleLinear,
   type ScaleLinear
 } from 'd3'
 import { endOfDay, set, startOfDay } from 'date-fns'
-import { useAtomValue } from 'jotai'
+import { useAtomValue, type Atom } from 'jotai'
 import {
+  memo,
   useEffect,
   useId,
   useMemo,
@@ -21,7 +21,7 @@ import {
 } from 'react'
 import invariant from 'tiny-invariant'
 
-import { type DateControlState } from './useDateControlState'
+import { type DateControlState, type RiseSet } from './useDateControlState'
 
 const Root = styled('div')({
   svg: {
@@ -45,7 +45,7 @@ export function createAltitudeData(
   start: Date | number,
   end: Date | number,
   observer: Observer,
-  subdivision = 50
+  subdivision = 100
 ): Altitude[] {
   const interval = (+end - +start) / (subdivision - 1)
   return [...Array(subdivision)].map((_, index) => {
@@ -66,12 +66,11 @@ interface SolsticeAltitude {
 const RiseSetGradient: FC<{
   width: number
   height: number
-  sunrise?: Date
-  sunset?: Date
+  riseSetAtom: Atom<RiseSet>
   scaleX: ScaleLinear<number, number>
-  skirt?: number
+  inset?: number
   opacity?: number
-}> = ({ width, height, sunrise, sunset, scaleX, skirt = 20, opacity = 1 }) => {
+}> = ({ width, height, riseSetAtom, scaleX, inset = 0, opacity = 1 }) => {
   const id = useId()
   const rect = useMemo(() => {
     const radius = 5
@@ -90,47 +89,72 @@ const RiseSetGradient: FC<{
   }, [width, height])
 
   const theme = useTheme()
-  if (sunrise == null && sunset == null) {
+
+  const { rise, set, dawn, dusk } = useAtomValue(riseSetAtom)
+  const entries = useMemo(() => {
+    if (rise == null || set == null || dawn == null || dusk == null) {
+      return // TODO
+    }
+    const light = theme.palette.mode === 'light'
+    const [dayOpacity, nightOpacity] = light ? [0, 1] : [1, 0]
+    const entries = [
+      { offset: scaleX(+dawn), value: dayOpacity },
+      { offset: scaleX(+rise), value: nightOpacity },
+      { offset: scaleX(+set), value: nightOpacity },
+      { offset: scaleX(+dusk), value: dayOpacity }
+    ].sort((a, b) => a.offset - b.offset)
+
+    const [t1, t2, t3, t4] = entries
+    if (t1.offset < inset) {
+      const skirt = t2.offset - t1.offset
+      const value = 1 - (skirt + (t1.offset - inset)) / skirt
+      return [
+        { offset: inset, value },
+        t2,
+        t3,
+        t4,
+        { offset: width - inset + (t1.offset - inset), value: t4.value },
+        { offset: width - inset, value }
+      ]
+    } else if (t4.offset > width - inset) {
+      const skirt = t4.offset - t3.offset
+      const value = (t4.offset - (width - inset)) / skirt
+      return [
+        { offset: inset, value },
+        { offset: t4.offset - (width - inset), value: t1.value },
+        t1,
+        t2,
+        t3,
+        { offset: width - inset, value }
+      ]
+    }
+    return entries
+  }, [width, scaleX, inset, theme, rise, set, dawn, dusk])
+
+  if (entries == null) {
     return null
   }
 
-  const sunriseX = sunrise != null ? scaleX(+sunrise) : undefined
-  const sunsetX = sunset != null ? scaleX(+sunset) : undefined
   const color = theme.palette.text.primary
   return (
     <>
       <defs>
-        <linearGradient id={id} x1={0} x2={1} y1={0} y2={0}>
-          <stop offset={0} stopColor={color} stopOpacity={opacity} />
-          {sunriseX != null && (
-            <>
-              <stop
-                offset={(sunriseX - skirt / 2) / width}
-                stopColor={color}
-                stopOpacity={opacity}
-              />
-              <stop
-                offset={(sunriseX + skirt / 2) / width}
-                stopColor={color}
-                stopOpacity={0}
-              />
-            </>
-          )}
-          {sunsetX != null && (
-            <>
-              <stop
-                offset={(sunsetX - skirt / 2) / width}
-                stopColor={color}
-                stopOpacity={0}
-              />
-              <stop
-                offset={(sunsetX + skirt / 2) / width}
-                stopColor={color}
-                stopOpacity={opacity}
-              />
-            </>
-          )}
-          <stop offset={width} stopColor={color} stopOpacity={opacity} />
+        <linearGradient
+          id={id}
+          x1={inset / width}
+          x2={(width - inset) / width}
+          y1={0}
+          y2={0}
+          spreadMethod='repeat'
+        >
+          {entries.map(({ value, offset }, index) => (
+            <stop
+              key={index}
+              offset={(offset - inset) / (width - inset * 2)}
+              stopColor={color}
+              stopOpacity={opacity * (1 - value)}
+            />
+          ))}
         </linearGradient>
       </defs>
       <path d={rect} fill={`url(#${id})`} />
@@ -138,33 +162,95 @@ const RiseSetGradient: FC<{
   )
 }
 
-const borderRadius = 5
+const hours = [...Array(7)].map((_, index) => index * 4)
+const altitudes = [90, 45, 0, -45, -90]
+
+const XAxis: FC<{
+  height: number
+  date: Date
+  scale: ScaleLinear<number, number>
+}> = memo(({ height, date, scale }) => {
+  const theme = useTheme()
+  const y = height + parseFloat(theme.spacing(1))
+  return (
+    <>
+      {hours.map(hour => (
+        <text
+          key={`${hour}`}
+          x={scale(+startOfDay(date) + hour * 3600000)}
+          y={y}
+          textAnchor='middle'
+          dominantBaseline='text-before-edge'
+          fill={theme.palette.text.secondary}
+          fontFamily={theme.typography.caption.fontFamily}
+          fontSize={theme.typography.caption.fontSize}
+        >
+          {`${hour}:00`}
+        </text>
+      ))}
+    </>
+  )
+})
+
+const YAxis: FC<{
+  width: number
+  scale: ScaleLinear<number, number>
+}> = memo(({ width, scale }) => {
+  const theme = useTheme()
+  const x = width + parseFloat(theme.spacing(1))
+  return (
+    <>
+      {altitudes.map(altitude => (
+        <text
+          key={`${altitude}`}
+          x={x}
+          y={scale(altitude)}
+          textAnchor='start'
+          dominantBaseline='central'
+          fill={theme.palette.text.secondary}
+          fontFamily={theme.typography.caption.fontFamily}
+          fontSize={theme.typography.caption.fontSize}
+        >
+          {altitude}°
+        </text>
+      ))}
+    </>
+  )
+})
 
 const Graph: FC<
   DateControlState & {
     width: number
     height: number
+    borderRadius?: number
   }
-> = ({ width, height, dateAtom, observerAtom, solsticesAtom, riseSetAtom }) => {
+> = ({
+  width,
+  height,
+  borderRadius = 5,
+  dateAtom,
+  observerAtom,
+  solsticesAtom,
+  riseSetAtom
+}) => {
   const date = useAtomValue(dateAtom)
   const observer = useAtomValue(observerAtom)
   const { summer: summerSolstice, winter: winterSolstice } =
     useAtomValue(solsticesAtom)
-  const { rise: sunrise, set: sunset } = useAtomValue(riseSetAtom)
 
   const scaleX = useMemo(
     () =>
       scaleLinear()
         .domain([+startOfDay(date), +endOfDay(date)])
         .range([borderRadius, width - borderRadius]),
-    [date, width]
+    [width, borderRadius, date]
   )
   const scaleY = useMemo(
     () =>
       scaleLinear()
         .domain([-100, 100])
         .range([height - borderRadius, borderRadius]),
-    [height]
+    [height, borderRadius]
   )
 
   const altitudes = useMemo(
@@ -209,8 +295,7 @@ const Graph: FC<
     () =>
       createLine<Altitude>()
         .x(({ date }) => scaleX(+date))
-        .y(({ altitude }) => scaleY(altitude))
-        .curve(curveCatmullRom),
+        .y(({ altitude }) => scaleY(altitude)),
     [scaleX, scaleY]
   )
   const area = useMemo(
@@ -218,8 +303,7 @@ const Graph: FC<
       createArea<SolsticeAltitude>()
         .x(({ date }) => scaleX(+date))
         .y0(({ summer }) => scaleY(summer))
-        .y1(({ winter }) => scaleY(winter))
-        .curve(curveCatmullRom),
+        .y1(({ winter }) => scaleY(winter)),
     [scaleX, scaleY]
   )
 
@@ -233,9 +317,9 @@ const Graph: FC<
       <RiseSetGradient
         width={width}
         height={height}
-        sunrise={sunrise}
-        sunset={sunset}
+        riseSetAtom={riseSetAtom}
         scaleX={scaleX}
+        inset={borderRadius}
         opacity={0.08}
       />
       <line
@@ -275,38 +359,8 @@ const Graph: FC<
         fill={theme.palette.primary.main}
         stroke='none'
       />
-      {[90, 45, 0, -45, -90].map(altitude => (
-        <text
-          key={`y:${altitude}`}
-          x={width}
-          y={scaleY(altitude)}
-          dx={parseInt(theme.spacing(1))}
-          textAnchor='start'
-          dominantBaseline='central'
-          fill={theme.palette.text.secondary}
-          fontFamily={theme.typography.caption.fontFamily}
-          fontSize={theme.typography.caption.fontSize}
-        >
-          {altitude}°
-        </text>
-      ))}
-      {[...Array(7)].map((_, index) => {
-        const hours = index * 4
-        return (
-          <text
-            key={`x:${index}`}
-            x={scaleX(+startOfDay(date) + hours * 3600000)}
-            y={height + parseInt(theme.spacing(1))}
-            textAnchor='middle'
-            dominantBaseline='text-before-edge'
-            fill={theme.palette.text.secondary}
-            fontFamily={theme.typography.caption.fontFamily}
-            fontSize={theme.typography.caption.fontSize}
-          >
-            {`${hours}:00`}
-          </text>
-        )
-      })}
+      <XAxis height={height} date={date} scale={scaleX} />
+      <YAxis width={width} scale={scaleY} />
     </svg>
   )
 }

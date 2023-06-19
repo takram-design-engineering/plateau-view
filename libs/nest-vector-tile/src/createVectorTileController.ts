@@ -14,8 +14,8 @@ import {
   type TileFormat
 } from '@takram/plateau-nest-tile-cache'
 
-import { VectorTileService } from './VectorTileService'
 import { type VectorTileOptions } from './interfaces/VectorTileOptions'
+import { VectorTileService } from './VectorTileService'
 
 export function createVectorTileController(options: VectorTileOptions): Type {
   @Controller(options.path)

@@ -100,8 +100,8 @@ export const DateControl = forwardRef<HTMLDivElement, DateControlProps>(
         <Stack direction='row' spacing={3} width='100%'>
           <Stack spacing={2} width={200}>
             <Stack spacing={0.5}>
-              <DateText>{format(date, 'MMMM d, yyyy')}</DateText>
-              <TimeText>{format(date, 'HH:mm')}</TimeText>
+              <DateText>{format(date, "yyyy'年'M'月'd'日'")}</DateText>
+              <TimeText>{format(date, 'H:mm')}</TimeText>
             </Stack>
             <DateControlList
               {...omit(state, ['dateAtom', 'observerAtom'])}

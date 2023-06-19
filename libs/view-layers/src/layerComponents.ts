@@ -4,9 +4,6 @@ import { BridgeLayer } from './BridgeLayer'
 import { BuildingLayer } from './BuildingLayer'
 import { LandSlideRiskLayer } from './LandSlideRiskLayer'
 import { LandUseLayer } from './LandUseLayer'
-import { RiverFloodingRiskLayer } from './RiverFloodingRiskLayer'
-import { RoadLayer } from './RoadLayer'
-import { UrbanPlanningLayer } from './UrbanPlanningLayer'
 import {
   BORDER_LAYER,
   BRIDGE_LAYER,
@@ -16,10 +13,11 @@ import {
   GENERIC_CITY_OBJECT_LAYER,
   HIGH_TIDE_RISK_LAYER,
   INLAND_FLOODING_RISK_LAYER,
+  LAND_USE_LAYER,
   LANDMARK_LAYER,
   LANDSLIDE_LAYER,
-  LAND_USE_LAYER,
   PARK_LAYER,
+  PEDESTRIAN_LAYER,
   RAILWAY_LAYER,
   RIVER_FLOODING_RISK_LAYER,
   ROAD_LAYER,
@@ -30,8 +28,14 @@ import {
   USE_CASE_LAYER,
   VEGETATION_LAYER
 } from './layerTypes'
+import { PedestrianLayer } from './PedestrianLayer'
+import { RiverFloodingRiskLayer } from './RiverFloodingRiskLayer'
+import { RoadLayer } from './RoadLayer'
+import { UrbanPlanningLayer } from './UrbanPlanningLayer'
 
 export const layerComponents: LayerComponents = {
+  [PEDESTRIAN_LAYER]: PedestrianLayer,
+  // Dataset layers
   [BORDER_LAYER]: undefined,
   [BRIDGE_LAYER]: BridgeLayer,
   [BUILDING_LAYER]: BuildingLayer,

@@ -9,26 +9,22 @@ import {
 } from 'react'
 
 import { type PlateauTilesetProps } from '@takram/plateau-datasets'
-import { type PlateauDatasetFormat } from '@takram/plateau-graphql'
 
 import { type PlateauTilesetLayerModel } from './createPlateauTilesetLayerBase'
-import { type DatasetDatum } from './useDatasetDatum'
 
 export interface PlateauTilesetLayerContentProps
   extends Pick<
     PlateauTilesetLayerModel,
     'boundingSphereAtom' | 'featureIndexAtom' | 'hiddenFeaturesAtom'
   > {
-  layerId: string
-  datum: DatasetDatum<PlateauDatasetFormat.Cesium3DTiles>
+  url: string
   component: ComponentType<PlateauTilesetProps & RefAttributes<Cesium3DTileset>>
 }
 
 export const PlateauTilesetLayerContent: FC<
   PlateauTilesetLayerContentProps
 > = ({
-  layerId,
-  datum,
+  url,
   component,
   boundingSphereAtom,
   featureIndexAtom,
@@ -48,7 +44,7 @@ export const PlateauTilesetLayerContent: FC<
     <Component
       ref={setTileset}
       featureIndexRef={setFeatureIndex}
-      url={datum.url}
+      url={url}
       hiddenFeatures={hiddenFeatures ?? undefined}
     />
   )

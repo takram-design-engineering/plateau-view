@@ -1,4 +1,4 @@
-import { Stack, Tooltip, styled, type TooltipProps } from '@mui/material'
+import { Stack, styled, Tooltip, type TooltipProps } from '@mui/material'
 import { Suspense, type FC } from 'react'
 
 import { ShortcutText, type ShortcutTextProps } from './ShortcutText'

@@ -2,7 +2,15 @@ import { Divider, IconButton } from '@mui/material'
 import { type Meta, type StoryObj } from '@storybook/react'
 import { atom } from 'jotai'
 
+import { ButtonParameterItem } from './ButtonInspectorItem'
 import { FloatingPanel } from './FloatingPanel'
+import {
+  BuildingIcon,
+  LocationIcon,
+  SearchIcon,
+  TrashIcon,
+  VisibilityOnIcon
+} from './icons'
 import { Inspector } from './Inspector'
 import { InspectorActions } from './InspectorActions'
 import { InspectorHeader } from './InspectorHeader'
@@ -12,13 +20,6 @@ import { SegmentParameterItem } from './SegmentParameterItem'
 import { SelectParameterItem } from './SelectParameterItem'
 import { SliderParameterItem } from './SliderParameterItem'
 import { SwitchParameterItem } from './SwitchParameterItem'
-import {
-  BuildingIcon,
-  LocationIcon,
-  SearchIcon,
-  TrashIcon,
-  VisibilityOnIcon
-} from './icons'
 
 const meta: Meta<typeof Inspector> = {
   title: 'Inspector',
@@ -34,7 +35,7 @@ const selectAtom = atom(1)
 const sliderAtom1 = atom(1)
 const sliderAtom2 = atom(1)
 const sliderAtom3 = atom([1, 5])
-const segmentAtom = atom([1])
+const segmentAtom = atom(1)
 
 export const Default: Story = {
   render: () => (
@@ -111,6 +112,7 @@ export const Default: Story = {
             <SegmentParameterItem
               label='Segment'
               atom={segmentAtom}
+              exclusive
               items={[
                 [1, 'Value 1'],
                 [2, 'Value 2'],
@@ -118,6 +120,7 @@ export const Default: Story = {
                 [4, 'Value 4']
               ]}
             />
+            <ButtonParameterItem label='Segment'>Button</ButtonParameterItem>
           </ParameterList>
         </InspectorItem>
       </Inspector>

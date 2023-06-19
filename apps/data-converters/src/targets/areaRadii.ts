@@ -1,6 +1,6 @@
 import { readFile, writeFile } from 'fs/promises'
-import { fromPairs } from 'lodash'
 import path from 'path'
+import { fromPairs } from 'lodash'
 import invariant from 'tiny-invariant'
 import type TopoJSON from 'topojson-specification'
 

@@ -1,17 +1,18 @@
 import {
+  alpha,
   Divider,
   IconButton,
   List,
   ListItem,
-  ListItemText,
   listItemSecondaryActionClasses,
+  ListItemText,
   styled,
   type ListProps
 } from '@mui/material'
 import { forwardRef, type MouseEventHandler, type ReactNode } from 'react'
 
-import { Scrollable } from './Scrollable'
 import { ExpandArrowIcon } from './icons'
+import { Scrollable } from './Scrollable'
 
 const Root = styled(List)({
   position: 'relative',
@@ -24,7 +25,9 @@ const Footer = styled(ListItem)(({ theme }) => ({
   alignItems: 'center',
   height: theme.spacing(4),
   color: theme.palette.text.secondary,
-  backgroundColor: theme.palette.grey[50],
+  // Half the opacity of the light style of divider.
+  // https://github.com/mui/material-ui/blob/v5.13.1/packages/mui-material/src/Divider/Divider.js#L71
+  backgroundColor: alpha(theme.palette.divider, 0.04),
   [`& .${listItemSecondaryActionClasses.root}`]: {
     right: theme.spacing(1)
   }

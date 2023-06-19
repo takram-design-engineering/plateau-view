@@ -1,12 +1,10 @@
-import { Globe } from '@cesium/engine'
 import { styled } from '@mui/material'
 import { atom, useAtomValue } from 'jotai'
-import { forwardRef, memo, useCallback, type FC } from 'react'
+import { forwardRef } from 'react'
 
 import {
   Canvas as CesiumCanvas,
   ShadowMap,
-  useCesium,
   type CanvasProps as CesiumCanvasProps,
   type ShadowMapProps
 } from '@takram/plateau-cesium'
@@ -14,7 +12,6 @@ import {
   AmbientOcclusion,
   type AmbientOcclusionProps
 } from '@takram/plateau-cesium-hbao'
-import { JapanSeaLevelEllipsoid } from '@takram/plateau-datasets'
 import { withDeferredProps } from '@takram/plateau-react-helpers'
 
 import {
@@ -39,8 +36,7 @@ import {
   shadowMapSoftShadowsAtom,
   type AntialiasType
 } from '../states/graphics'
-import { showGlobeWireframeAtom } from '../states/performance'
-import { GlobeDepthTestCoordinator } from './GlobeDepthTestCoordinator'
+import { SceneCoordinator } from './SceneCoordinator'
 
 const Root = withDeferredProps(
   ['useBrowserRecommendedResolution'],
@@ -50,32 +46,6 @@ const Root = withDeferredProps(
     zIndex: -1 // Below any UI
   })
 )
-
-const Configure: FC = memo(() => {
-  const scene = useCesium(({ scene }) => scene)
-
-  // Increase the precision of the depth buffer which HBAO looks up to
-  // reconstruct normals.
-  scene.camera.frustum.near = 5
-
-  const showGlobeWireframe = useAtomValue(showGlobeWireframeAtom)
-  const globe = scene.globe as Globe & {
-    _surface: {
-      tileProvider: {
-        _debug: {
-          wireframe: boolean
-        }
-      }
-    }
-  }
-  globe._surface.tileProvider._debug.wireframe = showGlobeWireframe
-
-  const antialiasType = useAtomValue(antialiasTypeAtom)
-  scene.postProcessStages.fxaa.enabled = antialiasType === 'fxaa'
-
-  scene.requestRender()
-  return null
-})
 
 const shadowMapPropsAtom = atom(
   (get): ShadowMapProps => ({
@@ -117,13 +87,6 @@ export interface CanvasProps extends CesiumCanvasProps {}
 
 export const Canvas = forwardRef<HTMLDivElement, CanvasProps>(
   ({ children, ...props }, forwardedRef) => {
-    const constructorOptions = useCallback(
-      () => ({
-        globe: new Globe(JapanSeaLevelEllipsoid)
-      }),
-      []
-    )
-
     const nativeResolutionEnabled = useAtomValue(nativeResolutionEnabledAtom)
     const explicitRenderingEnabled = useAtomValue(explicitRenderingEnabledAtom)
     const antialiasType = useAtomValue(antialiasTypeAtom)
@@ -133,7 +96,6 @@ export const Canvas = forwardRef<HTMLDivElement, CanvasProps>(
     return (
       <Root
         ref={forwardedRef}
-        constructorOptions={constructorOptions}
         msaaSamples={msaaSamples[antialiasType] ?? 0}
         useBrowserRecommendedResolution={!nativeResolutionEnabled}
         requestRenderMode={explicitRenderingEnabled}
@@ -141,10 +103,9 @@ export const Canvas = forwardRef<HTMLDivElement, CanvasProps>(
         maximumRenderTimeChange={1}
         {...props}
       >
-        <Configure />
         <ShadowMap {...shadowMapProps} maximumDistance={10000} />
         <AmbientOcclusion {...ambientOcclusionProps} />
-        <GlobeDepthTestCoordinator />
+        <SceneCoordinator />
         {children}
       </Root>
     )

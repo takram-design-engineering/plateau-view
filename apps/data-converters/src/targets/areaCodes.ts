@@ -1,6 +1,6 @@
 import { readFile, writeFile } from 'fs/promises'
-import { fromPairs, isArray } from 'lodash'
 import path from 'path'
+import { fromPairs, isArray } from 'lodash'
 import invariant from 'tiny-invariant'
 
 export type Prefectures = Record<

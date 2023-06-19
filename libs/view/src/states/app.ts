@@ -1,5 +1,8 @@
+import { isNumber } from 'class-validator'
 import { atom, type SetStateAction } from 'jotai'
 import { atomWithReset, type RESET } from 'jotai/utils'
+
+import { atomWithStorageValidation } from '@takram/plateau-shared-states'
 
 import { type EnvironmentType } from '../containers/Environments'
 import { type TerrainType } from '../containers/Terrains'
@@ -31,3 +34,11 @@ export const showDataFormatsAtom = atomWithReset(false)
 export const showAreaEntitiesAtom = atomWithReset(false)
 
 export const showSelectionBoundingSphereAtom = atomWithReset(false)
+
+export const enableKeyboardCameraControlAtom = atomWithReset(false)
+
+export const inspectorWidthAtom = atomWithStorageValidation({
+  key: 'inspectorWidth',
+  initialValue: 360,
+  validate: isNumber
+})

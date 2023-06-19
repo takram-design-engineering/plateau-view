@@ -29,8 +29,8 @@ export const BingMapsImageryLayer: FC<BingMapsImageryLayerProps> = ({
   return (
     <ImageryLayer
       imageryProvider={imageryProvider}
-      contrast={0.75}
-      brightness={0.9}
+      contrast={0.6}
+      brightness={1.5}
       saturation={0.75}
       {...props}
     />

@@ -2,9 +2,9 @@ import { type Meta, type StoryObj } from '@storybook/react'
 import { useCallback, useState, type FC } from 'react'
 
 import { FloatingPanel } from './FloatingPanel'
+import { BuildingIcon } from './icons'
 import { LayerList } from './LayerList'
 import { LayerListItem } from './LayerListItem'
-import { BuildingIcon } from './icons'
 
 const meta: Meta<typeof LayerListItem> = {
   title: 'LayerListItem',

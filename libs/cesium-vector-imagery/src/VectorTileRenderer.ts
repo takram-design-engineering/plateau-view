@@ -1,10 +1,10 @@
 import Point from '@mapbox/point-geometry'
 import {
   Labelers,
+  painter,
   TileCache,
   View,
   ZxySource,
-  painter,
   type Index,
   type LabelRule,
   type Rule as PaintRule,

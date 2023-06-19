@@ -82,3 +82,73 @@ export const Default: Story = {
     </ParameterList>
   )
 }
+
+export const MediumFontSize: Story = {
+  render: () => (
+    <ParameterList sx={{ width: 280 }}>
+      <SwitchParameterItem
+        label='Switch'
+        labelFontSize='medium'
+        atom={switchAtom}
+      />
+      <SelectParameterItem
+        label='Select'
+        labelFontSize='medium'
+        atom={selectAtom}
+        items={[
+          [1, 'Value 1'],
+          [2, 'Value 2'],
+          [3, 'Value 3'],
+          [4, 'Value 4']
+        ]}
+      />
+      <SelectParameterItem
+        label='Select'
+        labelFontSize='medium'
+        layout='stack'
+        atom={selectAtom}
+        items={[
+          [1, 'Value 1'],
+          [2, 'Value 2'],
+          [3, 'Value 3'],
+          [4, 'Value 4']
+        ]}
+      />
+      <SliderParameterItem
+        label='Slider'
+        labelFontSize='medium'
+        min={0}
+        max={10}
+        decimalPlaces={1}
+        atom={sliderAtom1}
+      />
+      <SliderParameterItem
+        label='Discrete Slider'
+        labelFontSize='medium'
+        min={0}
+        max={10}
+        step={1}
+        atom={sliderAtom2}
+      />
+      <SliderParameterItem
+        label='Range Slider'
+        labelFontSize='medium'
+        min={0}
+        max={10}
+        decimalPlaces={1}
+        atom={sliderAtom3}
+      />
+      <SegmentParameterItem
+        label='Segment'
+        labelFontSize='medium'
+        atom={segmentAtom}
+        items={[
+          [1, 'Value 1'],
+          [2, 'Value 2'],
+          [3, 'Value 3'],
+          [4, 'Value 4']
+        ]}
+      />
+    </ParameterList>
+  )
+}

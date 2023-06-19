@@ -3,22 +3,29 @@ import { fromPairs, uniq, without } from 'lodash'
 
 import { featureSelectionAtom } from '@takram/plateau-datasets'
 import { layersAtom } from '@takram/plateau-layers'
+import { pedestrianSelectionAtom } from '@takram/plateau-pedestrian'
 import { isNotNullish } from '@takram/plateau-type-helpers'
 
 import { type PlateauTilesetLayerModel } from './createPlateauTilesetLayerBase'
+import { PEDESTRIAN_LAYER } from './layerTypes'
+import { type PedestrianLayerModel } from './PedestrianLayer'
 
 export const pixelRatioAtom = atom(2)
 
-export const tilesetLayersAtom = atom(get => {
-  const layers = get(layersAtom)
-  return layers.filter(
+export const tilesetLayersAtom = atom(get =>
+  get(layersAtom).filter(
     (layer): layer is PlateauTilesetLayerModel =>
       'isPlateauTilesetLayer' in layer
   )
-})
+)
 
-export const highlightedLayersAtom = atom(get => {
-  // TODO: Support other types of selection.
+export const pedestrianLayersAtom = atom(get =>
+  get(layersAtom).filter(
+    (layer): layer is PedestrianLayerModel => layer.type === PEDESTRIAN_LAYER
+  )
+)
+
+const highlightedTilesetLayersAtom = atom(get => {
   const featureKeys = get(featureSelectionAtom).map(({ value }) => value.key)
   const tilesetLayers = get(tilesetLayersAtom)
   return tilesetLayers.filter(layer => {
@@ -27,6 +34,22 @@ export const highlightedLayersAtom = atom(get => {
       featureIndex != null && featureKeys.some(key => featureIndex.has(key))
     )
   })
+})
+
+const highlightedPedestrianLayersAtom = atom(get => {
+  const entityIds = get(pedestrianSelectionAtom).map(({ value }) => value)
+  const pedestrianLayers = get(pedestrianLayersAtom)
+  return pedestrianLayers.filter(layer => {
+    return entityIds.some(entityId => entityId === `Pedestrian:${layer.id}`)
+  })
+})
+
+export const highlightedLayersAtom = atom(get => {
+  // TODO: Support other types of selection.
+  return [
+    ...get(highlightedTilesetLayersAtom),
+    ...get(highlightedPedestrianLayersAtom)
+  ]
 })
 
 export const featureIndicesAtom = atom(get => {

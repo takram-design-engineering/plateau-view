@@ -6,7 +6,8 @@ import {
   ContextBar,
   DeveloperPanel,
   FloatingButton,
-  FloatingPanel
+  FloatingPanel,
+  Inspector as InspectorComponent
 } from '../src'
 
 const meta: Meta<typeof AppLayout> = {
@@ -22,30 +23,28 @@ export const Default: Story = {
   render: () => (
     <AppLayout
       main={
-        <Stack spacing={2}>
+        <Stack spacing={1}>
           <FloatingPanel sx={{ padding: 2 }}>Panel</FloatingPanel>
           <FloatingPanel sx={{ padding: 2 }}>Panel</FloatingPanel>
         </Stack>
       }
       context={
         <ContextBar>
-          <Stack direction='row' spacing={2}>
-            <Button sx={{ flexShrink: 0 }} variant='text'>
-              Context
-            </Button>
-            <Button sx={{ flexShrink: 0 }} variant='text'>
-              Context
-            </Button>
-            <Button sx={{ flexShrink: 0 }} variant='text'>
-              Context
-            </Button>
-            <Button sx={{ flexShrink: 0 }} variant='text'>
-              Context
-            </Button>
-            <Button sx={{ flexShrink: 0 }} variant='text'>
-              Context
-            </Button>
-          </Stack>
+          <Button sx={{ flexShrink: 0 }} variant='text'>
+            Context
+          </Button>
+          <Button sx={{ flexShrink: 0 }} variant='text'>
+            Context
+          </Button>
+          <Button sx={{ flexShrink: 0 }} variant='text'>
+            Context
+          </Button>
+          <Button sx={{ flexShrink: 0 }} variant='text'>
+            Context
+          </Button>
+          <Button sx={{ flexShrink: 0 }} variant='text'>
+            Context
+          </Button>
         </ContextBar>
       }
       bottomLeft={
@@ -78,33 +77,31 @@ export const Inspector: Story = {
       }
       context={
         <ContextBar>
-          <Stack direction='row' spacing={2}>
-            <Button sx={{ flexShrink: 0 }} variant='text'>
-              Context
-            </Button>
-            <Button sx={{ flexShrink: 0 }} variant='text'>
-              Context
-            </Button>
-            <Button sx={{ flexShrink: 0 }} variant='text'>
-              Context
-            </Button>
-            <Button sx={{ flexShrink: 0 }} variant='text'>
-              Context
-            </Button>
-            <Button sx={{ flexShrink: 0 }} variant='text'>
-              Context
-            </Button>
-          </Stack>
+          <Button sx={{ flexShrink: 0 }} variant='text'>
+            Context
+          </Button>
+          <Button sx={{ flexShrink: 0 }} variant='text'>
+            Context
+          </Button>
+          <Button sx={{ flexShrink: 0 }} variant='text'>
+            Context
+          </Button>
+          <Button sx={{ flexShrink: 0 }} variant='text'>
+            Context
+          </Button>
+          <Button sx={{ flexShrink: 0 }} variant='text'>
+            Context
+          </Button>
         </ContextBar>
       }
       aside={
-        <FloatingPanel scrollable sx={{ width: 300 }}>
+        <InspectorComponent>
           <Stack spacing={2} margin={2}>
             {[...Array(50)].map((_, index) => (
               <div key={index}>Aside</div>
             ))}
           </Stack>
-        </FloatingPanel>
+        </InspectorComponent>
       }
       bottomLeft={
         <Stack direction='row' spacing={1}>
@@ -126,40 +123,38 @@ export const InspectorFitHeight: Story = {
   render: () => (
     <AppLayout
       main={
-        <Stack spacing={2}>
+        <Stack spacing={1}>
           <FloatingPanel sx={{ padding: 2 }}>Panel</FloatingPanel>
           <FloatingPanel sx={{ padding: 2 }}>Panel</FloatingPanel>
         </Stack>
       }
       context={
         <ContextBar>
-          <Stack direction='row' spacing={2}>
-            <Button sx={{ flexShrink: 0 }} variant='text'>
-              Context
-            </Button>
-            <Button sx={{ flexShrink: 0 }} variant='text'>
-              Context
-            </Button>
-            <Button sx={{ flexShrink: 0 }} variant='text'>
-              Context
-            </Button>
-            <Button sx={{ flexShrink: 0 }} variant='text'>
-              Context
-            </Button>
-            <Button sx={{ flexShrink: 0 }} variant='text'>
-              Context
-            </Button>
-          </Stack>
+          <Button sx={{ flexShrink: 0 }} variant='text'>
+            Context
+          </Button>
+          <Button sx={{ flexShrink: 0 }} variant='text'>
+            Context
+          </Button>
+          <Button sx={{ flexShrink: 0 }} variant='text'>
+            Context
+          </Button>
+          <Button sx={{ flexShrink: 0 }} variant='text'>
+            Context
+          </Button>
+          <Button sx={{ flexShrink: 0 }} variant='text'>
+            Context
+          </Button>
         </ContextBar>
       }
       aside={
-        <FloatingPanel scrollable sx={{ width: 300 }}>
+        <InspectorComponent>
           <Stack spacing={2} margin={2}>
             {[...Array(2)].map((_, index) => (
               <div key={index}>Aside</div>
             ))}
           </Stack>
-        </FloatingPanel>
+        </InspectorComponent>
       }
       bottomLeft={
         <Stack direction='row' spacing={1}>
@@ -181,30 +176,28 @@ export const Developer: Story = {
   render: () => (
     <AppLayout
       main={
-        <Stack spacing={2}>
+        <Stack spacing={1}>
           <FloatingPanel sx={{ padding: 2 }}>Panel</FloatingPanel>
           <FloatingPanel sx={{ padding: 2 }}>Panel</FloatingPanel>
         </Stack>
       }
       context={
         <ContextBar>
-          <Stack direction='row' spacing={2}>
-            <Button sx={{ flexShrink: 0 }} variant='text'>
-              Context
-            </Button>
-            <Button sx={{ flexShrink: 0 }} variant='text'>
-              Context
-            </Button>
-            <Button sx={{ flexShrink: 0 }} variant='text'>
-              Context
-            </Button>
-            <Button sx={{ flexShrink: 0 }} variant='text'>
-              Context
-            </Button>
-            <Button sx={{ flexShrink: 0 }} variant='text'>
-              Context
-            </Button>
-          </Stack>
+          <Button sx={{ flexShrink: 0 }} variant='text'>
+            Context
+          </Button>
+          <Button sx={{ flexShrink: 0 }} variant='text'>
+            Context
+          </Button>
+          <Button sx={{ flexShrink: 0 }} variant='text'>
+            Context
+          </Button>
+          <Button sx={{ flexShrink: 0 }} variant='text'>
+            Context
+          </Button>
+          <Button sx={{ flexShrink: 0 }} variant='text'>
+            Context
+          </Button>
         </ContextBar>
       }
       bottomLeft={

@@ -10,8 +10,8 @@ import {
   type RefAttributes
 } from 'react'
 
-import { ParameterItem } from './ParameterItem'
 import { inversePseudoLog, pseudoLog } from './helpers/pseudoLog'
+import { ParameterItem, type ParameterItemProps } from './ParameterItem'
 
 const StyledSlider = styled(Slider)({
   width: 'calc(100% - 12px)',
@@ -28,9 +28,8 @@ const Value = styled('div')(({ theme }) => ({
 
 export interface SliderParameterItemProps<
   T extends number | number[] = number | number[]
-> extends PropsWithoutRef<Omit<SliderProps, 'value' | 'step'>> {
-  label?: ReactNode
-  description?: ReactNode
+> extends PropsWithoutRef<Omit<SliderProps, 'value' | 'step'>>,
+    Pick<ParameterItemProps, 'label' | 'labelFontSize' | 'description'> {
   step?: number
   decimalPlaces?: number
   unit?: ReactNode
@@ -46,6 +45,7 @@ export const SliderParameterItem = forwardRef<
   (
     {
       label,
+      labelFontSize,
       description,
       min = 0,
       max = 10,
@@ -111,6 +111,7 @@ export const SliderParameterItem = forwardRef<
       <ParameterItem
         ref={ref}
         label={label}
+        labelFontSize={labelFontSize}
         description={description}
         control={
           <Value>

@@ -1,60 +1,30 @@
-import {
-  Stack,
-  ToggleButton,
-  Tooltip,
-  styled,
-  type ToggleButtonProps
-} from '@mui/material'
+import { Stack, Tooltip } from '@mui/material'
 import { useAtomValue, useSetAtom } from 'jotai'
 import {
   bindPopover,
   bindTrigger,
   usePopupState
 } from 'material-ui-popup-state/hooks'
-import { forwardRef, useCallback, useId, type FC } from 'react'
+import { useCallback, useId, type FC } from 'react'
 
-import { platformAtom } from '@takram/plateau-shared-states'
 import {
   FloatingButton,
   FloatingToolbar,
-  HandToolIcon,
+  FloatingToolbarItem,
+  HandIcon,
   OverlayPopover,
-  PedestrianToolIcon,
-  SelectToolIcon,
+  PedestrianIcon,
+  PointerArrowIcon,
   SettingsIcon,
-  ShortcutTooltip,
-  SketchToolIcon,
-  StoryToolIcon,
-  TimelineIcon,
-  type ShortcutTooltipProps
+  SketchIcon,
+  StoryIcon,
+  TimelineIcon
 } from '@takram/plateau-ui-components'
 
 import { toolAtom, toolMachineAtom, type Tool } from '../states/tool'
 import { type EventObject } from '../states/toolMachine'
 import { DateControlPanel } from './DateControlPanel'
-
-const TooltipContent = styled('div')({
-  display: 'inline-flex',
-  height: '100%'
-})
-
-export const ToolbarItem = forwardRef<
-  HTMLButtonElement,
-  ToggleButtonProps & Omit<ShortcutTooltipProps, 'children'>
->(({ title, shortcutKey, ...props }, ref) => {
-  const platform = useAtomValue(platformAtom)
-  return (
-    <ShortcutTooltip
-      title={title}
-      platform={platform}
-      shortcutKey={shortcutKey}
-    >
-      <TooltipContent>
-        <ToggleButton ref={ref} aria-label={title} {...props} />
-      </TooltipContent>
-    </ShortcutTooltip>
-  )
-})
+import { SettingsPanel } from './SettingsPanel'
 
 const eventTypes: Record<Tool, EventObject['type']> = {
   hand: 'HAND',
@@ -78,49 +48,74 @@ export const Toolbar: FC = () => {
   )
 
   const id = useId()
-  const datePopupState = usePopupState({
+  const settingsPopupState = usePopupState({
     variant: 'popover',
-    popupId: `${id}:date`
+    popupId: `${id}:settings`
+  })
+  const dateControlPopupState = usePopupState({
+    variant: 'popover',
+    popupId: `${id}:dateControl`
   })
 
-  // TODO: Introduce icons.
+  const settingsPopoverProps = bindPopover(settingsPopupState)
+  const dateControlPopoverProps = bindPopover(dateControlPopupState)
+
   return (
     <Stack direction='row' spacing={1}>
       <FloatingToolbar value={tool} onChange={handleChange}>
-        <ToolbarItem value='hand' title='移動' shortcutKey='H'>
-          <HandToolIcon fontSize='medium' />
-        </ToolbarItem>
-        <ToolbarItem value='select' title='選択' shortcutKey='V'>
-          <SelectToolIcon fontSize='medium' />
-        </ToolbarItem>
-        <ToolbarItem value='sketch' title='作図' shortcutKey='G' disabled>
-          <SketchToolIcon fontSize='medium' />
-        </ToolbarItem>
-        <ToolbarItem value='story' title='ストーリー' shortcutKey='T' disabled>
-          <StoryToolIcon fontSize='medium' />
-        </ToolbarItem>
-        <ToolbarItem
+        <FloatingToolbarItem value='hand' title='移動' shortcutKey='H'>
+          <HandIcon fontSize='medium' />
+        </FloatingToolbarItem>
+        <FloatingToolbarItem value='select' title='選択' shortcutKey='V'>
+          <PointerArrowIcon fontSize='medium' />
+        </FloatingToolbarItem>
+        <FloatingToolbarItem
+          value='sketch'
+          title='作図'
+          shortcutKey='G'
+          disabled
+        >
+          <SketchIcon fontSize='medium' />
+        </FloatingToolbarItem>
+        <FloatingToolbarItem
+          value='story'
+          title='ストーリー'
+          shortcutKey='T'
+          disabled
+        >
+          <StoryIcon fontSize='medium' />
+        </FloatingToolbarItem>
+        <FloatingToolbarItem
           value='pedestrian'
           title='歩行者視点'
           shortcutKey='P'
           disabled
         >
-          <PedestrianToolIcon fontSize='medium' />
-        </ToolbarItem>
+          <PedestrianIcon fontSize='medium' />
+        </FloatingToolbarItem>
       </FloatingToolbar>
       <Tooltip title='設定'>
-        <span>
-          <FloatingButton aria-label='設定' disabled>
-            <SettingsIcon fontSize='medium' />
-          </FloatingButton>
-        </span>
+        <FloatingButton
+          selected={settingsPopoverProps.open}
+          aria-label='設定'
+          {...bindTrigger(settingsPopupState)}
+        >
+          <SettingsIcon fontSize='medium' />
+        </FloatingButton>
       </Tooltip>
+      <OverlayPopover {...settingsPopoverProps}>
+        <SettingsPanel />
+      </OverlayPopover>
       <Tooltip title='日時'>
-        <FloatingButton aria-label='日時' {...bindTrigger(datePopupState)}>
+        <FloatingButton
+          selected={dateControlPopoverProps.open}
+          aria-label='日時'
+          {...bindTrigger(dateControlPopupState)}
+        >
           <TimelineIcon fontSize='medium' />
         </FloatingButton>
       </Tooltip>
-      <OverlayPopover {...bindPopover(datePopupState)}>
+      <OverlayPopover {...dateControlPopoverProps}>
         <DateControlPanel />
       </OverlayPopover>
     </Stack>

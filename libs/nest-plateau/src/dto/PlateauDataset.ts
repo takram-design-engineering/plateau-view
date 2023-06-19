@@ -1,7 +1,7 @@
 import { Field, ID, InterfaceType } from '@nestjs/graphql'
 
-import { type PlateauStorageService } from '../PlateauStorageService'
 import { cleanseDatasetName } from '../helpers/cleanseDatasetName'
+import { type PlateauStorageService } from '../PlateauStorageService'
 import { type PlateauCatalog } from './PlateauCatalog'
 import {
   PlateauDatasetFormat,

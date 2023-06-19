@@ -1,4 +1,4 @@
-import { atom } from 'jotai'
+import { atom, type SetStateAction } from 'jotai'
 import { differenceBy, intersectionBy, without } from 'lodash'
 
 export interface SelectionAtomsOptions<T> {
@@ -17,9 +17,14 @@ export function atomsWithSelection<T>({
 
   const selectionAtom = atom(
     get => get(selectionPrimitiveAtom),
-    (get, set, values: readonly T[]) => {
+    (get, set, action: SetStateAction<readonly T[]>) => {
       set(selectionPrimitiveAtom, prevSelection => {
+        const values =
+          typeof action === 'function' ? action(prevSelection) : action
         if (values.length === 0) {
+          if (prevSelection.length === 0) {
+            return prevSelection
+          }
           if (prevSelection.length > 0 && onDeselect != null) {
             prevSelection.forEach(onDeselect)
           }

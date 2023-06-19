@@ -6,16 +6,6 @@ import { DarkThemeOverride } from './DarkThemeOverride'
 
 import 'overlayscrollbars/overlayscrollbars.css'
 
-const AutoHeight = styled('div', {
-  shouldForwardProp: prop => prop !== 'width'
-})<{ width?: number }>(({ width }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  width,
-  height: '100%',
-  minHeight: 0
-}))
-
 const Root = styled('div')({
   display: 'grid',
   gridTemplateColumns: '1fr',
@@ -129,7 +119,9 @@ const Context = styled('aside', {
   mainWidth: number
   contextWidth: number
 }>(({ theme, spacing = 0, mainWidth, contextWidth }) => ({
+  position: 'relative',
   display: 'flex',
+  flexGrow: 1,
   alignItems: 'start',
   width: mainWidth,
   minWidth: 0,
@@ -202,7 +194,7 @@ export const AppLayout: FC<AppLayoutProps> = memo(
                 mainWidth={mainWidth}
                 contextWidth={contextWidth}
               >
-                <AutoHeight>{main}</AutoHeight>
+                {main}
               </Main>
               <Context
                 spacing={spacing}
@@ -213,7 +205,7 @@ export const AppLayout: FC<AppLayoutProps> = memo(
               </Context>
             </MainContainer>
           </SizeContainer>
-          {aside != null && <AutoHeight>{aside}</AutoHeight>}
+          {aside}
         </RootGrid>
         <BottomGrid spacing={spacing}>
           <BottomLeftColumn>{bottomLeft}</BottomLeftColumn>

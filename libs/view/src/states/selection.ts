@@ -2,8 +2,8 @@ import { atom } from 'jotai'
 import { groupBy } from 'lodash'
 
 import {
-  layerSelectionAtom,
   layersAtom,
+  layerSelectionAtom,
   type LayerModel,
   type LayerType
 } from '@takram/plateau-layers'

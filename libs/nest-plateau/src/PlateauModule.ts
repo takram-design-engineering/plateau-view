@@ -1,16 +1,10 @@
-import { Storage } from '@google-cloud/storage'
-import { Global, Module } from '@nestjs/common'
 import { readFile } from 'fs/promises'
 import path from 'path'
+import { Storage } from '@google-cloud/storage'
+import { Global, Module } from '@nestjs/common'
 
 import { FirestoreModule } from '@takram/plateau-nest-firestore'
 
-import { PlateauCatalogService } from './PlateauCatalogService'
-import { PlateauMunicipalityService } from './PlateauMunicipalityService'
-import {
-  PlateauStorageService,
-  type PlateauStorageFiles
-} from './PlateauStorageService'
 import { PLATEAU_MODULE_OPTIONS, PLATEAU_STORAGE_FILES } from './constants'
 import { PlateauCatalog } from './dto/PlateauCatalog'
 import { PlateauMunicipality } from './dto/PlateauMunicipality'
@@ -19,6 +13,12 @@ import {
   ConfigurableModuleClass,
   MODULE_OPTIONS_TOKEN
 } from './moduleDefinitions'
+import { PlateauCatalogService } from './PlateauCatalogService'
+import { PlateauMunicipalityService } from './PlateauMunicipalityService'
+import {
+  PlateauStorageService,
+  type PlateauStorageFiles
+} from './PlateauStorageService'
 import { PlateauAreaFieldResolver } from './resolvers/PlateauAreaFieldResolver'
 import { PlateauDatasetFieldResolver } from './resolvers/PlateauDatasetFieldResolver'
 import { PlateauMunicipalityFieldResolver } from './resolvers/PlateauMunicipalityFieldResolver'

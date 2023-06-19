@@ -20,14 +20,13 @@ import {
 } from '@takram/plateau-graphql'
 import { type LayerProps } from '@takram/plateau-layers'
 
-import { PlateauTilesetLayerContent } from './PlateauTilesetLayerContent'
 import {
   createPlateauTilesetLayerBase,
   type PlateauTilesetLayerModel,
   type PlateauTilesetLayerModelParams
 } from './createPlateauTilesetLayerBase'
 import { BUILDING_LAYER } from './layerTypes'
-import { type DatasetDatum } from './useDatasetDatum'
+import { PlateauTilesetLayerContent } from './PlateauTilesetLayerContent'
 import { useMunicipalityName } from './useMunicipalityName'
 
 export interface BuildingLayerModelParams
@@ -157,9 +156,7 @@ export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
   if (datum.format === PlateauDatasetFormat.Cesium3DTiles) {
     return (
       <PlateauTilesetLayerContent
-        layerId={id}
-        // TODO: Infer type
-        datum={datum as DatasetDatum<PlateauDatasetFormat.Cesium3DTiles>}
+        url={datum.url}
         component={PlateauBuildingTileset}
         boundingSphereAtom={boundingSphereAtom}
         featureIndexAtom={featureIndexAtom}

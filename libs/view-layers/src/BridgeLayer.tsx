@@ -11,14 +11,14 @@ import {
 } from '@takram/plateau-graphql'
 import { type LayerProps } from '@takram/plateau-layers'
 
-import { PlateauTilesetLayerContent } from './PlateauTilesetLayerContent'
 import {
   createPlateauTilesetLayerBase,
   type PlateauTilesetLayerModel,
   type PlateauTilesetLayerModelParams
 } from './createPlateauTilesetLayerBase'
 import { BRIDGE_LAYER } from './layerTypes'
-import { useDatasetDatum, type DatasetDatum } from './useDatasetDatum'
+import { PlateauTilesetLayerContent } from './PlateauTilesetLayerContent'
+import { useDatasetDatum } from './useDatasetDatum'
 import { useMunicipalityName } from './useMunicipalityName'
 
 export interface BridgeLayerModelParams
@@ -77,9 +77,7 @@ export const BridgeLayer: FC<LayerProps<typeof BRIDGE_LAYER>> = ({
   if (datum.format === PlateauDatasetFormat.Cesium3DTiles) {
     return (
       <PlateauTilesetLayerContent
-        layerId={id}
-        // TODO: Infer type
-        datum={datum as DatasetDatum<PlateauDatasetFormat.Cesium3DTiles>}
+        url={datum.url}
         component={PlateauBridgeTileset}
         boundingSphereAtom={boundingSphereAtom}
         featureIndexAtom={featureIndexAtom}
