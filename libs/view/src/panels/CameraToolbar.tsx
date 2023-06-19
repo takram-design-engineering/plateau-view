@@ -1,5 +1,5 @@
 import FlightTakeoffOutlinedIcon from '@mui/icons-material/FlightTakeoffOutlined'
-import { type PrimitiveAtom, useAtom } from 'jotai'
+import { useAtom, type PrimitiveAtom } from 'jotai'
 import { useCallback, type FC } from 'react'
 
 import {
@@ -24,14 +24,16 @@ function useBooleanAtomProps(atom: PrimitiveAtom<boolean>): {
 }
 
 export const CameraToolbar: FC = () => {
+  const enableKeyboardCameraControlProps = useBooleanAtomProps(
+    enableKeyboardCameraControlAtom
+  )
   return (
     <FloatingButtons>
-      <FloatingButtonItem
-        title='飛行'
-        {...useBooleanAtomProps(enableKeyboardCameraControlAtom)}
-      >
-        <FlightTakeoffOutlinedIcon fontSize='medium' />
-      </FloatingButtonItem>
+      {process.env.NODE_ENV !== 'production' && (
+        <FloatingButtonItem title='飛行' {...enableKeyboardCameraControlProps}>
+          <FlightTakeoffOutlinedIcon fontSize='medium' />
+        </FloatingButtonItem>
+      )}
       <FloatingButtonItem title='自動回転' disabled>
         <RotateAroundIcon fontSize='medium' />
       </FloatingButtonItem>

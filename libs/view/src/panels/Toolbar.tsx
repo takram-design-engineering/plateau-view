@@ -89,6 +89,7 @@ export const Toolbar: FC = () => {
           value='pedestrian'
           title='歩行者視点'
           shortcutKey='P'
+          disabled
         >
           <PedestrianIcon fontSize='medium' />
         </FloatingToolbarItem>

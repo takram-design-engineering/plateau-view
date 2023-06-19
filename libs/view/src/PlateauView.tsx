@@ -6,6 +6,7 @@ import { Suspense, useCallback, useEffect, type FC } from 'react'
 import { CurrentTime, ViewLocator } from '@takram/plateau-cesium'
 import { SuspendUntilTilesLoaded } from '@takram/plateau-cesium-helpers'
 import { LayersRenderer, useAddLayer } from '@takram/plateau-layers'
+import { isNotFalse } from '@takram/plateau-type-helpers'
 import { AppLayout } from '@takram/plateau-ui-components'
 import {
   BUILDING_LAYER,
@@ -64,14 +65,15 @@ const InitialLayers: FC = () => {
           textured: false
         })
       ),
-      addLayer(
-        createViewLayer({
-          type: PEDESTRIAN_LAYER,
-          longitude: 139.769,
-          latitude: 35.68
-        })
-      )
-    ]
+      process.env.NODE_ENV !== 'production' &&
+        addLayer(
+          createViewLayer({
+            type: PEDESTRIAN_LAYER,
+            longitude: 139.769,
+            latitude: 35.68
+          })
+        )
+    ].filter(isNotFalse)
     return () => {
       remove.forEach(remove => {
         remove()
