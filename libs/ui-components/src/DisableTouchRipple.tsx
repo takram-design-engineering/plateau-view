@@ -1,4 +1,4 @@
-import { GlobalStyles, css } from '@mui/material'
+import { css, GlobalStyles } from '@mui/material'
 import { type FC } from 'react'
 
 export const DisableTouchRipple: FC = () => (

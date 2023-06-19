@@ -1,7 +1,7 @@
 import { Module, type DynamicModule, type Type } from '@nestjs/common'
 
-import { FirestoreCoreModule } from './FirestoreCoreModule'
 import { createCollectionProviders } from './createCollectionProviders'
+import { FirestoreCoreModule } from './FirestoreCoreModule'
 import { type FirestoreModuleOptions } from './interfaces/FirestoreModuleOptions'
 import { type ASYNC_OPTIONS_TYPE } from './moduleDefinitions'
 

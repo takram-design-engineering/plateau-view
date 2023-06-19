@@ -1,9 +1,9 @@
 import { Global, Module, type DynamicModule } from '@nestjs/common'
 
-import { createTerrainTileController } from './TerrainTileController'
-import { TerrainTileService } from './TerrainTileService'
 import { TERRAIN_TILE_MODULE_OPTIONS } from './constants'
 import { type TerrainTileModuleOptions } from './interfaces/TerrainTileModuleOptions'
+import { createTerrainTileController } from './TerrainTileController'
+import { TerrainTileService } from './TerrainTileService'
 
 @Global()
 @Module({})

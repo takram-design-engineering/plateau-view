@@ -12,7 +12,6 @@ import { type Constructor } from 'type-fest'
 import { FIRESTORE } from '@takram/plateau-nest-firestore'
 import { isNotNullish } from '@takram/plateau-type-helpers'
 
-import { PlateauStorageService } from './PlateauStorageService'
 import schema from './assets/plateau-2022.jtd.json'
 import { PlateauBuildingDataset } from './dto/PlateauBuildingDataset'
 import { PlateauCatalog, type PlateauCatalogData } from './dto/PlateauCatalog'
@@ -24,6 +23,7 @@ import {
 import { PlateauDefaultDataset } from './dto/PlateauDefaultDataset'
 import { PlateauMunicipality } from './dto/PlateauMunicipality'
 import { getMunicipalitiesInCatalog } from './helpers/getMunicipalitiesInCatalog'
+import { PlateauStorageService } from './PlateauStorageService'
 
 const datasetConstructors: Record<
   string,

@@ -11,14 +11,14 @@ import {
 } from '@takram/plateau-graphql'
 import { type LayerProps } from '@takram/plateau-layers'
 
-import { PlateauTilesetLayerContent } from './PlateauTilesetLayerContent'
 import {
   createPlateauTilesetLayerBase,
   type PlateauTilesetLayerModel,
   type PlateauTilesetLayerModelParams
 } from './createPlateauTilesetLayerBase'
 import { RIVER_FLOODING_RISK_LAYER } from './layerTypes'
-import { useDatasetDatum, type DatasetDatum } from './useDatasetDatum'
+import { PlateauTilesetLayerContent } from './PlateauTilesetLayerContent'
+import { useDatasetDatum } from './useDatasetDatum'
 import { useDatasetLayerTitle } from './useDatasetLayerTitle'
 
 export interface RiverFloodingRiskLayerModelParams
@@ -84,9 +84,7 @@ export const RiverFloodingRiskLayer: FC<
   if (datum.format === PlateauDatasetFormat.Cesium3DTiles) {
     return (
       <PlateauTilesetLayerContent
-        layerId={id}
-        // TODO: Infer type
-        datum={datum as DatasetDatum<PlateauDatasetFormat.Cesium3DTiles>}
+        url={datum.url}
         component={PlateauWaterSurfaceTileset}
         boundingSphereAtom={boundingSphereAtom}
         featureIndexAtom={featureIndexAtom}

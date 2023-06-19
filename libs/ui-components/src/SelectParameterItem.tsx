@@ -1,7 +1,7 @@
 import {
   Select,
-  Typography,
   styled,
+  Typography,
   type SelectChangeEvent,
   type SelectProps
 } from '@mui/material'

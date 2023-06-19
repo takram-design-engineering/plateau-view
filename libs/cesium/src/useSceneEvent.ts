@@ -1,5 +1,5 @@
 import { type Event, type JulianDate, type Scene } from '@cesium/engine'
-import { useEffect, useRef } from 'react'
+import { useLayoutEffect, useRef } from 'react'
 
 import { useCesium } from './useCesium'
 
@@ -16,10 +16,17 @@ export function useSceneEvent(
   const scene = useCesium(({ scene }) => scene, { indirect: true })
   const callbackRef = useRef(callback)
   callbackRef.current = callback
-  useEffect(() => {
+  useLayoutEffect(() => {
     return scene?.[type].addEventListener(
       (scene: Scene, currentTime: JulianDate) => {
-        callbackRef.current(scene, currentTime)
+        try {
+          callbackRef.current(scene, currentTime)
+        } catch (error) {
+          // WORKAROUND: Errors in scene event listeners silently terminates
+          // rendering.
+          // TODO: Maybe a configuration issue.
+          console.error(error)
+        }
       }
     )
   }, [type, scene])

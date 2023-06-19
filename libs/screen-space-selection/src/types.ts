@@ -45,8 +45,10 @@ export interface ScreenSpaceSelectionResponder<
   T extends ScreenSpaceSelectionType = ScreenSpaceSelectionType,
   U extends object = object
 > {
-  transform: (object: U) => ScreenSpaceSelectionEntry<T> | null | undefined
-  predicate: (
+  convertToSelection: (
+    object: U
+  ) => ScreenSpaceSelectionEntry<T> | null | undefined
+  shouldRespondToSelection: (
     value: ScreenSpaceSelectionEntry
   ) => value is ScreenSpaceSelectionEntry<T>
   onSelect?: (value: ScreenSpaceSelectionEntry<T>) => void

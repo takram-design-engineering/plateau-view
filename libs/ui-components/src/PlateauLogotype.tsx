@@ -1,12 +1,22 @@
-import { Box, type BoxProps } from '@mui/material'
-import { forwardRef } from 'react'
+import { styled } from '@mui/material'
+import { forwardRef, type ComponentPropsWithRef } from 'react'
 
-export const PlateauLogotype = forwardRef<SVGSVGElement, BoxProps>(
-  (props, ref) => (
-    <Box
+const Root = styled('svg')(({ theme }) => ({
+  height: 40,
+  ...(theme.palette.mode === 'dark' && {
+    '& path': {
+      fill: theme.palette.text.primary
+    }
+  })
+}))
+
+export const PlateauLogotype = forwardRef<
+  SVGSVGElement,
+  ComponentPropsWithRef<typeof Root>
+>((props, ref) => {
+  return (
+    <Root
       ref={ref}
-      component='svg'
-      height={40}
       viewBox='0 0 182 40'
       xmlns='http://www.w3.org/2000/svg'
       {...props}
@@ -79,6 +89,6 @@ export const PlateauLogotype = forwardRef<SVGSVGElement, BoxProps>(
         d='M180.087 31.5077V35.2667H179.009V31.5077H177.994V30.5977H181.102V31.5077H180.087Z'
         fill='black'
       />
-    </Box>
+    </Root>
   )
-)
+})

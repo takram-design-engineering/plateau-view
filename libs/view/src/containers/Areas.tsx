@@ -34,7 +34,7 @@ export const Areas: FC = () => {
   // TODO: Make selectable
   useScreenSpaceSelectionResponder({
     type: AREA,
-    transform: object => {
+    convertToSelection: object => {
       if (!(object instanceof Entity) || !object.id.startsWith('AreaEntity:')) {
         return
       }
@@ -43,7 +43,9 @@ export const Areas: FC = () => {
         value: object.id
       }
     },
-    predicate: (value): value is ScreenSpaceSelectionEntry<typeof AREA> => {
+    shouldRespondToSelection: (
+      value
+    ): value is ScreenSpaceSelectionEntry<typeof AREA> => {
       return value.type === AREA
     }
   })

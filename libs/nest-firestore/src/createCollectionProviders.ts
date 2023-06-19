@@ -1,10 +1,10 @@
+import path from 'path'
 import {
   type Firestore,
   type FirestoreDataConverter
 } from '@google-cloud/firestore'
 import { type Provider, type Type } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
-import path from 'path'
 
 import {
   FIRESTORE,

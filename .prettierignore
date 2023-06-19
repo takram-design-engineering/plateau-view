@@ -1,4 +1,11 @@
 # Add files here to ignore them from prettier formatting
-/dist
+/.yarn
+/cache
 /coverage
-assets/**/*
+/data
+/dist
+**/.next
+**/.terraform
+**/assets
+**/public
+*.typegen.ts

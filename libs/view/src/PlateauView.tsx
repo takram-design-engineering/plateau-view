@@ -6,25 +6,28 @@ import { Suspense, useCallback, useEffect, type FC } from 'react'
 import { CurrentTime, ViewLocator } from '@takram/plateau-cesium'
 import { SuspendUntilTilesLoaded } from '@takram/plateau-cesium-helpers'
 import { LayersRenderer, useAddLayer } from '@takram/plateau-layers'
+import { isNotFalse } from '@takram/plateau-type-helpers'
 import { AppLayout } from '@takram/plateau-ui-components'
 import {
   BUILDING_LAYER,
   createViewLayer,
-  layerComponents
+  layerComponents,
+  PEDESTRIAN_LAYER
 } from '@takram/plateau-view-layers'
 
 import { Areas } from './containers/Areas'
 import { Canvas } from './containers/Canvas'
 import { Environments } from './containers/Environments'
-import { ExclusiveSelection } from './containers/ExclusiveSelection'
 import { KeyBindings } from './containers/KeyBindings'
 import { ReverseGeocoding } from './containers/ReverseGeocoding'
 import { ScreenSpaceCamera } from './containers/ScreenSpaceCamera'
 import { ScreenSpaceSelection } from './containers/ScreenSpaceSelection'
 import { SelectionBoundingSphere } from './containers/SelectionBoundingSphere'
+import { SelectionCoordinator } from './containers/SelectionCoordinator'
 import { Terrains } from './containers/Terrains'
 import { ToolMachineEvents } from './containers/ToolMachineEvents'
 import { DeveloperPanels } from './developer/DeveloperPanels'
+import { CameraToolbar } from './panels/CameraToolbar'
 import { LocationContextBar } from './panels/LocationContextBar'
 import { MainPanel } from './panels/MainPanel'
 import { SelectionPanel } from './panels/SelectionPanel'
@@ -61,8 +64,16 @@ const InitialLayers: FC = () => {
           lod: 2,
           textured: false
         })
-      )
-    ]
+      ),
+      process.env.NODE_ENV !== 'production' &&
+        addLayer(
+          createViewLayer({
+            type: PEDESTRIAN_LAYER,
+            longitude: 139.769,
+            latitude: 35.68
+          })
+        )
+    ].filter(isNotFalse)
     return () => {
       remove.forEach(remove => {
         remove()
@@ -108,16 +119,17 @@ export const PlateauView: FC<PlateauViewProps> = () => {
         <Areas />
         <ReverseGeocoding />
         <ToolMachineEvents />
+        <SelectionCoordinator />
         <SelectionBoundingSphere />
       </Canvas>
       <KeyBindings />
       <ScreenSpaceSelection />
-      <ExclusiveSelection />
       <AppLayout
         main={<MainPanel />}
         context={<LocationContextBar />}
         aside={<SelectionPanel />}
         bottomLeft={<Toolbar />}
+        bottomRight={<CameraToolbar />}
         developer={<DeveloperPanels />}
       />
       <InitialLayers />

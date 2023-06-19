@@ -7,7 +7,6 @@ const StyledButton = styled(Button)(({ theme }) => ({
   height: theme.spacing(6),
   minWidth: theme.spacing(6.5),
   padding: `0 ${theme.spacing(1.5)}`,
-  color: theme.palette.text.primary,
   transition: 'none',
   [`&.${buttonClasses.containedPrimary}`]: {
     color: theme.palette.getContrastText(theme.palette.primary.dark)
@@ -25,9 +24,9 @@ export const FloatingButton = forwardRef<
   <FloatingPanel>
     <StyledButton
       ref={ref}
-      variant={selected ? 'contained' : 'text'}
+      variant='text'
       size='small'
-      color='primary'
+      color={selected ? 'primary' : 'inherit'}
       {...props}
     />
   </FloatingPanel>

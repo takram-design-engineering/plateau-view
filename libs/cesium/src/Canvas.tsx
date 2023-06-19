@@ -1,4 +1,4 @@
-import { GlobalStyles, css, styled } from '@mui/material'
+import { css, GlobalStyles, styled } from '@mui/material'
 import { useAtom } from 'jotai'
 import { debounce, omit, pick } from 'lodash'
 import {
@@ -139,7 +139,7 @@ export const Canvas = forwardRef<HTMLDivElement, CanvasProps>(
         // false is passed to `baseLayer` above.
         cesium.scene.imageryLayers.removeAll()
 
-        // Reading pixel values from the GPU buffer is not a trivial process,
+        // Reading pixel values from the GPU buffer is not a trivial task,
         // and I cannot afford to do so every frame by camera controller.
         cesium.scene.useDepthPicking = false
 

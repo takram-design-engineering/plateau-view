@@ -95,11 +95,13 @@ const RiseSetGradient: FC<{
     if (rise == null || set == null || dawn == null || dusk == null) {
       return // TODO
     }
+    const light = theme.palette.mode === 'light'
+    const [dayOpacity, nightOpacity] = light ? [0, 1] : [1, 0]
     const entries = [
-      { offset: scaleX(+dawn), value: 0 },
-      { offset: scaleX(+rise), value: 1 },
-      { offset: scaleX(+set), value: 1 },
-      { offset: scaleX(+dusk), value: 0 }
+      { offset: scaleX(+dawn), value: dayOpacity },
+      { offset: scaleX(+rise), value: nightOpacity },
+      { offset: scaleX(+set), value: nightOpacity },
+      { offset: scaleX(+dusk), value: dayOpacity }
     ].sort((a, b) => a.offset - b.offset)
 
     const [t1, t2, t3, t4] = entries
@@ -127,7 +129,7 @@ const RiseSetGradient: FC<{
       ]
     }
     return entries
-  }, [width, scaleX, inset, rise, set, dawn, dusk])
+  }, [width, scaleX, inset, theme, rise, set, dawn, dusk])
 
   if (entries == null) {
     return null

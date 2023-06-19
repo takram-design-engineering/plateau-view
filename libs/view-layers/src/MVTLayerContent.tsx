@@ -6,11 +6,9 @@ import {
   JapanSeaLevelEllipsoid,
   VectorImageryLayer
 } from '@takram/plateau-datasets'
-import { type PlateauDatasetFormat } from '@takram/plateau-graphql'
 
 import { type DatasetLayerModel } from './createDatasetLayerBase'
 import { pixelRatioAtom } from './states'
-import { type DatasetDatum } from './useDatasetDatum'
 import { useMVTMetadata } from './useMVTMetadata'
 
 // TODO: Refine types
@@ -22,16 +20,16 @@ export interface MVTLayerContentStyle {
 
 export interface MVTLayerContentProps
   extends Pick<DatasetLayerModel, 'boundingSphereAtom'> {
-  datum: DatasetDatum<PlateauDatasetFormat.Mvt>
+  url: string
   styles: readonly MVTLayerContentStyle[]
 }
 
 export const MVTLayerContent: FC<MVTLayerContentProps> = ({
-  datum,
+  url,
   styles,
   boundingSphereAtom
 }) => {
-  const metadata = useMVTMetadata(datum?.url)
+  const metadata = useMVTMetadata(url)
   const style = useMemo(() => {
     if (metadata == null) {
       return
@@ -66,7 +64,7 @@ export const MVTLayerContent: FC<MVTLayerContentProps> = ({
   }
   return (
     <VectorImageryLayer
-      url={datum.url}
+      url={url}
       style={style}
       pixelRatio={pixelRatio}
       rectangle={metadata.rectangle}

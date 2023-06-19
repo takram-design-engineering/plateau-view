@@ -11,10 +11,10 @@ import {
 import { ContextButton } from '@takram/plateau-ui-components'
 import {
   BRIDGE_LAYER,
-  LANDSLIDE_LAYER,
+  createViewLayer,
   LAND_USE_LAYER,
-  ROAD_LAYER,
-  createViewLayer
+  LANDSLIDE_LAYER,
+  ROAD_LAYER
 } from '@takram/plateau-view-layers'
 
 import { datasetTypeLayers } from '../../constants/datasetTypeLayers'

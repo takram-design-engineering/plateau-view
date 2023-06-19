@@ -1,9 +1,10 @@
 import { BoundingSphere } from '@cesium/engine'
 import { atom } from 'jotai'
 
+import { compose } from '@takram/plateau-cesium-helpers'
 import {
   atomsWithSelection,
-  atomsWithTransformSelection
+  atomsWithSelectionTransform
 } from '@takram/plateau-shared-states'
 
 import { type ScreenSpaceSelectionHandler } from './ScreenSpaceSelectionHandler'
@@ -33,7 +34,7 @@ export function resignResponder<T extends ScreenSpaceSelectionType>(
 
 function transform(object: object): ScreenSpaceSelectionEntry | undefined {
   for (const responder of responders) {
-    const value = responder.transform(object)
+    const value = responder.convertToSelection(object)
     if (value != null) {
       return value
     }
@@ -44,15 +45,17 @@ function transform(object: object): ScreenSpaceSelectionEntry | undefined {
 const selectionAtoms = atomsWithSelection<ScreenSpaceSelectionEntry>({
   getKey: value => {
     // Don't remove type assertion.
-    return `${value.type}:${
-      typeof value.value === 'object'
-        ? String((value.value as unknown as ScreenSpaceSelectionKeyedValue).key)
-        : String(value.value)
-    }`
+    return compose({
+      type: value.type,
+      key:
+        typeof value.value === 'object'
+          ? (value.value as unknown as ScreenSpaceSelectionKeyedValue).key
+          : value.value
+    })
   },
   onSelect: value => {
     for (const responder of responders) {
-      if (responder.predicate(value)) {
+      if (responder.shouldRespondToSelection(value)) {
         responder.onSelect?.(value)
         break
       }
@@ -60,7 +63,7 @@ const selectionAtoms = atomsWithSelection<ScreenSpaceSelectionEntry>({
   },
   onDeselect: value => {
     for (const responder of responders) {
-      if (responder.predicate(value)) {
+      if (responder.shouldRespondToSelection(value)) {
         responder.onDeselect?.(value)
         break
       }
@@ -79,7 +82,7 @@ const {
   replaceAtom: replaceScreenSpaceSelectionObjectsAtom,
   addAtom: addScreenSpaceSelectionObjectsAtom,
   removeAtom: removeScreenSpaceSelectionObjectsAtom
-} = atomsWithTransformSelection(selectionAtoms, transform)
+} = atomsWithSelectionTransform(selectionAtoms, transform)
 
 export {
   screenSpaceSelectionAtom,
@@ -96,7 +99,7 @@ export const boundingSphereAtom = atom(get => {
   const selection = get(screenSpaceSelectionAtom)
   selection.forEach(value => {
     for (const responder of responders) {
-      if (responder.predicate(value)) {
+      if (responder.shouldRespondToSelection(value)) {
         const boundingSphere = responder.computeBoundingSphere?.(value)
         if (boundingSphere != null) {
           boundingSpheres.push(boundingSphere)

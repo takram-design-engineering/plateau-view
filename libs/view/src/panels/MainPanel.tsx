@@ -3,9 +3,9 @@ import { useAtomValue, useSetAtom } from 'jotai'
 import { useCallback, useRef, useState, type FC } from 'react'
 
 import {
-  LayerList,
   clearLayerSelectionAtom,
-  layerAtomsAtom
+  layerAtomsAtom,
+  LayerList
 } from '@takram/plateau-layers'
 import { useWindowEvent } from '@takram/plateau-react-helpers'
 import { platformAtom } from '@takram/plateau-shared-states'

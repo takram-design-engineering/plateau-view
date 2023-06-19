@@ -16,15 +16,6 @@ import {
   type LandUseLayerModelParams
 } from './LandUseLayer'
 import {
-  createRiverFloodingRiskLayer,
-  type RiverFloodingRiskLayerModelParams
-} from './RiverFloodingRiskLayer'
-import { createRoadLayer, type RoadLayerModelParams } from './RoadLayer'
-import {
-  createUrbanPlanningLayer,
-  type UrbanPlanningLayerModelParams
-} from './UrbanPlanningLayer'
-import {
   BORDER_LAYER,
   BRIDGE_LAYER,
   BUILDING_LAYER,
@@ -33,10 +24,11 @@ import {
   GENERIC_CITY_OBJECT_LAYER,
   HIGH_TIDE_RISK_LAYER,
   INLAND_FLOODING_RISK_LAYER,
+  LAND_USE_LAYER,
   LANDMARK_LAYER,
   LANDSLIDE_LAYER,
-  LAND_USE_LAYER,
   PARK_LAYER,
+  PEDESTRIAN_LAYER,
   RAILWAY_LAYER,
   RIVER_FLOODING_RISK_LAYER,
   ROAD_LAYER,
@@ -47,9 +39,24 @@ import {
   USE_CASE_LAYER,
   VEGETATION_LAYER
 } from './layerTypes'
+import {
+  createPedestrianLayer,
+  type PedestrianLayerModelParams
+} from './PedestrianLayer'
+import {
+  createRiverFloodingRiskLayer,
+  type RiverFloodingRiskLayerModelParams
+} from './RiverFloodingRiskLayer'
+import { createRoadLayer, type RoadLayerModelParams } from './RoadLayer'
+import {
+  createUrbanPlanningLayer,
+  type UrbanPlanningLayerModelParams
+} from './UrbanPlanningLayer'
 
 // prettier-ignore
 type ViewLayerModelParams<T extends LayerType> =
+  T extends typeof PEDESTRIAN_LAYER ? PedestrianLayerModelParams :
+  // Dataset layers
   T extends typeof BORDER_LAYER ? never : // BorderLayerModelParams
   T extends typeof BRIDGE_LAYER ? BridgeLayerModelParams :
   T extends typeof BUILDING_LAYER ? BuildingLayerModelParams :
@@ -81,50 +88,30 @@ export function createViewLayer<T extends LayerType>(
 export function createViewLayer<T extends LayerType>(
   params: ViewLayerModelParams<T> & { type: T }
 ): SetOptional<LayerModel, 'id'> | undefined {
+  // prettier-ignore
   switch (params.type) {
-    case BORDER_LAYER:
-      return undefined // createBorderLayer(params)
-    case BRIDGE_LAYER:
-      return createBridgeLayer(params as BridgeLayerModelParams)
-    case BUILDING_LAYER:
-      return createBuildingLayer(params)
-    case CITY_FURNITURE_LAYER:
-      return undefined // createCityFurnitureLayer(params)
-    case EMERGENCY_ROUTE_LAYER:
-      return undefined // createEmergencyRouteLayer(params)
-    case GENERIC_CITY_OBJECT_LAYER:
-      return undefined // createGenericCityObjectLayer(params)
-    case HIGH_TIDE_RISK_LAYER:
-      return undefined // createHighTideRiskLayer(params)
-    case INLAND_FLOODING_RISK_LAYER:
-      return undefined // createInlandFloodingRiskLayer(params)
-    case LAND_USE_LAYER:
-      return createLandUseLayer(params as LandUseLayerModelParams)
-    case LANDMARK_LAYER:
-      return undefined // createLandmarkLayer(params)
-    case LANDSLIDE_LAYER:
-      return createLandSlideRiskLayer(params as LandSlideRiskLayerModelParams)
-    case PARK_LAYER:
-      return undefined // createParkLayer(params)
-    case RAILWAY_LAYER:
-      return undefined // createRailwayLayer(params)
-    case RIVER_FLOODING_RISK_LAYER:
-      return createRiverFloodingRiskLayer(
-        params as RiverFloodingRiskLayerModelParams
-      )
-    case ROAD_LAYER:
-      return createRoadLayer(params as RoadLayerModelParams)
-    case SHELTER_LAYER:
-      return undefined // createShelterLayer(params)
-    case STATION_LAYER:
-      return undefined // createStationLayer(params)
-    case TSUNAMI_RISK_LAYER:
-      return undefined // createTsunamiRiskLayer(params)
-    case URBAN_PLANNING_LAYER:
-      return createUrbanPlanningLayer(params as UrbanPlanningLayerModelParams)
-    case USE_CASE_LAYER:
-      return undefined // createUseCaseLayer(params)
-    case VEGETATION_LAYER:
-      return undefined // createVegetationLayer(params)
+    case PEDESTRIAN_LAYER: return createPedestrianLayer(params as PedestrianLayerModelParams)
+    // Dataset layers
+    case BORDER_LAYER: return undefined // createBorderLayer(params)
+    case BRIDGE_LAYER: return createBridgeLayer(params as BridgeLayerModelParams)
+    case BUILDING_LAYER: return createBuildingLayer(params as BuildingLayerModelParams)
+    case CITY_FURNITURE_LAYER: return undefined // createCityFurnitureLayer(params)
+    case EMERGENCY_ROUTE_LAYER: return undefined // createEmergencyRouteLayer(params)
+    case GENERIC_CITY_OBJECT_LAYER: return undefined // createGenericCityObjectLayer(params)
+    case HIGH_TIDE_RISK_LAYER: return undefined // createHighTideRiskLayer(params)
+    case INLAND_FLOODING_RISK_LAYER: return undefined // createInlandFloodingRiskLayer(params)
+    case LAND_USE_LAYER: return createLandUseLayer(params as LandUseLayerModelParams)
+    case LANDMARK_LAYER: return undefined // createLandmarkLayer(params)
+    case LANDSLIDE_LAYER: return createLandSlideRiskLayer(params as LandSlideRiskLayerModelParams)
+    case PARK_LAYER: return undefined // createParkLayer(params)
+    case RAILWAY_LAYER: return undefined // createRailwayLayer(params)
+    case RIVER_FLOODING_RISK_LAYER: return createRiverFloodingRiskLayer(params as RiverFloodingRiskLayerModelParams)
+    case ROAD_LAYER: return createRoadLayer(params as RoadLayerModelParams)
+    case SHELTER_LAYER: return undefined // createShelterLayer(params)
+    case STATION_LAYER: return undefined // createStationLayer(params)
+    case TSUNAMI_RISK_LAYER: return undefined // createTsunamiRiskLayer(params)
+    case URBAN_PLANNING_LAYER: return createUrbanPlanningLayer(params as UrbanPlanningLayerModelParams)
+    case USE_CASE_LAYER: return undefined // createUseCaseLayer(params)
+    case VEGETATION_LAYER: return undefined // createVegetationLayer(params)
   }
 }

@@ -27,13 +27,13 @@ import {
   type ScreenSpaceSelectionEntry
 } from '@takram/plateau-screen-space-selection'
 
-import { LambertDiffuseShader } from './LambertDiffuseShader'
-import { TileFeatureIndex } from './TileFeatureIndex'
 import { getGMLId } from './getGMLId'
+import { LambertDiffuseShader } from './LambertDiffuseShader'
 import {
   showTilesetBoundingVolumeAtom,
   showTilesetWireframeAtom
 } from './states'
+import { TileFeatureIndex } from './TileFeatureIndex'
 import { type TilesetPrimitiveConstructorOptions } from './types'
 
 export const PLATEAU_TILE_FEATURE = 'PLATEAU_TILE_FEATURE'
@@ -111,7 +111,7 @@ function useSelectionResponder({
   const scene = useCesium(({ scene }) => scene)
   useScreenSpaceSelectionResponder({
     type: PLATEAU_TILE_FEATURE,
-    transform: object => {
+    convertToSelection: object => {
       if (
         !(object instanceof Cesium3DTileFeature) ||
         object.tileset !== tileset
@@ -129,7 +129,7 @@ function useSelectionResponder({
           }
         : undefined
     },
-    predicate: (
+    shouldRespondToSelection: (
       value
     ): value is ScreenSpaceSelectionEntry<typeof PLATEAU_TILE_FEATURE> => {
       return (

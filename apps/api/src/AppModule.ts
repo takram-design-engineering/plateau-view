@@ -1,9 +1,9 @@
+import path from 'path'
 import { ApolloDriver, type ApolloDriverConfig } from '@nestjs/apollo'
 import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
 import { ServeStaticModule } from '@nestjs/serve-static'
 import * as envalid from 'envalid'
-import path from 'path'
 
 import { FirestoreModule } from '@takram/plateau-nest-firestore'
 import { PlateauModule } from '@takram/plateau-nest-plateau'

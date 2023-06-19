@@ -1,14 +1,14 @@
 import { Global, Module } from '@nestjs/common'
 
 import { BucketCache } from './BucketCache'
-import { FileCache } from './FileCache'
-import { TileCacheService } from './TileCacheService'
 import { TILE_CACHE, TILE_CACHE_MODULE_OPTIONS } from './constants'
+import { FileCache } from './FileCache'
 import { type TileCacheModuleOptions } from './interfaces/TileCacheModuleOptions'
 import {
   ConfigurableModuleClass,
   MODULE_OPTIONS_TOKEN
 } from './moduleDefinitions'
+import { TileCacheService } from './TileCacheService'
 
 @Global()
 @Module({

@@ -1,5 +1,5 @@
-import { Module } from '@nestjs/common'
 import path from 'path'
+import { Module } from '@nestjs/common'
 
 import { FirestoreModule } from '@takram/plateau-nest-firestore'
 import { TileCacheModule } from '@takram/plateau-nest-tile-cache'
@@ -22,7 +22,9 @@ import { AppController } from './AppController'
         process.env.PROJECT_ROOT,
         'apps/app/public/assets/mapStyles/light.json'
       ),
-      maximumLevel: 24,
+      // This must be +1 of imagery layer's maximum level because tiles are
+      // rendered with pixel ratio 2.
+      maximumLevel: 23,
       nativeMaximumLevel: 16
     })
   ],

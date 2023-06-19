@@ -27,7 +27,7 @@ const nextConfig = {
   // To import GLSL as text.
   webpack: config => {
     config.module.rules.push({
-      test: /\.glsl$/,
+      resourceQuery: /raw/,
       use: 'raw-loader'
     })
     return config

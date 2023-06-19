@@ -4,6 +4,7 @@ import { forwardRef, memo, useEffect, useState } from 'react'
 
 import { assignForwardedRef } from '@takram/plateau-react-helpers'
 
+import { requestRenderInNextFrame } from './requestRenderInNextFrame'
 import { useCesium } from './useCesium'
 
 export interface EntityProps extends CesiumEntity.ConstructorOptions {
@@ -25,10 +26,12 @@ export const Entity = memo(
 
       useEffect(() => {
         entities.add(entity)
+        requestRenderInNextFrame(scene)
         return () => {
           entities.remove(entity)
+          scene.requestRender()
         }
-      }, [entities, entity])
+      }, [scene, entities, entity])
 
       useEffect(() => assignForwardedRef(ref, entity), [ref, entity])
 

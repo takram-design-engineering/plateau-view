@@ -1,10 +1,10 @@
 import CheckIcon from '@mui/icons-material/Check'
 import {
   ListItemIcon,
-  MenuItem,
-  SvgIcon,
   listItemIconClasses,
+  MenuItem,
   styled,
+  SvgIcon,
   svgIconClasses,
   type MenuItemProps,
   type MenuItemTypeMap

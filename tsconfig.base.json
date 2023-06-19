@@ -38,6 +38,7 @@
       "@takram/plateau-nest-vector-tile": [
         "libs/nest-vector-tile/src/index.ts"
       ],
+      "@takram/plateau-pedestrian": ["libs/pedestrian/src/index.ts"],
       "@takram/plateau-react-helpers": ["libs/react-helpers/src/index.ts"],
       "@takram/plateau-screen-space-selection": [
         "libs/screen-space-selection/src/index.ts"

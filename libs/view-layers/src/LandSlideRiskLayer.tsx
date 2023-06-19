@@ -11,14 +11,14 @@ import {
 } from '@takram/plateau-graphql'
 import { type LayerProps } from '@takram/plateau-layers'
 
-import { MVTLayerContent } from './MVTLayerContent'
 import {
   createDatasetLayerBase,
   type DatasetLayerModel,
   type DatasetLayerModelParams
 } from './createDatasetLayerBase'
 import { LANDSLIDE_LAYER } from './layerTypes'
-import { useDatasetDatum, type DatasetDatum } from './useDatasetDatum'
+import { MVTLayerContent } from './MVTLayerContent'
+import { useDatasetDatum } from './useDatasetDatum'
 import { useDatasetLayerTitle } from './useDatasetLayerTitle'
 
 export interface LandSlideRiskLayerModelParams
@@ -79,8 +79,7 @@ export const LandSlideRiskLayer: FC<LayerProps<typeof LANDSLIDE_LAYER>> = ({
   if (datum.format === PlateauDatasetFormat.Mvt) {
     return (
       <MVTLayerContent
-        // TODO: Infer type
-        datum={datum as DatasetDatum<PlateauDatasetFormat.Mvt>}
+        url={datum.url}
         styles={styles}
         boundingSphereAtom={boundingSphereAtom}
       />

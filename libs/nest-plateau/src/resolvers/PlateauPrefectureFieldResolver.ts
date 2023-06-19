@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common'
 import { Parent, ResolveField, Resolver } from '@nestjs/graphql'
 
-import { PlateauMunicipalityService } from '../PlateauMunicipalityService'
 import { PlateauMunicipality } from '../dto/PlateauMunicipality'
 import { PlateauPrefecture } from '../dto/PlateauPrefecture'
+import { PlateauMunicipalityService } from '../PlateauMunicipalityService'
 
 @Injectable()
 @Resolver(() => PlateauPrefecture)

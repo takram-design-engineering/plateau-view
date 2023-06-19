@@ -49,6 +49,7 @@ This repository consists of the following apps and libraries. The README for eac
 | [nest-terrain-tile](libs/nest-terrain-tile)           | NestJS module for rendering DEM terrain tiles                                                         |
 | [nest-tile-cache](libs/nest-tile-cache)               | NestJS module for caching tile images                                                                 |
 | [nest-vector-tile](libs/nest-vector-tile)             | NestJS module for rendering vector map tiles                                                          |
+| [pedestrian](libs/pedestrian)                         | Integration with Google Street View and WASD navigation                                               |
 | [react-helpers](libs/react-helpers)                   | Helper functions and hooks for React                                                                  |
 | [screen-space-selection](libs/screen-space-selection) | Screen-space selection for Cesium                                                                     |
 | [shared-states](libs/shared-states)                   | Collection of states shared across libraries                                                          |

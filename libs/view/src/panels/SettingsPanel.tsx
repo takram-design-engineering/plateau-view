@@ -1,4 +1,4 @@
-import { Typography, styled } from '@mui/material'
+import { styled, Typography } from '@mui/material'
 import { type FC } from 'react'
 
 import {

@@ -1,7 +1,7 @@
-import { Storage, type Bucket } from '@google-cloud/storage'
 import path from 'path'
-import { type Sharp } from 'sharp'
 import { type Readable } from 'stream'
+import { Storage, type Bucket } from '@google-cloud/storage'
+import { type Sharp } from 'sharp'
 import invariant from 'tiny-invariant'
 
 import { type Coordinates } from './interfaces/Coordinates'

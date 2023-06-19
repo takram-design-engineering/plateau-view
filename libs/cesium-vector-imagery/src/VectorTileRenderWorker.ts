@@ -4,11 +4,11 @@ import { expose } from 'threads/worker'
 import invariant from 'tiny-invariant'
 import { type JsonObject } from 'type-fest'
 
+import { createStyleFromJSON } from './createStyleFromJSON'
 import {
   VectorTileRenderer,
   type VectorTileRendererOptions
 } from './VectorTileRenderer'
-import { createStyleFromJSON } from './createStyleFromJSON'
 
 export interface TileRendererParams
   extends Omit<

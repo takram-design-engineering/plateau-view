@@ -1,6 +1,6 @@
 import { readdir } from 'fs/promises'
-import minimist from 'minimist'
 import path from 'path'
+import minimist from 'minimist'
 import invariant from 'tiny-invariant'
 
 async function printTargets(targetDir: string): Promise<void> {

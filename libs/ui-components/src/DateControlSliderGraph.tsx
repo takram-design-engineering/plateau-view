@@ -1,4 +1,4 @@
-import { Slider, alpha, sliderClasses, styled } from '@mui/material'
+import { alpha, Slider, sliderClasses, styled } from '@mui/material'
 import { endOfDay, startOfDay, startOfMinute } from 'date-fns'
 import { useAtomValue } from 'jotai'
 import { type FC } from 'react'

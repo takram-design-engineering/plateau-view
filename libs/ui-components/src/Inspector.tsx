@@ -1,8 +1,74 @@
-import { styled } from '@mui/material'
-import { type ComponentPropsWithoutRef, type FC } from 'react'
+import { Paper, styled, type PaperProps } from '@mui/material'
+import {
+  Resizable,
+  type ResizeCallback,
+  type ResizeStartCallback
+} from 're-resizable'
+import { forwardRef } from 'react'
 
-const Root = styled('div')({})
+import { AutoHeight } from './AutoHeight'
+import { Scrollable } from './Scrollable'
 
-export interface InspectorProps extends ComponentPropsWithoutRef<typeof Root> {}
+const StyledPaper = styled(Paper)(({ theme, elevation = 4 }) => ({
+  position: 'relative',
+  maxHeight: '100%',
+  boxShadow: theme.shadows[elevation],
+  pointerEvents: 'auto'
+}))
 
-export const Inspector: FC<InspectorProps> = props => <Root {...props} />
+const ResizableRoot = styled('div')({
+  position: 'relative',
+  display: 'flex',
+  flexDirection: 'column',
+  maxHeight: '100%',
+  '&&': {
+    height: 'auto !important'
+  }
+})
+
+const ScrollableRoundedBox = styled(Scrollable)(({ theme }) => ({
+  borderRadius: theme.shape.borderRadius
+}))
+
+export interface InspectorProps extends Omit<PaperProps, 'onResize'> {
+  defaultWidth?: number
+  onResize?: ResizeCallback
+  onResizeStart?: ResizeStartCallback
+  onResizeStop?: ResizeCallback
+}
+
+export const Inspector = forwardRef<HTMLDivElement, InspectorProps>(
+  (
+    {
+      defaultWidth = 360,
+      onResize,
+      onResizeStart,
+      onResizeStop,
+      children,
+      ...props
+    },
+    ref
+  ) => (
+    <AutoHeight>
+      <StyledPaper ref={ref} {...props}>
+        <Resizable
+          as={ResizableRoot}
+          defaultSize={{
+            width: defaultWidth,
+            height: 'auto'
+          }}
+          minWidth={360}
+          enable={{
+            left: true,
+            right: true
+          }}
+          onResize={onResize}
+          onResizeStart={onResizeStart}
+          onResizeStop={onResizeStop}
+        >
+          <ScrollableRoundedBox defer>{children}</ScrollableRoundedBox>
+        </Resizable>
+      </StyledPaper>
+    </AutoHeight>
+  )
+)
