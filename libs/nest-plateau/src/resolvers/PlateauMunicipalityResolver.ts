@@ -1,8 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { Args, Query, Resolver } from '@nestjs/graphql'
 
-import { PlateauMunicipalityService } from '../PlateauMunicipalityService'
 import { PlateauMunicipality } from '../dto/PlateauMunicipality'
+import { PlateauMunicipalityService } from '../PlateauMunicipalityService'
 
 @Injectable()
 @Resolver()

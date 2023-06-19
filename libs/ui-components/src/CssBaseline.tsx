@@ -1,7 +1,7 @@
 import {
+  css,
   GlobalStyles,
   CssBaseline as MuiCssBaseline,
-  css,
   useTheme
 } from '@mui/material'
 import { type FC } from 'react'

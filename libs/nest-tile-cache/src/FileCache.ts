@@ -1,9 +1,9 @@
 import { createReadStream } from 'fs'
 import { open } from 'fs/promises'
-import { mkdirp } from 'mkdirp'
 import path from 'path'
-import { type Sharp } from 'sharp'
 import { type Readable } from 'stream'
+import { mkdirp } from 'mkdirp'
+import { type Sharp } from 'sharp'
 
 import { type Coordinates } from './interfaces/Coordinates'
 import { type TileCache } from './interfaces/TileCache'

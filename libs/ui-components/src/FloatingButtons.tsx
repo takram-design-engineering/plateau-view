@@ -1,4 +1,4 @@
-import { Stack, buttonClasses, styled } from '@mui/material'
+import { buttonClasses, Stack, styled } from '@mui/material'
 import { forwardRef } from 'react'
 
 import { FloatingPanel, type FloatingPanelProps } from './FloatingPanel'

@@ -1,15 +1,15 @@
-import { Module, type DynamicModule } from '@nestjs/common'
 import { readFile } from 'fs/promises'
+import { Module, type DynamicModule } from '@nestjs/common'
 
 import { CesiumModule } from '@takram/plateau-nest-cesium'
 
-import { VectorTileCoreModule } from './VectorTileCoreModule'
-import { VectorTileService } from './VectorTileService'
 import { VECTOR_TILE_MAP_STYLE, VECTOR_TILE_OPTIONS } from './constants'
 import { createVectorTileController } from './createVectorTileController'
 import { type VectorTileModuleOptions } from './interfaces/VectorTileModuleOptions'
 import { type VectorTileOptions } from './interfaces/VectorTileOptions'
 import { type ASYNC_OPTIONS_TYPE } from './moduleDefinitions'
+import { VectorTileCoreModule } from './VectorTileCoreModule'
+import { VectorTileService } from './VectorTileService'
 
 @Module({})
 export class VectorTileModule {

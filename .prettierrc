@@ -11,8 +11,6 @@
   "trailingComma": "none",
   "useTabs": false,
   "importOrder": [
-    "<BUILTIN_MODULES>",
-    "",
     "<THIRD_PARTY_MODULES>",
     "",
     "^(@takram)(/.*)$",

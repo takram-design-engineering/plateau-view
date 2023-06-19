@@ -32,17 +32,17 @@ export const sketchStateMachine = createMachine({
           states: {
             select: {
               on: {
-                [MOUSE_DOWN]: "#sketch.activeTool.modal.select"
+                [MOUSE_DOWN]: '#sketch.activeTool.modal.select'
               }
             },
             hand: {
               on: {
-                MOUSE_DOWN: "#sketch.activeTool.modal.hand"
+                MOUSE_DOWN: '#sketch.activeTool.modal.hand'
               }
             },
             drawing: {
               on: {
-                MOUSE_DOWN: "#sketch.activeTool.modal.drawing"
+                MOUSE_DOWN: '#sketch.activeTool.modal.drawing'
               }
             },
             history: {
@@ -61,7 +61,7 @@ export const sketchStateMachine = createMachine({
           states: {
             hand: {
               on: {
-                [MOUSE_DOWN]: "#sketch.activeTool.momentary.hand",
+                [MOUSE_DOWN]: '#sketch.activeTool.momentary.hand',
                 RELEASE_SPACE: '#sketch.selectedTool.modal.history'
               }
             }
@@ -79,10 +79,10 @@ export const sketchStateMachine = createMachine({
             drawing: {}
           },
 
-          initial: "select",
+          initial: 'select',
 
           on: {
-            MOUSE_UP: "#sketch.selectedTool.modal.history"
+            MOUSE_UP: '#sketch.selectedTool.modal.history'
           }
         },
 
@@ -90,12 +90,12 @@ export const sketchStateMachine = createMachine({
           states: {
             hand: {
               on: {
-                MOUSE_UP: "#sketch.selectedTool.momentary.hand"
+                MOUSE_UP: '#sketch.selectedTool.momentary.hand'
               }
             }
           },
 
-          initial: "hand"
+          initial: 'hand'
         }
       }
     }
@@ -111,5 +111,5 @@ export const sketchStateMachine = createMachine({
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions, @typescript-eslint/consistent-type-imports
   tsTypes: {} as import('./sketchStateMachine.typegen').Typegen0,
 
-  initial: "selectedTool"
+  initial: 'selectedTool'
 })

@@ -1,7 +1,7 @@
 import { writeFile } from 'fs/promises'
+import path from 'path'
 import { glob } from 'glob'
 import { fromPairs } from 'lodash'
-import path from 'path'
 
 const patterns = {
   '3dtiles': '**/tileset.json',

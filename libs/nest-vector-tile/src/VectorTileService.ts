@@ -1,3 +1,4 @@
+import { type Readable } from 'stream'
 import {
   Map,
   type MapOptions,
@@ -7,7 +8,6 @@ import { Inject, Injectable } from '@nestjs/common'
 import axios, { isAxiosError } from 'axios'
 import { type CustomLayerInterface, type Style } from 'mapbox-gl'
 import sharp from 'sharp'
-import { type Readable } from 'stream'
 import invariant from 'tiny-invariant'
 
 import { CESIUM, type Cesium } from '@takram/plateau-nest-cesium'

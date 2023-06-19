@@ -14,8 +14,8 @@ import {
   TileFormatValidationPipe
 } from '@takram/plateau-nest-tile-cache'
 
-import { TerrainTileService } from './TerrainTileService'
 import { type TerrainTileModuleOptions } from './interfaces/TerrainTileModuleOptions'
+import { TerrainTileService } from './TerrainTileService'
 
 export function createTerrainTileController(
   options: TerrainTileModuleOptions

@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common'
 import { ID, Parent, ResolveField, Resolver } from '@nestjs/graphql'
 import invariant from 'tiny-invariant'
 
-import { PlateauMunicipalityService } from '../PlateauMunicipalityService'
 import { PlateauArea } from '../dto/PlateauArea'
 import { PlateauPrefecture } from '../dto/PlateauPrefecture'
+import { PlateauMunicipalityService } from '../PlateauMunicipalityService'
 
 @Injectable()
 @Resolver(() => PlateauArea)

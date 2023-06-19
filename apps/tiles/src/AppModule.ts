@@ -1,5 +1,4 @@
 import path from 'path'
-
 import { Module } from '@nestjs/common'
 
 import { FirestoreModule } from '@takram/plateau-nest-firestore'

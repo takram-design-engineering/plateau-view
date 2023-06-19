@@ -1,4 +1,4 @@
-import { List, ListItem, Stack, Typography, styled } from '@mui/material'
+import { List, ListItem, Stack, styled, Typography } from '@mui/material'
 import { useAtom, useAtomValue } from 'jotai'
 import { useCallback, type FC } from 'react'
 

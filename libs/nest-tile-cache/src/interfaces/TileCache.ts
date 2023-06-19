@@ -1,5 +1,5 @@
-import { type Sharp } from 'sharp'
 import { type Readable } from 'stream'
+import { type Sharp } from 'sharp'
 
 import { type Coordinates } from './Coordinates'
 import { type TileFormat } from './TileFormat'

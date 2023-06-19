@@ -1,7 +1,7 @@
+import { type Readable } from 'stream'
 import { Firestore } from '@google-cloud/firestore'
 import { Inject, Injectable } from '@nestjs/common'
 import { type Sharp } from 'sharp'
-import { type Readable } from 'stream'
 import invariant from 'tiny-invariant'
 
 import { FIRESTORE } from '@takram/plateau-nest-firestore'
