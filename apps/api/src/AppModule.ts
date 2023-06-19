@@ -36,10 +36,16 @@ const env = envalid.cleanEnv(process.env, {
       storageRoot: env.DATA_STORAGE_ROOT
     }),
     TileCacheModule.forRoot({
-      cacheRoot: process.env.TILE_CACHE_ROOT
+      cacheRoot:
+        process.env.TILE_CACHE_ROOT !== ''
+          ? process.env.TILE_CACHE_ROOT
+          : undefined
     }),
     TerrainTileModule.forRoot({
-      path: 'terrain'
+      path: 'terrain',
+      disableCache:
+        process.env.TILE_CACHE_ROOT == null ||
+        process.env.TILE_CACHE_ROOT === ''
     }),
 
     // Serve static files for development; these routes are behind our path

@@ -1,4 +1,4 @@
-import { type Readable } from 'stream'
+import { Readable } from 'stream'
 import { Firestore } from '@google-cloud/firestore'
 import { Inject, Injectable } from '@nestjs/common'
 import { type Sharp } from 'sharp'
@@ -63,7 +63,7 @@ export class TileCacheService {
     path: string,
     coords: Coordinates,
     { format = 'webp' }: RenderTileOptions = {}
-  ): Promise<Sharp | Readable | string | undefined> {
+  ): Promise<Readable | string | undefined> {
     if (this.cache != null) {
       ;(async () => {
         invariant(this.cache != null)
@@ -72,7 +72,7 @@ export class TileCacheService {
         console.error(error)
       })
     }
-    return applyFormat(image, format)
+    return Readable.from(await applyFormat(image, format).toBuffer())
   }
 
   async isDiscarded(path: string, coords: Coordinates): Promise<boolean> {
