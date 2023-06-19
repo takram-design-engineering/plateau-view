@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  Inject,
   Param,
   ParseIntPipe,
   Res,
@@ -14,13 +15,19 @@ import {
   type TileFormat
 } from '@takram/plateau-nest-tile-cache'
 
+import { VECTOR_TILE_MODULE_OPTIONS } from './constants'
+import { VectorTileModuleOptions } from './interfaces/VectorTileModuleOptions'
 import { type VectorTileOptions } from './interfaces/VectorTileOptions'
 import { VectorTileService } from './VectorTileService'
 
 export function createVectorTileController(options: VectorTileOptions): Type {
   @Controller(options.path)
   class VectorTileController {
-    constructor(private readonly service: VectorTileService) {}
+    constructor(
+      private readonly service: VectorTileService,
+      @Inject(VECTOR_TILE_MODULE_OPTIONS)
+      private readonly options: VectorTileModuleOptions
+    ) {}
 
     @Get(':level/:x/:y.:format')
     async renderTile(
@@ -39,9 +46,13 @@ export function createVectorTileController(options: VectorTileOptions): Type {
         return
       }
       res.set({
-        'Content-Type': `image/${format}`,
-        'Cache-Control': 'public, max-age=31536000' // 1 year
+        'Content-Type': `image/${format}`
       })
+      if (this.options.disableCache !== true) {
+        res.set({
+          'Cache-Control': 'public, max-age=31536000' // 1 year
+        })
+      }
       return new StreamableFile(result)
     }
   }

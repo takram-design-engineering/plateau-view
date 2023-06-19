@@ -1,1 +1,3 @@
-export interface VectorTileModuleOptions {}
+export interface VectorTileModuleOptions {
+  disableCache?: boolean
+}

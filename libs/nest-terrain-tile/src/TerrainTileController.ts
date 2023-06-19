@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  Inject,
   Param,
   ParseIntPipe,
   Res,
@@ -14,6 +15,7 @@ import {
   TileFormatValidationPipe
 } from '@takram/plateau-nest-tile-cache'
 
+import { TERRAIN_TILE_MODULE_OPTIONS } from './constants'
 import { type TerrainTileModuleOptions } from './interfaces/TerrainTileModuleOptions'
 import { TerrainTileService } from './TerrainTileService'
 
@@ -22,7 +24,11 @@ export function createTerrainTileController(
 ): Type {
   @Controller(options.path)
   class TerrainTileController {
-    constructor(private readonly service: TerrainTileService) {}
+    constructor(
+      private readonly service: TerrainTileService,
+      @Inject(TERRAIN_TILE_MODULE_OPTIONS)
+      private readonly options: TerrainTileModuleOptions
+    ) {}
 
     @Get(':level/:x/:y.:format')
     async renderTile(
@@ -41,9 +47,13 @@ export function createTerrainTileController(
         return
       }
       res.set({
-        'Content-Type': `image/${format}`,
-        'Cache-Control': 'public, max-age=31536000' // 1 year
+        'Content-Type': `image/${format}`
       })
+      if (this.options.disableCache !== true) {
+        res.set({
+          'Cache-Control': 'public, max-age=31536000' // 1 year
+        })
+      }
       return new StreamableFile(result)
     }
   }

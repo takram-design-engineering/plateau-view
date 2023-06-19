@@ -13,9 +13,16 @@ import { AppController } from './AppController'
       rootPath: 'api'
     }),
     TileCacheModule.forRoot({
-      cacheRoot: process.env.TILE_CACHE_ROOT
+      cacheRoot:
+        process.env.TILE_CACHE_ROOT !== ''
+          ? process.env.TILE_CACHE_ROOT
+          : undefined
     }),
-    VectorTileModule.forRoot({}),
+    VectorTileModule.forRoot({
+      disableCache:
+        process.env.TILE_CACHE_ROOT == null ||
+        process.env.TILE_CACHE_ROOT === ''
+    }),
     VectorTileModule.forFeature({
       path: 'light',
       mapStyle: path.resolve(
