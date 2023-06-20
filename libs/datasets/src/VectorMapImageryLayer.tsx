@@ -20,7 +20,9 @@ export const VectorMapImageryLayer: FC<VectorMapImageryLayerProps> = ({
     const imageryProvider = new UrlTemplateImageryProvider({
       url: `${baseUrl}/light/{z}/{x}/{y}.webp`,
       maximumLevel: 22,
-      tileDiscardPolicy: new DiscardEmptyTileImagePolicy()
+      tileDiscardPolicy: new DiscardEmptyTileImagePolicy(),
+      tileWidth: 512,
+      tileHeight: 512
     })
     imageryProvider.errorEvent.addEventListener(() => {}) // Suppress error log
     return imageryProvider
