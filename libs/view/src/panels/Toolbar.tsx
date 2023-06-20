@@ -24,6 +24,7 @@ import {
 import { toolAtom, toolMachineAtom, type Tool } from '../states/tool'
 import { type EventObject } from '../states/toolMachine'
 import { DateControlPanel } from './DateControlPanel'
+import { EnvironmentSelect } from './EnvironmentSelect'
 import { SettingsPanel } from './SettingsPanel'
 
 const eventTypes: Record<Tool, EventObject['type']> = {
@@ -118,6 +119,7 @@ export const Toolbar: FC = () => {
       <OverlayPopover {...dateControlPopoverProps}>
         <DateControlPanel />
       </OverlayPopover>
+      <EnvironmentSelect />
     </Stack>
   )
 }
