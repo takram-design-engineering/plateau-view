@@ -130,13 +130,15 @@ export const EnvironmentSelect: FC = () => {
 
   const handleSatellite = useCallback(() => {
     setEnvironmentType('satellite')
+    setColorMode('light')
     close()
-  }, [setEnvironmentType, close])
+  }, [setEnvironmentType, setColorMode, close])
 
   const handleElevation = useCallback(() => {
     setEnvironmentType('elevation')
+    setColorMode('light')
     close()
-  }, [setEnvironmentType, close])
+  }, [setEnvironmentType, setColorMode, close])
 
   const selectedItem =
     environmentType === 'map' && colorMode === 'light'
