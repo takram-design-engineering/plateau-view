@@ -1,3 +1,4 @@
+import path from 'path'
 import type { StorybookConfig } from '@storybook/react-vite'
 import { mergeConfig } from 'vite'
 import tsconfigPaths from 'vite-tsconfig-paths'
@@ -15,7 +16,16 @@ const config: StorybookConfig = {
   },
   viteFinal: async config =>
     mergeConfig(config, {
-      plugins: [tsconfigPaths()]
+      plugins: [tsconfigPaths()],
+      // WORKAROUND: https://github.com/nrwl/nx/issues/17156
+      resolve: {
+        alias: {
+          '@takram/plateau-color-schemes': path.resolve(
+            __dirname,
+            '../../color-schemes/src/index.ts'
+          )
+        }
+      }
     }),
   features: {
     storyStoreV7: false
