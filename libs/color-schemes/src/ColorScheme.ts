@@ -21,6 +21,10 @@ export class ColorScheme {
     )
   }
 
+  get count(): number {
+    return this.lut.length
+  }
+
   quantize(count: number): ColorTuple[] {
     invariant(count > 1)
     return [...Array(count)].map((_, index) => {

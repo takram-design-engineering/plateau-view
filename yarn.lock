@@ -8101,6 +8101,7 @@ __metadata:
     "@swc/jest": 0.2.20
     "@testing-library/react": 14.0.0
     "@turf/turf": ^6.5.0
+    "@types/chroma-js": ^2.4.0
     "@types/d3": ^7.4.0
     "@types/geojson": ^7946.0.10
     "@types/glob": ^8.1.0
@@ -8130,6 +8131,7 @@ __metadata:
     axios-hooks: ^4.0.0
     babel-jest: ^29.4.1
     babel-loader: 8.1.0
+    chroma-js: ^2.4.2
     class-transformer: ^0.5.1
     class-validator: ^0.14.0
     cypress: ^12.11.0
@@ -9777,6 +9779,13 @@ __metadata:
   version: 4.3.5
   resolution: "@types/chai@npm:4.3.5"
   checksum: c8f26a88c6b5b53a3275c7f5ff8f107028e3cbb9ff26795fff5f3d9dea07106a54ce9e2dce5e40347f7c4cc35657900aaf0c83934a25a1ae12e61e0f5516e431
+  languageName: node
+  linkType: hard
+
+"@types/chroma-js@npm:^2.4.0":
+  version: 2.4.0
+  resolution: "@types/chroma-js@npm:2.4.0"
+  checksum: aa91adf61a5dee8469c1e6b298d3496041d1baa8bd9938865a61050b5e392adc3425718c7c29b09a3d8dfe0d2e8a1301e98d4b458135e53c2ecb3ecca8cb7d21
   languageName: node
   linkType: hard
 
@@ -13460,6 +13469,13 @@ __metadata:
   version: 2.0.0
   resolution: "chownr@npm:2.0.0"
   checksum: c57cf9dd0791e2f18a5ee9c1a299ae6e801ff58fee96dc8bfd0dcb4738a6ce58dd252a3605b1c93c6418fe4f9d5093b28ffbf4d66648cb2a9c67eaef9679be2f
+  languageName: node
+  linkType: hard
+
+"chroma-js@npm:^2.4.2":
+  version: 2.4.2
+  resolution: "chroma-js@npm:2.4.2"
+  checksum: cf9884c02d406286e4370599bcd1afbf089384407df46b3a69edfedcba7bb99e8f959a5cfdbfec750b305c441c06ca40cd1f70ba3a6c2ce739ac09a92520ddae
   languageName: node
   linkType: hard
 
