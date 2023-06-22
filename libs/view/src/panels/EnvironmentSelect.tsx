@@ -1,5 +1,5 @@
-import { alpha, styled, useTheme } from '@mui/material'
-import { useAtom } from 'jotai'
+import { alpha, Button, styled } from '@mui/material'
+import { useAtom, useAtomValue } from 'jotai'
 import {
   bindMenu,
   bindTrigger,
@@ -8,11 +8,12 @@ import {
 import NextImage from 'next/image'
 import { useCallback, useId, type FC } from 'react'
 
+import { colorSchemeTurbo } from '@takram/plateau-color-schemes'
 import { colorModeAtom } from '@takram/plateau-shared-states'
 import {
-  FloatingButton,
   FloatingPanel,
   OverlayPopover,
+  QuantitativeColorLegend,
   SelectItem,
   type SelectItemProps
 } from '@takram/plateau-ui-components'
@@ -21,13 +22,25 @@ import darkMapImage from '../assets/dark_map.webp'
 import elevationImage from '../assets/elevation.webp'
 import lightMapImage from '../assets/light_map.webp'
 import satelliteImage from '../assets/satellite.webp'
-import { environmentTypeAtom } from '../states/app'
+import {
+  environmentTypeAtom,
+  terrainElevationHeightRangeAtom
+} from '../states/app'
 
-const inset = 2
+const inset = 3
 
-const Root = styled(FloatingButton)({
+const Root = styled(FloatingPanel)({
   padding: 0,
   minWidth: 0
+})
+
+const StyledButton = styled(Button)({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  height: '100%',
+  minWidth: 0,
+  padding: 0
 })
 
 const StyledSelectItem = styled(SelectItem)(({ theme }) => ({
@@ -151,27 +164,43 @@ export const EnvironmentSelect: FC = () => {
       ? 'elevation'
       : undefined
 
-  const theme = useTheme()
+  const elevationRange = useAtomValue(terrainElevationHeightRangeAtom)
+
   return (
     <>
-      <Root {...bindTrigger(popupState)}>
-        <Image>
-          {selectedItem != null && (
-            <NextImage
-              src={environmentItems[selectedItem].image}
-              alt={environmentItems[selectedItem].label}
+      <Root>
+        <StyledButton variant='text' {...bindTrigger(popupState)}>
+          {selectedItem !== 'elevation' && (
+            <Image>
+              {selectedItem != null && (
+                <NextImage
+                  src={environmentItems[selectedItem].image}
+                  alt={environmentItems[selectedItem].label}
+                />
+              )}
+            </Image>
+          )}
+          {selectedItem === 'elevation' && (
+            <QuantitativeColorLegend
+              min={elevationRange[0]}
+              max={elevationRange[1]}
+              colorScheme={colorSchemeTurbo}
+              sx={{
+                width: 240,
+                marginX: 2
+              }}
             />
           )}
-        </Image>
+        </StyledButton>
       </Root>
       <OverlayPopover
         {...bindMenu(popupState)}
         anchorOrigin={{
-          horizontal: parseFloat(theme.spacing(-3.5)),
+          horizontal: 'center',
           vertical: 'top'
         }}
         transformOrigin={{
-          horizontal: 'left',
+          horizontal: 'center',
           vertical: 'bottom'
         }}
       >
