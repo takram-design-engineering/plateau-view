@@ -50,6 +50,8 @@ export const SceneCoordinator: FC = memo(() => {
       }
     }
   }
+  // TODO: Make this configurable via quality setting.
+  globe.maximumScreenSpaceError = 1.5
   globe._surface.tileProvider._debug.wireframe = showGlobeWireframe
 
   const antialiasType = useAtomValue(antialiasTypeAtom)
