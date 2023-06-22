@@ -1,4 +1,4 @@
-import { alpha, Button, styled } from '@mui/material'
+import { alpha, Box, Button, Stack, styled } from '@mui/material'
 import { useAtom, useAtomValue } from 'jotai'
 import {
   bindMenu,
@@ -27,7 +27,7 @@ import {
   terrainElevationHeightRangeAtom
 } from '../states/app'
 
-const inset = 3
+const inset = 6
 
 const Root = styled(FloatingPanel)({
   padding: 0,
@@ -46,10 +46,10 @@ const StyledButton = styled(Button)({
 const StyledSelectItem = styled(SelectItem)(({ theme }) => ({
   padding: `calc(${theme.spacing(0.5)} - ${inset}px) ${theme.spacing(1)}`,
   '&:first-of-type': {
-    marginTop: `calc(${theme.spacing(1)} - ${inset}px)`
+    marginTop: theme.spacing(0.5)
   },
   '&:last-of-type': {
-    marginBottom: `calc(${theme.spacing(1)} - ${inset}px)`
+    marginBottom: theme.spacing(0.5)
   }
 }))
 
@@ -169,8 +169,8 @@ export const EnvironmentSelect: FC = () => {
   return (
     <>
       <Root>
-        <StyledButton variant='text' {...bindTrigger(popupState)}>
-          {selectedItem !== 'elevation' && (
+        <Stack direction='row' spacing={1} alignItems='center'>
+          <StyledButton variant='text' {...bindTrigger(popupState)}>
             <Image>
               {selectedItem != null && (
                 <NextImage
@@ -179,19 +179,18 @@ export const EnvironmentSelect: FC = () => {
                 />
               )}
             </Image>
-          )}
+          </StyledButton>
           {selectedItem === 'elevation' && (
-            <QuantitativeColorLegend
-              min={elevationRange[0]}
-              max={elevationRange[1]}
-              colorScheme={colorSchemeTurbo}
-              sx={{
-                width: 240,
-                marginX: 2
-              }}
-            />
+            <Box paddingRight={1.5}>
+              <QuantitativeColorLegend
+                min={elevationRange[0]}
+                max={elevationRange[1]}
+                colorScheme={colorSchemeTurbo}
+                sx={{ width: 240 }}
+              />
+            </Box>
           )}
-        </StyledButton>
+        </Stack>
       </Root>
       <OverlayPopover
         {...bindMenu(popupState)}
