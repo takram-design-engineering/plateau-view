@@ -8,10 +8,10 @@ import { ColorSchemeGradient } from './ColorSchemeGradient'
 import { formatValue } from './helpers/formatValue'
 
 const Values = styled('div')(({ theme }) => ({
-  ...theme.typography.caption,
+  ...theme.typography.small,
   position: 'relative',
   height: `calc(${theme.typography.caption.fontSize} * ${
-    1 + (+(theme.typography.caption.lineHeight ?? 1) - 1) / 2
+    1 + (+(theme.typography.small.lineHeight ?? 1) - 1) / 2
   })`,
   color: theme.palette.text.secondary,
   lineHeight: 1

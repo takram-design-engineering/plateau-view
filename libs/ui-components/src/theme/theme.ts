@@ -2,6 +2,7 @@ import { alpha, createTheme, type ThemeOptions } from '@mui/material'
 import { cyan, grey } from '@mui/material/colors'
 import { type Shadows } from '@mui/material/styles/shadows'
 import { merge } from 'lodash'
+import { type CSSProperties } from 'react'
 
 import { MuiButton } from './components/MuiButton'
 import { MuiChip } from './components/MuiChip'
@@ -22,6 +23,22 @@ import { MuiToggleButton } from './components/MuiToggleButton'
 import { MuiTooltip } from './components/MuiTooltip'
 
 // TODO: Transition to MUI Joy when it's released.
+
+declare module '@mui/material/styles' {
+  interface TypographyVariants {
+    small: CSSProperties
+  }
+
+  interface TypographyVariantsOptions {
+    small?: CSSProperties
+  }
+}
+
+declare module '@mui/material/Typography' {
+  interface TypographyPropsVariantOverrides {
+    small: true
+  }
+}
 
 const theme = createTheme()
 
@@ -92,6 +109,10 @@ export const themeOptions: ThemeOptions = {
     },
     caption: {
       fontSize: theme.typography.pxToRem(11.06)
+    },
+    small: {
+      fontSize: theme.typography.pxToRem(9.83),
+      lineHeight: 1.2
     }
   },
   components: {
