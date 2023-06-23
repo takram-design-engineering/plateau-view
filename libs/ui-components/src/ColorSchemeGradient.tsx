@@ -33,7 +33,7 @@ const Tick = styled('div')({
 })
 
 export interface ColorSchemeGradientProps {
-  colorScheme: ColorScheme
+  colorScheme: ColorScheme<'sequential' | 'diverging'>
   min?: number
   max?: number
 }

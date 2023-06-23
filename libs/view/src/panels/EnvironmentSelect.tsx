@@ -1,7 +1,8 @@
-import { alpha, Box, Button, Stack, styled } from '@mui/material'
+import { alpha, Button, Stack, styled } from '@mui/material'
 import { useAtom, useAtomValue } from 'jotai'
 import {
   bindMenu,
+  bindPopover,
   bindTrigger,
   usePopupState
 } from 'material-ui-popup-state/hooks'
@@ -13,8 +14,10 @@ import { colorModeAtom } from '@takram/plateau-shared-states'
 import {
   FloatingPanel,
   OverlayPopover,
+  ParameterList,
   QuantitativeColorLegend,
   SelectItem,
+  SliderParameterItem,
   type SelectItemProps
 } from '@takram/plateau-ui-components'
 
@@ -34,14 +37,25 @@ const Root = styled(FloatingPanel)({
   minWidth: 0
 })
 
-const StyledButton = styled(Button)({
+const ImageButton = styled(Button)({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   height: '100%',
   minWidth: 0,
-  padding: 0
+  padding: 0,
+  borderRadius: 0
 })
+
+const LegendButton = styled(Button)(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  height: '100%',
+  minWidth: 0,
+  padding: theme.spacing(1.5),
+  borderRadius: 0
+}))
 
 const StyledSelectItem = styled(SelectItem)(({ theme }) => ({
   padding: `calc(${theme.spacing(0.5)} - ${inset}px) ${theme.spacing(1)}`,
@@ -118,6 +132,56 @@ const Item: FC<
   </StyledSelectItem>
 )
 
+const ElevationLegendButton: FC = () => {
+  const elevationRange = useAtomValue(terrainElevationHeightRangeAtom)
+
+  const id = useId()
+  const popupState = usePopupState({
+    variant: 'popover',
+    popupId: id
+  })
+
+  return (
+    <>
+      <LegendButton variant='text' {...bindTrigger(popupState)}>
+        <QuantitativeColorLegend
+          min={elevationRange[0]}
+          max={elevationRange[1]}
+          colorScheme={colorSchemeTurbo}
+          unit='m'
+          sx={{ width: 240 }}
+        />
+      </LegendButton>
+      <OverlayPopover
+        {...bindPopover(popupState)}
+        anchorOrigin={{
+          horizontal: 'center',
+          vertical: 'top'
+        }}
+        transformOrigin={{
+          horizontal: 'center',
+          vertical: 'bottom'
+        }}
+        disableClickAway
+      >
+        <FloatingPanel>
+          <ParameterList sx={{ width: 240, marginX: 2 }}>
+            <SliderParameterItem
+              label='標高範囲'
+              min={-10}
+              max={4000}
+              step={1}
+              unit='m'
+              logarithmic
+              atom={terrainElevationHeightRangeAtom}
+            />
+          </ParameterList>
+        </FloatingPanel>
+      </OverlayPopover>
+    </>
+  )
+}
+
 export const EnvironmentSelect: FC = () => {
   const [environmentType, setEnvironmentType] = useAtom(environmentTypeAtom)
   const [colorMode, setColorMode] = useAtom(colorModeAtom)
@@ -125,9 +189,9 @@ export const EnvironmentSelect: FC = () => {
   const id = useId()
   const popupState = usePopupState({
     variant: 'popover',
-    popupId: id
+    popupId: `${id}:menu`
   })
-  const { close } = popupState
+  const close = popupState.close
 
   const handleLightMap = useCallback(() => {
     setEnvironmentType('map')
@@ -164,13 +228,11 @@ export const EnvironmentSelect: FC = () => {
       ? 'elevation'
       : undefined
 
-  const elevationRange = useAtomValue(terrainElevationHeightRangeAtom)
-
   return (
     <>
       <Root>
-        <Stack direction='row' spacing={1} alignItems='center'>
-          <StyledButton variant='text' {...bindTrigger(popupState)}>
+        <Stack direction='row'>
+          <ImageButton variant='text' {...bindTrigger(popupState)}>
             <Image>
               {selectedItem != null && (
                 <NextImage
@@ -179,17 +241,8 @@ export const EnvironmentSelect: FC = () => {
                 />
               )}
             </Image>
-          </StyledButton>
-          {selectedItem === 'elevation' && (
-            <Box paddingRight={1.5}>
-              <QuantitativeColorLegend
-                min={elevationRange[0]}
-                max={elevationRange[1]}
-                colorScheme={colorSchemeTurbo}
-                sx={{ width: 240 }}
-              />
-            </Box>
-          )}
+          </ImageButton>
+          {selectedItem === 'elevation' && <ElevationLegendButton />}
         </Stack>
       </Root>
       <OverlayPopover

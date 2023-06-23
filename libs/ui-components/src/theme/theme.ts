@@ -13,6 +13,7 @@ import { MuiLink } from './components/MuiLink'
 import { MuiMenu } from './components/MuiMenu'
 import { MuiMenuItem } from './components/MuiMenuItem'
 import { MuiOutlinedInput } from './components/MuiOutlinedInput'
+import { MuiPopover } from './components/MuiPopover'
 import { MuiSelect } from './components/MuiSelect'
 import { MuiSlider } from './components/MuiSlider'
 import { MuiSvgIcon } from './components/MuiSvgIcon'
@@ -125,6 +126,7 @@ export const themeOptions: ThemeOptions = {
     MuiMenu,
     MuiMenuItem,
     MuiOutlinedInput,
+    MuiPopover,
     MuiSelect,
     MuiSlider,
     MuiSvgIcon,
