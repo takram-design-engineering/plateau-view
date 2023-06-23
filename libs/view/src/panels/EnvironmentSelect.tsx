@@ -1,19 +1,23 @@
-import { alpha, styled, useTheme } from '@mui/material'
-import { useAtom } from 'jotai'
+import { alpha, Button, Stack, styled } from '@mui/material'
+import { useAtom, useAtomValue } from 'jotai'
 import {
   bindMenu,
+  bindPopover,
   bindTrigger,
   usePopupState
 } from 'material-ui-popup-state/hooks'
 import NextImage from 'next/image'
 import { useCallback, useId, type FC } from 'react'
 
+import { colorSchemeTurbo } from '@takram/plateau-color-schemes'
 import { colorModeAtom } from '@takram/plateau-shared-states'
 import {
-  FloatingButton,
   FloatingPanel,
   OverlayPopover,
+  ParameterList,
+  QuantitativeColorLegend,
   SelectItem,
+  SliderParameterItem,
   type SelectItemProps
 } from '@takram/plateau-ui-components'
 
@@ -21,22 +25,45 @@ import darkMapImage from '../assets/dark_map.webp'
 import elevationImage from '../assets/elevation.webp'
 import lightMapImage from '../assets/light_map.webp'
 import satelliteImage from '../assets/satellite.webp'
-import { environmentTypeAtom } from '../states/app'
+import {
+  environmentTypeAtom,
+  terrainElevationHeightRangeAtom
+} from '../states/app'
 
-const inset = 2
+const inset = 6
 
-const Root = styled(FloatingButton)({
+const Root = styled(FloatingPanel)({
   padding: 0,
   minWidth: 0
 })
 
+const ImageButton = styled(Button)({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  height: '100%',
+  minWidth: 0,
+  padding: 0,
+  borderRadius: 0
+})
+
+const LegendButton = styled(Button)(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  height: '100%',
+  minWidth: 0,
+  padding: theme.spacing(1.5),
+  borderRadius: 0
+}))
+
 const StyledSelectItem = styled(SelectItem)(({ theme }) => ({
   padding: `calc(${theme.spacing(0.5)} - ${inset}px) ${theme.spacing(1)}`,
   '&:first-of-type': {
-    marginTop: `calc(${theme.spacing(1)} - ${inset}px)`
+    marginTop: theme.spacing(0.5)
   },
   '&:last-of-type': {
-    marginBottom: `calc(${theme.spacing(1)} - ${inset}px)`
+    marginBottom: theme.spacing(0.5)
   }
 }))
 
@@ -105,6 +132,56 @@ const Item: FC<
   </StyledSelectItem>
 )
 
+const ElevationLegendButton: FC = () => {
+  const elevationRange = useAtomValue(terrainElevationHeightRangeAtom)
+
+  const id = useId()
+  const popupState = usePopupState({
+    variant: 'popover',
+    popupId: id
+  })
+
+  return (
+    <>
+      <LegendButton variant='text' {...bindTrigger(popupState)}>
+        <QuantitativeColorLegend
+          min={elevationRange[0]}
+          max={elevationRange[1]}
+          colorScheme={colorSchemeTurbo}
+          unit='m'
+          sx={{ width: 240 }}
+        />
+      </LegendButton>
+      <OverlayPopover
+        {...bindPopover(popupState)}
+        anchorOrigin={{
+          horizontal: 'center',
+          vertical: 'top'
+        }}
+        transformOrigin={{
+          horizontal: 'center',
+          vertical: 'bottom'
+        }}
+        disableClickAway
+      >
+        <FloatingPanel>
+          <ParameterList sx={{ width: 240, marginX: 2 }}>
+            <SliderParameterItem
+              label='標高範囲'
+              min={-10}
+              max={4000}
+              step={1}
+              unit='m'
+              logarithmic
+              atom={terrainElevationHeightRangeAtom}
+            />
+          </ParameterList>
+        </FloatingPanel>
+      </OverlayPopover>
+    </>
+  )
+}
+
 export const EnvironmentSelect: FC = () => {
   const [environmentType, setEnvironmentType] = useAtom(environmentTypeAtom)
   const [colorMode, setColorMode] = useAtom(colorModeAtom)
@@ -112,9 +189,9 @@ export const EnvironmentSelect: FC = () => {
   const id = useId()
   const popupState = usePopupState({
     variant: 'popover',
-    popupId: id
+    popupId: `${id}:menu`
   })
-  const { close } = popupState
+  const close = popupState.close
 
   const handleLightMap = useCallback(() => {
     setEnvironmentType('map')
@@ -151,27 +228,31 @@ export const EnvironmentSelect: FC = () => {
       ? 'elevation'
       : undefined
 
-  const theme = useTheme()
   return (
     <>
-      <Root {...bindTrigger(popupState)}>
-        <Image>
-          {selectedItem != null && (
-            <NextImage
-              src={environmentItems[selectedItem].image}
-              alt={environmentItems[selectedItem].label}
-            />
-          )}
-        </Image>
+      <Root>
+        <Stack direction='row'>
+          <ImageButton variant='text' {...bindTrigger(popupState)}>
+            <Image>
+              {selectedItem != null && (
+                <NextImage
+                  src={environmentItems[selectedItem].image}
+                  alt={environmentItems[selectedItem].label}
+                />
+              )}
+            </Image>
+          </ImageButton>
+          {selectedItem === 'elevation' && <ElevationLegendButton />}
+        </Stack>
       </Root>
       <OverlayPopover
         {...bindMenu(popupState)}
         anchorOrigin={{
-          horizontal: parseFloat(theme.spacing(-3.5)),
+          horizontal: 'center',
           vertical: 'top'
         }}
         transformOrigin={{
-          horizontal: 'left',
+          horizontal: 'center',
           vertical: 'bottom'
         }}
       >

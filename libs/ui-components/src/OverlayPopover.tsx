@@ -1,6 +1,5 @@
 import {
   ClickAwayListener,
-  Fade,
   Popover,
   popoverClasses,
   styled,
@@ -12,8 +11,11 @@ const Root = styled(Popover, {
   shouldForwardProp: prop => prop !== 'placement'
 })<{
   placement: 'top' | 'bottom'
-}>(({ theme, placement }) => ({
-  pointerEvents: 'none',
+  disableClickAway: boolean
+}>(({ theme, placement, disableClickAway }) => ({
+  ...(!disableClickAway && {
+    pointerEvents: 'none'
+  }),
   [`& .${popoverClasses.paper}`]: {
     overflow: 'visible',
     backgroundColor: 'transparent',
@@ -33,12 +35,14 @@ const Root = styled(Popover, {
 export interface OverlayPopoverProps extends PopoverProps {
   placement?: 'top' | 'bottom'
   pinned?: boolean
+  disableClickAway?: boolean
   children: JSX.Element
 }
 
 export const OverlayPopover: FC<OverlayPopoverProps> = ({
   placement = 'top',
   pinned = false,
+  disableClickAway = false,
   onClose,
   children,
   ...props
@@ -54,11 +58,11 @@ export const OverlayPopover: FC<OverlayPopoverProps> = ({
   )
   const handleClose: NonNullable<PopoverProps['onClose']> = useCallback(
     (event, reason) => {
-      if (reason !== 'backdropClick') {
+      if (disableClickAway || reason !== 'backdropClick') {
         onClose?.(event, reason)
       }
     },
-    [onClose]
+    [disableClickAway, onClose]
   )
   return (
     <Root
@@ -71,14 +75,17 @@ export const OverlayPopover: FC<OverlayPopoverProps> = ({
         vertical: placement === 'top' ? 'bottom' : 'top',
         horizontal: 'center'
       }}
-      TransitionComponent={Fade}
-      transitionDuration={0}
       {...props}
       placement={placement}
+      disableClickAway={disableClickAway}
     >
-      <ClickAwayListener onClickAway={handleClickAway}>
-        <div>{children}</div>
-      </ClickAwayListener>
+      {!disableClickAway ? (
+        <ClickAwayListener onClickAway={handleClickAway}>
+          <div>{children}</div>
+        </ClickAwayListener>
+      ) : (
+        children
+      )}
     </Root>
   )
 }

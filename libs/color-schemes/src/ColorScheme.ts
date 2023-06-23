@@ -5,8 +5,8 @@ import { type ColorTuple, type LUT } from './types'
 
 export type ColorSchemeType = 'sequential' | 'diverging'
 
-export class ColorScheme {
-  constructor(readonly type: ColorSchemeType, readonly lut: LUT) {
+export class ColorScheme<T extends ColorSchemeType = ColorSchemeType> {
+  constructor(readonly type: T, readonly lut: LUT) {
     invariant(lut.length > 1)
   }
 
@@ -19,6 +19,10 @@ export class ColorScheme {
         .range(this.lut)
         .clamp(true))
     )
+  }
+
+  get count(): number {
+    return this.lut.length
   }
 
   quantize(count: number): ColorTuple[] {
