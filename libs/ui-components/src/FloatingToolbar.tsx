@@ -18,7 +18,7 @@ const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
   overflow: 'hidden',
   height: theme.spacing(6),
   [`& .${toggleButtonClasses.root}`]: {
-    minWidth: theme.spacing(6.5),
+    minWidth: theme.spacing(6),
     padding: `0 ${theme.spacing(1.5)}`,
     color: theme.palette.text.primary,
     // Add specificity

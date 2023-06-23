@@ -10,7 +10,7 @@ import { type PlateauTilesetLayerModel } from './createPlateauTilesetLayerBase'
 import { PEDESTRIAN_LAYER } from './layerTypes'
 import { type PedestrianLayerModel } from './PedestrianLayer'
 
-export const pixelRatioAtom = atom(2)
+export const pixelRatioAtom = atom(1)
 
 export const tilesetLayersAtom = atom(get =>
   get(layersAtom).filter(

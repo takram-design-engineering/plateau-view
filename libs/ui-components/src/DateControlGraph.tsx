@@ -3,7 +3,6 @@ import { Body, Equator, Horizon, type Observer } from 'astronomy-engine'
 import {
   area as createArea,
   line as createLine,
-  path as createPath,
   scaleLinear,
   type ScaleLinear
 } from 'd3'
@@ -21,6 +20,7 @@ import {
 } from 'react'
 import invariant from 'tiny-invariant'
 
+import { createRoundedRectPath } from './helpers/createRoundedRectPath'
 import { type DateControlState, type RiseSet } from './useDateControlState'
 
 const Root = styled('div')({
@@ -72,21 +72,10 @@ const RiseSetGradient: FC<{
   opacity?: number
 }> = ({ width, height, riseSetAtom, scaleX, inset = 0, opacity = 1 }) => {
   const id = useId()
-  const rect = useMemo(() => {
-    const radius = 5
-    const path = createPath()
-    path.moveTo(radius, 0)
-    path.lineTo(width - radius, 0)
-    path.arcTo(width, 0, width, radius, radius)
-    path.lineTo(width, height - radius)
-    path.arcTo(width, height, width - radius, height, radius)
-    path.lineTo(radius, height)
-    path.arcTo(0, height, 0, height - radius, radius)
-    path.lineTo(0, radius)
-    path.arcTo(0, 0, radius, 0, radius)
-    path.closePath()
-    return path.toString()
-  }, [width, height])
+  const rect = useMemo(
+    () => createRoundedRectPath({ width, height, radius: 5 }),
+    [width, height]
+  )
 
   const theme = useTheme()
 

@@ -66,6 +66,8 @@ export interface ShadowMapProps extends Partial<ShadowMapOptions> {
   terrainBias?: Partial<ShadowMapBias>
   primitiveBias?: Partial<ShadowMapBias>
   pointBias?: Partial<ShadowMapBias>
+  debugShowDepth?: boolean
+  debugShowCascadeColors?: boolean
 }
 
 export const ShadowMap = withDeferredProps(
@@ -74,6 +76,8 @@ export const ShadowMap = withDeferredProps(
     terrainBias = {},
     primitiveBias = {},
     pointBias = {},
+    debugShowDepth = false,
+    debugShowCascadeColors = false,
     ...props
   }: ShadowMapProps) => {
     const scene = useCesium(({ scene }) => scene)
@@ -82,6 +86,8 @@ export const ShadowMap = withDeferredProps(
       _terrainBias: ShadowMapBias
       _pointBias: ShadowMapBias
       _primitiveBias: ShadowMapBias
+      debugShow: boolean
+      debugCascadeColors: boolean
     }
     assignPropertyProps(shadowMap, props, defaultShadowMapOptions)
 
@@ -93,6 +99,9 @@ export const ShadowMap = withDeferredProps(
       primitiveBias,
       defaultPrimitiveBias
     )
+
+    shadowMap.debugShow = debugShowDepth
+    shadowMap.debugCascadeColors = debugShowCascadeColors
 
     scene.requestRender()
 

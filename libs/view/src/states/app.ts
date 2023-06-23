@@ -23,13 +23,13 @@ export const environmentTypeAtom = atom(
 )
 export const terrainTypeAtom = atomWithReset<TerrainType>('plateau')
 export const enableTerrainLightingAtom = atomWithReset(true)
-export const debugSphericalHarmonicsAtom = atomWithReset(false)
 export const terrainElevationHeightRangeAtom = atomWithReset<[number, number]>([
   0, 1000
 ])
-export type PlateauDataSource = '2020' | '2022' | 'cms'
+export const debugSphericalHarmonicsAtom = atomWithReset(false)
+export const showShadowMapDepthAtom = atomWithReset(false)
+export const showShadowMapCascadeColorsAtom = atomWithReset(false)
 
-export const plateauDataSourceAtom = atomWithReset<PlateauDataSource>('2020')
 export const showDataFormatsAtom = atomWithReset(false)
 export const showAreaEntitiesAtom = atomWithReset(false)
 

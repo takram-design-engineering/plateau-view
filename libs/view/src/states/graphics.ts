@@ -46,11 +46,13 @@ export const shadowMapEnabledAtom = atomWithStorageValidation({
   initialValue: true,
   validate: isBoolean
 })
+
 export const shadowMapSizeAtom = atomWithStorageValidation({
   key: 'shadowMapSize',
   initialValue: 4096 as ShadowMapSize,
   validate: isShadowMapSize
 })
+
 export const shadowMapSoftShadowsAtom = atomWithStorageValidation({
   key: 'shadowMapSoftShadows',
   initialValue: true,
@@ -62,14 +64,17 @@ export const ambientOcclusionEnabledAtom = atomWithStorageValidation({
   initialValue: true,
   validate: isBoolean
 })
+
 export const ambientOcclusionIntensityAtom = atomWithReset(100)
 export const ambientOcclusionMaxRadiusAtom = atomWithReset(40)
 export const ambientOcclusionBiasAtom = atomWithReset(0.1)
+
 export const ambientOcclusionDirectionsAtom = atomWithStorageValidation({
   key: 'ambientOcclusionDirections',
   initialValue: 4,
   validate: isNumber
 })
+
 export const ambientOcclusionStepsAtom = atomWithStorageValidation({
   key: 'ambientOcclusionSteps',
   initialValue: 8,

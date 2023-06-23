@@ -5,7 +5,7 @@ import { FloatingPanel } from './FloatingPanel'
 
 const StyledButton = styled(Button)(({ theme }) => ({
   height: theme.spacing(6),
-  minWidth: theme.spacing(6.5),
+  minWidth: theme.spacing(6),
   padding: `0 ${theme.spacing(1.5)}`,
   transition: 'none',
   [`&.${buttonClasses.containedPrimary}`]: {
