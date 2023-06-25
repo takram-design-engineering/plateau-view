@@ -8,7 +8,7 @@ import {
 import { useCallback, type FC } from 'react'
 
 const Root = styled(Popover, {
-  shouldForwardProp: prop => prop !== 'placement'
+  shouldForwardProp: prop => prop !== 'placement' && prop !== 'disableClickAway'
 })<{
   placement: 'top' | 'bottom'
   disableClickAway: boolean
