@@ -43,15 +43,11 @@ const Developer: FC<{ children?: ReactNode }> = props => (
   />
 )
 
-const RootColumn = styled('div', {
-  shouldForwardProp: prop => prop !== 'spacing'
-})<{ spacing?: number }>(({ theme, spacing = 0 }) => ({
+const RootColumn = styled('div')(({ theme }) => ({
   display: 'grid',
   gridTemplateRows: '1fr',
   gridAutoFlow: 'row',
   gridAutoRows: 'fit-content(0)',
-  gridRowGap: theme.spacing(spacing),
-  margin: theme.spacing(spacing),
   minHeight: 0
 }))
 
@@ -63,6 +59,7 @@ const RootGrid = styled('div', {
   gridColumnGap: theme.spacing(spacing),
   gridAutoFlow: 'column',
   gridAutoColumns: '',
+  margin: theme.spacing(spacing),
   minHeight: 0
 }))
 
@@ -141,7 +138,8 @@ const BottomGrid = styled('div', {
   gridTemplateColumns: 'fit-content(0) fit-content(0)',
   gridColumnGap: theme.spacing(spacing),
   alignItems: 'end',
-  justifyContent: 'space-between'
+  justifyContent: 'space-between',
+  backgroundColor: theme.palette.background.default
 }))
 
 const BottomLeftColumn = styled('div')({
@@ -181,7 +179,7 @@ export const AppLayout: FC<AppLayoutProps> = memo(
     developer
   }) => (
     <Root>
-      <RootColumn spacing={spacing}>
+      <RootColumn>
         <RootGrid spacing={spacing}>
           <SizeContainer>
             <MainContainer
@@ -207,10 +205,12 @@ export const AppLayout: FC<AppLayoutProps> = memo(
           </SizeContainer>
           {aside}
         </RootGrid>
-        <BottomGrid spacing={spacing}>
-          <BottomLeftColumn>{bottomLeft}</BottomLeftColumn>
-          <BottomRightColumn>{bottomRight}</BottomRightColumn>
-        </BottomGrid>
+        <DarkThemeOverride>
+          <BottomGrid spacing={spacing}>
+            <BottomLeftColumn>{bottomLeft}</BottomLeftColumn>
+            <BottomRightColumn>{bottomRight}</BottomRightColumn>
+          </BottomGrid>
+        </DarkThemeOverride>
       </RootColumn>
       {developer != null && (
         <DeveloperColumn>

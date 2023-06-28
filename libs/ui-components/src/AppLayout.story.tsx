@@ -54,7 +54,7 @@ export const Default: Story = {
         </Stack>
       }
       bottomRight={
-        <Stack direction='column' spacing={1}>
+        <Stack direction='row' spacing={1}>
           <FloatingButton>Bottom Right</FloatingButton>
           <FloatingButton>Bottom Right</FloatingButton>
         </Stack>
