@@ -4,7 +4,6 @@ import {
   ListItemSecondaryAction,
   Menu,
   MenuItem,
-  styled,
   type IconButtonProps
 } from '@mui/material'
 import { useAtom, useAtomValue } from 'jotai'
@@ -23,7 +22,7 @@ import {
   Shortcut
 } from '@takram/plateau-ui-components'
 
-import { showDeveloperPanelsAtom } from '../../states/app'
+import { showDeveloperPanelsAtom } from '../states/app'
 
 export interface MainMenuButtonProps extends Omit<IconButtonProps, 'onClick'> {
   onClick?: (event: MouseEvent<HTMLElement>, name: string) => void
@@ -33,10 +32,10 @@ export const MainMenuButton = forwardRef<
   HTMLButtonElement,
   MainMenuButtonProps
 >(({ onClick, ...props }, ref) => {
-  const popupId = useId()
+  const id = useId()
   const popupState = usePopupState({
     variant: 'popover',
-    popupId
+    popupId: id
   })
 
   const [showDeveloperPanels, setShowDeveloperPanels] = useAtom(
