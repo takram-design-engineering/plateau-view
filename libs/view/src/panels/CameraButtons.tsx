@@ -1,4 +1,4 @@
-import FlightTakeoffOutlinedIcon from '@mui/icons-material/FlightTakeoffOutlined'
+import KeyboardIcon from '@mui/icons-material/Keyboard'
 import { useAtom, type PrimitiveAtom } from 'jotai'
 import { useCallback, type FC } from 'react'
 
@@ -28,22 +28,20 @@ export const CameraButtons: FC = () => {
   )
   return (
     <>
-      {process.env.NODE_ENV !== 'production' && (
-        <AppIconButton
-          title='キーボード操作'
-          {...enableKeyboardCameraControlProps}
-        >
-          <FlightTakeoffOutlinedIcon fontSize='medium' />
-        </AppIconButton>
-      )}
+      <AppIconButton
+        title='キーボード操作'
+        {...enableKeyboardCameraControlProps}
+      >
+        <KeyboardIcon />
+      </AppIconButton>
       <AppIconButton title='自動回転' disabled>
-        <RotateAroundIcon fontSize='medium' />
+        <RotateAroundIcon />
       </AppIconButton>
       <AppIconButton title='縮小' disabled>
-        <MinusIcon fontSize='medium' />
+        <MinusIcon />
       </AppIconButton>
       <AppIconButton title='拡大' disabled>
-        <PlusIcon fontSize='medium' />
+        <PlusIcon />
       </AppIconButton>
     </>
   )
