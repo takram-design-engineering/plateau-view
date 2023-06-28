@@ -17,8 +17,6 @@ import {
 } from '@takram/plateau-ui-components'
 import { ViewLayerListItem } from '@takram/plateau-view-layers'
 
-import { MainMenuButton } from './MainPanel/MainMenuButton'
-
 const Search = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'row',
@@ -68,8 +66,6 @@ export const MainPanel: FC = () => {
     <FloatingPanel>
       <Search>
         <Stack direction='row' flexGrow={1} alignItems='center'>
-          <MainMenuButton />
-          <Divider orientation='vertical' light />
           <SearchField
             inputRef={textFieldRef}
             variant='standard'

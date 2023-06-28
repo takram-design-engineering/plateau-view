@@ -3,8 +3,7 @@ import { useAtom, type PrimitiveAtom } from 'jotai'
 import { useCallback, type FC } from 'react'
 
 import {
-  FloatingButtonItem,
-  FloatingButtons,
+  AppIconButton,
   MinusIcon,
   PlusIcon,
   RotateAroundIcon
@@ -23,26 +22,29 @@ function useBooleanAtomProps(atom: PrimitiveAtom<boolean>): {
   return { selected, onClick: handleClick }
 }
 
-export const CameraToolbar: FC = () => {
+export const CameraButtons: FC = () => {
   const enableKeyboardCameraControlProps = useBooleanAtomProps(
     enableKeyboardCameraControlAtom
   )
   return (
-    <FloatingButtons>
+    <>
       {process.env.NODE_ENV !== 'production' && (
-        <FloatingButtonItem title='飛行' {...enableKeyboardCameraControlProps}>
+        <AppIconButton
+          title='キーボード操作'
+          {...enableKeyboardCameraControlProps}
+        >
           <FlightTakeoffOutlinedIcon fontSize='medium' />
-        </FloatingButtonItem>
+        </AppIconButton>
       )}
-      <FloatingButtonItem title='自動回転' disabled>
+      <AppIconButton title='自動回転' disabled>
         <RotateAroundIcon fontSize='medium' />
-      </FloatingButtonItem>
-      <FloatingButtonItem title='縮小' disabled>
+      </AppIconButton>
+      <AppIconButton title='縮小' disabled>
         <MinusIcon fontSize='medium' />
-      </FloatingButtonItem>
-      <FloatingButtonItem title='拡大' disabled>
+      </AppIconButton>
+      <AppIconButton title='拡大' disabled>
         <PlusIcon fontSize='medium' />
-      </FloatingButtonItem>
-    </FloatingButtons>
+      </AppIconButton>
+    </>
   )
 }

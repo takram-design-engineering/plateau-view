@@ -46,8 +46,7 @@ const Root = withDeferredProps(
   ['useBrowserRecommendedResolution'],
   styled(CesiumCanvas)({
     position: 'absolute',
-    inset: 0,
-    zIndex: -1 // Below any UI
+    inset: 0
   })
 )
 

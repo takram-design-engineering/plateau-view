@@ -25,12 +25,6 @@ import {
 
 import { showDeveloperPanelsAtom } from '../../states/app'
 
-const StyledIconButton = styled(IconButton)(({ theme }) => ({
-  width: theme.spacing(6.5),
-  height: '100%',
-  borderRadius: 0
-}))
-
 export interface MainMenuButtonProps extends Omit<IconButtonProps, 'onClick'> {
   onClick?: (event: MouseEvent<HTMLElement>, name: string) => void
 }
@@ -72,15 +66,14 @@ export const MainMenuButton = forwardRef<
   const platform = useAtomValue(platformAtom)
   return (
     <>
-      <StyledIconButton
+      <IconButton
         ref={ref}
-        size='small'
         aria-label='メインメニュー'
         {...bindTrigger(popupState)}
         {...props}
       >
         <PlateauSymbol sx={{ fontSize: 24 }} />
-      </StyledIconButton>
+      </IconButton>
       <Menu
         {...bindMenu(popupState)}
         anchorOrigin={{
