@@ -2,7 +2,7 @@ import { Button, Stack } from '@mui/material'
 import { type Meta, type StoryObj } from '@storybook/react'
 
 import {
-  AppLayout,
+  AppOverlayLayout,
   ContextBar,
   DeveloperPanel,
   FloatingButton,
@@ -10,18 +10,18 @@ import {
   Inspector as InspectorComponent
 } from '../src'
 
-const meta: Meta<typeof AppLayout> = {
-  title: 'AppLayout',
-  component: AppLayout
+const meta: Meta<typeof AppOverlayLayout> = {
+  title: 'AppOverlayLayout',
+  component: AppOverlayLayout
 }
 
 export default meta
 
-type Story = StoryObj<typeof AppLayout>
+type Story = StoryObj<typeof AppOverlayLayout>
 
 export const Default: Story = {
   render: () => (
-    <AppLayout
+    <AppOverlayLayout
       main={
         <Stack spacing={1}>
           <FloatingPanel sx={{ padding: 2 }}>Panel</FloatingPanel>
@@ -65,7 +65,7 @@ export const Default: Story = {
 
 export const Inspector: Story = {
   render: () => (
-    <AppLayout
+    <AppOverlayLayout
       main={
         <FloatingPanel scrollable>
           <Stack spacing={2} margin={2}>
@@ -121,7 +121,7 @@ export const Inspector: Story = {
 
 export const InspectorFitHeight: Story = {
   render: () => (
-    <AppLayout
+    <AppOverlayLayout
       main={
         <Stack spacing={1}>
           <FloatingPanel sx={{ padding: 2 }}>Panel</FloatingPanel>
@@ -174,7 +174,7 @@ export const InspectorFitHeight: Story = {
 
 export const Developer: Story = {
   render: () => (
-    <AppLayout
+    <AppOverlayLayout
       main={
         <Stack spacing={1}>
           <FloatingPanel sx={{ padding: 2 }}>Panel</FloatingPanel>

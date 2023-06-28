@@ -155,7 +155,7 @@ const BottomRightColumn = styled('div')({
   alignItems: 'end'
 })
 
-export interface AppLayoutProps {
+export interface AppOverlayLayoutProps {
   spacing?: number
   mainWidth?: number
   contextWidth?: number
@@ -167,7 +167,7 @@ export interface AppLayoutProps {
   developer?: ReactNode
 }
 
-export const AppLayout: FC<AppLayoutProps> = memo(
+export const AppOverlayLayout: FC<AppOverlayLayoutProps> = memo(
   ({
     spacing = 1,
     mainWidth = 360,

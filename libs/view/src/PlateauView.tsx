@@ -11,7 +11,7 @@ import {
   AppBreadcrumbs,
   AppBreadcrumbsItem,
   AppFrame,
-  AppLayout,
+  AppOverlayLayout,
   Space
 } from '@takram/plateau-ui-components'
 import {
@@ -148,7 +148,7 @@ export const PlateauView: FC<PlateauViewProps> = () => {
       </Canvas>
       <KeyBindings />
       <ScreenSpaceSelection />
-      <AppLayout
+      <AppOverlayLayout
         main={<MainPanel />}
         context={<LocationContextBar />}
         aside={<SelectionPanel />}
