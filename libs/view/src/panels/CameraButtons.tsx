@@ -1,9 +1,9 @@
-import KeyboardIcon from '@mui/icons-material/Keyboard'
 import { useAtom, type PrimitiveAtom } from 'jotai'
 import { useCallback, type FC } from 'react'
 
 import {
   AppIconButton,
+  KeyboardIcon,
   MinusIcon,
   PlusIcon,
   RotateAroundIcon

@@ -150,7 +150,7 @@ export const PlateauView: FC<PlateauViewProps> = () => {
       <ScreenSpaceSelection />
       <AppOverlayLayout
         main={<MainPanel />}
-        context={<LocationContextBar />}
+        // context={<LocationContextBar />}
         aside={<SelectionPanel />}
         developer={<DeveloperPanels />}
       />
