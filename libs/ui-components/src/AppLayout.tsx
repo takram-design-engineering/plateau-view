@@ -14,6 +14,7 @@ const Root = styled('div')({
   direction: 'rtl',
   position: 'absolute',
   inset: 0,
+  top: 0,
   pointerEvents: 'none',
   '& > *': {
     direction: 'ltr'

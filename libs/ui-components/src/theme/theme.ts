@@ -45,7 +45,7 @@ const theme = createTheme()
 
 export const themeOptions: ThemeOptions = {
   shape: {
-    borderRadius: 10
+    borderRadius: 5
   },
   palette: {
     primary: cyan,
@@ -168,7 +168,8 @@ export const darkThemeOptions = merge<unknown, unknown, ThemeOptions>(
     palette: {
       mode: 'dark',
       background: {
-        default: grey[900]
+        default: '#222222',
+        paper: '#222222',
       },
       text: {
         secondary: alpha(theme.palette.common.white, 0.45)
