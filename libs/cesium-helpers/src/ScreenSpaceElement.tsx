@@ -6,13 +6,14 @@ import {
   SceneTransforms
 } from '@cesium/engine'
 import { styled } from '@mui/material'
-import { forwardRef, useRef, useState, type ComponentPropsWithRef } from 'react'
+import { motion, useMotionValue } from 'framer-motion'
+import { forwardRef, useRef, type ComponentPropsWithRef } from 'react'
 import { mergeRefs } from 'react-merge-refs'
 
 import { useCesium, usePreRender } from '@takram/plateau-cesium'
 import { useConstant } from '@takram/plateau-react-helpers'
 
-const Root = styled('div')({
+const Root = styled(motion.div)({
   position: 'absolute',
   pointerEvents: 'none'
 })
@@ -33,7 +34,8 @@ export const ScreenSpaceElement = forwardRef<
   const position = useConstant(() => new Cartesian3())
   positionProp?.clone(position)
 
-  const [visible, setVisible] = useState(false)
+  const motionTransform = useMotionValue('')
+  const motionDisplay = useMotionValue('none')
 
   const ref = useRef<HTMLDivElement>(null)
   const scene = useCesium(({ scene }) => scene, { indirect: true })
@@ -55,18 +57,26 @@ export const ScreenSpaceElement = forwardRef<
       windowPosition.y > window.innerHeight ||
       !occluder.isPointVisible(position)
     ) {
-      setVisible(false)
+      motionDisplay.set('none')
       return
     }
     const x = `calc(${windowPosition.x}px - 50%)`
     const y = `calc(${windowPosition.y}px - 50%)`
-    ref.current.style.transform = `translate(${x}, ${y})`
-    setVisible(true)
+    motionTransform.set(`translate(${x}, ${y})`)
+    motionDisplay.set('block')
   })
 
   return (
-    <Root ref={mergeRefs([ref, forwardedRef])} {...props}>
-      {visible && children}
+    <Root
+      ref={mergeRefs([ref, forwardedRef])}
+      {...props}
+      style={{
+        ...props.style,
+        transform: motionTransform,
+        display: motionDisplay
+      }}
+    >
+      {children}
     </Root>
   )
 })

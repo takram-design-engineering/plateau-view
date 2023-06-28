@@ -59,7 +59,8 @@ const Sensor: FC<SensorProps> = ({ id, position, offset }) => {
         height: 32,
         top: -16 + (transform?.y ?? 0),
         left: 16 + (transform?.x ?? 0),
-        cursor: 'pointer'
+        cursor: 'pointer',
+        pointerEvents: 'auto'
       }}
       {...listeners}
       onContextMenu={preventDefault}
