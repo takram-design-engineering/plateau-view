@@ -26,11 +26,12 @@ export const SettingsButton: FC = () => {
       <AppIconButton
         title='設定'
         selected={popoverProps.open}
+        disableTooltip={popoverProps.open}
         {...bindTrigger(popupState)}
       >
         <SettingsIcon />
       </AppIconButton>
-      <OverlayPopover {...popoverProps} placement='bottom' inset={2}>
+      <OverlayPopover {...popoverProps} inset={1.5}>
         <SettingsPanel />
       </OverlayPopover>
     </>

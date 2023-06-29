@@ -15,14 +15,18 @@ export interface AppIconButtonProps
   extends ButtonProps,
     Pick<ShortcutTooltipProps, 'shortcutKey'> {
   selected?: boolean
+  disableTooltip?: boolean
 }
 
 export const AppIconButton = forwardRef<HTMLButtonElement, AppIconButtonProps>(
-  ({ title, shortcutKey, selected = false, ...props }, ref) => {
+  (
+    { title, shortcutKey, selected = false, disableTooltip = false, ...props },
+    ref
+  ) => {
     const platform = useAtomValue(platformAtom)
     return (
       <ShortcutTooltip
-        title={title}
+        title={!disableTooltip && title}
         platform={platform}
         shortcutKey={shortcutKey}
       >

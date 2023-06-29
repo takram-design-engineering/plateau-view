@@ -26,11 +26,12 @@ export const DateControlButton: FC = () => {
       <AppIconButton
         title='日時'
         selected={popoverProps.open}
+        disableTooltip={popoverProps.open}
         {...bindTrigger(popupState)}
       >
         <TimelineIcon />
       </AppIconButton>
-      <OverlayPopover {...popoverProps} placement='bottom' inset={2}>
+      <OverlayPopover {...popoverProps} inset={1.5}>
         <DateControlPanel />
       </OverlayPopover>
     </>
