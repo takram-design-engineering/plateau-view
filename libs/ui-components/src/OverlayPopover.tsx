@@ -8,11 +8,13 @@ import {
 import { useCallback, type FC } from 'react'
 
 const Root = styled(Popover, {
-  shouldForwardProp: prop => prop !== 'placement' && prop !== 'disableClickAway'
+  shouldForwardProp: prop =>
+    prop !== 'placement' && prop !== 'inset' && prop !== 'disableClickAway'
 })<{
   placement: 'top' | 'bottom'
+  inset: number
   disableClickAway: boolean
-}>(({ theme, placement, disableClickAway }) => ({
+}>(({ theme, placement, inset, disableClickAway }) => ({
   ...(!disableClickAway && {
     pointerEvents: 'none'
   }),
@@ -24,16 +26,17 @@ const Root = styled(Popover, {
     boxShadow: 'none',
     pointerEvents: 'auto',
     ...(placement === 'top' && {
-      paddingBottom: theme.spacing(1)
+      paddingBottom: theme.spacing(inset)
     }),
     ...(placement === 'bottom' && {
-      paddingTop: theme.spacing(1)
+      paddingTop: theme.spacing(inset)
     })
   }
 }))
 
 export interface OverlayPopoverProps extends PopoverProps {
   placement?: 'top' | 'bottom'
+  inset?: number
   pinned?: boolean
   disableClickAway?: boolean
   children: JSX.Element
@@ -41,6 +44,7 @@ export interface OverlayPopoverProps extends PopoverProps {
 
 export const OverlayPopover: FC<OverlayPopoverProps> = ({
   placement = 'top',
+  inset = 1,
   pinned = false,
   disableClickAway = false,
   onClose,
@@ -77,6 +81,7 @@ export const OverlayPopover: FC<OverlayPopoverProps> = ({
       }}
       {...props}
       placement={placement}
+      inset={inset}
       disableClickAway={disableClickAway}
     >
       {!disableClickAway ? (

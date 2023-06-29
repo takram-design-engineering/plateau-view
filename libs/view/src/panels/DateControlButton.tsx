@@ -30,7 +30,7 @@ export const DateControlButton: FC = () => {
       >
         <TimelineIcon />
       </AppIconButton>
-      <OverlayPopover {...popoverProps} placement='bottom'>
+      <OverlayPopover {...popoverProps} placement='bottom' inset={2}>
         <DateControlPanel />
       </OverlayPopover>
     </>

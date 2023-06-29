@@ -30,7 +30,7 @@ export const SettingsButton: FC = () => {
       >
         <SettingsIcon />
       </AppIconButton>
-      <OverlayPopover {...popoverProps} placement='bottom'>
+      <OverlayPopover {...popoverProps} placement='bottom' inset={2}>
         <SettingsPanel />
       </OverlayPopover>
     </>

@@ -43,6 +43,14 @@ export const ToolButtons: FC = () => {
       <AppToggleButton value='select' title='選択' shortcutKey='V'>
         <PointerArrowIcon fontSize='medium' />
       </AppToggleButton>
+      <AppToggleButton
+        value='pedestrian'
+        title='歩行者視点'
+        shortcutKey='P'
+        disabled
+      >
+        <PedestrianIcon fontSize='medium' />
+      </AppToggleButton>
       <AppToggleButton value='sketch' title='作図' shortcutKey='G' disabled>
         <SketchIcon fontSize='medium' />
       </AppToggleButton>
@@ -53,14 +61,6 @@ export const ToolButtons: FC = () => {
         disabled
       >
         <StoryIcon fontSize='medium' />
-      </AppToggleButton>
-      <AppToggleButton
-        value='pedestrian'
-        title='歩行者視点'
-        shortcutKey='P'
-        disabled
-      >
-        <PedestrianIcon fontSize='medium' />
       </AppToggleButton>
     </AppToggleButtonGroup>
   )

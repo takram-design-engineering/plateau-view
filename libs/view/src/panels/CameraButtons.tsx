@@ -30,16 +30,22 @@ export const CameraButtons: FC = () => {
     enableKeyboardCameraControlAtom
   )
 
-  const scene = useCesium(({ scene }) => scene)
+  const scene = useCesium(({ scene }) => scene, { indirect: true })
 
   const zoomPromise = useRef(Promise.resolve())
   const handleZoomOut = useCallback(() => {
+    if (scene == null) {
+      return
+    }
     zoomPromise.current = zoomPromise.current.then(async () => {
       await animateZoom(scene, -1)
     })
   }, [scene])
 
   const handleZoomIn = useCallback(() => {
+    if (scene == null) {
+      return
+    }
     zoomPromise.current = zoomPromise.current.then(async () => {
       await animateZoom(scene, 1 / 2)
     })
