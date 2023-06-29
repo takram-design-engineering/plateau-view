@@ -33,6 +33,7 @@ import { ToolMachineEvents } from './containers/ToolMachineEvents'
 import { DeveloperPanels } from './developer/DeveloperPanels'
 import { CameraButtons } from './panels/CameraButtons'
 import { DateControlButton } from './panels/DateControlButton'
+import { EnvironmentSelect } from './panels/EnvironmentSelect'
 import { LocationBreadcrumbs } from './panels/LocationBreadcrumbs'
 import { MainMenuButton } from './panels/MainMenuButton'
 import { MainPanel } from './panels/MainPanel'
@@ -105,6 +106,7 @@ export const PlateauView: FC<PlateauViewProps> = () => {
           <Space />
           <SettingsButton />
           <DateControlButton />
+          <EnvironmentSelect />
           <Space flexible />
           <LocationBreadcrumbs />
           <Space flexible />
