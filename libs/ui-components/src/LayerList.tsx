@@ -1,12 +1,13 @@
 import {
   alpha,
   Divider,
-  IconButton,
   List,
-  ListItem,
+  ListItemButton,
+  ListItemSecondaryAction,
   listItemSecondaryActionClasses,
   ListItemText,
   styled,
+  type ListItem,
   type ListProps
 } from '@mui/material'
 import { forwardRef, type MouseEventHandler, type ReactNode } from 'react'
@@ -20,7 +21,7 @@ const Root = styled(List)({
   maxHeight: 'calc(100% - 50px)'
 }) as unknown as typeof List // For generics
 
-const Footer = styled(ListItem)(({ theme }) => ({
+const Footer = styled(ListItemButton)(({ theme }) => ({
   ...theme.typography.body2,
   alignItems: 'center',
   height: theme.spacing(4),
@@ -29,7 +30,10 @@ const Footer = styled(ListItem)(({ theme }) => ({
   // https://github.com/mui/material-ui/blob/v5.13.1/packages/mui-material/src/Divider/Divider.js#L71
   backgroundColor: alpha(theme.palette.divider, 0.04),
   [`& .${listItemSecondaryActionClasses.root}`]: {
-    right: theme.spacing(1)
+    right: theme.spacing(1),
+    svg: {
+      display: 'block'
+    }
   }
 })) as unknown as typeof ListItem // For generics
 
@@ -40,8 +44,8 @@ const StyledScrollable = styled(Scrollable)(({ theme }) => ({
 export interface LayerListProps extends ListProps<'div'> {
   footer?: ReactNode
   open?: boolean
-  onOpen?: MouseEventHandler<HTMLButtonElement>
-  onClose?: MouseEventHandler<HTMLButtonElement>
+  onOpen?: MouseEventHandler<HTMLLIElement>
+  onClose?: MouseEventHandler<HTMLLIElement>
 }
 
 export const LayerList = forwardRef<HTMLDivElement, LayerListProps>(
@@ -58,18 +62,13 @@ export const LayerList = forwardRef<HTMLDivElement, LayerListProps>(
         </>
       )}
       <Footer
-        component='div'
-        secondaryAction={
-          <IconButton
-            size='small'
-            aria-label={open ? '閉じる' : '開く'}
-            onClick={open ? onClose : onOpen}
-          >
-            <ExpandArrowIcon expanded={open} />
-          </IconButton>
-        }
+        aria-label={open ? '閉じる' : '開く'}
+        onClick={open ? onClose : onOpen}
       >
         <ListItemText>{footer ?? '\u00a0'}</ListItemText>
+        <ListItemSecondaryAction>
+          <ExpandArrowIcon expanded={open} />
+        </ListItemSecondaryAction>
       </Footer>
     </Root>
   )
