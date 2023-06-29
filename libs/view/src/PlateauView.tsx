@@ -8,8 +8,6 @@ import { LayersRenderer, useAddLayer } from '@takram/plateau-layers'
 import { isNotFalse } from '@takram/plateau-type-helpers'
 import {
   AppBar,
-  AppBreadcrumbs,
-  AppBreadcrumbsItem,
   AppFrame,
   AppOverlayLayout,
   Space
@@ -35,7 +33,7 @@ import { ToolMachineEvents } from './containers/ToolMachineEvents'
 import { DeveloperPanels } from './developer/DeveloperPanels'
 import { CameraButtons } from './panels/CameraButtons'
 import { DateControlButton } from './panels/DateControlButton'
-import { LocationContextBar } from './panels/LocationContextBar'
+import { LocationBreadcrumbs } from './panels/LocationBreadcrumbs'
 import { MainMenuButton } from './panels/MainMenuButton'
 import { MainPanel } from './panels/MainPanel'
 import { SelectionPanel } from './panels/SelectionPanel'
@@ -102,17 +100,13 @@ export const PlateauView: FC<PlateauViewProps> = () => {
       header={
         <AppBar>
           <MainMenuButton />
-          <Space />
+          <Space size={2} />
           <ToolButtons />
           <Space />
           <SettingsButton />
           <DateControlButton />
           <Space flexible />
-          <AppBreadcrumbs>
-            <AppBreadcrumbsItem>Prefecture</AppBreadcrumbsItem>
-            <AppBreadcrumbsItem>City</AppBreadcrumbsItem>
-            <AppBreadcrumbsItem>Municipality</AppBreadcrumbsItem>
-          </AppBreadcrumbs>
+          <LocationBreadcrumbs />
           <Space flexible />
           <CameraButtons />
         </AppBar>
@@ -150,7 +144,6 @@ export const PlateauView: FC<PlateauViewProps> = () => {
       <ScreenSpaceSelection />
       <AppOverlayLayout
         main={<MainPanel />}
-        // context={<LocationContextBar />}
         aside={<SelectionPanel />}
         developer={<DeveloperPanels />}
       />

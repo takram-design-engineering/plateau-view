@@ -12,10 +12,10 @@ import invariant from 'tiny-invariant'
 import { ContextBar, type ContextBarProps } from '@takram/plateau-ui-components'
 
 import { useLocationContextState } from '../hooks/useLocationContextState'
+import { LocationBreadcrumbs } from './LocationBreadcrumbs'
 import { BuildingDatasetButtonSelect } from './LocationContextBar/BuildingDatasetButtonSelect'
 import { DefaultDatasetButton } from './LocationContextBar/DefaultDatasetButton'
 import { DefaultDatasetSelect } from './LocationContextBar/DefaultDatasetSelect'
-import { LocationBreadcrumbs } from './LocationContextBar/LocationBreadcrumbs'
 
 const Probe = styled('div')({
   position: 'absolute',

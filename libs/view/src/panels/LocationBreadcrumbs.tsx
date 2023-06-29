@@ -1,48 +1,19 @@
-import {
-  Breadcrumbs,
-  breadcrumbsClasses,
-  Button,
-  buttonClasses,
-  styled
-} from '@mui/material'
 import { useAtomValue } from 'jotai'
 import { useCallback, type FC, type MouseEvent } from 'react'
 
 import { useCesium } from '@takram/plateau-cesium'
 import { flyToArea } from '@takram/plateau-data-sources'
+import {
+  AppBreadcrumbs,
+  AppBreadcrumbsItem
+} from '@takram/plateau-ui-components'
 
-import { type LocationContextState } from '../../hooks/useLocationContextState'
-import { areaDataSourceAtom } from '../../states/address'
+import { useLocationContextState } from '../hooks/useLocationContextState'
+import { areaDataSourceAtom } from '../states/address'
 
-const StyledBreadcrumbs = styled(Breadcrumbs)(({ theme }) => ({
-  ...theme.typography.body2,
-  display: 'flex',
-  alignItems: 'center',
-  height: theme.spacing(5),
-  margin: `0 ${theme.spacing(1)}`,
-  [`& .${breadcrumbsClasses.ol}`]: {
-    alignItems: 'baseline',
-    flexWrap: 'nowrap'
-  },
-  [`& .${breadcrumbsClasses.separator}`]: {
-    margin: `0 ${theme.spacing(0.5)}`
-  },
-  [`& .${buttonClasses.text}`]: {
-    minWidth: 0
-  }
-}))
+export const LocationBreadcrumbs: FC = () => {
+  const { areas, focusedAreaCode, focusArea } = useLocationContextState()
 
-export interface LocationBreadcrumbsProps
-  extends Pick<
-    LocationContextState,
-    'areas' | 'focusedAreaCode' | 'focusArea'
-  > {}
-
-export const LocationBreadcrumbs: FC<LocationBreadcrumbsProps> = ({
-  areas,
-  focusedAreaCode,
-  focusArea
-}) => {
   const scene = useCesium(({ scene }) => scene, { indirect: true })
   const dataSource = useAtomValue(areaDataSourceAtom)
 
@@ -79,29 +50,20 @@ export const LocationBreadcrumbs: FC<LocationBreadcrumbsProps> = ({
     return null
   }
   return (
-    <StyledBreadcrumbs separator='›'>
+    <AppBreadcrumbs>
       {[...areas].reverse().map((area, index, { length }) => (
-        <Button
+        <AppBreadcrumbsItem
           key={area.code}
-          variant='text'
-          size='small'
-          color={
-            focusedAreaCode != null
-              ? area.code === focusedAreaCode
-                ? 'primary'
-                : 'inherit'
-              : index === length - 1
-              ? 'primary'
-              : 'inherit'
+          selected={
+            (focusedAreaCode != null && area.code === focusedAreaCode) ||
+            (focusedAreaCode == null && index === length - 1)
           }
-          fullWidth
-          // selected={focusedArea != null && area.code === focusedArea.code}
           onClick={handleClick}
           data-reverse-index={index}
         >
           {area.name}
-        </Button>
+        </AppBreadcrumbsItem>
       ))}
-    </StyledBreadcrumbs>
+    </AppBreadcrumbs>
   )
 }
