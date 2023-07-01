@@ -1,5 +1,5 @@
 export * from './BuildingIcon'
-export * from './DropdownIcon'
+export * from './DropDownIcon'
 export * from './ExpandArrowIcon'
 export * from './HandIcon'
 export * from './InfoIcon'

@@ -16,7 +16,7 @@ import {
 import { forwardRef, useCallback, useState, type ReactNode } from 'react'
 import invariant from 'tiny-invariant'
 
-import { DropdownIcon } from './icons/DropdownIcon'
+import { DropDownIcon } from './icons/DropDownIcon'
 
 const StyledButton = styled(Button)(({ theme }) => ({
   height: theme.spacing(5),
@@ -108,7 +108,7 @@ export const ContextButtonSelect = forwardRef<
         size='small'
         multiple
         value={value != null && value !== '' ? [value] : []}
-        IconComponent={DropdownIcon}
+        IconComponent={DropDownIcon}
         {...(props as SelectProps<string[]>)}
         renderValue={renderValue}
         onOpen={handleOpen}
