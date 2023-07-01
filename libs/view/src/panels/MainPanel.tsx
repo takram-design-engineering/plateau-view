@@ -38,7 +38,7 @@ export const MainPanel: FC = () => {
   }, [])
 
   const layerAtoms = useAtomValue(layerAtomsAtom)
-  const [layersOpen, setLayersOpen] = useState(true)
+  const [layersOpen, setLayersOpen] = useState(false)
   const handleLayersOpen = useCallback(() => {
     setLayersOpen(true)
   }, [])
