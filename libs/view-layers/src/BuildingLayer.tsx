@@ -1,4 +1,3 @@
-import { type Cesium3DTileFeature, type Color } from '@cesium/engine'
 import {
   atom,
   useAtom,
@@ -11,10 +10,7 @@ import { useEffect, useMemo, type FC } from 'react'
 import { type SetOptional } from 'type-fest'
 
 import { useCesium } from '@takram/plateau-cesium'
-import {
-  colorSchemeViridis,
-  type ColorScheme
-} from '@takram/plateau-color-schemes'
+import { type ColorScheme } from '@takram/plateau-color-schemes'
 import { PlateauBuildingTileset } from '@takram/plateau-datasets'
 import {
   PlateauDatasetFormat,
@@ -32,6 +28,7 @@ import {
 } from './createPlateauTilesetLayerBase'
 import { BUILDING_LAYER } from './layerTypes'
 import { PlateauTilesetLayerContent } from './PlateauTilesetLayerContent'
+import { useEvaluateTileFeatureColor } from './useEvaluateTileFeatureColor'
 import { useMunicipalityName } from './useMunicipalityName'
 
 export interface BuildingLayerModelParams
@@ -62,10 +59,7 @@ export function createBuildingLayer(
     type: BUILDING_LAYER,
     versionAtom: atom(params.version ?? null),
     lodAtom: atom(params.lod ?? null),
-    texturedAtom: atom(params.textured ?? null),
-    colorPropertyAtom: atom<string | null>(null),
-    colorSchemeAtom: atom<ColorScheme>(colorSchemeViridis),
-    colorRangeAtom: atom([0, 100])
+    texturedAtom: atom(params.textured ?? null)
   }
 }
 
@@ -99,7 +93,6 @@ function matchDatum(
 }
 
 export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
-  id,
   titleAtom,
   hiddenAtom,
   boundingSphereAtom,
@@ -109,6 +102,7 @@ export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
   texturedAtom,
   featureIndexAtom,
   hiddenFeaturesAtom,
+  propertiesAtom,
   colorPropertyAtom,
   colorSchemeAtom,
   colorRangeAtom
@@ -164,29 +158,11 @@ export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
     setTextured(datum.textured)
   }, [setVersion, setLod, setTextured, datum])
 
-  const colorProperty = useAtomValue(colorPropertyAtom)
-  const colorScheme = useAtomValue(colorSchemeAtom)
-  const colorRange = useAtomValue(colorRangeAtom)
-  const color = useMemo(
-    () =>
-      colorProperty != null
-        ? (feature: Cesium3DTileFeature, result: Color): Color => {
-            const property = feature.getProperty(colorProperty) ?? 0
-            const [minValue, maxValue] = colorRange
-            if (minValue === maxValue) {
-              return result
-            }
-            const color = colorScheme.linear(
-              (property - minValue) / (maxValue - minValue)
-            )
-            result.red = color[0]
-            result.green = color[1]
-            result.blue = color[2]
-            return result
-          }
-        : undefined,
-    [colorProperty, colorScheme, colorRange]
-  )
+  const color = useEvaluateTileFeatureColor({
+    colorPropertyAtom,
+    colorSchemeAtom,
+    colorRangeAtom
+  })
 
   if (hidden || datum == null) {
     return null
@@ -199,6 +175,7 @@ export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
         boundingSphereAtom={boundingSphereAtom}
         featureIndexAtom={featureIndexAtom}
         hiddenFeaturesAtom={hiddenFeaturesAtom}
+        propertiesAtom={propertiesAtom}
         color={color}
       />
     )

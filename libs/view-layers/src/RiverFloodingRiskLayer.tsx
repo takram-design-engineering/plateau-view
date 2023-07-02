@@ -20,6 +20,7 @@ import { RIVER_FLOODING_RISK_LAYER } from './layerTypes'
 import { PlateauTilesetLayerContent } from './PlateauTilesetLayerContent'
 import { useDatasetDatum } from './useDatasetDatum'
 import { useDatasetLayerTitle } from './useDatasetLayerTitle'
+import { useEvaluateTileFeatureColor } from './useEvaluateTileFeatureColor'
 
 export interface RiverFloodingRiskLayerModelParams
   extends PlateauTilesetLayerModelParams {}
@@ -38,14 +39,17 @@ export function createRiverFloodingRiskLayer(
 export const RiverFloodingRiskLayer: FC<
   LayerProps<typeof RIVER_FLOODING_RISK_LAYER>
 > = ({
-  id,
   titleAtom,
   hiddenAtom,
   boundingSphereAtom,
   municipalityCode,
   datumIdAtom,
   featureIndexAtom,
-  hiddenFeaturesAtom
+  hiddenFeaturesAtom,
+  propertiesAtom,
+  colorPropertyAtom,
+  colorSchemeAtom,
+  colorRangeAtom
 }) => {
   const query = useMunicipalityDatasetsQuery({
     variables: {
@@ -78,6 +82,12 @@ export const RiverFloodingRiskLayer: FC<
     }
   }, [scene])
 
+  const color = useEvaluateTileFeatureColor({
+    colorPropertyAtom,
+    colorSchemeAtom,
+    colorRangeAtom
+  })
+
   if (hidden || datum == null) {
     return null
   }
@@ -89,6 +99,8 @@ export const RiverFloodingRiskLayer: FC<
         boundingSphereAtom={boundingSphereAtom}
         featureIndexAtom={featureIndexAtom}
         hiddenFeaturesAtom={hiddenFeaturesAtom}
+        propertiesAtom={propertiesAtom}
+        color={color}
       />
     )
   }
