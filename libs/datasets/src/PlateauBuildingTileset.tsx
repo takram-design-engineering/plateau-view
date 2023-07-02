@@ -3,10 +3,11 @@ import { forwardRef, useEffect, useRef } from 'react'
 import { mergeRefs } from 'react-merge-refs'
 
 import { PlateauTileset, type PlateauTilesetProps } from './PlateauTileset'
-import { useDefaultTileStyle, type EvaluateColor } from './useDefaultTileStyle'
+import { type EvaluateTileFeatureColor } from './types'
+import { useDefaultTileStyle } from './useDefaultTileStyle'
 
 export interface PlateauBuildingTilesetProps extends PlateauTilesetProps {
-  color?: string | EvaluateColor
+  color?: string | EvaluateTileFeatureColor
   opacity?: number
   style?: Cesium3DTileStyle
 }

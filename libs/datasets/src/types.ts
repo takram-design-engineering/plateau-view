@@ -1,4 +1,8 @@
-import { type Cesium3DTileset } from '@cesium/engine'
+import {
+  type Cesium3DTileFeature,
+  type Cesium3DTileset,
+  type Color
+} from '@cesium/engine'
 import { type Primitive } from 'type-fest'
 
 export type TilesetPrimitiveConstructorOptions = {
@@ -6,3 +10,8 @@ export type TilesetPrimitiveConstructorOptions = {
     ? Cesium3DTileset.ConstructorOptions[K]
     : never
 }
+
+export type EvaluateTileFeatureColor = (
+  feature: Cesium3DTileFeature,
+  result: Color
+) => Color
