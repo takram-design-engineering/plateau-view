@@ -4,10 +4,11 @@ import {
   type SelectChangeEvent,
   type SelectProps
 } from '@mui/material'
-import { useAtom, type PrimitiveAtom } from 'jotai'
+import { atom, useAtom, type PrimitiveAtom, type SetStateAction } from 'jotai'
 import {
   forwardRef,
   useCallback,
+  useMemo,
   type PropsWithoutRef,
   type ReactNode
 } from 'react'
@@ -48,30 +49,74 @@ const colorSchemes = [
 ]
 
 const StyledSelect = styled(Select)(({ theme }) => ({
-  marginRight: theme.spacing(-1)
+  width: `calc(100% - ${theme.spacing(-2)})`,
+  marginLeft: theme.spacing(-1)
 })) as unknown as typeof Select // For generics
+
+const Value = styled('div')(({ theme }) => ({
+  ...theme.typography.body2,
+  overflow: 'hidden',
+  whiteSpace: 'nowrap',
+  textOverflow: 'ellipsis'
+}))
 
 export interface ColorSchemeParameterItemProps
   extends PropsWithoutRef<Omit<SelectProps<string | null>, 'value'>>,
     Pick<ParameterItemProps, 'label' | 'labelFontSize' | 'description'> {
-  atom: PrimitiveAtom<ColorScheme | null>
+  atom: PrimitiveAtom<ColorScheme> | Array<PrimitiveAtom<ColorScheme>>
 }
+
+const MIXED = 'MIXED'
 
 export const ColorSchemeParameterItem = forwardRef<
   HTMLDivElement,
   ColorSchemeParameterItemProps
 >(
   (
-    { label, labelFontSize, description, atom, onChange, children, ...props },
+    {
+      label,
+      labelFontSize,
+      description,
+      atom: atomOrAtoms,
+      onChange,
+      children,
+      ...props
+    },
     ref
   ) => {
-    const [value, setValue] = useAtom(atom)
+    const mergedAtom = useMemo(
+      () =>
+        Array.isArray(atomOrAtoms)
+          ? atom(
+              get => {
+                if (atomOrAtoms.length === 0) {
+                  return null
+                }
+                const value = get(atomOrAtoms[0])
+                return atomOrAtoms.every(atom => get(atom) === value)
+                  ? value
+                  : MIXED
+              },
+              (get, set, value: SetStateAction<ColorScheme>) => {
+                atomOrAtoms.forEach(atom => {
+                  set(atom, value)
+                })
+              }
+            )
+          : atomOrAtoms,
+      [atomOrAtoms]
+    )
+    const [value, setValue] = useAtom(mergedAtom)
 
     const handleChange = useCallback(
       (event: SelectChangeEvent<string | null>, child: ReactNode) => {
-        setValue(
-          colorSchemes.find(({ name }) => name === event.target.value) ?? null
+        const colorScheme = colorSchemes.find(
+          ({ name }) => name === event.target.value
         )
+        if (colorScheme == null) {
+          return
+        }
+        setValue(colorScheme)
         onChange?.(event, child)
       },
       [onChange, setValue]
@@ -86,13 +131,17 @@ export const ColorSchemeParameterItem = forwardRef<
         gutterBottom
       >
         <StyledSelect
-          variant='outlined'
+          variant='filled'
           fullWidth
           {...props}
-          value={value !== null ? value.name : ''}
+          value={value !== null ? (value !== MIXED ? value.name : MIXED) : ''}
           onChange={handleChange}
-          displayEmpty
         >
+          {value === MIXED && (
+            <SelectItem value={MIXED}>
+              <Value>混在</Value>
+            </SelectItem>
+          )}
           {colorSchemes.map(colorScheme => (
             <SelectItem key={colorScheme.name} value={colorScheme.name}>
               <ColorSchemeSelectItemContent colorScheme={colorScheme} />
