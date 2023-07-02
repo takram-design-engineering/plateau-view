@@ -11,7 +11,9 @@ import { type LayerModel, type LayerPredicate } from './types'
 // TODO: Rewrite with atomFamily perhaps?
 export const layersAtom = atomWithReset<LayerModel[]>([])
 export const layerAtomsAtom = splitAtom(layersAtom)
-export const layerIdsAtom = atom(get => get(layersAtom).map(({ id }) => id))
+export const layerIdsAtom = atom(get =>
+  get(layerAtomsAtom).map(layerAtom => get(layerAtom).id)
+)
 
 const {
   selectionAtom: layerSelectionAtom,
