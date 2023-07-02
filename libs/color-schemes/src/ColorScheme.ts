@@ -6,7 +6,7 @@ import { type ColorTuple, type LUT } from './types'
 export type ColorSchemeType = 'sequential' | 'diverging'
 
 export class ColorScheme<T extends ColorSchemeType = ColorSchemeType> {
-  constructor(readonly type: T, readonly lut: LUT) {
+  constructor(readonly type: T, readonly name: string, readonly lut: LUT) {
     invariant(lut.length > 1)
   }
 
