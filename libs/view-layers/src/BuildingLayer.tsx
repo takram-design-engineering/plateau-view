@@ -1,3 +1,4 @@
+import { type Cesium3DTileFeature, type Color } from '@cesium/engine'
 import {
   atom,
   useAtom,
@@ -10,6 +11,10 @@ import { useEffect, useMemo, type FC } from 'react'
 import { type SetOptional } from 'type-fest'
 
 import { useCesium } from '@takram/plateau-cesium'
+import {
+  colorSchemeViridis,
+  type ColorScheme
+} from '@takram/plateau-color-schemes'
 import { PlateauBuildingTileset } from '@takram/plateau-datasets'
 import {
   PlateauDatasetFormat,
@@ -41,6 +46,9 @@ export interface BuildingLayerModel
   versionAtom: PrimitiveAtom<string | null>
   lodAtom: PrimitiveAtom<number | null>
   texturedAtom: PrimitiveAtom<boolean | null>
+  colorPropertyAtom: PrimitiveAtom<string | null>
+  colorSchemeAtom: PrimitiveAtom<ColorScheme>
+  colorRangeAtom: PrimitiveAtom<[number, number]>
 }
 
 export function createBuildingLayer(
@@ -54,7 +62,10 @@ export function createBuildingLayer(
     type: BUILDING_LAYER,
     versionAtom: atom(params.version ?? null),
     lodAtom: atom(params.lod ?? null),
-    texturedAtom: atom(params.textured ?? null)
+    texturedAtom: atom(params.textured ?? null),
+    colorPropertyAtom: atom<string | null>(null),
+    colorSchemeAtom: atom<ColorScheme>(colorSchemeViridis),
+    colorRangeAtom: atom([0, 100])
   }
 }
 
@@ -97,7 +108,10 @@ export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
   lodAtom,
   texturedAtom,
   featureIndexAtom,
-  hiddenFeaturesAtom
+  hiddenFeaturesAtom,
+  colorPropertyAtom,
+  colorSchemeAtom,
+  colorRangeAtom
 }) => {
   const query = useMunicipalityDatasetsQuery({
     variables: {
@@ -150,6 +164,30 @@ export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
     setTextured(datum.textured)
   }, [setVersion, setLod, setTextured, datum])
 
+  const colorProperty = useAtomValue(colorPropertyAtom)
+  const colorScheme = useAtomValue(colorSchemeAtom)
+  const colorRange = useAtomValue(colorRangeAtom)
+  const color = useMemo(
+    () =>
+      colorProperty != null
+        ? (feature: Cesium3DTileFeature, result: Color): Color => {
+            const property = feature.getProperty(colorProperty) ?? 0
+            const [minValue, maxValue] = colorRange
+            if (minValue === maxValue) {
+              return result
+            }
+            const color = colorScheme.linear(
+              (property - minValue) / (maxValue - minValue)
+            )
+            result.red = color[0]
+            result.green = color[1]
+            result.blue = color[2]
+            return result
+          }
+        : undefined,
+    [colorProperty, colorScheme, colorRange]
+  )
+
   if (hidden || datum == null) {
     return null
   }
@@ -161,6 +199,7 @@ export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
         boundingSphereAtom={boundingSphereAtom}
         featureIndexAtom={featureIndexAtom}
         hiddenFeaturesAtom={hiddenFeaturesAtom}
+        color={color}
       />
     )
   }

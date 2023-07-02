@@ -5,7 +5,7 @@ export const MuiTooltip: Components<Theme>['MuiTooltip'] = {
   defaultProps: {
     placement: 'top',
     arrow: true,
-    enterDelay: 1000,
+    enterDelay: 500,
     disableInteractive: true,
     TransitionComponent: Fade,
     TransitionProps: {

@@ -11,14 +11,16 @@ export class ColorScheme<T extends ColorSchemeType = ColorSchemeType> {
   }
 
   #linear?: ScaleLinear<ColorTuple, ColorTuple> | undefined
-  get linear(): ScaleLinear<ColorTuple, ColorTuple> {
-    return (
-      this.#linear ??
-      (this.#linear = scaleLinear<ColorTuple>()
+  linear(value: number): ColorTuple {
+    if (this.#linear == null) {
+      this.#linear = scaleLinear<ColorTuple>()
         .domain(quantize(interpolate(0, 1), this.lut.length))
         .range(this.lut)
-        .clamp(true))
-    )
+        .clamp(true)
+    }
+    const result = this.#linear(value)
+    invariant(result != null)
+    return result
   }
 
   get count(): number {
@@ -39,7 +41,7 @@ export class ColorScheme<T extends ColorSchemeType = ColorSchemeType> {
     const context = canvas.getContext('2d')
     invariant(context != null)
     this.lut.forEach(([r, g, b], index) => {
-      context.fillStyle = rgb(r * 0xff, g * 0xff, b * 0xff).toString()
+      context.fillStyle = rgb(r * 255, g * 255, b * 255).toString()
       context.fillRect(index, 0, 1, 1)
     })
     return canvas

@@ -22,6 +22,7 @@ import { MuiTab } from './components/MuiTab'
 import { MuiTextField } from './components/MuiTextField'
 import { MuiToggleButton } from './components/MuiToggleButton'
 import { MuiTooltip } from './components/MuiTooltip'
+import { MuiPaper } from './components/MuiPaper'
 
 // TODO: Transition to MUI Joy when it's released.
 
@@ -45,7 +46,7 @@ const theme = createTheme()
 
 export const themeOptions: ThemeOptions = {
   shape: {
-    borderRadius: 10
+    borderRadius: 5
   },
   palette: {
     primary: cyan,
@@ -126,6 +127,7 @@ export const themeOptions: ThemeOptions = {
     MuiMenu,
     MuiMenuItem,
     MuiOutlinedInput,
+    MuiPaper,
     MuiPopover,
     MuiSelect,
     MuiSlider,
@@ -168,7 +170,8 @@ export const darkThemeOptions = merge<unknown, unknown, ThemeOptions>(
     palette: {
       mode: 'dark',
       background: {
-        default: grey[900]
+        default: '#222222',
+        paper: '#333333',
       },
       text: {
         secondary: alpha(theme.palette.common.white, 0.45)

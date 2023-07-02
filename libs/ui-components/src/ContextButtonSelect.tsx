@@ -13,10 +13,17 @@ import {
   type SelectChangeEvent,
   type SelectProps
 } from '@mui/material'
-import { forwardRef, useCallback, useState, type ReactNode } from 'react'
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode
+} from 'react'
 import invariant from 'tiny-invariant'
 
-import { DropdownIcon } from './icons/DropdownIcon'
+import { DropDownIcon } from './icons/DropDownIcon'
 
 const StyledButton = styled(Button)(({ theme }) => ({
   height: theme.spacing(5),
@@ -63,14 +70,6 @@ export const ContextButtonSelect = forwardRef<
 >(({ label, value, onChange, onClick, children, ...props }, forwardedRef) => {
   const [open, setOpen] = useState(false)
 
-  const handleOpen = useCallback(() => {
-    setOpen(true)
-  }, [])
-
-  const handleClose = useCallback(() => {
-    setOpen(false)
-  }, [])
-
   const handleChange = useCallback(
     (event: SelectChangeEvent<string[]>, value: ReactNode) => {
       const values = event.target.value
@@ -81,6 +80,23 @@ export const ContextButtonSelect = forwardRef<
     },
     [onChange]
   )
+
+  // WORKAROUND: https://github.com/mui/material-ui/issues/25578#issuecomment-1104779355
+  const selectRef = useRef<HTMLButtonElement>(null)
+  const menuRef = useRef<HTMLUListElement>(null)
+  useEffect(() => {
+    const handler = (event: MouseEvent): void => {
+      if (selectRef.current?.contains(event.target as Node) === true) {
+        setOpen(true)
+      } else if (menuRef.current?.contains(event.target as Node) !== true) {
+        setOpen(false)
+      }
+    }
+    window.addEventListener('mouseup', handler)
+    return () => {
+      window.removeEventListener('mouseup', handler)
+    }
+  }, [])
 
   const selected = value != null && value !== ''
 
@@ -103,17 +119,23 @@ export const ContextButtonSelect = forwardRef<
       </StyledButton>
       <StyledDivider orientation='vertical' variant='middle' light />
       <StyledSelect
+        ref={selectRef}
         open={open}
         variant='filled'
         size='small'
         multiple
         value={value != null && value !== '' ? [value] : []}
-        IconComponent={DropdownIcon}
+        IconComponent={DropDownIcon}
         {...(props as SelectProps<string[]>)}
         renderValue={renderValue}
-        onOpen={handleOpen}
-        onClose={handleClose}
         onChange={handleChange}
+        MenuProps={{
+          ...props.MenuProps,
+          MenuListProps: {
+            ...props.MenuProps?.MenuListProps,
+            ref: menuRef
+          }
+        }}
       >
         {children}
       </StyledSelect>
