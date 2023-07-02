@@ -62,6 +62,9 @@ const Arrow = styled('div')(({ theme }) => {
       '&::before': {
         transformOrigin: '0 0'
       }
+    },
+    '[data-popper-reference-hidden] &': {
+      visibility: 'hidden'
     }
   }
 })
@@ -106,7 +109,8 @@ export const OverlayPopover: FC<OverlayPopoverProps> = ({
           name: 'arrow',
           enabled: true,
           options: {
-            padding: theme.shape.borderRadius,
+            padding:
+              theme.shape.borderRadius + parseFloat(theme.spacing(inset)),
             element: arrowRef
           }
         }

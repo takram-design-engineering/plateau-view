@@ -9,7 +9,15 @@ import {
   type SelectChangeEvent,
   type SelectProps
 } from '@mui/material'
-import { forwardRef, useCallback, useState, type ReactNode } from 'react'
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode
+} from 'react'
+import { mergeRefs } from 'react-merge-refs'
 import invariant from 'tiny-invariant'
 
 const StyledSelect = styled(Select)(({ theme }) => ({
@@ -55,16 +63,8 @@ export interface ContextSelectProps extends SelectProps<string[]> {
 }
 
 export const ContextSelect = forwardRef<HTMLButtonElement, ContextSelectProps>(
-  ({ label, children, onChange, ...props }, ref) => {
+  ({ label, children, onChange, ...props }, forwardedRef) => {
     const [open, setOpen] = useState(false)
-
-    const handleOpen = useCallback(() => {
-      setOpen(true)
-    }, [])
-
-    const handleClose = useCallback(() => {
-      setOpen(false)
-    }, [])
 
     const handleChange = useCallback(
       (event: SelectChangeEvent<string[]>, value: ReactNode) => {
@@ -93,9 +93,29 @@ export const ContextSelect = forwardRef<HTMLButtonElement, ContextSelectProps>(
       [label]
     )
 
+    // WORKAROUND: https://github.com/mui/material-ui/issues/25578#issuecomment-1104779355
+    const ref = useRef<HTMLButtonElement>(null)
+    const menuRef = useRef<HTMLUListElement>(null)
+    useEffect(() => {
+      const handler = (event: MouseEvent): void => {
+        if (!(event.target instanceof Node)) {
+          return
+        }
+        if (ref.current?.contains(event.target) === true) {
+          setOpen(true)
+        } else if (menuRef.current?.contains(event.target) !== true) {
+          setOpen(false)
+        }
+      }
+      window.addEventListener('mouseup', handler)
+      return () => {
+        window.removeEventListener('mouseup', handler)
+      }
+    }, [])
+
     return (
       <StyledSelect
-        ref={ref}
+        ref={mergeRefs([ref, forwardedRef])}
         open={open}
         variant='filled'
         size='small'
@@ -103,9 +123,14 @@ export const ContextSelect = forwardRef<HTMLButtonElement, ContextSelectProps>(
         displayEmpty
         renderValue={renderValue}
         {...props}
-        onOpen={handleOpen}
-        onClose={handleClose}
         onChange={handleChange}
+        MenuProps={{
+          ...props.MenuProps,
+          MenuListProps: {
+            ...props.MenuProps?.MenuListProps,
+            ref: menuRef
+          }
+        }}
       >
         {children}
       </StyledSelect>
