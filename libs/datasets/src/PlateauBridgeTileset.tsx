@@ -28,6 +28,7 @@ export const PlateauBridgeTileset = forwardRef<
       ref={mergeRefs([ref, forwardedRef])}
       {...props}
       style={style ?? defaultStyle}
+      disableShadow={opacity != null && opacity < 1}
     />
   )
 })
