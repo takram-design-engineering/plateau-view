@@ -1,12 +1,13 @@
+import { useAtomValue } from 'jotai'
 import { type FC } from 'react'
 
 import { AppBreadcrumbs } from '@takram/plateau-ui-components'
 
-import { useLocationContextState } from '../hooks/useLocationContextState'
+import { areasAtom } from '../states/address'
 import { LocationBreadcrumbItem } from './LocationBreadcrumbItem'
 
 export const LocationBreadcrumbs: FC = () => {
-  const { areas } = useLocationContextState()
+  const areas = useAtomValue(areasAtom)
   if (areas == null) {
     return null
   }

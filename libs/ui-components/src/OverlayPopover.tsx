@@ -5,6 +5,7 @@ import {
   useTheme,
   type PopperProps
 } from '@mui/material'
+import { omit } from 'lodash'
 import { useCallback, useState, type FC } from 'react'
 
 import { isNotFalse } from '@takram/plateau-type-helpers'
@@ -96,7 +97,8 @@ export const OverlayPopover: FC<OverlayPopoverProps> = ({
   const theme = useTheme()
   return (
     <Popper
-      {...props}
+      // WORKAROUND: Accept popover props.
+      {...(omit(props, ['anchorPosition', 'anchorReference']) as PopperProps)}
       modifiers={[
         {
           name: 'offset',
