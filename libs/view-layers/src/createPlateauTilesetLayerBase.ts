@@ -26,6 +26,7 @@ export interface PlateauTilesetLayerModel extends DatasetLayerModel {
   colorPropertyAtom: PrimitiveAtom<string | null>
   colorSchemeAtom: PrimitiveAtom<ColorScheme>
   colorRangeAtom: PrimitiveAtom<[number, number]>
+  opacityAtom: PrimitiveAtom<number>
 }
 
 export type PlateauTilesetProperty = { name: string } & (
@@ -48,6 +49,7 @@ export function createPlateauTilesetLayerBase(
     propertiesAtom: atom<readonly PlateauTilesetProperty[] | null>(null),
     colorPropertyAtom: atom<string | null>(null),
     colorSchemeAtom: atom<ColorScheme>(colorSchemeViridis),
-    colorRangeAtom: atom([0, 100])
+    colorRangeAtom: atom([0, 100]),
+    opacityAtom: atom(1)
   }
 }

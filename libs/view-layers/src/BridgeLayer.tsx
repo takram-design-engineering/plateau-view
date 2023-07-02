@@ -47,7 +47,8 @@ export const BridgeLayer: FC<LayerProps<typeof BRIDGE_LAYER>> = ({
   propertiesAtom,
   colorPropertyAtom,
   colorSchemeAtom,
-  colorRangeAtom
+  colorRangeAtom,
+  opacityAtom
 }) => {
   const query = useMunicipalityDatasetsQuery({
     variables: {
@@ -81,6 +82,7 @@ export const BridgeLayer: FC<LayerProps<typeof BRIDGE_LAYER>> = ({
     colorSchemeAtom,
     colorRangeAtom
   })
+  const opacity = useAtomValue(opacityAtom)
 
   if (hidden || datum == null) {
     return null
@@ -95,6 +97,7 @@ export const BridgeLayer: FC<LayerProps<typeof BRIDGE_LAYER>> = ({
         hiddenFeaturesAtom={hiddenFeaturesAtom}
         propertiesAtom={propertiesAtom}
         color={color}
+        opacity={opacity}
       />
     )
   }

@@ -105,7 +105,8 @@ export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
   propertiesAtom,
   colorPropertyAtom,
   colorSchemeAtom,
-  colorRangeAtom
+  colorRangeAtom,
+  opacityAtom
 }) => {
   const query = useMunicipalityDatasetsQuery({
     variables: {
@@ -163,6 +164,7 @@ export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
     colorSchemeAtom,
     colorRangeAtom
   })
+  const opacity = useAtomValue(opacityAtom)
 
   if (hidden || datum == null) {
     return null
@@ -177,6 +179,7 @@ export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
         hiddenFeaturesAtom={hiddenFeaturesAtom}
         propertiesAtom={propertiesAtom}
         color={color}
+        opacity={opacity}
       />
     )
   }
