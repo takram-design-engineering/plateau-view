@@ -8,17 +8,16 @@ import {
 export const MuiOutlinedInput: Components<Theme>['MuiOutlinedInput'] = {
   styleOverrides: {
     root: ({ theme }) => {
-      const borderColor =
-        theme.palette.mode === 'light'
-          ? 'rgba(0, 0, 0, 0.23)'
-          : 'rgba(255, 255, 255, 0.23)'
       return {
+        [`& .${outlinedInputClasses.notchedOutline}`]: {
+          borderColor: theme.palette.divider
+        },
         [`&:hover .${outlinedInputClasses.notchedOutline}`]: {
           backgroundColor: alpha(
             theme.palette.text.primary,
             theme.palette.action.hoverOpacity
           ),
-          borderColor
+          borderColor: theme.palette.divider
         },
         [`&.${outlinedInputClasses.focused} .${outlinedInputClasses.notchedOutline}`]:
           {
@@ -26,7 +25,7 @@ export const MuiOutlinedInput: Components<Theme>['MuiOutlinedInput'] = {
               theme.palette.text.primary,
               theme.palette.action.hoverOpacity
             ),
-            borderColor,
+            borderColor: theme.palette.divider,
             borderWidth: 1
           }
       }

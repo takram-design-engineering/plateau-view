@@ -1,6 +1,9 @@
 import { type Meta, type StoryObj } from '@storybook/react'
 import { atom } from 'jotai'
 
+import { type ColorScheme } from '@takram/plateau-color-schemes'
+
+import { ColorSchemeParameterItem } from './ColorSchemeParameterItem'
 import { ParameterList } from './ParameterList'
 import { SegmentParameterItem } from './SegmentParameterItem'
 import { SelectParameterItem } from './SelectParameterItem'
@@ -22,6 +25,7 @@ const sliderAtom1 = atom(1)
 const sliderAtom2 = atom(1)
 const sliderAtom3 = atom([1, 5])
 const segmentAtom = atom([1])
+const colorSchemeAtom = atom<ColorScheme | null>(null)
 
 export const Default: Story = {
   render: () => (
@@ -79,6 +83,7 @@ export const Default: Story = {
           [4, 'Value 4']
         ]}
       />
+      <ColorSchemeParameterItem label='Color Scheme' atom={colorSchemeAtom} />
     </ParameterList>
   )
 }
