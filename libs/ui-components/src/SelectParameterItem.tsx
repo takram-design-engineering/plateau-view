@@ -78,6 +78,7 @@ export const SelectParameterItem = forwardRef<
         {...props}
         value={value !== null ? value : ''}
         onChange={handleChange}
+        displayEmpty
       >
         {items != null
           ? items.map(([value, content, props]) => (
