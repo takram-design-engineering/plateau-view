@@ -67,7 +67,7 @@ export function PlateauTilesetLayerContent<
             typeof value.maximum === 'number'
           ) {
             return {
-              name: name.replaceAll('_', ' '),
+              name,
               type: 'number' as const,
               minimum: value.minimum,
               maximum: value.maximum

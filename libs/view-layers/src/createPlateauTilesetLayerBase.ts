@@ -2,7 +2,7 @@ import { atom, type PrimitiveAtom } from 'jotai'
 import { type SetOptional } from 'type-fest'
 
 import {
-  colorSchemeViridis,
+  colorSchemeMagma,
   type ColorScheme
 } from '@takram/plateau-color-schemes'
 import { type TileFeatureIndex } from '@takram/plateau-datasets'
@@ -48,7 +48,7 @@ export function createPlateauTilesetLayerBase(
     hiddenFeaturesAtom: atom<readonly string[] | null>(null),
     propertiesAtom: atom<readonly PlateauTilesetProperty[] | null>(null),
     colorPropertyAtom: atom<string | null>(null),
-    colorSchemeAtom: atom<ColorScheme>(colorSchemeViridis),
+    colorSchemeAtom: atom<ColorScheme>(colorSchemeMagma),
     colorRangeAtom: atom([0, 100]),
     opacityAtom: atom(1)
   }
