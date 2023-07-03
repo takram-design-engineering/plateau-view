@@ -70,6 +70,7 @@ export const Default: Story = {
         label='Range Slider'
         min={0}
         max={10}
+        range
         decimalPlaces={1}
         atom={sliderAtom3}
       />

@@ -74,8 +74,9 @@ export const SelectParameterItem = forwardRef<
                 if (atomOrAtoms.length === 0) {
                   return null
                 }
-                const value = get(atomOrAtoms[0])
-                return atomOrAtoms.every(atom => get(atom) === value)
+                const values = atomOrAtoms.map(atom => get(atom))
+                const [value] = values
+                return values.slice(1).every(another => another === value)
                   ? value
                   : MIXED
               },
