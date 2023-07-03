@@ -2,7 +2,7 @@ import { ColorScheme } from '../ColorScheme'
 
 // Reference: https://github.com/matplotlib/matplotlib/blob/main/lib/matplotlib/_cm_listed.py
 // TODO: Pack into binary.
-export default new ColorScheme('sequential', [
+export default new ColorScheme('sequential', 'Viridis', [
   [0.267004, 0.004874, 0.329415],
   [0.26851, 0.009605, 0.335427],
   [0.269944, 0.014625, 0.341379],

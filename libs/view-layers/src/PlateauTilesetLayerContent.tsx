@@ -8,6 +8,7 @@ import {
 } from 'react'
 
 import { type PlateauTilesetProps } from '@takram/plateau-datasets'
+import { isNotNullish } from '@takram/plateau-type-helpers'
 
 import { type PlateauTilesetLayerModel } from './createPlateauTilesetLayerBase'
 
@@ -15,7 +16,10 @@ export type PlateauTilesetLayerContentProps<
   Props extends PlateauTilesetProps & RefAttributes<Cesium3DTileset>
 > = Pick<
   PlateauTilesetLayerModel,
-  'boundingSphereAtom' | 'featureIndexAtom' | 'hiddenFeaturesAtom'
+  | 'boundingSphereAtom'
+  | 'featureIndexAtom'
+  | 'hiddenFeaturesAtom'
+  | 'propertiesAtom'
 > &
   Props & {
     url: string
@@ -30,6 +34,7 @@ export function PlateauTilesetLayerContent<
   boundingSphereAtom,
   featureIndexAtom,
   hiddenFeaturesAtom,
+  propertiesAtom,
   ...props
 }: PlateauTilesetLayerContentProps<Props>): JSX.Element {
   const setFeatureIndex = useSetAtom(featureIndexAtom)
@@ -37,9 +42,45 @@ export function PlateauTilesetLayerContent<
 
   const [tileset, setTileset] = useState<Cesium3DTileset | null>(null)
   const setBoundingSphere = useSetAtom(boundingSphereAtom)
+  const setProperties = useSetAtom(propertiesAtom)
   useEffect(() => {
-    setBoundingSphere(tileset?.boundingSphere ?? null)
-  }, [tileset, setBoundingSphere])
+    if (tileset == null) {
+      setBoundingSphere(null)
+      setProperties(null)
+      return
+    }
+    setBoundingSphere(tileset.boundingSphere)
+    setProperties(
+      Object.entries(tileset.properties)
+        .map(([name, value]) => {
+          if (
+            name.startsWith('_') ||
+            value == null ||
+            typeof value !== 'object'
+          ) {
+            return undefined
+          }
+          if (
+            'minimum' in value &&
+            'maximum' in value &&
+            typeof value.minimum === 'number' &&
+            typeof value.maximum === 'number'
+          ) {
+            return {
+              name,
+              type: 'number' as const,
+              minimum: value.minimum,
+              maximum: value.maximum
+            }
+          }
+          return {
+            name,
+            type: 'unknown' as const
+          }
+        })
+        .filter(isNotNullish)
+    )
+  }, [tileset, setBoundingSphere, setProperties])
 
   const Component = component as ComponentType<
     PlateauTilesetProps & RefAttributes<Cesium3DTileset>

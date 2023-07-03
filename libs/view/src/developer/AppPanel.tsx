@@ -93,6 +93,7 @@ export const AppPanel: FC = () => {
             min={-10}
             max={4000}
             step={1}
+            range
             unit='m'
             logarithmic
             atom={terrainElevationHeightRangeAtom}

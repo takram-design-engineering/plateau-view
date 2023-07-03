@@ -2,7 +2,7 @@ import { ColorScheme } from '../ColorScheme'
 
 // Reference: https://github.com/matplotlib/matplotlib/blob/main/lib/matplotlib/_cm_listed.py
 // TODO: Pack into binary.
-export default new ColorScheme('sequential', [
+export default new ColorScheme('sequential', 'Plasma', [
   [0.050383, 0.029803, 0.527975],
   [0.063536, 0.028426, 0.533124],
   [0.075353, 0.027206, 0.538007],

@@ -9,13 +9,10 @@ import { useMemo, useRef } from 'react'
 
 import { colorModeAtom } from '@takram/plateau-shared-states'
 
-export type EvaluateColor = (
-  feature: Cesium3DTileFeature,
-  result: Color
-) => Color
+import { type EvaluateTileFeatureColor } from './types'
 
 export interface DefaultTileStyleParams {
-  color?: string | EvaluateColor
+  color?: string | EvaluateTileFeatureColor
   opacity?: number
 }
 

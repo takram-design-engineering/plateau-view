@@ -2,7 +2,7 @@ import { ColorScheme } from '../ColorScheme'
 
 // Reference: https://github.com/mwaskom/seaborn/blob/master/seaborn/cm.py
 // TODO: Pack into binary.
-export default new ColorScheme('sequential', [
+export default new ColorScheme('sequential', 'Flare', [
   [0.92907237, 0.68878959, 0.50411509],
   [0.92891402, 0.68494686, 0.50173994],
   [0.92864754, 0.68116207, 0.4993754],
