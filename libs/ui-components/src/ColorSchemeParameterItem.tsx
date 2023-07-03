@@ -22,6 +22,7 @@ import {
   colorSchemeMagma,
   colorSchemeMako,
   colorSchemePlasma,
+  colorSchemePlateau,
   colorSchemeRocket,
   colorSchemeTurbo,
   colorSchemeViridis,
@@ -34,6 +35,7 @@ import { ParameterItem, type ParameterItemProps } from './ParameterItem'
 import { SelectItem } from './SelectItem'
 
 const colorSchemes = [
+  colorSchemePlateau,
   colorSchemeCividis,
   colorSchemeCrest,
   colorSchemeFlare,

@@ -1,4 +1,4 @@
-import { type SelectChangeEvent } from '@mui/material'
+import { Select, type SelectChangeEvent } from '@mui/material'
 import { type Meta, type StoryObj } from '@storybook/react'
 import { useState, type FC } from 'react'
 
@@ -17,18 +17,17 @@ import {
   colorSchemeVlag
 } from '@takram/plateau-color-schemes'
 
-import { ColorSchemeSelect } from './ColorSchemeSelect'
 import { ColorSchemeSelectItemContent } from './ColorSchemeSelectItemContent'
 import { SelectItem } from './SelectItem'
 
-const meta: Meta<typeof ColorSchemeSelect> = {
-  title: 'ColorSchemeSelect',
-  component: ColorSchemeSelect
+const meta: Meta<typeof ColorSchemeSelectItemContent> = {
+  title: 'ColorSchemeSelectItemContent',
+  component: ColorSchemeSelectItemContent
 }
 
 export default meta
 
-type Story = StoryObj<typeof ColorSchemeSelect>
+type Story = StoryObj<typeof ColorSchemeSelectItemContent>
 
 const Components: FC = () => {
   const [value, setValue] = useState('')
@@ -40,12 +39,7 @@ const Components: FC = () => {
   }
 
   return (
-    <ColorSchemeSelect
-      variant='filled'
-      size='small'
-      value={value}
-      onChange={handleChange}
-    >
+    <Select variant='filled' size='small' value={value} onChange={handleChange}>
       <SelectItem value={colorSchemeCividis.name}>
         <ColorSchemeSelectItemContent colorScheme={colorSchemeCividis} />
       </SelectItem>
@@ -82,7 +76,7 @@ const Components: FC = () => {
       <SelectItem value={colorSchemeVlag.name}>
         <ColorSchemeSelectItemContent colorScheme={colorSchemeVlag} />
       </SelectItem>
-    </ColorSchemeSelect>
+    </Select>
   )
 }
 
