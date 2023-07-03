@@ -179,30 +179,28 @@ export const Canvas = forwardRef<HTMLDivElement, CanvasProps>(
     )
 
     return (
-      <>
-        <Root
-          ref={mergeRefs([rootRef, forwardedRef])}
-          {...omit(props, [
-            ...optionKeys,
-            ...Object.keys(mutableOptions),
-            ...Object.keys(mutableSceneOptions),
-            ...Object.keys(mutableClockOptions)
-          ])}
-        >
-          <Container ref={containerRef} />
-          <GlobalStyles
-            styles={css`
-              .cesium-widget,
-              .cesium-widget canvas {
-                display: block;
-                width: 100%;
-                height: 100%;
-              }
-            `}
-          />
-        </Root>
+      <Root
+        ref={mergeRefs([rootRef, forwardedRef])}
+        {...omit(props, [
+          ...optionKeys,
+          ...Object.keys(mutableOptions),
+          ...Object.keys(mutableSceneOptions),
+          ...Object.keys(mutableClockOptions)
+        ])}
+      >
+        <Container ref={containerRef} />
+        <GlobalStyles
+          styles={css`
+            .cesium-widget,
+            .cesium-widget canvas {
+              display: block;
+              width: 100%;
+              height: 100%;
+            }
+          `}
+        />
         {cesium != null && children}
-      </>
+      </Root>
     )
   }
 )

@@ -1,5 +1,4 @@
 import { Cartesian3, HeadingPitchRoll } from '@cesium/engine'
-import { styled } from '@mui/material'
 import { useSetAtom } from 'jotai'
 import { Suspense, useCallback, useEffect, type FC } from 'react'
 
@@ -7,7 +6,12 @@ import { CurrentTime, ViewLocator } from '@takram/plateau-cesium'
 import { SuspendUntilTilesLoaded } from '@takram/plateau-cesium-helpers'
 import { LayersRenderer, useAddLayer } from '@takram/plateau-layers'
 import { isNotFalse } from '@takram/plateau-type-helpers'
-import { AppLayout } from '@takram/plateau-ui-components'
+import {
+  AppBar,
+  AppFrame,
+  AppOverlayLayout,
+  Space
+} from '@takram/plateau-ui-components'
 import {
   BUILDING_LAYER,
   createViewLayer,
@@ -27,19 +31,19 @@ import { SelectionCoordinator } from './containers/SelectionCoordinator'
 import { Terrains } from './containers/Terrains'
 import { ToolMachineEvents } from './containers/ToolMachineEvents'
 import { DeveloperPanels } from './developer/DeveloperPanels'
-import { CameraToolbar } from './panels/CameraToolbar'
-import { LocationContextBar } from './panels/LocationContextBar'
+import { CameraButtons } from './panels/CameraButtons'
+import { DateControlButton } from './panels/DateControlButton'
+import { EnvironmentSelect } from './panels/EnvironmentSelect'
+import { LocationBreadcrumbs } from './panels/LocationBreadcrumbs'
+import { MainMenuButton } from './panels/MainMenuButton'
 import { MainPanel } from './panels/MainPanel'
 import { SelectionPanel } from './panels/SelectionPanel'
-import { Toolbar } from './panels/Toolbar'
+import { SettingsButton } from './panels/SettingsButton'
+import { ToolButtons } from './panels/ToolButtons'
 import { readyAtom } from './states/app'
 
 const initialDestination = Cartesian3.fromDegrees(139.755, 35.675, 1000)
 const initialOrientation = new HeadingPitchRoll(Math.PI * 0.4, -Math.PI * 0.2)
-
-const Root = styled('div')({
-  touchAction: 'none' // TODO: Don't disable globally
-})
 
 // TODO: Just for temporary.
 const InitialLayers: FC = () => {
@@ -93,7 +97,23 @@ export const PlateauView: FC<PlateauViewProps> = () => {
   }, [setReady])
 
   return (
-    <Root>
+    <AppFrame
+      header={
+        <AppBar>
+          <MainMenuButton />
+          <Space size={2} />
+          <ToolButtons />
+          <Space />
+          <SettingsButton />
+          <DateControlButton />
+          <EnvironmentSelect />
+          <Space flexible />
+          <LocationBreadcrumbs />
+          <Space flexible />
+          <CameraButtons />
+        </AppBar>
+      }
+    >
       <Canvas>
         <ScreenSpaceCamera tiltByRightButton />
         <CurrentTime hours={7} />
@@ -124,15 +144,12 @@ export const PlateauView: FC<PlateauViewProps> = () => {
       </Canvas>
       <KeyBindings />
       <ScreenSpaceSelection />
-      <AppLayout
+      <AppOverlayLayout
         main={<MainPanel />}
-        context={<LocationContextBar />}
         aside={<SelectionPanel />}
-        bottomLeft={<Toolbar />}
-        bottomRight={<CameraToolbar />}
         developer={<DeveloperPanels />}
       />
       <InitialLayers />
-    </Root>
+    </AppFrame>
   )
 }

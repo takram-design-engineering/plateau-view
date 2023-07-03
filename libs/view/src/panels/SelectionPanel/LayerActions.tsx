@@ -3,7 +3,7 @@ import { atom, useAtom, useSetAtom, type SetStateAction } from 'jotai'
 import { useCallback, useMemo } from 'react'
 import invariant from 'tiny-invariant'
 
-import { removeLayerAtom, type LayerType } from '@takram/plateau-layers'
+import { removeLayerAtom, type LayerModelBase } from '@takram/plateau-layers'
 import {
   InfoIcon,
   InspectorActions,
@@ -18,16 +18,16 @@ import {
   type SelectionGroup
 } from '../../states/selection'
 
-export interface LayerActionsProps<T extends LayerType> {
+export interface LayerActionsProps {
   values: (SelectionGroup & {
     type: typeof LAYER_SELECTION
-    subtype: T
+    subtype: LayerModelBase
   })['values']
 }
 
-export function LayerActions<T extends LayerType>({
+export function LayerActions({
   values
-}: LayerActionsProps<T>): JSX.Element | null {
+}: LayerActionsProps): JSX.Element | null {
   invariant(values.length > 0)
 
   const hiddenAtom = useMemo(() => {

@@ -1,6 +1,6 @@
-import { Slider, styled, type SliderProps } from '@mui/material'
+import { Slider, sliderClasses, styled, type SliderProps } from '@mui/material'
 import { scaleLinear } from 'd3'
-import { useAtom, type PrimitiveAtom } from 'jotai'
+import { atom, useAtom, type PrimitiveAtom, type SetStateAction } from 'jotai'
 import {
   forwardRef,
   useCallback,
@@ -13,12 +13,22 @@ import {
 import { inversePseudoLog, pseudoLog } from './helpers/pseudoLog'
 import { ParameterItem, type ParameterItemProps } from './ParameterItem'
 
-const StyledSlider = styled(Slider)({
+const StyledSlider = styled(Slider, {
+  shouldForwardProp: prop => prop !== 'mixed'
+})<{ mixed?: boolean }>(({ mixed = false }) => ({
   width: 'calc(100% - 12px)',
   marginTop: -6,
   marginRight: 6,
-  marginLeft: 6
-})
+  marginLeft: 6,
+  ...(mixed && {
+    [`& .${sliderClasses.thumb}`]: {
+      display: 'none'
+    },
+    [`& .${sliderClasses.track}`]: {
+      display: 'none'
+    }
+  })
+}))
 
 const Value = styled('div')(({ theme }) => ({
   ...theme.typography.body2,
@@ -26,21 +36,33 @@ const Value = styled('div')(({ theme }) => ({
   fontVariantNumeric: 'tabular-nums'
 }))
 
-export interface SliderParameterItemProps<
-  T extends number | number[] = number | number[]
-> extends PropsWithoutRef<Omit<SliderProps, 'value' | 'step'>>,
+export interface SliderParameterItemProps<Range extends boolean = false>
+  extends PropsWithoutRef<Omit<SliderProps, 'value' | 'step'>>,
     Pick<ParameterItemProps, 'label' | 'labelFontSize' | 'description'> {
   step?: number
+  range?: Range
   decimalPlaces?: number
   unit?: ReactNode
   logarithmic?: boolean
   logarithmicBase?: number
-  atom: PrimitiveAtom<T>
+  atom: Range extends true
+    ? PrimitiveAtom<[number, number]> | Array<PrimitiveAtom<[number, number]>>
+    : PrimitiveAtom<number> | Array<PrimitiveAtom<number>>
 }
+
+interface InternalSliderParameterItemProps
+  extends Omit<SliderParameterItemProps, 'atom' | 'range'> {
+  range?: boolean
+  atom:
+    | PrimitiveAtom<number | [number, number]>
+    | Array<PrimitiveAtom<number | [number, number]>>
+}
+
+const MIXED = 'MIXED'
 
 export const SliderParameterItem = forwardRef<
   HTMLDivElement,
-  SliderParameterItemProps
+  InternalSliderParameterItemProps
 >(
   (
     {
@@ -50,31 +72,70 @@ export const SliderParameterItem = forwardRef<
       min = 0,
       max = 10,
       step = Number.EPSILON,
+      range = false,
       decimalPlaces = 0,
       unit,
       logarithmic = false,
       logarithmicBase = 10,
-      atom,
+      atom: atomOrAtoms,
       onChange,
       ...props
     },
     ref
   ) => {
-    const [value, setValue] = useAtom(atom)
+    const mergedAtom = useMemo(
+      () =>
+        Array.isArray(atomOrAtoms)
+          ? atom(
+              (get): number | [number, number] | typeof MIXED | null => {
+                if (atomOrAtoms.length === 0) {
+                  return null
+                }
+                const values = atomOrAtoms.map(atom => get(atom))
+                const [value] = values
+                return Array.isArray(value)
+                  ? values.every(
+                      another =>
+                        Array.isArray(another) &&
+                        another[0] === value[0] &&
+                        another[1] === value[1]
+                    )
+                    ? value
+                    : MIXED
+                  : values.every(another => another === value)
+                  ? value
+                  : MIXED
+              },
+              (get, set, value: SetStateAction<number | [number, number]>) => {
+                atomOrAtoms.forEach(atom => {
+                  set(atom, value)
+                })
+              }
+            )
+          : atomOrAtoms,
+      [atomOrAtoms]
+    )
+    const [value, setValue] = useAtom(mergedAtom)
 
     const handleChange = useCallback(
       (event: Event, value: number | number[], activeThumb: number) => {
+        if (Array.isArray(value) && value.length !== 2) {
+          return
+        }
         if (logarithmic) {
           const scaledValue = logarithmic
             ? inversePseudoLog(value, logarithmicBase)
             : value
           const stepValue = Array.isArray(scaledValue)
-            ? scaledValue.map(value => Math.round(value / step) * step)
+            ? (scaledValue.map(value => Math.round(value / step) * step) as [
+                number,
+                number
+              ])
             : Math.round(scaledValue / step) * step
           setValue(stepValue)
           onChange?.(event, stepValue, activeThumb)
         } else {
-          setValue(value)
+          setValue(value as [number, number])
           onChange?.(event, value, activeThumb)
         }
       },
@@ -103,8 +164,15 @@ export const SliderParameterItem = forwardRef<
       [max, logarithmic, logarithmicBase]
     )
     const scaledValue = useMemo(
-      () => (logarithmic ? pseudoLog(value, logarithmicBase) : value),
-      [value, logarithmic, logarithmicBase]
+      () =>
+        value != null && value !== MIXED
+          ? logarithmic
+            ? pseudoLog(value, logarithmicBase)
+            : value
+          : range
+          ? [0, 0]
+          : 0,
+      [range, logarithmic, logarithmicBase, value]
     )
 
     return (
@@ -115,10 +183,18 @@ export const SliderParameterItem = forwardRef<
         description={description}
         control={
           <Value>
-            {typeof value === 'number'
-              ? value.toFixed(decimalPlaces)
-              : value.map(value => value.toFixed(decimalPlaces)).join(' ~ ')}
-            {unit != null && <> {unit}</>}
+            {value === MIXED
+              ? '混在'
+              : value != null && (
+                  <>
+                    {typeof value === 'number'
+                      ? value.toFixed(decimalPlaces)
+                      : value
+                          .map(value => value.toFixed(decimalPlaces))
+                          .join(' ~ ')}
+                    {unit != null && <> {unit}</>}
+                  </>
+                )}
           </Value>
         }
       >
@@ -132,10 +208,11 @@ export const SliderParameterItem = forwardRef<
           {...props}
           value={scaledValue}
           onChange={handleChange}
+          mixed={value === MIXED}
         />
       </ParameterItem>
     )
   }
-) as <T extends number | number[]>(
-  props: SliderParameterItemProps<T> & RefAttributes<HTMLDivElement>
+) as <Range extends boolean = false>(
+  props: SliderParameterItemProps<Range> & RefAttributes<HTMLDivElement>
 ) => JSX.Element // For generics

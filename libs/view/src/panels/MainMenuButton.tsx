@@ -4,7 +4,6 @@ import {
   ListItemSecondaryAction,
   Menu,
   MenuItem,
-  styled,
   type IconButtonProps
 } from '@mui/material'
 import { useAtom, useAtomValue } from 'jotai'
@@ -23,13 +22,7 @@ import {
   Shortcut
 } from '@takram/plateau-ui-components'
 
-import { showDeveloperPanelsAtom } from '../../states/app'
-
-const StyledIconButton = styled(IconButton)(({ theme }) => ({
-  width: theme.spacing(6.5),
-  height: '100%',
-  borderRadius: 0
-}))
+import { showDeveloperPanelsAtom } from '../states/app'
 
 export interface MainMenuButtonProps extends Omit<IconButtonProps, 'onClick'> {
   onClick?: (event: MouseEvent<HTMLElement>, name: string) => void
@@ -39,10 +32,10 @@ export const MainMenuButton = forwardRef<
   HTMLButtonElement,
   MainMenuButtonProps
 >(({ onClick, ...props }, ref) => {
-  const popupId = useId()
+  const id = useId()
   const popupState = usePopupState({
     variant: 'popover',
-    popupId
+    popupId: id
   })
 
   const [showDeveloperPanels, setShowDeveloperPanels] = useAtom(
@@ -72,15 +65,14 @@ export const MainMenuButton = forwardRef<
   const platform = useAtomValue(platformAtom)
   return (
     <>
-      <StyledIconButton
+      <IconButton
         ref={ref}
-        size='small'
         aria-label='メインメニュー'
         {...bindTrigger(popupState)}
         {...props}
       >
         <PlateauSymbol sx={{ fontSize: 24 }} />
-      </StyledIconButton>
+      </IconButton>
       <Menu
         {...bindMenu(popupState)}
         anchorOrigin={{

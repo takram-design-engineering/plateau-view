@@ -1,91 +1,129 @@
 import {
   ClickAwayListener,
-  Popover,
-  popoverClasses,
+  Popper,
   styled,
-  type PopoverProps
+  useTheme,
+  type PopperProps
 } from '@mui/material'
-import { useCallback, type FC } from 'react'
+import { omit } from 'lodash'
+import { useCallback, useState, type FC } from 'react'
 
-const Root = styled(Popover, {
-  shouldForwardProp: prop => prop !== 'placement'
-})<{
-  placement: 'top' | 'bottom'
-  disableClickAway: boolean
-}>(({ theme, placement, disableClickAway }) => ({
-  ...(!disableClickAway && {
-    pointerEvents: 'none'
-  }),
-  [`& .${popoverClasses.paper}`]: {
-    overflow: 'visible',
-    backgroundColor: 'transparent',
-    backgroundImage: 'none',
-    borderRadius: 0,
-    boxShadow: 'none',
-    pointerEvents: 'auto',
-    ...(placement === 'top' && {
-      paddingBottom: theme.spacing(1)
-    }),
-    ...(placement === 'bottom' && {
-      paddingTop: theme.spacing(1)
-    })
+import { isNotFalse } from '@takram/plateau-type-helpers'
+
+const Arrow = styled('div')(({ theme }) => {
+  const hypotenuse = `${1 / Math.SQRT2}em`
+  return {
+    overflow: 'hidden',
+    position: 'absolute',
+    width: '1em',
+    height: hypotenuse,
+    boxSizing: 'border-box',
+    color: theme.palette.background.paper,
+    '&::before': {
+      content: '""',
+      margin: 'auto',
+      display: 'block',
+      width: '100%',
+      height: '100%',
+      backgroundColor: 'currentColor',
+      transform: 'rotate(45deg)'
+    },
+    '[data-popper-placement="top"] &': {
+      bottom: 0,
+      left: '50%',
+      marginBottom: `-${hypotenuse}`,
+      '&::before': {
+        transformOrigin: '100% 0'
+      }
+    },
+    '[data-popper-placement="right"] &': {
+      top: '50%',
+      left: 0,
+      marginLeft: `-${hypotenuse}`,
+      height: '1em',
+      width: hypotenuse,
+      '&::before': {
+        transformOrigin: '100% 100%'
+      }
+    },
+    '[data-popper-placement="bottom"] &': {
+      top: 0,
+      left: '50%',
+      marginTop: `-${hypotenuse}`,
+      '&::before': {
+        transformOrigin: '0 100%'
+      }
+    },
+    '[data-popper-placement="left"] &': {
+      top: '50%',
+      right: 0,
+      marginRight: `-${hypotenuse}`,
+      height: '1em',
+      width: hypotenuse,
+      '&::before': {
+        transformOrigin: '0 0'
+      }
+    },
+    '[data-popper-reference-hidden] &': {
+      visibility: 'hidden'
+    }
   }
-}))
+})
 
-export interface OverlayPopoverProps extends PopoverProps {
-  placement?: 'top' | 'bottom'
+export interface OverlayPopoverProps extends PopperProps {
+  arrow?: boolean
   pinned?: boolean
-  disableClickAway?: boolean
+  inset?: number
+  onClose?: () => void
   children: JSX.Element
 }
 
 export const OverlayPopover: FC<OverlayPopoverProps> = ({
-  placement = 'top',
+  arrow = true,
   pinned = false,
-  disableClickAway = false,
+  inset = 1,
   onClose,
   children,
   ...props
 }) => {
-  // Relaxed behavior to close popover by clicking outside.
-  const handleClickAway = useCallback(
-    (event: MouseEvent | TouchEvent) => {
-      if (!pinned) {
-        onClose?.(event, 'backdropClick')
-      }
-    },
-    [onClose, pinned]
-  )
-  const handleClose: NonNullable<PopoverProps['onClose']> = useCallback(
-    (event, reason) => {
-      if (disableClickAway || reason !== 'backdropClick') {
-        onClose?.(event, reason)
-      }
-    },
-    [disableClickAway, onClose]
-  )
+  const handleClickAway = useCallback(() => {
+    if (!pinned) {
+      onClose?.()
+    }
+  }, [onClose, pinned])
+
+  const [arrowRef, setArrowRef] = useState<HTMLDivElement | null>(null)
+
+  const theme = useTheme()
   return (
-    <Root
-      onClose={handleClose}
-      anchorOrigin={{
-        vertical: placement === 'top' ? 'top' : 'bottom',
-        horizontal: 'center'
-      }}
-      transformOrigin={{
-        vertical: placement === 'top' ? 'bottom' : 'top',
-        horizontal: 'center'
-      }}
-      {...props}
-      placement={placement}
-      disableClickAway={disableClickAway}
+    <Popper
+      // WORKAROUND: Accept popover props.
+      {...(omit(props, ['anchorPosition', 'anchorReference']) as PopperProps)}
+      modifiers={[
+        {
+          name: 'offset',
+          enabled: true,
+          options: {
+            offset: [0, parseFloat(theme.spacing(inset))]
+          }
+        },
+        arrow && {
+          name: 'arrow',
+          enabled: true,
+          options: {
+            padding:
+              theme.shape.borderRadius + parseFloat(theme.spacing(inset)),
+            element: arrowRef
+          }
+        }
+      ].filter(isNotFalse)}
     >
-      {!disableClickAway ? (
-        <ClickAwayListener onClickAway={handleClickAway}>
-          <div>{children}</div>
-        </ClickAwayListener>
-      ) : (
-        children
-      )}
-    </Root>
+      <ClickAwayListener onClickAway={handleClickAway}>
+        <div>
+          {children}
+          {arrow && <Arrow ref={setArrowRef} />}
+        </div>
+      </ClickAwayListener>
+    </Popper>
   )
 }

@@ -24,23 +24,26 @@ export const ShortcutTooltip: FC<ShortcutTooltipProps> = ({
   <Tooltip
     {...props}
     title={
-      <Stack direction='row' spacing={1}>
-        <span>{title}</span>
-        {shortcutKey != null && (
-          <Shortcut>
-            <Suspense>
-              <ShortcutText
-                platform={platform}
-                shortcutKey={shortcutKey}
-                commandKey={commandKey}
-                ctrlKey={ctrlKey}
-                altKey={altKey}
-                shiftKey={shiftKey}
-              />
-            </Suspense>
-          </Shortcut>
-        )}
-      </Stack>
+      title != null &&
+      title !== false && (
+        <Stack direction='row' spacing={1}>
+          <span>{title}</span>
+          {shortcutKey != null && (
+            <Shortcut>
+              <Suspense>
+                <ShortcutText
+                  platform={platform}
+                  shortcutKey={shortcutKey}
+                  commandKey={commandKey}
+                  ctrlKey={ctrlKey}
+                  altKey={altKey}
+                  shiftKey={shiftKey}
+                />
+              </Suspense>
+            </Shortcut>
+          )}
+        </Stack>
+      )
     }
   />
 )

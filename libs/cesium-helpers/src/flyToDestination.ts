@@ -25,7 +25,7 @@ const defaultOptions = {
 export async function flyToDestination(
   scene: Scene,
   destination: Cartesian3 | Rectangle,
-  headingPitchRoll:
+  headingPitchRoll?:
     | HeadingPitchRoll
     | (HeadingPitchRollValues & {
         fov?: number
@@ -36,7 +36,11 @@ export async function flyToDestination(
     const resolvedOptions = defaults({}, options, defaultOptions)
 
     let animationControl: AnimationPlaybackControls | undefined
-    if ('fov' in headingPitchRoll && headingPitchRoll.fov != null) {
+    if (
+      headingPitchRoll != null &&
+      'fov' in headingPitchRoll &&
+      headingPitchRoll.fov != null
+    ) {
       const frustum = scene.camera.frustum
       invariant(frustum instanceof PerspectiveFrustum)
       const motionFov = motionValue(frustum.fov)

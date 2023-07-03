@@ -19,8 +19,10 @@ const Root = styled(FloatingPanel, {
   shouldForwardProp: prop => prop !== 'hidden'
 })<{
   hidden?: boolean
-}>(({ hidden = false }) => ({
+}>(({ theme, hidden = false }) => ({
   minWidth: 0,
+  maxWidth: `calc(100vw - ${theme.spacing(2)})`,
+  margin: `0 ${theme.spacing(1)}`,
   ...(hidden && {
     visibility: 'hidden'
   })
@@ -58,8 +60,8 @@ const OverflowButton = styled('div', {
 })<{
   orientation: 'horizontal' | 'vertical'
 }>(({ theme, orientation }) => {
-  const transparent = alpha(theme.palette.background.default, 0)
-  const opaque = theme.palette.background.default
+  const transparent = alpha(theme.palette.background.paper, 0)
+  const opaque = theme.palette.background.paper
   const gradientWidth = theme.spacing(2)
   return {
     overflow: 'hidden',
