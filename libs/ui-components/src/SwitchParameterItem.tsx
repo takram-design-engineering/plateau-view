@@ -1,4 +1,4 @@
-import { styled, Switch, type SwitchProps } from '@mui/material'
+import { styled, Switch, switchClasses, type SwitchProps } from '@mui/material'
 import { atom, useAtom, type PrimitiveAtom, type SetStateAction } from 'jotai'
 import {
   forwardRef,
@@ -14,9 +14,16 @@ const StyledSwitch = styled(Switch, {
   shouldForwardProp: prop => prop !== 'indeterminate'
 })<{
   indeterminate?: boolean
-}>(({ theme, indeterminate = false }) => ({
-  marginRight: theme.spacing(-1)
-}))
+}>(({ theme, size = 'small', indeterminate = false }) => {
+  return {
+    marginRight: theme.spacing(-1),
+    ...(indeterminate && {
+      [`& .${switchClasses.switchBase}`]: {
+        transform: `translateX(${size === 'small' ? 6 : 7}px)`
+      }
+    })
+  }
+})
 
 export interface SwitchParameterItemProps
   extends PropsWithoutRef<Omit<SwitchProps, 'value'>>,
