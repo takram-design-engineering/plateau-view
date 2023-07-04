@@ -8,12 +8,6 @@ import {
   SliderParameterItem
 } from '@takram/plateau-ui-components'
 
-function hasOpacityAtom(
-  values: readonly LayerModel[]
-): values is ReadonlyArray<Extract<LayerModel, { opacityAtom: unknown }>> {
-  return values.every(value => 'opacityAtom' in value)
-}
-
 export interface LayerOpacitySectionProps {
   layers: readonly LayerModel[]
 }
@@ -29,7 +23,7 @@ export const LayerOpacitySection: FC<LayerOpacitySectionProps> = ({
     [layers]
   )
 
-  if (!hasOpacityAtom(layers)) {
+  if (opacityAtoms.length === 0) {
     return null
   }
   return (

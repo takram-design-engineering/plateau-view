@@ -1,4 +1,4 @@
-import { useAtomValue, useSetAtom } from 'jotai'
+import { atom, useAtomValue, useSetAtom, type PrimitiveAtom } from 'jotai'
 import { useEffect, type FC } from 'react'
 import { type SetOptional } from 'type-fest'
 
@@ -25,14 +25,17 @@ import { useMunicipalityName } from './useMunicipalityName'
 export interface BridgeLayerModelParams
   extends PlateauTilesetLayerModelParams {}
 
-export interface BridgeLayerModel extends PlateauTilesetLayerModel {}
+export interface BridgeLayerModel extends PlateauTilesetLayerModel {
+  showWireframeAtom: PrimitiveAtom<boolean>
+}
 
 export function createBridgeLayer(
   params: BridgeLayerModelParams
 ): SetOptional<BridgeLayerModel, 'id'> {
   return {
     ...createPlateauTilesetLayerBase(params),
-    type: BRIDGE_LAYER
+    type: BRIDGE_LAYER,
+    showWireframeAtom: atom(false)
   }
 }
 
@@ -48,7 +51,8 @@ export const BridgeLayer: FC<LayerProps<typeof BRIDGE_LAYER>> = ({
   colorPropertyAtom,
   colorSchemeAtom,
   colorRangeAtom,
-  opacityAtom
+  opacityAtom,
+  showWireframeAtom
 }) => {
   const query = useMunicipalityDatasetsQuery({
     variables: {
@@ -83,6 +87,7 @@ export const BridgeLayer: FC<LayerProps<typeof BRIDGE_LAYER>> = ({
     colorRangeAtom
   })
   const opacity = useAtomValue(opacityAtom)
+  const showWireframe = useAtomValue(showWireframeAtom)
 
   if (hidden || datum == null) {
     return null
@@ -98,6 +103,7 @@ export const BridgeLayer: FC<LayerProps<typeof BRIDGE_LAYER>> = ({
         propertiesAtom={propertiesAtom}
         color={color}
         opacity={opacity}
+        showWireframe={showWireframe}
       />
     )
   }

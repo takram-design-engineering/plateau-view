@@ -285,6 +285,7 @@ const PlateauTilesetContent = withEphemerality(
         tileset.debugWireframe = showWireframe
         tileset.debugShowBoundingVolume = showBoundingVolume
         Object.assign(tileset, props)
+        scene.requestRender()
       }
 
       useEffect(
@@ -307,6 +308,7 @@ const PlateauTilesetContent = withEphemerality(
         tileset,
         featureIndex
       })
+
       return null
     }
   )
@@ -318,20 +320,17 @@ const DeferredPlateauTilesetContent = withDeferredProps(
 )
 
 export interface PlateauTilesetProps
-  extends Omit<
-    PlateauTilesetContentProps,
-    'showWireframe' | 'showBoundingVolume'
-  > {}
+  extends Omit<PlateauTilesetContentProps, 'showBoundingVolume'> {}
 
 export const PlateauTileset = forwardRef<Cesium3DTileset, PlateauTilesetProps>(
-  (props, forwardedRef) => {
+  ({ showWireframe: showWireframeProp = false, ...props }, forwardedRef) => {
     const showWireframe = useAtomValue(showTilesetWireframeAtom)
     const showBoundingVolume = useAtomValue(showTilesetBoundingVolumeAtom)
     return (
       <DeferredPlateauTilesetContent
         ref={forwardedRef}
         {...props}
-        showWireframe={showWireframe}
+        showWireframe={showWireframeProp || showWireframe}
         showBoundingVolume={showBoundingVolume}
       />
     )

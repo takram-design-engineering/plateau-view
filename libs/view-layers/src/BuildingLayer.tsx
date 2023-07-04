@@ -46,6 +46,7 @@ export interface BuildingLayerModel
   colorPropertyAtom: PrimitiveAtom<string | null>
   colorSchemeAtom: PrimitiveAtom<ColorScheme>
   colorRangeAtom: PrimitiveAtom<[number, number]>
+  showWireframeAtom: PrimitiveAtom<boolean>
 }
 
 export function createBuildingLayer(
@@ -59,7 +60,8 @@ export function createBuildingLayer(
     type: BUILDING_LAYER,
     versionAtom: atom(params.version ?? null),
     lodAtom: atom(params.lod ?? null),
-    texturedAtom: atom(params.textured ?? null)
+    texturedAtom: atom(params.textured ?? null),
+    showWireframeAtom: atom(false)
   }
 }
 
@@ -106,7 +108,8 @@ export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
   colorPropertyAtom,
   colorSchemeAtom,
   colorRangeAtom,
-  opacityAtom
+  opacityAtom,
+  showWireframeAtom
 }) => {
   const query = useMunicipalityDatasetsQuery({
     variables: {
@@ -165,6 +168,7 @@ export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
     colorRangeAtom
   })
   const opacity = useAtomValue(opacityAtom)
+  const showWireframe = useAtomValue(showWireframeAtom)
 
   if (hidden || datum == null) {
     return null
@@ -180,6 +184,7 @@ export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
         propertiesAtom={propertiesAtom}
         color={color}
         opacity={opacity}
+        showWireframe={showWireframe}
       />
     )
   }
