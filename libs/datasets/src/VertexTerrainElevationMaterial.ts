@@ -14,6 +14,7 @@ export class VertexTerrainElevationMaterial extends Material {
           image: colorSchemeTurbo.createImage(),
           minHeight: 0,
           maxHeight: 1000,
+          logarithmic: false,
           // The height of czm_materialInput appears to be in WGS84 even when we
           // provide another ellipsoid in the constructor options of Globe.
           heightDatum:

@@ -26,7 +26,7 @@ const switchAtom = atom(false)
 const selectAtom = atom(1)
 const sliderAtom1 = atom(1)
 const sliderAtom2 = atom(1)
-const sliderAtom3 = atom<[number, number]>([1, 5])
+const sliderAtom3 = atom([1, 5])
 const segmentAtom = atom([1])
 const colorSchemeAtom = atom<ColorScheme>(colorSchemeMagma)
 

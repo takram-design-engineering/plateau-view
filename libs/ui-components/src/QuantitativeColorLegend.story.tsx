@@ -21,9 +21,9 @@ export default meta
 
 type Story = StoryObj<typeof QuantitativeColorLegend>
 
-const rangeAtom1 = atom<[number, number]>([0, 1])
-const rangeAtom2 = atom<[number, number]>([0, 100])
-const rangeAtom3 = atom<[number, number]>([0, 100000])
+const rangeAtom1 = atom([0, 1])
+const rangeAtom2 = atom([0, 100])
+const rangeAtom3 = atom([0, 100000])
 
 const Component: FC = () => {
   const [min1, max1] = useAtomValue(rangeAtom1)

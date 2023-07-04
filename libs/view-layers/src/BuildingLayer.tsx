@@ -45,7 +45,7 @@ export interface BuildingLayerModel
   texturedAtom: PrimitiveAtom<boolean | null>
   colorPropertyAtom: PrimitiveAtom<string | null>
   colorSchemeAtom: PrimitiveAtom<ColorScheme>
-  colorRangeAtom: PrimitiveAtom<[number, number]>
+  colorRangeAtom: PrimitiveAtom<number[]>
   showWireframeAtom: PrimitiveAtom<boolean>
 }
 

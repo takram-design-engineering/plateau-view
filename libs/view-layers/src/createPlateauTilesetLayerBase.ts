@@ -25,7 +25,7 @@ export interface PlateauTilesetLayerModel extends DatasetLayerModel {
   propertiesAtom: PrimitiveAtom<readonly PlateauTilesetProperty[] | null>
   colorPropertyAtom: PrimitiveAtom<string | null>
   colorSchemeAtom: PrimitiveAtom<ColorScheme>
-  colorRangeAtom: PrimitiveAtom<[number, number]>
+  colorRangeAtom: PrimitiveAtom<number[]>
   opacityAtom: PrimitiveAtom<number>
 }
 

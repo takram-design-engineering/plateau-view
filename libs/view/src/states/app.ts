@@ -23,9 +23,9 @@ export const environmentTypeAtom = atom(
 )
 export const terrainTypeAtom = atomWithReset<TerrainType>('plateau')
 export const enableTerrainLightingAtom = atomWithReset(true)
-export const terrainElevationHeightRangeAtom = atomWithReset<[number, number]>([
-  0, 4000
-])
+export const terrainElevationHeightRangeAtom = atomWithReset([0, 4000])
+export const logarithmicTerrainElevationAtom = atomWithReset(true)
+
 export const debugSphericalHarmonicsAtom = atomWithReset(false)
 export const showShadowMapDepthAtom = atomWithReset(false)
 export const showShadowMapCascadeColorsAtom = atomWithReset(false)
