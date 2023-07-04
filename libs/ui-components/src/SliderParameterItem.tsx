@@ -10,6 +10,7 @@ import {
   type RefAttributes
 } from 'react'
 
+import { formatValue, type ValueFormatter } from './helpers/formatValue'
 import { inversePseudoLog, pseudoLog } from './helpers/pseudoLog'
 import { ParameterItem, type ParameterItemProps } from './ParameterItem'
 
@@ -41,7 +42,7 @@ export interface SliderParameterItemProps<Range extends boolean = false>
     Pick<ParameterItemProps, 'label' | 'labelFontSize' | 'description'> {
   step?: number
   range?: Range
-  decimalPlaces?: number
+  format?: ValueFormatter
   unit?: ReactNode
   logarithmic?: boolean
   logarithmicBase?: number
@@ -73,7 +74,7 @@ export const SliderParameterItem = forwardRef<
       max = 10,
       step = Number.EPSILON,
       range = false,
-      decimalPlaces = 0,
+      format = formatValue,
       unit,
       logarithmic = false,
       logarithmicBase = 10,
@@ -188,10 +189,8 @@ export const SliderParameterItem = forwardRef<
               : value != null && (
                   <>
                     {typeof value === 'number'
-                      ? value.toFixed(decimalPlaces)
-                      : value
-                          .map(value => value.toFixed(decimalPlaces))
-                          .join(' ~ ')}
+                      ? format(value)
+                      : value.map(value => format(value)).join(' ~ ')}
                     {unit != null && <> {unit}</>}
                   </>
                 )}

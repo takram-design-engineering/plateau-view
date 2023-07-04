@@ -3,6 +3,7 @@ import { useMemo, type FC } from 'react'
 import { type LayerModel } from '@takram/plateau-layers'
 import { isNotFalse } from '@takram/plateau-type-helpers'
 import {
+  formatPercent,
   ParameterList,
   SliderParameterItem
 } from '@takram/plateau-ui-components'
@@ -34,11 +35,11 @@ export const LayerOpacitySection: FC<LayerOpacitySectionProps> = ({
   return (
     <ParameterList>
       <SliderParameterItem
-        label='透明度'
+        label='不透明度'
         atom={opacityAtoms}
         min={0}
         max={1}
-        decimalPlaces={1}
+        format={formatPercent}
       />
     </ParameterList>
   )

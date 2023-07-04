@@ -36,17 +36,19 @@ export interface ColorSchemeGradientProps {
   colorScheme: ColorScheme<'sequential' | 'diverging'>
   min?: number
   max?: number
+  colorCount?: number
 }
 
 export const ColorSchemeGradient: FC<ColorSchemeGradientProps> = ({
   colorScheme,
   min,
-  max
+  max,
+  colorCount = 24
 }) => {
   const id = useId()
   const stops = useMemo(
     () =>
-      [...Array(colorScheme.count + 1)].map((_, index, { length }) => {
+      [...Array(colorCount)].map((_, index, { length }) => {
         const value = index / length
         return (
           <stop
@@ -56,7 +58,7 @@ export const ColorSchemeGradient: FC<ColorSchemeGradientProps> = ({
           />
         )
       }),
-    [colorScheme]
+    [colorScheme, colorCount]
   )
 
   const theme = useTheme()
