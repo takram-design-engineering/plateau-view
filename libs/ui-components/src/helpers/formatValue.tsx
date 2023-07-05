@@ -19,5 +19,5 @@ export const formatValue: ValueFormatter = value => {
 }
 
 export const formatPercent: ValueFormatter = value => (
-  <>{formatValue(value * 100)}%</>
+  <>{Math.round(value * 100)}%</>
 )

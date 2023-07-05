@@ -17,6 +17,7 @@ import { useConstant } from '@takram/plateau-react-helpers'
 
 import {
   enableTerrainLightingAtom,
+  logarithmicTerrainElevationAtom,
   terrainElevationHeightRangeAtom
 } from '../states/app'
 
@@ -40,35 +41,70 @@ export const ElevationEnvironment: FC<EnvironmentProps> = props => {
 
   const globeShader = useConstant(() => ({
     material: new VertexTerrainElevationMaterial(),
-    matcher: new StringMatcher().replace(
-      [
-        '#ifdef APPLY_COLOR_TO_ALPHA',
-        'vec3 colorDiff = abs(color.rgb - colorToAlpha.rgb);',
-        'colorDiff.r = max(max(colorDiff.r, colorDiff.g), colorDiff.b);',
-        'alpha = czm_branchFreeTernary(colorDiff.r < colorToAlpha.a, 0.0, alpha);',
-        '#endif'
-      ],
-      /* glsl */ `
-      // colorToAlpha is used as an identification of imagery layer here.
-      if (colorToAlpha == vec4(1.0)) {
-        float decodedValue = dot(color, vec3(16711680.0, 65280.0, 255.0));
-        float height = (decodedValue - 8388607.0) * 0.01;
-        float scaledHeight = clamp(
-          (height - minHeight_1) / (maxHeight_2 - minHeight_1),
-          0.0,
-          1.0
-        );
-        vec4 mappedColor = texture(image_0, vec2(scaledHeight, 0.5));
-        color = mappedColor.rgb;
-      }`
-    )
+    matcher: new StringMatcher()
+      .insertBefore(
+        'vec4 sampleAndBlend(',
+        /* glsl */ `
+        float pseudoLog(float value) {
+          return czm_branchFreeTernary(
+            value > 10.0,
+            log(value) / ${Math.log(10)},
+            czm_branchFreeTernary(
+              value < -10.0,
+              -log(-value) / ${Math.log(10)},
+              value / 10.0
+            )
+          );
+        }`
+      )
+      .replace(
+        [
+          '#ifdef APPLY_COLOR_TO_ALPHA',
+          'vec3 colorDiff = abs(color.rgb - colorToAlpha.rgb);',
+          'colorDiff.r = max(max(colorDiff.r, colorDiff.g), colorDiff.b);',
+          'alpha = czm_branchFreeTernary(colorDiff.r < colorToAlpha.a, 0.0, alpha);',
+          '#endif'
+        ],
+        /* glsl */ `
+        // colorToAlpha is used as an identification of imagery layer here.
+        if (colorToAlpha == vec4(1.0)) {
+          float decodedValue = dot(color, vec3(16711680.0, 65280.0, 255.0));
+          float height = (decodedValue - 8388607.0) * 0.01;
+          float minHeight = czm_branchFreeTernary(
+            logarithmic_3,
+            pseudoLog(minHeight_1),
+            minHeight_1
+          );
+          float maxHeight = czm_branchFreeTernary(
+            logarithmic_3,
+            pseudoLog(maxHeight_2),
+            maxHeight_2
+          );
+          float value = czm_branchFreeTernary(
+            logarithmic_3,
+            pseudoLog(height),
+            height
+          );
+          float scaledHeight = clamp(
+            (value - minHeight) / (maxHeight - minHeight),
+            0.0,
+            1.0
+          );
+          vec4 mappedColor = texture(image_0, vec2(scaledHeight, 0.5));
+          color = mappedColor.rgb;
+        }`
+      )
   }))
 
   const terrainElevationHeightRange = useAtomValue(
     terrainElevationHeightRangeAtom
   )
+  const logarithmicTerrainElevation = useAtomValue(
+    logarithmicTerrainElevationAtom
+  )
   globeShader.material.uniforms.minHeight = terrainElevationHeightRange[0]
   globeShader.material.uniforms.maxHeight = terrainElevationHeightRange[1]
+  globeShader.material.uniforms.logarithmic = logarithmicTerrainElevation
   const scene = useCesium(({ scene }) => scene)
   scene.requestRender()
 

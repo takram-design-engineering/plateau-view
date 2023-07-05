@@ -135,7 +135,6 @@ export const GraphicsPanel: FC = () => {
             disabled={!ambientOcclusionEnabled}
             min={0}
             max={200}
-            decimalPlaces={1}
             atom={ambientOcclusionIntensityAtom}
           />
           <SliderParameterItem
@@ -143,7 +142,6 @@ export const GraphicsPanel: FC = () => {
             step={1}
             min={1}
             max={100}
-            decimalPlaces={0}
             disabled={!ambientOcclusionEnabled}
             atom={ambientOcclusionMaxRadiusAtom}
           />
@@ -151,7 +149,6 @@ export const GraphicsPanel: FC = () => {
             label='Bias'
             min={0}
             max={1}
-            decimalPlaces={2}
             disabled={!ambientOcclusionEnabled}
             atom={ambientOcclusionBiasAtom}
           />
@@ -194,7 +191,6 @@ export const GraphicsPanel: FC = () => {
             step={1}
             min={1}
             max={16}
-            decimalPlaces={0}
             atom={ambientOcclusionDirectionsAtom}
           />
           <SliderParameterItem
@@ -202,7 +198,6 @@ export const GraphicsPanel: FC = () => {
             step={1}
             min={1}
             max={16}
-            decimalPlaces={0}
             disabled={!ambientOcclusionEnabled}
             atom={ambientOcclusionStepsAtom}
           />
@@ -210,7 +205,6 @@ export const GraphicsPanel: FC = () => {
             label='Shade Black Point'
             min={0}
             max={1}
-            decimalPlaces={2}
             disabled={!ambientOcclusionEnabled}
             atom={ambientOcclusionBlackPointAtom}
           />
@@ -218,7 +212,6 @@ export const GraphicsPanel: FC = () => {
             label='Shade White Point'
             min={0}
             max={1}
-            decimalPlaces={2}
             disabled={!ambientOcclusionEnabled}
             atom={ambientOcclusionWhitePointAtom}
           />
@@ -226,7 +219,6 @@ export const GraphicsPanel: FC = () => {
             label='Shade Gamma'
             min={1}
             max={3}
-            decimalPlaces={2}
             disabled={!ambientOcclusionEnabled}
             atom={ambientOcclusionGammaAtom}
           />

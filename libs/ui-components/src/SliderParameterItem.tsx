@@ -10,6 +10,7 @@ import {
   type RefAttributes
 } from 'react'
 
+import { formatValue, type ValueFormatter } from './helpers/formatValue'
 import { inversePseudoLog, pseudoLog } from './helpers/pseudoLog'
 import { ParameterItem, type ParameterItemProps } from './ParameterItem'
 
@@ -41,12 +42,12 @@ export interface SliderParameterItemProps<Range extends boolean = false>
     Pick<ParameterItemProps, 'label' | 'labelFontSize' | 'description'> {
   step?: number
   range?: Range
-  decimalPlaces?: number
+  format?: ValueFormatter
   unit?: ReactNode
   logarithmic?: boolean
   logarithmicBase?: number
   atom: Range extends true
-    ? PrimitiveAtom<[number, number]> | Array<PrimitiveAtom<[number, number]>>
+    ? PrimitiveAtom<number[]> | Array<PrimitiveAtom<number[]>>
     : PrimitiveAtom<number> | Array<PrimitiveAtom<number>>
 }
 
@@ -54,8 +55,8 @@ interface InternalSliderParameterItemProps
   extends Omit<SliderParameterItemProps, 'atom' | 'range'> {
   range?: boolean
   atom:
-    | PrimitiveAtom<number | [number, number]>
-    | Array<PrimitiveAtom<number | [number, number]>>
+    | PrimitiveAtom<number | number[]>
+    | Array<PrimitiveAtom<number | number[]>>
 }
 
 const MIXED = 'MIXED'
@@ -73,7 +74,7 @@ export const SliderParameterItem = forwardRef<
       max = 10,
       step = Number.EPSILON,
       range = false,
-      decimalPlaces = 0,
+      format = formatValue,
       unit,
       logarithmic = false,
       logarithmicBase = 10,
@@ -87,7 +88,7 @@ export const SliderParameterItem = forwardRef<
       () =>
         Array.isArray(atomOrAtoms)
           ? atom(
-              (get): number | [number, number] | typeof MIXED | null => {
+              (get): number | number[] | typeof MIXED | null => {
                 if (atomOrAtoms.length === 0) {
                   return null
                 }
@@ -106,7 +107,7 @@ export const SliderParameterItem = forwardRef<
                   ? value
                   : MIXED
               },
-              (get, set, value: SetStateAction<number | [number, number]>) => {
+              (get, set, value: SetStateAction<number | number[]>) => {
                 atomOrAtoms.forEach(atom => {
                   set(atom, value)
                 })
@@ -135,7 +136,7 @@ export const SliderParameterItem = forwardRef<
           setValue(stepValue)
           onChange?.(event, stepValue, activeThumb)
         } else {
-          setValue(value as [number, number])
+          setValue(value as number[])
           onChange?.(event, value, activeThumb)
         }
       },
@@ -188,10 +189,8 @@ export const SliderParameterItem = forwardRef<
               : value != null && (
                   <>
                     {typeof value === 'number'
-                      ? value.toFixed(decimalPlaces)
-                      : value
-                          .map(value => value.toFixed(decimalPlaces))
-                          .join(' ~ ')}
+                      ? format(value)
+                      : value.map(value => format(value)).join(' ~ ')}
                     {unit != null && <> {unit}</>}
                   </>
                 )}

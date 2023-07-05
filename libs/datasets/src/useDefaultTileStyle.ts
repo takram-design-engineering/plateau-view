@@ -37,11 +37,12 @@ export function useDefaultTileStyle({
         evaluateColor: (feature: Cesium3DTileFeature, result: Color): Color => {
           const { color, opacity } = ref.current
           if (feature.getProperty('selected') === true) {
-            result = Color.fromCssColorString(
+            return Color.fromCssColorString(
               theme.palette.primary.main,
               result
             )
-          } else if (color == null) {
+          }
+          if (color == null) {
             result = Color.fromCssColorString(
               colorMode === 'light' ? '#ffffff' : '#444444',
               result

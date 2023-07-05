@@ -92,7 +92,6 @@ export const Default: Story = {
               label='Slider'
               min={0}
               max={10}
-              decimalPlaces={1}
               atom={sliderAtom1}
             />
             <SliderParameterItem
@@ -106,7 +105,7 @@ export const Default: Story = {
               label='Range Slider'
               min={0}
               max={10}
-              decimalPlaces={1}
+              // @ts-expect-error TODO: Fix type
               atom={sliderAtom3}
             />
             <SegmentParameterItem

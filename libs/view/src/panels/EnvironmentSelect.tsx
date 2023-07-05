@@ -19,6 +19,7 @@ import {
   QuantitativeColorLegend,
   SelectItem,
   SliderParameterItem,
+  SwitchParameterItem,
   type SelectItemProps
 } from '@takram/plateau-ui-components'
 
@@ -28,6 +29,7 @@ import lightMapImage from '../assets/light_map.webp'
 import satelliteImage from '../assets/satellite.webp'
 import {
   environmentTypeAtom,
+  logarithmicTerrainElevationAtom,
   terrainElevationHeightRangeAtom
 } from '../states/app'
 
@@ -148,7 +150,7 @@ const ElevationLegendButton: FC = () => {
         }}
       >
         <FloatingPanel>
-          <ParameterList sx={{ width: 240, marginX: 2 }}>
+          <ParameterList sx={{ width: 240, marginX: 2, marginY: 1 }}>
             <SliderParameterItem
               label='標高範囲'
               min={-10}
@@ -158,6 +160,10 @@ const ElevationLegendButton: FC = () => {
               unit='m'
               logarithmic
               atom={terrainElevationHeightRangeAtom}
+            />
+            <SwitchParameterItem
+              label='対数スケール'
+              atom={logarithmicTerrainElevationAtom}
             />
           </ParameterList>
         </FloatingPanel>

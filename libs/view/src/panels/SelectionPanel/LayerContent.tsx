@@ -13,6 +13,7 @@ import { LayerActions } from './LayerActions'
 import { LayerColorSection } from './LayerColorSection'
 import { LayerHiddenFeaturesSection } from './LayerHiddenFeaturesSection'
 import { LayerOpacitySection } from './LayerOpacitySection'
+import { LayerShowWireframeSection } from './LayerShowWireframeSection'
 
 export interface LayerContentProps<T extends LayerType> {
   values: (SelectionGroup & {
@@ -43,6 +44,7 @@ export function LayerContent<T extends LayerType>({
       <InspectorItem>
         <LayerHiddenFeaturesSection layers={values} />
         <LayerOpacitySection layers={values} />
+        <LayerShowWireframeSection layers={values} />
         <LayerColorSection layers={values} />
       </InspectorItem>
     </>

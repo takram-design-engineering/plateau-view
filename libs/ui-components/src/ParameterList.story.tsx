@@ -26,7 +26,7 @@ const switchAtom = atom(false)
 const selectAtom = atom(1)
 const sliderAtom1 = atom(1)
 const sliderAtom2 = atom(1)
-const sliderAtom3 = atom<[number, number]>([1, 5])
+const sliderAtom3 = atom([1, 5])
 const segmentAtom = atom([1])
 const colorSchemeAtom = atom<ColorScheme>(colorSchemeMagma)
 
@@ -55,13 +55,7 @@ export const Default: Story = {
           [4, 'Value 4']
         ]}
       />
-      <SliderParameterItem
-        label='Slider'
-        min={0}
-        max={10}
-        decimalPlaces={1}
-        atom={sliderAtom1}
-      />
+      <SliderParameterItem label='Slider' min={0} max={10} atom={sliderAtom1} />
       <SliderParameterItem
         label='Discrete Slider'
         min={0}
@@ -74,7 +68,6 @@ export const Default: Story = {
         min={0}
         max={10}
         range
-        decimalPlaces={1}
         atom={sliderAtom3}
       />
       <SegmentParameterItem
@@ -129,7 +122,6 @@ export const MediumFontSize: Story = {
         labelFontSize='medium'
         min={0}
         max={10}
-        decimalPlaces={1}
         atom={sliderAtom1}
       />
       <SliderParameterItem
@@ -145,7 +137,6 @@ export const MediumFontSize: Story = {
         labelFontSize='medium'
         min={0}
         max={10}
-        decimalPlaces={1}
         range
         atom={sliderAtom3}
       />

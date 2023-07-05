@@ -22,6 +22,7 @@ import {
   debugSphericalHarmonicsAtom,
   enableTerrainLightingAtom,
   environmentTypeAtom,
+  logarithmicTerrainElevationAtom,
   showAreaEntitiesAtom,
   showDataFormatsAtom,
   showSelectionBoundingSphereAtom,
@@ -36,6 +37,7 @@ const resetAtom = atomWithResettableAtoms([
   debugSphericalHarmonicsAtom,
   enableTerrainLightingAtom,
   environmentTypeAtom,
+  logarithmicTerrainElevationAtom,
   showAreaEntitiesAtom,
   showDataFormatsAtom,
   showSelectionBoundingSphereAtom,
@@ -98,6 +100,10 @@ export const AppPanel: FC = () => {
             logarithmic
             atom={terrainElevationHeightRangeAtom}
             disabled={environmentType !== 'elevation'}
+          />
+          <SwitchParameterItem
+            label='Logarithmic Terrain Elevation'
+            atom={logarithmicTerrainElevationAtom}
           />
           <SwitchParameterItem
             label='Tileset Texture'

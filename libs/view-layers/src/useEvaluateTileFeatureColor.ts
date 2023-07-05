@@ -8,7 +8,7 @@ import { type EvaluateTileFeatureColor } from '@takram/plateau-datasets'
 export interface EvaluateTileFeatureColorParams {
   colorPropertyAtom: Atom<string | null>
   colorSchemeAtom: Atom<ColorScheme>
-  colorRangeAtom: Atom<[number, number]>
+  colorRangeAtom: Atom<number[]>
 }
 
 export function useEvaluateTileFeatureColor({
