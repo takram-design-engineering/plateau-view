@@ -29,7 +29,7 @@ export default meta
 
 type Story = StoryObj<typeof ColorSchemeSelectItemContent>
 
-const Components: FC = () => {
+const Component: FC = () => {
   const [value, setValue] = useState('')
   const handleChange = <T,>(event: SelectChangeEvent<T>): void => {
     console.log(event)
@@ -81,5 +81,5 @@ const Components: FC = () => {
 }
 
 export const Default: Story = {
-  render: () => <Components />
+  render: () => <Component />
 }

@@ -30,7 +30,7 @@ export default meta
 
 type Story = StoryObj<typeof AppBar>
 
-const StoryComponent: FC = () => {
+const Component: FC = () => {
   const [tool, setTool] = useState<string | null>(null)
   const handleChange = useCallback((event: unknown, value: string | null) => {
     if (value != null) {
@@ -85,5 +85,5 @@ const StoryComponent: FC = () => {
 }
 
 export const Default: Story = {
-  render: () => <StoryComponent />
+  render: () => <Component />
 }

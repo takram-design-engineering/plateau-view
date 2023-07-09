@@ -19,7 +19,7 @@ type Story = StoryObj<typeof FloatingToolbar>
 
 const valueAtom = atom(1)
 
-const StoryComponent: FC = () => {
+const Component: FC = () => {
   const [value, setValue] = useAtom(valueAtom)
   return (
     <FloatingToolbar
@@ -41,5 +41,5 @@ const StoryComponent: FC = () => {
 }
 
 export const Default: Story = {
-  render: () => <StoryComponent />
+  render: () => <Component />
 }
