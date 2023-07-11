@@ -1,7 +1,11 @@
 import { createSvgIcon, styled } from '@mui/material'
 
 const Icon = createSvgIcon(
-  <path d='M11.9995 16.0384L6.3457 10.38464L7.39953 9.33081L11.9995 13.9308L16.5995 9.33081L17.6534 10.38464L11.9995 16.0384Z' />,
+  <path
+    fillRule='evenodd'
+    clipRule='evenodd'
+    d='M6.57617 10.4242L7.4247 9.57568L12.0004 14.1514L16.5762 9.57568L17.4247 10.4242L12.0004 15.8485L6.57617 10.4242Z'
+  />,
   'ExpandArrow'
 )
 
