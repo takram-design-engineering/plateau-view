@@ -1,4 +1,6 @@
+export * from './AddressIcon'
 export * from './BuildingIcon'
+export * from './DatasetIcon'
 export * from './DropDownIcon'
 export * from './ExpandArrowIcon'
 export * from './HandIcon'
