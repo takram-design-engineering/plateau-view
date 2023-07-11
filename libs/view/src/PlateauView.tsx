@@ -1,5 +1,6 @@
 import { Cartesian3, HeadingPitchRoll } from '@cesium/engine'
 import { useSetAtom } from 'jotai'
+import dynamic from 'next/dynamic'
 import { Suspense, useCallback, useEffect, type FC } from 'react'
 
 import { CurrentTime, ViewLocator } from '@takram/plateau-cesium'
@@ -36,11 +37,15 @@ import { DateControlButton } from './panels/DateControlButton'
 import { EnvironmentSelect } from './panels/EnvironmentSelect'
 import { LocationBreadcrumbs } from './panels/LocationBreadcrumbs'
 import { MainMenuButton } from './panels/MainMenuButton'
-import { MainPanel } from './panels/MainPanel'
 import { SelectionPanel } from './panels/SelectionPanel'
 import { SettingsButton } from './panels/SettingsButton'
 import { ToolButtons } from './panels/ToolButtons'
 import { readyAtom } from './states/app'
+
+const MainPanel = dynamic(
+  async () => (await import('./panels/MainPanel')).MainPanel,
+  { ssr: false }
+)
 
 const initialDestination = Cartesian3.fromDegrees(139.755, 35.675, 1000)
 const initialOrientation = new HeadingPitchRoll(Math.PI * 0.4, -Math.PI * 0.2)
@@ -145,7 +150,11 @@ export const PlateauView: FC<PlateauViewProps> = () => {
       <KeyBindings />
       <ScreenSpaceSelection />
       <AppOverlayLayout
-        main={<MainPanel />}
+        main={
+          <Suspense>
+            <MainPanel />
+          </Suspense>
+        }
         aside={<SelectionPanel />}
         developer={<DeveloperPanels />}
       />
