@@ -1,6 +1,16 @@
 import { styled } from '@mui/material'
+import { atom, useSetAtom, type Atom } from 'jotai'
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react'
-import { memo, type FC, type ReactNode } from 'react'
+import {
+  createContext,
+  memo,
+  useEffect,
+  useMemo,
+  useRef,
+  type FC,
+  type ReactNode
+} from 'react'
+import invariant from 'tiny-invariant'
 
 import { DarkThemeOverride } from './DarkThemeOverride'
 
@@ -155,6 +165,15 @@ const BottomRightColumn = styled('div')({
   alignItems: 'end'
 })
 
+export interface AppOverlayLayoutContextValue {
+  maxMainHeightAtom: Atom<number>
+}
+
+export const AppOverlayLayoutContext =
+  createContext<AppOverlayLayoutContextValue>({
+    maxMainHeightAtom: atom(0)
+  })
+
 export interface AppOverlayLayoutProps {
   spacing?: number
   mainWidth?: number
@@ -178,48 +197,73 @@ export const AppOverlayLayout: FC<AppOverlayLayoutProps> = memo(
     bottomLeft,
     bottomRight,
     developer
-  }) => (
-    <Root>
-      <RootColumn>
-        <RootGrid spacing={spacing}>
-          <SizeContainer>
-            <MainContainer
-              spacing={spacing}
-              mainWidth={mainWidth}
-              contextWidth={contextWidth}
-            >
-              <Main
-                spacing={spacing}
-                mainWidth={mainWidth}
-                contextWidth={contextWidth}
-              >
-                {main}
-              </Main>
-              <Context
-                spacing={spacing}
-                mainWidth={mainWidth}
-                contextWidth={contextWidth}
-              >
-                {context}
-              </Context>
-            </MainContainer>
-          </SizeContainer>
-          {aside}
-        </RootGrid>
-        <DarkThemeOverride>
-          <BottomGrid spacing={spacing}>
-            <BottomLeftColumn>{bottomLeft}</BottomLeftColumn>
-            <BottomRightColumn>{bottomRight}</BottomRightColumn>
-          </BottomGrid>
-        </DarkThemeOverride>
-      </RootColumn>
-      {developer != null && (
-        <DeveloperColumn>
-          <DarkThemeOverride>
-            <Developer>{developer}</Developer>
-          </DarkThemeOverride>
-        </DeveloperColumn>
-      )}
-    </Root>
-  )
+  }) => {
+    const maxMainHeightAtom = useMemo(() => atom(0), [])
+    const setMaxMainHeight = useSetAtom(maxMainHeightAtom)
+
+    const mainRef = useRef<HTMLDivElement>(null)
+    useEffect(() => {
+      invariant(mainRef.current != null)
+      setMaxMainHeight(mainRef.current.getBoundingClientRect().height)
+      const observer = new ResizeObserver(([entry]) => {
+        setMaxMainHeight(entry.contentRect.height)
+      })
+      observer.observe(mainRef.current)
+      return () => {
+        observer.disconnect()
+      }
+    }, [setMaxMainHeight])
+
+    const contextValue = useMemo(
+      () => ({ maxMainHeightAtom }),
+      [maxMainHeightAtom]
+    )
+
+    return (
+      <AppOverlayLayoutContext.Provider value={contextValue}>
+        <Root>
+          <RootColumn>
+            <RootGrid spacing={spacing}>
+              <SizeContainer ref={mainRef}>
+                <MainContainer
+                  spacing={spacing}
+                  mainWidth={mainWidth}
+                  contextWidth={contextWidth}
+                >
+                  <Main
+                    spacing={spacing}
+                    mainWidth={mainWidth}
+                    contextWidth={contextWidth}
+                  >
+                    {main}
+                  </Main>
+                  <Context
+                    spacing={spacing}
+                    mainWidth={mainWidth}
+                    contextWidth={contextWidth}
+                  >
+                    {context}
+                  </Context>
+                </MainContainer>
+              </SizeContainer>
+              {aside}
+            </RootGrid>
+            <DarkThemeOverride>
+              <BottomGrid spacing={spacing}>
+                <BottomLeftColumn>{bottomLeft}</BottomLeftColumn>
+                <BottomRightColumn>{bottomRight}</BottomRightColumn>
+              </BottomGrid>
+            </DarkThemeOverride>
+          </RootColumn>
+          {developer != null && (
+            <DeveloperColumn>
+              <DarkThemeOverride>
+                <Developer>{developer}</Developer>
+              </DarkThemeOverride>
+            </DeveloperColumn>
+          )}
+        </Root>
+      </AppOverlayLayoutContext.Provider>
+    )
+  }
 )

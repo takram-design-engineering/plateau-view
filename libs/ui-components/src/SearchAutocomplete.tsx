@@ -5,6 +5,7 @@ import {
   createSvgIcon,
   Divider,
   inputAdornmentClasses,
+  ListSubheader,
   styled,
   type AutocompleteGetTagProps,
   type AutocompleteOwnerState,
@@ -29,7 +30,6 @@ import { EntityTitleButton } from './EntityTitleButton'
 import { AddressIcon, BuildingIcon, DatasetIcon } from './icons'
 import { SearchField } from './SearchField'
 import { SearchListbox } from './SearchListbox'
-import { SearchListGroup } from './SearchListGroup'
 
 const Root = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -117,11 +117,11 @@ function getOptionLabel(value: string | SearchInputValue): string {
 
 function renderGroup(params: AutocompleteRenderGroupParams): ReactNode {
   return [
-    <SearchListGroup>
+    <ListSubheader component='div'>
       {isSearchInputType(params.group)
         ? groupNames[params.group]
         : params.group}
-    </SearchListGroup>,
+    </ListSubheader>,
     params.children
   ]
 }
@@ -176,6 +176,7 @@ type AutocompleteProps = MuiAutocompleteProps<
 export type SearchAutocompleteProps = Omit<AutocompleteProps, 'renderInput'> & {
   placeholder?: ReactNode
   endAdornment?: ReactNode
+  maxHeight?: number
   children?: ReactNode
 }
 
@@ -184,7 +185,14 @@ export const SearchAutocomplete = forwardRef<
   SearchAutocompleteProps
 >(
   (
-    { open: openProp = false, placeholder, endAdornment, children, ...props },
+    {
+      open: openProp = false,
+      placeholder,
+      endAdornment,
+      maxHeight,
+      children,
+      ...props
+    },
     ref
   ) => {
     const renderInput = useCallback(
@@ -231,6 +239,10 @@ export const SearchAutocomplete = forwardRef<
           PopperComponent={PopperComponent}
           PaperComponent={PaperComponent}
           ListboxComponent={SearchListbox}
+          ListboxProps={{
+            // @ts-expect-error Override prop type
+            maxHeight
+          }}
           {...props}
           open={open}
           value={value}
