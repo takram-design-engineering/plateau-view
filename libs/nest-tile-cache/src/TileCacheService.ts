@@ -76,6 +76,9 @@ export class TileCacheService {
   }
 
   async isDiscarded(path: string, coords: Coordinates): Promise<boolean> {
+    if (this.cache == null) {
+      return false
+    }
     const docs = await this.firestore.getAll(
       ...[coords, ...getParents(coords)].map(coords =>
         this.firestore.doc(makeDocumentId(path, coords))
@@ -85,6 +88,9 @@ export class TileCacheService {
   }
 
   async discardOne(path: string, coords: Coordinates): Promise<void> {
+    if (this.cache == null) {
+      return
+    }
     const doc = await this.firestore.doc(makeDocumentId(path, coords)).get()
     if (doc.exists) {
       return
