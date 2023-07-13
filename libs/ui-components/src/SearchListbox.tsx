@@ -2,9 +2,10 @@ import { styled, useTheme } from '@mui/material'
 import { sum } from 'lodash'
 import {
   Children,
-  cloneElement,
+  createContext,
   forwardRef,
   useCallback,
+  useContext,
   useMemo,
   type FC,
   type HTMLAttributes
@@ -12,12 +13,19 @@ import {
 import { VariableSizeList, type ListChildComponentProps } from 'react-window'
 import invariant from 'tiny-invariant'
 
-const OuterElement = styled('div')(({ theme }) => ({
-  paddingTop: theme.spacing(1),
-  paddingBottom: theme.spacing(1)
-}))
+const OuterElementContext = createContext({})
 
-const InnerElement = styled('div')({})
+const OuterElement = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
+  (props, ref) => {
+    const outerProps = useContext(OuterElementContext)
+    return <div ref={ref} {...props} {...outerProps} />
+  }
+)
+
+const InnerElement = styled('div')(({ theme }) => ({
+  marginTop: theme.spacing(1),
+  marginBottom: theme.spacing(1)
+}))
 
 const Root = styled('div')({
   height: '100%'
@@ -25,14 +33,19 @@ const Root = styled('div')({
 
 const Row: FC<ListChildComponentProps> = ({ data, index, style }) => {
   invariant(typeof style.top === 'number')
+  invariant(typeof style.height === 'number')
   const theme = useTheme()
   const listPadding = parseFloat(theme.spacing(1))
-  return cloneElement(data[index], {
-    style: {
-      ...style,
-      top: +style.top + listPadding
-    }
-  })
+  return (
+    <div
+      style={{
+        ...style,
+        top: style.top + listPadding
+      }}
+    >
+      {data[index]}
+    </div>
+  )
 }
 
 interface SearchListboxProps extends HTMLAttributes<HTMLElement> {
@@ -43,7 +56,13 @@ interface SearchListboxProps extends HTMLAttributes<HTMLElement> {
 
 export const SearchListbox = forwardRef<HTMLDivElement, SearchListboxProps>(
   (
-    { itemSize: itemSizeProp, maxItemCount = 10, maxHeight, children },
+    {
+      itemSize: itemSizeProp,
+      maxItemCount = 10,
+      maxHeight,
+      children,
+      ...props
+    },
     forwardedRef
   ) => {
     const theme = useTheme()
@@ -86,17 +105,20 @@ export const SearchListbox = forwardRef<HTMLDivElement, SearchListboxProps>(
 
     return (
       <Root ref={forwardedRef}>
-        <VariableSizeList
-          itemData={itemData}
-          itemCount={itemCount}
-          itemSize={getItemSize}
-          width='auto'
-          height={height}
-          outerElementType={OuterElement}
-          innerElementType={InnerElement}
-        >
-          {Row}
-        </VariableSizeList>
+        <OuterElementContext.Provider value={props}>
+          <VariableSizeList
+            itemData={itemData}
+            itemCount={itemCount}
+            itemSize={getItemSize}
+            width='auto'
+            height={height}
+            outerElementType={OuterElement}
+            innerElementType={InnerElement}
+            overscanCount={Math.ceil(itemCount / itemSize)}
+          >
+            {Row}
+          </VariableSizeList>
+        </OuterElementContext.Provider>
       </Root>
     )
   }

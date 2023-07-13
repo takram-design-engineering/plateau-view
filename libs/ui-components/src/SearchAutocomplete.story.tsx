@@ -29,19 +29,19 @@ export default meta
 type Story = StoryObj<typeof SearchAutocomplete>
 
 const options = [
-  { type: 'dataset', name: 'Dataset 1' },
-  { type: 'dataset', name: 'Dataset 2' },
-  { type: 'dataset', name: 'Dataset 3' },
-  { type: 'dataset', name: 'Dataset 4' },
-  { type: 'building', name: 'Building 1' },
-  { type: 'building', name: 'Building 2' },
-  { type: 'building', name: 'Building 3' },
-  { type: 'building', name: 'Building 4' },
-  { type: 'address', name: 'Address 1' },
-  { type: 'address', name: 'Address 2' },
-  { type: 'address', name: 'Address 3' },
-  { type: 'address', name: 'Address 4' }
-] as const
+  ...[...Array(1000)].map((_, index) => ({
+    type: 'dataset' as const,
+    name: `Dataset ${index}`
+  })),
+  ...[...Array(1000)].map((_, index) => ({
+    type: 'building' as const,
+    name: `Building ${index}`
+  })),
+  ...[...Array(1000)].map((_, index) => ({
+    type: 'address' as const,
+    name: `Address ${index}`
+  }))
+]
 
 const Component: FC = () => {
   const [focused, setFocused] = useState(false)
@@ -69,16 +69,16 @@ const Component: FC = () => {
             <Divider light />
             {!focused ? (
               <LayerList>
-                <LayerListItem iconComponent={LayerIcon} title='Layer' />
-                <LayerListItem iconComponent={LayerIcon} title='Layer' />
-                <LayerListItem iconComponent={LayerIcon} title='Layer' />
-                <LayerListItem iconComponent={LayerIcon} title='Layer' />
-                <LayerListItem iconComponent={LayerIcon} title='Layer' />
+                <LayerListItem iconComponent={LayerIcon} title='レイヤー 1' />
+                <LayerListItem iconComponent={LayerIcon} title='レイヤー 2' />
+                <LayerListItem iconComponent={LayerIcon} title='レイヤー 3' />
+                <LayerListItem iconComponent={LayerIcon} title='レイヤー 4' />
+                <LayerListItem iconComponent={LayerIcon} title='レイヤー 5' />
               </LayerList>
             ) : (
               <List component='div' dense>
                 <ListSubheader component='div'>
-                  Layers
+                  このエリアのデータセット
                   <ListItemSecondaryAction>
                     <Button variant='text' size='small'>
                       絞り込み
@@ -98,7 +98,7 @@ const Component: FC = () => {
                   title='Dataset'
                 />
                 <ListSubheader>
-                  Buildings
+                  このエリアの建築物
                   <ListItemSecondaryAction>
                     <Button variant='text' size='small'>
                       絞り込み
@@ -118,7 +118,7 @@ const Component: FC = () => {
                   title='Building'
                 />
                 <ListSubheader>
-                  Addresses
+                  このエリアの住所
                   <ListItemSecondaryAction>
                     <Button variant='text' size='small'>
                       絞り込み

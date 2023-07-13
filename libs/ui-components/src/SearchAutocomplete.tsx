@@ -21,6 +21,8 @@ import {
   useCallback,
   useState,
   type ComponentType,
+  type FocusEvent,
+  type ForwardedRef,
   type HTMLAttributes,
   type ReactNode
 } from 'react'
@@ -88,37 +90,37 @@ const CloseIcon = createSvgIcon(
   'Close'
 )
 
-export type SearchInputType = 'dataset' | 'building' | 'address'
+export type SearchOptionType = 'dataset' | 'building' | 'address'
 
-function isSearchInputType(value: unknown): value is SearchInputType {
+function isSearchOptionType(value: unknown): value is SearchOptionType {
   return value === 'dataset' || value === 'building' || value === 'address'
 }
 
-export interface SearchInputValue {
-  type: SearchInputType
+export interface SearchOption {
+  type: SearchOptionType
   name: string
 }
 
-const iconComponents: Record<SearchInputType, ComponentType> = {
+const iconComponents: Record<SearchOptionType, ComponentType> = {
   dataset: DatasetIcon,
   building: BuildingIcon,
   address: AddressIcon
 }
 
-const groupNames: Record<SearchInputType, string> = {
+const groupNames: Record<SearchOptionType, string> = {
   dataset: 'データセット',
   building: '建築物',
   address: '住所'
 }
 
-function getOptionLabel(value: string | SearchInputValue): string {
+function getOptionLabel(value: string | SearchOption): string {
   return typeof value === 'string' ? value : value.name
 }
 
 function renderGroup(params: AutocompleteRenderGroupParams): ReactNode {
   return [
     <ListSubheader component='div'>
-      {isSearchInputType(params.group)
+      {isSearchOptionType(params.group)
         ? groupNames[params.group]
         : params.group}
     </ListSubheader>,
@@ -128,7 +130,7 @@ function renderGroup(params: AutocompleteRenderGroupParams): ReactNode {
 
 function renderOption(
   props: HTMLAttributes<HTMLLIElement>,
-  option: SearchInputValue,
+  option: SearchOption,
   state: AutocompleteRenderOptionState
 ): ReactNode {
   return (
@@ -142,10 +144,10 @@ function renderOption(
 }
 
 function renderTags(
-  values: readonly SearchInputValue[],
+  values: readonly SearchOption[],
   getTagProps: AutocompleteGetTagProps,
   ownerState: AutocompleteOwnerState<
-    SearchInputValue,
+    SearchOption,
     true,
     false,
     true,
@@ -162,18 +164,19 @@ function renderTags(
   ))
 }
 
-function groupBy(option: SearchInputValue): string {
+function groupBy(option: SearchOption): string {
   return option.type
 }
 
 type AutocompleteProps = MuiAutocompleteProps<
-  SearchInputValue,
+  SearchOption,
   true, // Multiple
   false, // DisableClearable
   true // FreeSolo
 >
 
 export type SearchAutocompleteProps = Omit<AutocompleteProps, 'renderInput'> & {
+  inputRef?: ForwardedRef<HTMLInputElement>
   placeholder?: ReactNode
   endAdornment?: ReactNode
   maxHeight?: number
@@ -186,18 +189,40 @@ export const SearchAutocomplete = forwardRef<
 >(
   (
     {
+      inputRef,
       open: openProp = false,
       placeholder,
       endAdornment,
       maxHeight,
       children,
+      onChange,
+      onInputChange,
+      onFocus,
+      onBlur,
       ...props
     },
     ref
   ) => {
+    const [focused, setFocused] = useState(false)
+    const handleFocus = useCallback(
+      (event: FocusEvent<HTMLInputElement>) => {
+        setFocused(true)
+        onFocus?.(event)
+      },
+      [onFocus]
+    )
+    const handleBlur = useCallback(
+      (event: FocusEvent<HTMLInputElement>) => {
+        setFocused(false)
+        onBlur?.(event)
+      },
+      [onBlur]
+    )
+
     const renderInput = useCallback(
       (params: AutocompleteRenderInputParams) => (
         <SearchField
+          inputRef={inputRef}
           placeholder={placeholder}
           {...params}
           InputProps={{
@@ -205,29 +230,37 @@ export const SearchAutocomplete = forwardRef<
             ...(params.InputProps.startAdornment != null
               ? { startAdornment: params.InputProps.startAdornment }
               : {}),
-            ...(params.InputProps.endAdornment != null
+            ...(params.InputProps.endAdornment != null || focused
               ? { endAdornment: params.InputProps.endAdornment }
               : { endAdornment })
           }}
         />
       ),
-      [placeholder, endAdornment]
+      [inputRef, placeholder, endAdornment, focused]
     )
 
-    const [value, setValue] = useState<Array<string | SearchInputValue>>([])
+    const [value, setValue] = useState<Array<string | SearchOption>>([])
     const [inputValue, setInputValue] = useState('')
 
     const handleChange: NonNullable<AutocompleteProps['onChange']> =
-      useCallback((event, value, reason, details) => {
-        setValue(value)
-      }, [])
+      useCallback(
+        (event, value, reason, details) => {
+          setValue(value)
+          onChange?.(event, value, reason, details)
+        },
+        [onChange]
+      )
 
     const handleInputChange: NonNullable<AutocompleteProps['onInputChange']> =
-      useCallback((event, value, reason) => {
-        setInputValue(value)
-      }, [])
+      useCallback(
+        (event, value, reason) => {
+          setInputValue(value)
+          onInputChange?.(event, value, reason)
+        },
+        [onInputChange]
+      )
 
-    const open = openProp || inputValue !== ''
+    const open = openProp || value.length > 0 || inputValue !== ''
     return (
       <Root>
         <Autocomplete
@@ -255,6 +288,8 @@ export const SearchAutocomplete = forwardRef<
           renderTags={renderTags}
           onChange={handleChange}
           onInputChange={handleInputChange}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
         />
         {!open && children}
       </Root>
