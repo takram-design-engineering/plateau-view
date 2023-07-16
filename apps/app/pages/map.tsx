@@ -1,5 +1,5 @@
 import { Math as CesiumMath, Rectangle } from '@cesium/engine'
-import { Box, Paper, Select, SelectChangeEvent } from '@mui/material'
+import { Box, Paper, Select, type SelectChangeEvent } from '@mui/material'
 import maplibre from 'maplibre-gl'
 import { type NextPage } from 'next'
 import { useCallback, useRef, useState } from 'react'
