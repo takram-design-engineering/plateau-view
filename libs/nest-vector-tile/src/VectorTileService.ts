@@ -92,14 +92,6 @@ export class VectorTileService {
     })
     map.load(this.mapStyle)
 
-    // Render upto the maximum level using the native maximum level as data.
-    // TODO: Reduce visible layers
-    if (options.zoom > this.options.nativeMaximumLevel) {
-      this.mapStyle.layers.forEach(({ id }) => {
-        map.setLayerZoomRange(id, 0, this.options.maximumLevel)
-      })
-    }
-
     return await new Promise<Uint8Array>((resolve, reject) => {
       map.render(options, (error, buffer) => {
         map.release()
