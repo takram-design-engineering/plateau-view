@@ -17,12 +17,13 @@ export interface LayerStylesOptions {
 }
 
 function createBoundaryStyles(options: LayerStylesOptions): LayerStyles {
+  const dasharray = [2, 2, 0.01, 2]
   return {
     '行政区画界線25000所属界（所属を明示する境界線）': {
       paint: {
         'line-color': options.municipalityBoundaryColor,
         'line-width': 1,
-        'line-dasharray': [1.5, 2, 0.01, 2]
+        'line-dasharray': dasharray
       },
       layout: {
         'line-cap': 'round',
@@ -33,7 +34,7 @@ function createBoundaryStyles(options: LayerStylesOptions): LayerStyles {
       paint: {
         'line-color': options.municipalityBoundaryColor,
         'line-width': 1,
-        'line-dasharray': [1.5, 2, 0.01, 2]
+        'line-dasharray': dasharray
       },
       layout: {
         'line-cap': 'round',
@@ -44,7 +45,7 @@ function createBoundaryStyles(options: LayerStylesOptions): LayerStyles {
       paint: {
         'line-color': options.prefectureBoundaryColor,
         'line-width': 1,
-        'line-dasharray': [1.5, 2, 0.01, 2]
+        'line-dasharray': dasharray
       },
       layout: {
         'line-cap': 'round',
