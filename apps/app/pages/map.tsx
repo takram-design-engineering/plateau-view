@@ -1,22 +1,22 @@
 import { Math as CesiumMath, Rectangle } from '@cesium/engine'
-import { Box } from '@mui/material'
+import { Box, Paper, Select, SelectChangeEvent } from '@mui/material'
 import maplibre from 'maplibre-gl'
 import { type NextPage } from 'next'
 import { useCallback, useRef, useState } from 'react'
-import {
-  Map,
-  type MapProps,
-  type MapRef,
-  type ViewStateChangeEvent
-} from 'react-map-gl'
+import { Map, type MapRef, type ViewStateChangeEvent } from 'react-map-gl'
 import invariant from 'tiny-invariant'
 
 import { Canvas, type CesiumRoot } from '@takram/plateau-cesium'
 import { VectorMapImageryLayer } from '@takram/plateau-datasets'
 
-import mapStyle from '../public/assets/mapStyles/light.json'
-
 import 'maplibre-gl/dist/maplibre-gl.css'
+
+import { SelectItem } from '@takram/plateau-ui-components'
+import {
+  darkStyle,
+  lightStyle,
+  standardStyle
+} from '@takram/plateau-vector-map-style'
 
 const rectangleScratch = new Rectangle()
 
@@ -62,6 +62,11 @@ const Page: NextPage = () => {
   //   }
   // }, [camera])
 
+  const [path, setPath] = useState('standard')
+  const handleChange = useCallback((event: SelectChangeEvent) => {
+    setPath(event.target.value)
+  }, [])
+
   invariant(
     process.env.NEXT_PUBLIC_TILES_BASE_URL != null,
     'Missing environment variable: NEXT_PUBLIC_TILES_BASE_URL'
@@ -97,6 +102,7 @@ const Page: NextPage = () => {
         >
           <VectorMapImageryLayer
             baseUrl={process.env.NEXT_PUBLIC_TILES_BASE_URL}
+            path={path}
           />
         </Canvas>
       </Box>
@@ -111,7 +117,13 @@ const Page: NextPage = () => {
         <Map
           ref={mapRef}
           mapLib={maplibre}
-          mapStyle={mapStyle as MapProps['mapStyle']}
+          mapStyle={
+            {
+              standard: standardStyle,
+              light: lightStyle,
+              dark: darkStyle
+            }[path]
+          }
           minZoom={4}
           maxZoom={24}
           onMove={handleMove}
@@ -126,6 +138,13 @@ const Page: NextPage = () => {
           }}
         />
       </Box>
+      <Paper sx={{ position: 'absolute', top: 0, left: 0, margin: 1 }}>
+        <Select variant='filled' value={path} onChange={handleChange}>
+          <SelectItem value='standard'>Standard</SelectItem>
+          <SelectItem value='light'>Light</SelectItem>
+          <SelectItem value='dark'>Dark</SelectItem>
+        </Select>
+      </Paper>
     </Box>
   )
 }
