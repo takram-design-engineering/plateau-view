@@ -7,12 +7,13 @@ type Color = string
 export interface LayerStylesOptions {
   landColor: Color
   waterColor: Color
-  seaRouteColor: Color
-  municipalityBoundaryColor: Color
-  prefectureBoundaryColor: Color
-  minorRoadColor: Color
-  majorRoadColor: Color
-  highwayColor: Color
+  seaRouteColor?: Color
+  boundaryColor: Color
+  municipalityBoundaryColor?: Color
+  prefectureBoundaryColor?: Color
+  roadColor: Color
+  majorRoadColor?: Color
+  highwayColor?: Color
   railwayColor: Color
 }
 
@@ -21,7 +22,8 @@ function createBoundaryStyles(options: LayerStylesOptions): LayerStyles {
   return {
     '行政区画界線25000所属界（所属を明示する境界線）': {
       paint: {
-        'line-color': options.municipalityBoundaryColor,
+        'line-color':
+          options.municipalityBoundaryColor ?? options.boundaryColor,
         'line-width': 1,
         'line-dasharray': dasharray
       },
@@ -32,7 +34,8 @@ function createBoundaryStyles(options: LayerStylesOptions): LayerStyles {
     },
     行政区画界線25000市区町村界: {
       paint: {
-        'line-color': options.municipalityBoundaryColor,
+        'line-color':
+          options.municipalityBoundaryColor ?? options.boundaryColor,
         'line-width': 1,
         'line-dasharray': dasharray
       },
@@ -43,7 +46,7 @@ function createBoundaryStyles(options: LayerStylesOptions): LayerStyles {
     },
     '行政区画界線25000都府県界及び北海道総合振興局・振興局界': {
       paint: {
-        'line-color': options.prefectureBoundaryColor,
+        'line-color': options.prefectureBoundaryColor ?? options.boundaryColor,
         'line-width': 1,
         'line-dasharray': dasharray
       },
@@ -54,7 +57,7 @@ function createBoundaryStyles(options: LayerStylesOptions): LayerStyles {
     },
     行政区画界線地方界: {
       paint: {
-        'line-color': options.prefectureBoundaryColor,
+        'line-color': options.prefectureBoundaryColor ?? options.boundaryColor,
         'line-width': 1,
         'line-opacity': 0.5
       }
@@ -82,6 +85,11 @@ function createLandWaterStyles(options: LayerStylesOptions): LayerStyles {
         'fill-color': options.landColor
       }
     },
+    水部構造物面: {
+      paint: {
+        'fill-color': options.landColor
+      }
+    },
     水域: {
       maxZoom: null,
       paint: {
@@ -102,17 +110,14 @@ function createLandWaterStyles(options: LayerStylesOptions): LayerStyles {
         'line-opacity': 0.5
       }
     },
-    水部表記線line: {
-      paint: {
-        'line-color': options.seaRouteColor,
-        'line-width': 1
+    ...(options.seaRouteColor != null && {
+      水部表記線line: {
+        paint: {
+          'line-color': options.seaRouteColor,
+          'line-width': 1
+        }
       }
-    },
-    水部構造物面: {
-      paint: {
-        'fill-color': options.landColor
-      }
-    }
+    })
   }
 }
 
@@ -124,7 +129,7 @@ const roadOpacity: Expression = [
   1
 ]
 
-const majorRoadWidth: Expression = [
+const simplifiedRoadWidth: Expression = [
   'case',
   ['==', ['get', 'vt_motorway'], 1],
   2,
@@ -141,7 +146,7 @@ const majorRoadWidth: Expression = [
   ]
 ]
 
-const minorRoadWidth: Expression = [
+const roadWidth: Expression = [
   'case',
   ['has', 'vt_width'],
   ['get', 'vt_width'],
@@ -171,18 +176,18 @@ function createRoadStyles(options: LayerStylesOptions): LayerStyles {
   const color: Expression = [
     'case',
     ['==', ['get', 'vt_motorway'], 1],
-    options.highwayColor,
+    options.highwayColor ?? options.roadColor,
     [
       'match',
       ['get', 'vt_rdctg'],
       '高速自動車国道等',
-      options.highwayColor,
+      options.highwayColor ?? options.roadColor,
       ['国道', '主要道路', '都道府県道'],
-      options.majorRoadColor,
-      options.minorRoadColor
+      options.majorRoadColor ?? options.roadColor,
+      options.roadColor
     ]
   ]
-  const majorStyle: LineLayerStyle = {
+  const simplifiedStyle: LineLayerStyle = {
     minZoom: null,
     paint: {
       'line-color': color,
@@ -190,7 +195,7 @@ function createRoadStyles(options: LayerStylesOptions): LayerStyles {
       'line-width': [
         'let',
         'width',
-        majorRoadWidth,
+        simplifiedRoadWidth,
         [
           'interpolate',
           ['exponential', 2],
@@ -203,7 +208,7 @@ function createRoadStyles(options: LayerStylesOptions): LayerStyles {
       ]
     }
   }
-  const minorStyle: LineLayerStyle = {
+  const style: LineLayerStyle = {
     minZoom: null,
     maxZoom: null,
     paint: {
@@ -212,7 +217,7 @@ function createRoadStyles(options: LayerStylesOptions): LayerStyles {
       'line-width': [
         'let',
         'width',
-        minorRoadWidth,
+        roadWidth,
         [
           'interpolate',
           ['exponential', 2],
@@ -230,18 +235,18 @@ function createRoadStyles(options: LayerStylesOptions): LayerStyles {
   }
 
   return {
-    '道路中心線ZL4-10国道': majorStyle,
-    '道路中心線ZL4-10高速': majorStyle,
-    道路中心線ククリ0: minorStyle,
-    道路中心線ククリ1: minorStyle,
-    道路中心線ククリ2: minorStyle,
-    道路中心線ククリ3: minorStyle,
-    道路中心線ククリ4: minorStyle,
-    道路中心線ククリ橋0: minorStyle,
-    道路中心線ククリ橋1: minorStyle,
-    道路中心線ククリ橋2: minorStyle,
-    道路中心線ククリ橋3: minorStyle,
-    道路中心線ククリ橋4: minorStyle
+    '道路中心線ZL4-10国道': simplifiedStyle,
+    '道路中心線ZL4-10高速': simplifiedStyle,
+    道路中心線ククリ0: style,
+    道路中心線ククリ1: style,
+    道路中心線ククリ2: style,
+    道路中心線ククリ3: style,
+    道路中心線ククリ4: style,
+    道路中心線ククリ橋0: style,
+    道路中心線ククリ橋1: style,
+    道路中心線ククリ橋2: style,
+    道路中心線ククリ橋3: style,
+    道路中心線ククリ橋4: style
   }
 }
 
@@ -253,7 +258,7 @@ const railwayOpacity: Expression = [
   1
 ]
 
-const majorRailwayWidth: Expression = [
+const simplifiedRailwayWidth: Expression = [
   'match',
   ['get', 'vt_rtcode'],
   '新幹線',
@@ -271,7 +276,7 @@ const majorRailwayWidth: Expression = [
   1
 ]
 
-const minorRailwayWidth: Expression = [
+const railwayWidth: Expression = [
   '*',
   [
     'match',
@@ -301,7 +306,7 @@ const minorRailwayWidth: Expression = [
 ]
 
 function createRailwayStyles(options: LayerStylesOptions): LayerStyles {
-  const majorStyle: LineLayerStyle = {
+  const simplifiedStyle: LineLayerStyle = {
     minZoom: null,
     paint: {
       'line-color': options.railwayColor,
@@ -309,7 +314,7 @@ function createRailwayStyles(options: LayerStylesOptions): LayerStyles {
       'line-width': [
         'let',
         'width',
-        majorRailwayWidth,
+        simplifiedRailwayWidth,
         [
           'interpolate',
           ['exponential', 2],
@@ -322,7 +327,7 @@ function createRailwayStyles(options: LayerStylesOptions): LayerStyles {
       ]
     }
   }
-  const minorStyle: LineLayerStyle = {
+  const style: LineLayerStyle = {
     minZoom: null,
     maxZoom: null,
     paint: {
@@ -331,7 +336,7 @@ function createRailwayStyles(options: LayerStylesOptions): LayerStyles {
       'line-width': [
         'let',
         'width',
-        minorRailwayWidth,
+        railwayWidth,
         [
           'interpolate',
           ['exponential', 2],
@@ -346,17 +351,17 @@ function createRailwayStyles(options: LayerStylesOptions): LayerStyles {
   }
 
   return {
-    '鉄道中心線ZL4-10': majorStyle,
-    鉄道中心線0: minorStyle,
-    鉄道中心線橋0: minorStyle,
-    鉄道中心線1: minorStyle,
-    鉄道中心線橋1: minorStyle,
-    鉄道中心線2: minorStyle,
-    鉄道中心線橋2: minorStyle,
-    鉄道中心線3: minorStyle,
-    鉄道中心線橋3: minorStyle,
-    鉄道中心線4: minorStyle,
-    鉄道中心線橋4: minorStyle
+    '鉄道中心線ZL4-10': simplifiedStyle,
+    鉄道中心線0: style,
+    鉄道中心線橋0: style,
+    鉄道中心線1: style,
+    鉄道中心線橋1: style,
+    鉄道中心線2: style,
+    鉄道中心線橋2: style,
+    鉄道中心線3: style,
+    鉄道中心線橋3: style,
+    鉄道中心線4: style,
+    鉄道中心線橋4: style
 
     // TODO: Maintain physical line widths.
     // 軌道の中心線トンネル: {

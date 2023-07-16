@@ -17,11 +17,10 @@ export const standardStyle = createStyle({
     landColor: '#f4f4f4',
     waterColor: lighten(primaryColor, 0.4),
     seaRouteColor: lighten(primaryColor, 0.2),
-    municipalityBoundaryColor: subColor,
-    prefectureBoundaryColor: subColor,
-    highwayColor: '#acacac',
+    boundaryColor: subColor,
+    roadColor: '#ffffff',
     majorRoadColor: '#dfdfdf',
-    minorRoadColor: '#ffffff',
+    highwayColor: '#acacac',
     railwayColor: darken(accentColor, 0.4)
   })
 })
@@ -31,11 +30,10 @@ export const lightStyle = createStyle({
     landColor: gray(1),
     waterColor: gray(0.75),
     seaRouteColor: gray(0.675),
-    municipalityBoundaryColor: gray(0.33),
-    prefectureBoundaryColor: gray(0.33),
-    highwayColor: gray(0.66),
+    boundaryColor: gray(0.33),
+    roadColor: gray(0.9),
     majorRoadColor: gray(0.9),
-    minorRoadColor: gray(0.9),
+    highwayColor: gray(0.66),
     railwayColor: gray(0.66)
   })
 })
@@ -45,11 +43,10 @@ export const darkStyle = createStyle({
     landColor: gray(0.1),
     waterColor: gray(0),
     seaRouteColor: gray(0.05),
-    municipalityBoundaryColor: gray(0.66),
-    prefectureBoundaryColor: gray(0.66),
-    highwayColor: gray(0.4),
+    boundaryColor: gray(0.66),
+    roadColor: gray(0.2),
     majorRoadColor: gray(0.2),
-    minorRoadColor: gray(0.2),
+    highwayColor: gray(0.4),
     railwayColor: gray(0.4)
   })
 })
