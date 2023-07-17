@@ -135,8 +135,12 @@ export function useSearchOptions(): SearchOptions {
         case 'building': {
           const building = option as BuildingSearchOption
           let boundingSphere = computePlateauBoundingSphere([building.feature])
+          const minRadius = 200 // Arbitrary size
           if (boundingSphere != null) {
-            boundingSphere.radius = Math.max(70, boundingSphere.radius * 2)
+            boundingSphere.radius = Math.max(
+              minRadius,
+              boundingSphere.radius * 2
+            )
           } else {
             // Fallback
             boundingSphere = new BoundingSphere(
@@ -146,7 +150,7 @@ export function useSearchOptions(): SearchOptions {
                 0,
                 scene.globe.ellipsoid
               ),
-              200 // Arbitrary size
+              minRadius
             )
           }
           void flyToBoundingSphere(scene, boundingSphere)
