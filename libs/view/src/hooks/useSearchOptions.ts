@@ -1,11 +1,16 @@
-import { atom, useAtomValue } from 'jotai'
-import { useMemo } from 'react'
+import { BoundingSphere, Cartesian3 } from '@cesium/engine'
+import { atom, useAtomValue, useSetAtom } from 'jotai'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
+import { useCesium } from '@takram/plateau-cesium'
+import { flyToBoundingSphere } from '@takram/plateau-cesium-helpers'
+import { computePlateauBoundingSphere } from '@takram/plateau-datasets'
 import {
   PlateauDatasetType,
   useMunicipalityDatasetsQuery
 } from '@takram/plateau-graphql'
 import { layersAtom, type LayerModel } from '@takram/plateau-layers'
+import { screenSpaceSelectionAtom } from '@takram/plateau-screen-space-selection'
 import { isNotNullish } from '@takram/plateau-type-helpers'
 import { type SearchOption } from '@takram/plateau-ui-components'
 import { BUILDING_LAYER } from '@takram/plateau-view-layers'
@@ -16,6 +21,7 @@ export interface SearchOptions {
   datasets: ReadonlyArray<SearchOption & { type: 'dataset' }>
   buildings: ReadonlyArray<SearchOption & { type: 'building' }>
   addresses: ReadonlyArray<SearchOption & { type: 'address' }>
+  select: (option: SearchOption) => void
 }
 
 export function useSearchOptions(): SearchOptions {
@@ -60,20 +66,85 @@ export function useSearchOptions(): SearchOptions {
       [layers]
     )
   )
+  const [featureIndicesKey, setFeatureIndicesKey] = useState(0)
+  useEffect(() => {
+    const removeListeners = featureIndices.map(featureIndex =>
+      featureIndex.onUpdate.addEventListener(() => {
+        setFeatureIndicesKey(value => value + 1)
+      })
+    )
+    return () => {
+      removeListeners.forEach(removeListener => {
+        removeListener()
+      })
+    }
+  }, [featureIndices])
+
   const buildings = useMemo(
     () =>
       featureIndices.flatMap(featureIndex =>
-        featureIndex.features.map(({ name }) => ({
-          type: 'building' as const,
-          name
-        }))
+        featureIndex.searchableFeatures.map(
+          ({ key, name, feature, longitude, latitude }) => ({
+            type: 'building' as const,
+            name,
+            feature,
+            featureIndex,
+            key,
+            longitude,
+            latitude
+          })
+        )
       ),
-    [featureIndices]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [featureIndices, featureIndicesKey]
+  )
+
+  const scene = useCesium(({ scene }) => scene, { indirect: true })
+  const setScreenSpaceSelection = useSetAtom(screenSpaceSelectionAtom)
+  const select = useCallback(
+    (option: SearchOption) => {
+      if (scene == null) {
+        return
+      }
+      switch (option.type) {
+        case 'building': {
+          const building = option as (typeof buildings)[number]
+          let boundingSphere = computePlateauBoundingSphere([building.feature])
+          if (boundingSphere != null) {
+            boundingSphere.radius = Math.max(50, boundingSphere.radius * 2)
+          } else {
+            // Fallback
+            boundingSphere = new BoundingSphere(
+              Cartesian3.fromDegrees(
+                building.longitude,
+                building.latitude,
+                0,
+                scene.globe.ellipsoid
+              ),
+              200
+            )
+          }
+          void flyToBoundingSphere(scene, boundingSphere)
+          setScreenSpaceSelection([
+            {
+              type: 'PLATEAU_TILE_FEATURE',
+              value: {
+                featureIndex: building.featureIndex,
+                key: building.key
+              }
+            }
+          ])
+          break
+        }
+      }
+    },
+    [scene, setScreenSpaceSelection]
   )
 
   return {
     datasets,
     buildings,
-    addresses: []
+    addresses: [],
+    select
   }
 }

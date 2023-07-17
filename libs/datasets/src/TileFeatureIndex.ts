@@ -1,4 +1,5 @@
 import {
+  Event as CesiumEvent,
   type Cesium3DTile,
   type Cesium3DTileContent,
   type Cesium3DTileFeature
@@ -7,7 +8,7 @@ import moji from 'moji'
 
 import { forEachTileFeature } from '@takram/plateau-cesium-helpers'
 
-export function cleanseName(text: string): string {
+function cleanseName(text: string): string {
   return moji(text)
     .convert('ZE', 'HE')
     .convert('ZS', 'HS')
@@ -24,8 +25,9 @@ interface IndexRecord {
   batchId: number
 }
 
-interface FeatureRecord {
+interface SearchableFeatureRecord {
   feature: Cesium3DTileFeature
+  key: string
   name: string
   longitude: number
   latitude: number
@@ -33,10 +35,12 @@ interface FeatureRecord {
 
 export class TileFeatureIndex {
   private readonly records = new Map<string, IndexRecord[]>()
-  readonly #features: FeatureRecord[] = []
+  readonly #searchableFeatures: SearchableFeatureRecord[] = []
 
-  get features(): ReadonlyArray<Readonly<FeatureRecord>> {
-    return this.#features
+  readonly onUpdate = new CesiumEvent<() => void>()
+
+  get searchableFeatures(): ReadonlyArray<Readonly<SearchableFeatureRecord>> {
+    return this.#searchableFeatures
   }
 
   has(key: string): boolean {
@@ -83,11 +87,13 @@ export class TileFeatureIndex {
     if (name == null || longitude == null || latitude == null) {
       return
     }
-    this.#features.push({
+    this.#searchableFeatures.push({
       feature,
+      key,
       name: cleanseName(name),
       longitude,
       latitude
     })
+    this.onUpdate.raiseEvent()
   }
 }
