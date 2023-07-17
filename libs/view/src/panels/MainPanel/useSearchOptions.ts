@@ -4,7 +4,11 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { useCesium } from '@takram/plateau-cesium'
 import { flyToBoundingSphere } from '@takram/plateau-cesium-helpers'
-import { computePlateauBoundingSphere } from '@takram/plateau-datasets'
+import {
+  computePlateauBoundingSphere,
+  type SearchableFeatureRecord,
+  type TileFeatureIndex
+} from '@takram/plateau-datasets'
 import {
   PlateauDatasetType,
   useMunicipalityDatasetsQuery
@@ -15,12 +19,27 @@ import { isNotNullish } from '@takram/plateau-type-helpers'
 import { type SearchOption } from '@takram/plateau-ui-components'
 import { BUILDING_LAYER } from '@takram/plateau-view-layers'
 
-import { areasAtom } from '../states/address'
+import { areasAtom } from '../../states/address'
+
+export interface DatasetSearchOption extends SearchOption {
+  type: 'dataset'
+}
+
+export interface BuildingSearchOption
+  extends SearchOption,
+    SearchableFeatureRecord {
+  type: 'building'
+  featureIndex: TileFeatureIndex
+}
+
+export interface AddressSearchOption extends SearchOption {
+  type: 'address'
+}
 
 export interface SearchOptions {
-  datasets: ReadonlyArray<SearchOption & { type: 'dataset' }>
-  buildings: ReadonlyArray<SearchOption & { type: 'building' }>
-  addresses: ReadonlyArray<SearchOption & { type: 'address' }>
+  datasets: readonly DatasetSearchOption[]
+  buildings: readonly BuildingSearchOption[]
+  addresses: readonly AddressSearchOption[]
   select: (option: SearchOption) => void
 }
 
@@ -108,10 +127,10 @@ export function useSearchOptions(): SearchOptions {
       }
       switch (option.type) {
         case 'building': {
-          const building = option as (typeof buildings)[number]
+          const building = option as BuildingSearchOption
           let boundingSphere = computePlateauBoundingSphere([building.feature])
           if (boundingSphere != null) {
-            boundingSphere.radius = Math.max(50, boundingSphere.radius * 2)
+            boundingSphere.radius = Math.max(70, boundingSphere.radius * 2)
           } else {
             // Fallback
             boundingSphere = new BoundingSphere(

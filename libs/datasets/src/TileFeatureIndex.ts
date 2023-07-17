@@ -25,7 +25,7 @@ interface IndexRecord {
   batchId: number
 }
 
-interface SearchableFeatureRecord {
+export interface SearchableFeatureRecord {
   feature: Cesium3DTileFeature
   key: string
   name: string
