@@ -78,10 +78,27 @@ export class PlateauCatalogService {
     return dataset
   }
 
+  private filterBySearchTokens(
+    datasets: readonly PlateauDataset[],
+    searchTokens: readonly string[]
+  ): PlateauDataset[] {
+    return datasets.filter(dataset => {
+      const data = dataset.catalog.data
+      return searchTokens.some(
+        token =>
+          data.name.includes(token) ||
+          data.pref.includes(token) ||
+          data.city?.includes(token) === true ||
+          ('ward' in data && data.ward?.includes(token) === true)
+      )
+    })
+  }
+
   // TODO: Pagination
   async findAll(
     params: {
       municipalityCode?: string
+      searchTokens?: readonly string[]
       includeTypes?: readonly PlateauDatasetType[]
       excludeTypes?: readonly PlateauDatasetType[]
     } = {}
@@ -96,9 +113,12 @@ export class PlateauCatalogService {
       }
       query = query.orderBy('data.type').orderBy('data.name')
       const snapshot = await query.get()
-      return snapshot.docs
+      const datasets = snapshot.docs
         .map(doc => this.createDataset(doc.data()))
         .filter(isNotNullish)
+      return params.searchTokens != null
+        ? this.filterBySearchTokens(datasets, params.searchTokens)
+        : datasets
     }
 
     // TODO: Use logical OR when @google-cloud/firestore supports it.
@@ -126,7 +146,7 @@ export class PlateauCatalogService {
       cityQuery.get(),
       wardQuery.get()
     ])
-    return [
+    const datasets = [
       // Firestore currently doesn't have query to match null values.
       ...citySnapshot.docs
         .map(doc => doc.data())
@@ -137,6 +157,9 @@ export class PlateauCatalogService {
     ]
       .map(data => this.createDataset(data))
       .filter(isNotNullish)
+    return params.searchTokens != null
+      ? this.filterBySearchTokens(datasets, params.searchTokens)
+      : datasets
   }
 
   async syncWithRemote(): Promise<void> {

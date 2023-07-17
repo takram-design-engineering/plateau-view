@@ -153,6 +153,7 @@ export type PlateauMunicipality = PlateauArea & {
 export type PlateauMunicipalityDatasetsArgs = {
   excludeTypes?: InputMaybe<Array<PlateauDatasetType>>
   includeTypes?: InputMaybe<Array<PlateauDatasetType>>
+  searchTokens?: InputMaybe<Array<Scalars['String']['input']>>
 }
 
 export type PlateauPrefecture = PlateauArea & {
@@ -167,10 +168,17 @@ export type PlateauPrefecture = PlateauArea & {
 
 export type Query = {
   __typename?: 'Query'
+  datasets: Array<PlateauDataset>
   municipalities: Array<PlateauMunicipality>
   municipality?: Maybe<PlateauMunicipality>
   prefecture?: Maybe<PlateauPrefecture>
   prefectures: Array<PlateauPrefecture>
+}
+
+export type QueryDatasetsArgs = {
+  excludeTypes?: InputMaybe<Array<PlateauDatasetType>>
+  includeTypes?: InputMaybe<Array<PlateauDatasetType>>
+  searchTokens?: InputMaybe<Array<Scalars['String']['input']>>
 }
 
 export type QueryMunicipalitiesArgs = {

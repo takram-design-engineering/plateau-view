@@ -108,7 +108,7 @@ type PlateauDefaultDatasetDatum implements PlateauDatasetDatum {
 
 type PlateauMunicipality implements PlateauArea {
   code: String!
-  datasets(excludeTypes: [PlateauDatasetType!], includeTypes: [PlateauDatasetType!]): [PlateauDataset!]!
+  datasets(excludeTypes: [PlateauDatasetType!], includeTypes: [PlateauDatasetType!], searchTokens: [String!]): [PlateauDataset!]!
   id: ID!
   name: String!
   parents: [PlateauArea!]!
@@ -126,6 +126,7 @@ type PlateauPrefecture implements PlateauArea {
 }
 
 type Query {
+  datasets(excludeTypes: [PlateauDatasetType!], includeTypes: [PlateauDatasetType!], searchTokens: [String!]): [PlateauDataset!]!
   municipalities(prefectureCode: String): [PlateauMunicipality!]!
   municipality(code: String!): PlateauMunicipality
   prefecture(code: String!): PlateauPrefecture
