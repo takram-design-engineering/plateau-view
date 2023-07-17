@@ -11,18 +11,28 @@ import {
 } from '@takram/plateau-datasets'
 import {
   PlateauDatasetType,
-  useMunicipalityDatasetsQuery
+  useMunicipalityDatasetsQuery,
+  type PlateauDatasetFragment,
+  type PlateauMunicipalityFragment
 } from '@takram/plateau-graphql'
-import { layersAtom, type LayerModel } from '@takram/plateau-layers'
+import {
+  addLayerAtom,
+  layersAtom,
+  useFindLayer,
+  type LayerModel
+} from '@takram/plateau-layers'
 import { screenSpaceSelectionAtom } from '@takram/plateau-screen-space-selection'
 import { isNotNullish } from '@takram/plateau-type-helpers'
 import { type SearchOption } from '@takram/plateau-ui-components'
-import { BUILDING_LAYER } from '@takram/plateau-view-layers'
+import { BUILDING_LAYER, createViewLayer } from '@takram/plateau-view-layers'
 
+import { datasetTypeLayers } from '../../constants/datasetTypeLayers'
 import { areasAtom } from '../../states/address'
 
 export interface DatasetSearchOption extends SearchOption {
   type: 'dataset'
+  municipality: PlateauMunicipalityFragment
+  dataset: PlateauDatasetFragment
 }
 
 export interface BuildingSearchOption
@@ -47,6 +57,9 @@ export function useSearchOptions(): SearchOptions {
   const areas = useAtomValue(areasAtom)
   const area = areas != null ? areas[0] : areas
 
+  const layers = useAtomValue(layersAtom)
+  const findLayer = useFindLayer()
+
   const query = useMunicipalityDatasetsQuery({
     variables:
       area != null
@@ -66,16 +79,31 @@ export function useSearchOptions(): SearchOptions {
         : undefined,
     skip: area == null
   })
-  const datasets = useMemo(
-    () =>
-      query.data?.municipality?.datasets.map(dataset => ({
-        type: 'dataset' as const,
-        name: dataset.typeName
-      })) ?? [],
-    [query]
-  )
 
-  const layers = useAtomValue(layersAtom)
+  const datasets = useMemo(() => {
+    const municipality = query.data?.municipality
+    if (municipality == null) {
+      return []
+    }
+    return municipality.datasets
+      .filter(dataset => {
+        const layerType = datasetTypeLayers[dataset.type]
+        return (
+          layerType == null ||
+          findLayer(layers, {
+            type: layerType,
+            municipalityCode: municipality.code
+          }) == null
+        )
+      })
+      .map(dataset => ({
+        type: 'dataset' as const,
+        name: dataset.typeName,
+        municipality,
+        dataset
+      }))
+  }, [query, layers, findLayer])
+
   const featureIndices = useAtomValue(
     useMemo(
       () =>
@@ -125,6 +153,7 @@ export function useSearchOptions(): SearchOptions {
   )
 
   const scene = useCesium(({ scene }) => scene, { indirect: true })
+  const addLayer = useSetAtom(addLayerAtom)
   const setScreenSpaceSelection = useSetAtom(screenSpaceSelectionAtom)
   const select = useCallback(
     (option: SearchOption) => {
@@ -132,9 +161,35 @@ export function useSearchOptions(): SearchOptions {
         return
       }
       switch (option.type) {
+        case 'dataset': {
+          const datasetOption = option as DatasetSearchOption
+          const type = datasetTypeLayers[datasetOption.dataset.type]
+          if (type == null) {
+            return
+          }
+          if (type === BUILDING_LAYER) {
+            addLayer(
+              createViewLayer({
+                type,
+                municipalityCode: datasetOption.municipality.code
+              })
+            )
+          } else {
+            addLayer(
+              createViewLayer({
+                type,
+                municipalityCode: datasetOption.municipality.code,
+                datasetId: datasetOption.dataset.id
+              })
+            )
+          }
+          break
+        }
         case 'building': {
-          const building = option as BuildingSearchOption
-          let boundingSphere = computePlateauBoundingSphere([building.feature])
+          const buildingOption = option as BuildingSearchOption
+          let boundingSphere = computePlateauBoundingSphere([
+            buildingOption.feature
+          ])
           const minRadius = 200 // Arbitrary size
           if (boundingSphere != null) {
             boundingSphere.radius = Math.max(
@@ -145,8 +200,8 @@ export function useSearchOptions(): SearchOptions {
             // Fallback
             boundingSphere = new BoundingSphere(
               Cartesian3.fromDegrees(
-                building.longitude,
-                building.latitude,
+                buildingOption.longitude,
+                buildingOption.latitude,
                 0,
                 scene.globe.ellipsoid
               ),
@@ -158,8 +213,8 @@ export function useSearchOptions(): SearchOptions {
             {
               type: 'PLATEAU_TILE_FEATURE',
               value: {
-                featureIndex: building.featureIndex,
-                key: building.key
+                featureIndex: buildingOption.featureIndex,
+                key: buildingOption.key
               }
             }
           ])
@@ -167,7 +222,7 @@ export function useSearchOptions(): SearchOptions {
         }
       }
     },
-    [scene, setScreenSpaceSelection]
+    [scene, addLayer, setScreenSpaceSelection]
   )
 
   return {
