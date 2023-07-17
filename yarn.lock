@@ -8110,6 +8110,7 @@ __metadata:
     "@types/lodash": ^4.14.195
     "@types/mapbox__point-geometry": ^0.1.2
     "@types/minimist": ^1.2.2
+    "@types/moji": ^0.5.0
     "@types/node": 18.16.0
     "@types/object-hash": ^3.0.2
     "@types/offscreencanvas": ^2019.7.0
@@ -8179,6 +8180,7 @@ __metadata:
     minimatch: ^9.0.1
     minimist: ^1.2.8
     mkdirp: ^3.0.1
+    moji: ^0.5.1
     nanoid: ^4.0.2
     next: 13.4.1
     nx: 16.3.2
@@ -10520,6 +10522,13 @@ __metadata:
   version: 1.2.2
   resolution: "@types/minimist@npm:1.2.2"
   checksum: b8da83c66eb4aac0440e64674b19564d9d86c80ae273144db9681e5eeff66f238ade9515f5006ffbfa955ceff8b89ad2bd8ec577d7caee74ba101431fb07045d
+  languageName: node
+  linkType: hard
+
+"@types/moji@npm:^0.5.0":
+  version: 0.5.0
+  resolution: "@types/moji@npm:0.5.0"
+  checksum: b13aed7287215db4edba4f06096034aedce7f61816297da30ac0cb974b1f9c4b86df1186b59389d3cb304487e2211b1525ea20410498c0ed9cab135f5f6bf2b2
   languageName: node
   linkType: hard
 
@@ -22510,6 +22519,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"moji@npm:^0.5.1":
+  version: 0.5.1
+  resolution: "moji@npm:0.5.1"
+  dependencies:
+    object-assign: ^3.0.0
+  checksum: 6bb4914d246a73b2b7499f1d3b1c921eb69d1d163136b59cc6dc81c85a56c70243b8f23334bdd5c8f2cea2003247f84f216a9c679e23ac21d5fe4e2acddad016
+  languageName: node
+  linkType: hard
+
 "mproj@npm:0.0.36":
   version: 0.0.36
   resolution: "mproj@npm:0.0.36"
@@ -23200,6 +23218,13 @@ __metadata:
   version: 4.1.1
   resolution: "object-assign@npm:4.1.1"
   checksum: fcc6e4ea8c7fe48abfbb552578b1c53e0d194086e2e6bbbf59e0a536381a292f39943c6e9628af05b5528aa5e3318bb30d6b2e53cadaf5b8fe9e12c4b69af23f
+  languageName: node
+  linkType: hard
+
+"object-assign@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "object-assign@npm:3.0.0"
+  checksum: 56c66a77318aea95b11bd16a65c313e98786cea1db673a7fdd3bc92aced671b35f62a9819ad9cf7846921c773818329636cda5cd1b7c4fa0ce9908440e091dac
   languageName: node
   linkType: hard
 

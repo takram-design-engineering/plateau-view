@@ -3,16 +3,41 @@ import {
   type Cesium3DTileContent,
   type Cesium3DTileFeature
 } from '@cesium/engine'
+import moji from 'moji'
 
 import { forEachTileFeature } from '@takram/plateau-cesium-helpers'
+
+export function cleanseName(text: string): string {
+  return moji(text)
+    .convert('ZE', 'HE')
+    .convert('ZS', 'HS')
+    .convert('HK', 'ZK')
+    .toString()
+    .replace(/ +/g, ' ')
+    .replace(/([^ ])\(/g, '$1 (')
+    .replace(/\)([^ ])/g, ') $1')
+    .trim()
+}
 
 interface IndexRecord {
   content: Cesium3DTileContent
   batchId: number
 }
 
+interface FeatureRecord {
+  feature: Cesium3DTileFeature
+  name: string
+  longitude: number
+  latitude: number
+}
+
 export class TileFeatureIndex {
   private readonly records = new Map<string, IndexRecord[]>()
+  readonly #features: FeatureRecord[] = []
+
+  get features(): ReadonlyArray<Readonly<FeatureRecord>> {
+    return this.#features
+  }
 
   has(key: string): boolean {
     return this.records.has(key)
@@ -49,5 +74,20 @@ export class TileFeatureIndex {
     } else {
       record.push({ content, batchId })
     }
+
+    const feature = content.getFeature(batchId)
+    // Only PLATEAU 2020 datasets are supported.
+    const name: string | undefined = feature.getProperty('名称')
+    const longitude: number | undefined = feature.getProperty('_x')
+    const latitude: number | undefined = feature.getProperty('_y')
+    if (name == null || longitude == null || latitude == null) {
+      return
+    }
+    this.#features.push({
+      feature,
+      name: cleanseName(name),
+      longitude,
+      latitude
+    })
   }
 }
