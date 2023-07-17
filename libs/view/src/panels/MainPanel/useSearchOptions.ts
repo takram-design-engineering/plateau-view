@@ -140,7 +140,7 @@ export function useSearchOptions(): SearchOptions {
                 0,
                 scene.globe.ellipsoid
               ),
-              200
+              200 // Arbitrary size
             )
           }
           void flyToBoundingSphere(scene, boundingSphere)

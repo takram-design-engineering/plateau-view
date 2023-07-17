@@ -74,6 +74,8 @@ export const SearchAutocompletePanel: FC<SearchAutocompletePanelProps> = ({
   )
   const selectOption = searchOptions.select
 
+  const textFieldRef = useRef<HTMLInputElement>(null)
+
   const [focused, setFocused] = useState(false)
   const handleFocus = useCallback(() => {
     setFocused(true)
@@ -86,9 +88,12 @@ export const SearchAutocompletePanel: FC<SearchAutocompletePanelProps> = ({
           return
         }
         const [value] = values
-        if (typeof value !== 'string') {
-          selectOption(value)
+        if (typeof value === 'string') {
+          return
         }
+        selectOption(value)
+        textFieldRef.current?.blur()
+        setFocused(false)
       },
       [selectOption]
     )
@@ -99,8 +104,6 @@ export const SearchAutocompletePanel: FC<SearchAutocompletePanelProps> = ({
     },
     [selectOption]
   )
-
-  const textFieldRef = useRef<HTMLInputElement>(null)
 
   useWindowEvent('keydown', event => {
     // TODO: Manage shortcut globally

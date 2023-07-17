@@ -29,7 +29,7 @@ import {
 import invariant from 'tiny-invariant'
 
 import { EntityTitleButton } from './EntityTitleButton'
-import { AddressIcon, BuildingIcon, DatasetIcon } from './icons'
+import { AddressIcon, BuildingIcon, DatasetIcon, HistoryIcon } from './icons'
 import { SearchField } from './SearchField'
 import { SearchListbox } from './SearchListbox'
 
@@ -90,10 +90,15 @@ const CloseIcon = createSvgIcon(
   'Close'
 )
 
-export type SearchOptionType = 'dataset' | 'building' | 'address'
+export type SearchOptionType = 'history' | 'dataset' | 'building' | 'address'
 
 function isSearchOptionType(value: unknown): value is SearchOptionType {
-  return value === 'dataset' || value === 'building' || value === 'address'
+  return (
+    value === 'history' ||
+    value === 'dataset' ||
+    value === 'building' ||
+    value === 'address'
+  )
 }
 
 export interface SearchOption {
@@ -102,12 +107,14 @@ export interface SearchOption {
 }
 
 const iconComponents: Record<SearchOptionType, ComponentType> = {
+  history: HistoryIcon,
   dataset: DatasetIcon,
   building: BuildingIcon,
   address: AddressIcon
 }
 
 const groupNames: Record<SearchOptionType, string> = {
+  history: '最近の検索',
   dataset: 'データセット',
   building: '建築物',
   address: '住所'
@@ -257,7 +264,8 @@ export const SearchAutocomplete = forwardRef<
       useCallback(
         (event, value, reason) => {
           if (reason === 'reset') {
-            return
+            setFocused(false)
+            return // Disable auto clear
           }
           setInputValue(value)
           onInputChange?.(event, value, reason)
@@ -265,7 +273,7 @@ export const SearchAutocomplete = forwardRef<
         [onInputChange]
       )
 
-    const open = openProp || value.length > 0 || inputValue !== ''
+    const open = openProp || value.length > 0 || (focused && inputValue !== '')
     return (
       <Root>
         <Autocomplete
