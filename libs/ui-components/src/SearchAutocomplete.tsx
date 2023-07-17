@@ -113,8 +113,8 @@ const groupNames: Record<SearchOptionType, string> = {
   address: '住所'
 }
 
-function getOptionLabel(value: string | SearchOption): string {
-  return typeof value === 'string' ? value : value.name
+function getOptionLabel(value: SearchOption): string {
+  return value.name
 }
 
 function renderGroup(params: AutocompleteRenderGroupParams): ReactNode {
@@ -150,7 +150,7 @@ function renderTags(
     SearchOption,
     true,
     false,
-    true,
+    false,
     typeof Chip
   >
 ): ReactNode {
@@ -172,7 +172,7 @@ type AutocompleteProps = MuiAutocompleteProps<
   SearchOption,
   true, // Multiple
   false, // DisableClearable
-  true // FreeSolo
+  false // FreeSolo
 >
 
 export type SearchAutocompleteProps = Omit<AutocompleteProps, 'renderInput'> & {
@@ -239,14 +239,14 @@ export const SearchAutocomplete = forwardRef<
       [inputRef, placeholder, endAdornment, focused]
     )
 
-    const [value, setValue] = useState<Array<string | SearchOption>>([])
+    const [value, setValue] = useState<SearchOption[]>([])
     const [inputValue, setInputValue] = useState('')
 
     const handleChange: NonNullable<AutocompleteProps['onChange']> =
       useCallback(
         (event, value, reason, details) => {
-          setValue(value)
           onChange?.(event, value, reason, details)
+          setValue([])
         },
         [onChange]
       )
@@ -263,11 +263,15 @@ export const SearchAutocomplete = forwardRef<
     const open = openProp || value.length > 0 || inputValue !== ''
     return (
       <Root>
-        <Autocomplete
+        <Autocomplete<
+          SearchOption,
+          true, // Multiple
+          false, // DisableClearable
+          false // FreeSolo
+        >
           ref={ref}
           fullWidth
           multiple
-          freeSolo
           disablePortal
           PopperComponent={PopperComponent}
           PaperComponent={PaperComponent}
