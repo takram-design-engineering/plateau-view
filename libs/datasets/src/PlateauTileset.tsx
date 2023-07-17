@@ -1,13 +1,9 @@
 import {
-  BoundingSphere,
-  Cartographic,
   Cesium3DTileFeature,
   Cesium3DTileset,
-  Math as CesiumMath,
   ShadowMode,
   type Cesium3DTile,
-  type Cesium3DTileStyle,
-  type Ellipsoid
+  type Cesium3DTileStyle
 } from '@cesium/engine'
 import { useAtomValue } from 'jotai'
 import { difference } from 'lodash'
@@ -27,6 +23,7 @@ import {
   type ScreenSpaceSelectionEntry
 } from '@takram/plateau-screen-space-selection'
 
+import { computePlateauBoundingSphere } from './computePlateauBoundingSphere'
 import { getGMLId } from './getGMLId'
 import { LambertDiffuseShader } from './LambertDiffuseShader'
 import {
@@ -72,35 +69,6 @@ function initTile(
   })
 }
 
-const cartographicScratch = new Cartographic()
-
-function computeBoundingSphere(
-  features: readonly Cesium3DTileFeature[],
-  ellipsoid?: Ellipsoid,
-  result = new BoundingSphere()
-): BoundingSphere | undefined {
-  // TODO: Do I have to the bounding sphere of all the features?
-  const [feature] = features
-
-  // I cannot find the way to access glTF buffer. Try approximate bounding
-  // sphere by property values, but PLATEAU 2022 tilesets don't have
-  // coordinates information in their properties. Only PLATEAU 2020
-  // datasets are supported.
-  const x: number | undefined = feature.getProperty('_x')
-  const y: number | undefined = feature.getProperty('_y')
-  const z: number | undefined = feature.getProperty('_z')
-  const height: number | undefined = feature.getProperty('_height')
-  if (x == null || y == null || z == null || height == null) {
-    return undefined
-  }
-  cartographicScratch.longitude = CesiumMath.toRadians(x)
-  cartographicScratch.latitude = CesiumMath.toRadians(y)
-  cartographicScratch.height = height / 2
-  Cartographic.toCartesian(cartographicScratch, ellipsoid, result.center)
-  result.radius = height / 2
-  return result
-}
-
 function useSelectionResponder({
   tileset,
   featureIndex
@@ -108,7 +76,6 @@ function useSelectionResponder({
   tileset?: Cesium3DTileset
   featureIndex: TileFeatureIndex
 }): void {
-  const scene = useCesium(({ scene }) => scene)
   useScreenSpaceSelectionResponder({
     type: PLATEAU_TILE_FEATURE,
     convertToSelection: object => {
@@ -159,7 +126,7 @@ function useSelectionResponder({
       if (features == null) {
         return
       }
-      return computeBoundingSphere(features, scene.globe.ellipsoid, result)
+      return computePlateauBoundingSphere(features, result)
     }
   })
 }

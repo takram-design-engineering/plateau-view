@@ -1,4 +1,5 @@
 export * from './BingMapsImageryLayer'
+export * from './computePlateauBoundingSphere'
 export * from './GooglePhotorealisticTileset'
 export * from './JapanSeaLevelEllipsoid'
 export * from './JapanSeaLevelEllipsoidTerrain'
