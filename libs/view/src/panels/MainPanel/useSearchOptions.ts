@@ -11,9 +11,8 @@ import {
 } from '@takram/plateau-datasets'
 import {
   PlateauDatasetType,
-  useMunicipalityDatasetsQuery,
-  type PlateauDatasetFragment,
-  type PlateauMunicipalityFragment
+  useDatasetsQuery,
+  type DatasetsQuery
 } from '@takram/plateau-graphql'
 import {
   addLayerAtom,
@@ -31,8 +30,7 @@ import { areasAtom } from '../../states/address'
 
 export interface DatasetSearchOption extends SearchOption {
   type: 'dataset'
-  municipality: PlateauMunicipalityFragment
-  dataset: PlateauDatasetFragment
+  dataset: DatasetsQuery['datasets'][number]
 }
 
 export interface BuildingSearchOption
@@ -55,16 +53,17 @@ export interface SearchOptions {
 
 export function useSearchOptions(): SearchOptions {
   const areas = useAtomValue(areasAtom)
-  const area = areas != null ? areas[0] : areas
 
   const layers = useAtomValue(layersAtom)
   const findLayer = useFindLayer()
 
-  const query = useMunicipalityDatasetsQuery({
+  const query = useDatasetsQuery({
     variables:
-      area != null
+      areas != null
         ? {
-            municipalityCode: area.code,
+            municipalityCodes: areas
+              .filter(area => area.type === 'municipality')
+              .map(area => area.code),
             includeTypes: [
               // TODO: Update supported dataset types.
               PlateauDatasetType.Bridge,
@@ -77,31 +76,31 @@ export function useSearchOptions(): SearchOptions {
             ]
           }
         : undefined,
-    skip: area == null
+    skip: areas == null
   })
 
   const datasets = useMemo(() => {
-    const municipality = query.data?.municipality
-    if (municipality == null) {
-      return []
-    }
-    return municipality.datasets
-      .filter(dataset => {
-        const layerType = datasetTypeLayers[dataset.type]
-        return (
-          layerType == null ||
-          findLayer(layers, {
-            type: layerType,
-            municipalityCode: municipality.code
-          }) == null
-        )
-      })
-      .map(dataset => ({
-        type: 'dataset' as const,
-        name: dataset.typeName,
-        municipality,
-        dataset
-      }))
+    return (
+      query.data?.datasets
+        .filter(dataset => {
+          if (dataset.municipality == null) {
+            return undefined
+          }
+          const layerType = datasetTypeLayers[dataset.type]
+          return (
+            layerType == null ||
+            findLayer(layers, {
+              type: layerType,
+              municipalityCode: dataset.municipality.code
+            }) == null
+          )
+        })
+        .map(dataset => ({
+          type: 'dataset' as const,
+          name: dataset.typeName,
+          dataset
+        })) ?? []
+    )
   }, [query, layers, findLayer])
 
   const featureIndices = useAtomValue(
@@ -164,21 +163,22 @@ export function useSearchOptions(): SearchOptions {
         case 'dataset': {
           const datasetOption = option as DatasetSearchOption
           const type = datasetTypeLayers[datasetOption.dataset.type]
-          if (type == null) {
+          const municipality = datasetOption.dataset.municipality
+          if (type == null || municipality == null) {
             return
           }
           if (type === BUILDING_LAYER) {
             addLayer(
               createViewLayer({
                 type,
-                municipalityCode: datasetOption.municipality.code
+                municipalityCode: municipality.code
               })
             )
           } else {
             addLayer(
               createViewLayer({
                 type,
-                municipalityCode: datasetOption.municipality.code,
+                municipalityCode: municipality.code,
                 datasetId: datasetOption.dataset.id
               })
             )

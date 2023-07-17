@@ -98,12 +98,18 @@ export class PlateauCatalogService {
   async findAll(
     params: {
       municipalityCode?: string
+      municipalityCodes?: readonly string[]
       searchTokens?: readonly string[]
       includeTypes?: readonly PlateauDatasetType[]
       excludeTypes?: readonly PlateauDatasetType[]
     } = {}
   ): Promise<PlateauDataset[]> {
-    if (params.municipalityCode == null) {
+    const municipalityCodes = [
+      params.municipalityCode,
+      ...(params.municipalityCodes ?? [])
+    ].filter(isNotNullish)
+
+    if (municipalityCodes.length === 0) {
       let query: Query<PlateauCatalog> = this.catalogCollection
       if (params.includeTypes != null) {
         query = query.where('data.type', 'in', params.includeTypes)
@@ -124,13 +130,13 @@ export class PlateauCatalogService {
     // TODO: Use logical OR when @google-cloud/firestore supports it.
     let cityQuery: Query<PlateauCatalog> = this.catalogCollection.where(
       'data.city_code',
-      '==',
-      params.municipalityCode
+      'in',
+      municipalityCodes
     )
     let wardQuery: Query<PlateauCatalog> = this.catalogCollection.where(
       'data.ward_code',
-      '==',
-      params.municipalityCode
+      'in',
+      municipalityCodes
     )
     if (params.includeTypes != null) {
       cityQuery = cityQuery.where('data.type', 'in', params.includeTypes)

@@ -10,3 +10,20 @@ query municipalityDatasets(
     }
   }
 }
+
+query datasets(
+  $municipalityCodes: [String!]
+  $includeTypes: [PlateauDatasetType!]
+  $excludeTypes: [PlateauDatasetType!]
+) {
+  datasets(
+    municipalityCodes: $municipalityCodes
+    includeTypes: $includeTypes
+    excludeTypes: $excludeTypes
+  ) {
+    ...PlateauDataset
+    municipality {
+      ...PlateauMunicipality
+    }
+  }
+}

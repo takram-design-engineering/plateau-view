@@ -15,6 +15,11 @@ export class PlateauDatasetResolver {
 
   @Query(() => [PlateauDataset])
   async datasets(
+    @Args('municipalityCodes', {
+      type: () => [String],
+      nullable: true
+    })
+    municipalityCodes?: readonly string[],
     @Args('includeTypes', {
       type: () => [PlateauDatasetTypeEnum],
       nullable: true
@@ -32,6 +37,7 @@ export class PlateauDatasetResolver {
     searchTokens?: readonly string[]
   ): Promise<PlateauDataset[]> {
     return await this.catalogService.findAll({
+      municipalityCodes,
       includeTypes,
       excludeTypes,
       searchTokens
