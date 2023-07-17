@@ -52,9 +52,15 @@ export function useSearchOptions(): SearchOptions {
       area != null
         ? {
             municipalityCode: area.code,
-            excludeTypes: [
-              PlateauDatasetType.UseCase,
-              PlateauDatasetType.GenericCityObject
+            includeTypes: [
+              // TODO: Update supported dataset types.
+              PlateauDatasetType.Bridge,
+              PlateauDatasetType.Building,
+              PlateauDatasetType.LandUse,
+              PlateauDatasetType.LandSlideRisk,
+              PlateauDatasetType.RiverFloodingRisk,
+              PlateauDatasetType.Road,
+              PlateauDatasetType.UrbanPlanning
             ]
           }
         : undefined,

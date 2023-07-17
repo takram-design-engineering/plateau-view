@@ -16,7 +16,7 @@ import {
   type DatasetLayerModel,
   type DatasetLayerModelParams
 } from './createDatasetLayerBase'
-import { LANDSLIDE_LAYER } from './layerTypes'
+import { LAND_SLIDE_RISK_LAYER } from './layerTypes'
 import { MVTLayerContent } from './MVTLayerContent'
 import { useDatasetDatum } from './useDatasetDatum'
 import { useDatasetLayerTitle } from './useDatasetLayerTitle'
@@ -31,11 +31,13 @@ export function createLandSlideRiskLayer(
 ): SetOptional<LandSlideRiskLayerModel, 'id'> {
   return {
     ...createDatasetLayerBase(params),
-    type: LANDSLIDE_LAYER
+    type: LAND_SLIDE_RISK_LAYER
   }
 }
 
-export const LandSlideRiskLayer: FC<LayerProps<typeof LANDSLIDE_LAYER>> = ({
+export const LandSlideRiskLayer: FC<
+  LayerProps<typeof LAND_SLIDE_RISK_LAYER>
+> = ({
   titleAtom,
   hiddenAtom,
   boundingSphereAtom,
@@ -52,7 +54,7 @@ export const LandSlideRiskLayer: FC<LayerProps<typeof LANDSLIDE_LAYER>> = ({
   const datum = useDatasetDatum(datumIdAtom, municipality?.datasets)
 
   const title = useDatasetLayerTitle({
-    layerType: LANDSLIDE_LAYER,
+    layerType: LAND_SLIDE_RISK_LAYER,
     municipality,
     datum
   })

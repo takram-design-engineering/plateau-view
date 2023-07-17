@@ -11,9 +11,9 @@ import {
   GENERIC_CITY_OBJECT_LAYER,
   HIGH_TIDE_RISK_LAYER,
   INLAND_FLOODING_RISK_LAYER,
+  LAND_SLIDE_RISK_LAYER,
   LAND_USE_LAYER,
   LANDMARK_LAYER,
-  LANDSLIDE_LAYER,
   PARK_LAYER,
   RAILWAY_LAYER,
   RIVER_FLOODING_RISK_LAYER,
@@ -38,7 +38,7 @@ export const datasetTypeLayers = {
   [PlateauDatasetType.HighTideRisk]: undefined, // HIGH_TIDE_RISK_LAYER
   [PlateauDatasetType.InlandFloodingRisk]: undefined, // INLAND_FLOODING_RISK_LAYER
   [PlateauDatasetType.Landmark]: undefined, // LANDMARK_LAYER
-  [PlateauDatasetType.LandSlideRisk]: LANDSLIDE_LAYER,
+  [PlateauDatasetType.LandSlideRisk]: LAND_SLIDE_RISK_LAYER,
   [PlateauDatasetType.LandUse]: LAND_USE_LAYER,
   [PlateauDatasetType.Park]: undefined, // PARK_LAYER
   [PlateauDatasetType.Railway]: undefined, // RAILWAY_LAYER

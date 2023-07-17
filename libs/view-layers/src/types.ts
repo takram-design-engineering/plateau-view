@@ -16,9 +16,9 @@ import {
   type GENERIC_CITY_OBJECT_LAYER,
   type HIGH_TIDE_RISK_LAYER,
   type INLAND_FLOODING_RISK_LAYER,
+  type LAND_SLIDE_RISK_LAYER,
   type LAND_USE_LAYER,
   type LANDMARK_LAYER,
-  type LANDSLIDE_LAYER,
   type PARK_LAYER,
   type PEDESTRIAN_LAYER,
   type RAILWAY_LAYER,
@@ -59,7 +59,7 @@ declare module '@takram/plateau-layers' {
     [INLAND_FLOODING_RISK_LAYER]: never // InlandFloodingRiskLayerModel
     [LAND_USE_LAYER]: LandUseLayerModel
     [LANDMARK_LAYER]: never // LandmarkLayerModel
-    [LANDSLIDE_LAYER]: LandSlideRiskLayerModel
+    [LAND_SLIDE_RISK_LAYER]: LandSlideRiskLayerModel
     [PARK_LAYER]: never // ParkLayerModel
     [RAILWAY_LAYER]: never // RailwayLayerModel
     [RIVER_FLOODING_RISK_LAYER]: RiverFloodingRiskLayerModel
