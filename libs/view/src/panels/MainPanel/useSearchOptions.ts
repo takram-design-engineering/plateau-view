@@ -44,6 +44,10 @@ export interface AddressSearchOption extends SearchOption {
   type: 'address'
 }
 
+export interface SearchOptionsParams {
+  skip?: boolean
+}
+
 export interface SearchOptions {
   datasets: readonly DatasetSearchOption[]
   buildings: readonly BuildingSearchOption[]
@@ -51,12 +55,13 @@ export interface SearchOptions {
   select: (option: SearchOption) => void
 }
 
-export function useSearchOptions(): SearchOptions {
-  const areas = useAtomValue(areasAtom)
-
+export function useSearchOptions({
+  skip = false
+}: SearchOptionsParams = {}): SearchOptions {
   const layers = useAtomValue(layersAtom)
   const findLayer = useFindLayer()
 
+  const areas = useAtomValue(areasAtom)
   const query = useDatasetsQuery({
     variables:
       areas != null
@@ -76,10 +81,13 @@ export function useSearchOptions(): SearchOptions {
             ]
           }
         : undefined,
-    skip: areas == null
+    skip: skip || areas == null
   })
 
   const datasets = useMemo(() => {
+    if (skip) {
+      return []
+    }
     return (
       query.data?.datasets
         .filter(dataset => {
@@ -102,7 +110,7 @@ export function useSearchOptions(): SearchOptions {
           dataset
         })) ?? []
     )
-  }, [query, layers, findLayer])
+  }, [skip, query, layers, findLayer])
 
   const featureIndices = useAtomValue(
     useMemo(
@@ -134,8 +142,11 @@ export function useSearchOptions(): SearchOptions {
   }, [featureIndices])
 
   const buildings = useMemo(
-    () =>
-      featureIndices.flatMap(featureIndex =>
+    () => {
+      if (skip) {
+        return []
+      }
+      return featureIndices.flatMap(featureIndex =>
         featureIndex.searchableFeatures.map(
           ({ key, name, feature, longitude, latitude }) => ({
             type: 'building' as const,
@@ -147,9 +158,10 @@ export function useSearchOptions(): SearchOptions {
             latitude
           })
         )
-      ),
+      )
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [featureIndices, featureIndicesKey]
+    [skip, featureIndices, featureIndicesKey]
   )
 
   const scene = useCesium(({ scene }) => scene, { indirect: true })

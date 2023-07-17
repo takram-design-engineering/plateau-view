@@ -63,7 +63,15 @@ export interface SearchAutocompletePanelProps {
 export const SearchAutocompletePanel: FC<SearchAutocompletePanelProps> = ({
   children
 }) => {
-  const searchOptions = useSearchOptions()
+  const textFieldRef = useRef<HTMLInputElement>(null)
+  const [focused, setFocused] = useState(false)
+  const handleFocus = useCallback(() => {
+    setFocused(true)
+  }, [])
+
+  const searchOptions = useSearchOptions({
+    skip: !focused
+  })
   const options = useMemo(
     () => [
       ...searchOptions.datasets,
@@ -73,13 +81,6 @@ export const SearchAutocompletePanel: FC<SearchAutocompletePanelProps> = ({
     [searchOptions.datasets, searchOptions.buildings, searchOptions.addresses]
   )
   const selectOption = searchOptions.select
-
-  const textFieldRef = useRef<HTMLInputElement>(null)
-
-  const [focused, setFocused] = useState(false)
-  const handleFocus = useCallback(() => {
-    setFocused(true)
-  }, [])
 
   const handleChange: NonNullable<SearchAutocompleteProps['onChange']> =
     useCallback(
