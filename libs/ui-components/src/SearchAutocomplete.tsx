@@ -19,6 +19,8 @@ import { omit } from 'lodash'
 import {
   forwardRef,
   useCallback,
+  useEffect,
+  useMemo,
   useState,
   type ComponentType,
   type FocusEvent,
@@ -90,9 +92,16 @@ const CloseIcon = createSvgIcon(
   'Close'
 )
 
-export type SearchOptionType = 'history' | 'dataset' | 'building' | 'address'
+export type SearchOptionType =
+  | 'filter'
+  | 'history'
+  | 'dataset'
+  | 'building'
+  | 'address'
 
-function isSearchOptionType(value: unknown): value is SearchOptionType {
+function isSearchOptionType(
+  value: unknown
+): value is Exclude<SearchOptionType, 'filter'> {
   return (
     value === 'history' ||
     value === 'dataset' ||
@@ -103,17 +112,21 @@ function isSearchOptionType(value: unknown): value is SearchOptionType {
 
 export interface SearchOption {
   type: SearchOptionType
+  id?: string
   name: string
 }
 
-const iconComponents: Record<SearchOptionType, ComponentType> = {
+const iconComponents: Record<
+  Exclude<SearchOptionType, 'filter'>,
+  ComponentType
+> = {
   history: HistoryIcon,
   dataset: DatasetIcon,
   building: BuildingIcon,
   address: AddressIcon
 }
 
-const groupNames: Record<SearchOptionType, string> = {
+const groupNames: Record<Exclude<SearchOptionType, 'filter'>, string> = {
   history: '最近の検索',
   dataset: 'データセット',
   building: '建築物',
@@ -144,6 +157,7 @@ function renderOption(
     // @ts-expect-error TODO
     <EntityTitleButton
       title={option.name}
+      // @ts-expect-error TODO
       iconComponent={iconComponents[option.type]}
       {...props}
     />
@@ -187,6 +201,7 @@ export type SearchAutocompleteProps = Omit<AutocompleteProps, 'renderInput'> & {
   placeholder?: ReactNode
   endAdornment?: ReactNode
   maxHeight?: number
+  filters?: string[]
   children?: ReactNode
 }
 
@@ -201,6 +216,8 @@ export const SearchAutocomplete = forwardRef<
       placeholder,
       endAdornment,
       maxHeight,
+      options,
+      filters,
       children,
       onChange,
       onInputChange,
@@ -246,14 +263,39 @@ export const SearchAutocomplete = forwardRef<
       [inputRef, placeholder, endAdornment, focused]
     )
 
-    const [value] = useState<Array<string | SearchOption>>([])
+    const [value, setValue] = useState<Array<string | SearchOption>>([])
     const [inputValue, setInputValue] = useState('')
+
+    useEffect(() => {
+      setValue(
+        filters?.map(filter => ({
+          type: 'filter' as const,
+          id: filter,
+          name: groupNames[filter as keyof typeof groupNames]
+        })) ?? []
+      )
+    }, [filters])
+
+    const filteredOptions = useMemo(() => {
+      if (value.length === 0) {
+        return options
+      }
+      const filters = value
+        .filter(
+          (value: string | SearchOption): value is SearchOption =>
+            typeof value !== 'string'
+        )
+        .map(({ id }) => id)
+      return options.filter(option => filters.includes(option.type))
+    }, [options, value])
 
     const handleChange: NonNullable<AutocompleteProps['onChange']> =
       useCallback(
         (event, value, reason, details) => {
-          if (reason !== 'selectOption') {
+          if (reason === 'createOption') {
             return // Disable free solo here.
+          } else if (reason === 'removeOption') {
+            setValue([])
           }
           onChange?.(event, value, reason, details)
         },
@@ -291,6 +333,7 @@ export const SearchAutocomplete = forwardRef<
           }}
           {...props}
           open={open}
+          options={filteredOptions}
           value={value}
           inputValue={inputValue}
           getOptionLabel={getOptionLabel}

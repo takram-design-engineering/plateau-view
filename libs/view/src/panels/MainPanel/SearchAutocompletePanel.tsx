@@ -56,6 +56,23 @@ const OptionItem: FC<{
   )
 }
 
+const FilterButton: FC<{
+  filter: string
+  onClick?: (event: MouseEvent, filter: string) => void
+}> = ({ filter, onClick }) => {
+  const handleClick = useCallback(
+    (event: MouseEvent) => {
+      onClick?.(event, filter)
+    },
+    [filter, onClick]
+  )
+  return (
+    <Button variant='text' size='small' onClick={handleClick}>
+      絞り込み
+    </Button>
+  )
+}
+
 export interface SearchAutocompletePanelProps {
   children?: ReactNode
 }
@@ -82,9 +99,18 @@ export const SearchAutocompletePanel: FC<SearchAutocompletePanelProps> = ({
   )
   const selectOption = searchOptions.select
 
+  const [filters, setFilters] = useState<string[]>()
+  const handleClickFilter = useCallback((event: MouseEvent, filter: string) => {
+    setFilters([filter])
+  }, [])
+
   const handleChange: NonNullable<SearchAutocompleteProps['onChange']> =
     useCallback(
       (event, values, reason, details) => {
+        if (reason === 'removeOption') {
+          setFilters([])
+          return
+        }
         if (values.length !== 1) {
           return
         }
@@ -137,6 +163,7 @@ export const SearchAutocompletePanel: FC<SearchAutocompletePanelProps> = ({
           inputRef={textFieldRef}
           placeholder='データセット、建築物、住所を検索'
           options={options}
+          filters={filters}
           maxHeight={maxMainHeight}
           onFocus={handleFocus}
           onChange={handleChange}
@@ -158,9 +185,10 @@ export const SearchAutocompletePanel: FC<SearchAutocompletePanelProps> = ({
                 <ListSubheader component='div' key='datasets'>
                   周辺のデータセット
                   <ListItemSecondaryAction>
-                    <Button variant='text' size='small'>
-                      絞り込み
-                    </Button>
+                    <FilterButton
+                      filter='dataset'
+                      onClick={handleClickFilter}
+                    />
                   </ListItemSecondaryAction>
                 </ListSubheader>,
                 ...searchOptions.datasets
@@ -178,9 +206,10 @@ export const SearchAutocompletePanel: FC<SearchAutocompletePanelProps> = ({
                 <ListSubheader key='buildings'>
                   周辺の建築物
                   <ListItemSecondaryAction>
-                    <Button variant='text' size='small'>
-                      絞り込み
-                    </Button>
+                    <FilterButton
+                      filter='building'
+                      onClick={handleClickFilter}
+                    />
                   </ListItemSecondaryAction>
                 </ListSubheader>,
                 ...searchOptions.buildings
@@ -198,9 +227,10 @@ export const SearchAutocompletePanel: FC<SearchAutocompletePanelProps> = ({
                 <ListSubheader key='addresses'>
                   周辺の住所
                   <ListItemSecondaryAction>
-                    <Button variant='text' size='small'>
-                      絞り込み
-                    </Button>
+                    <FilterButton
+                      filter='address'
+                      onClick={handleClickFilter}
+                    />
                   </ListItemSecondaryAction>
                 </ListSubheader>,
                 ...searchOptions.addresses
