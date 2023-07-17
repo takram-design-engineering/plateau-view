@@ -91,13 +91,14 @@ export function useSearchOptions(): SearchOptions {
             layerType == null ||
             findLayer(layers, {
               type: layerType,
-              municipalityCode: dataset.municipality.code
+              municipalityCode: dataset.municipality.code,
+              datasetId: dataset.id
             }) == null
           )
         })
         .map(dataset => ({
           type: 'dataset' as const,
-          name: dataset.typeName,
+          name: dataset.name !== '' ? dataset.name : dataset.typeName,
           dataset
         })) ?? []
     )
@@ -179,7 +180,8 @@ export function useSearchOptions(): SearchOptions {
               createViewLayer({
                 type,
                 municipalityCode: municipality.code,
-                datasetId: datasetOption.dataset.id
+                datasetId: datasetOption.dataset.id,
+                datumId: datasetOption.dataset.data[0].id
               })
             )
           }

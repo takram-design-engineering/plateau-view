@@ -155,7 +155,7 @@ export const SearchAutocompletePanel: FC<SearchAutocompletePanelProps> = ({
             <MenuList component='div' dense>
               {searchOptions.datasets.length > 0 && [
                 <ListSubheader component='div' key='datasets'>
-                  このエリアのデータセット
+                  周辺のデータセット
                   <ListItemSecondaryAction>
                     <Button variant='text' size='small'>
                       絞り込み
@@ -175,7 +175,7 @@ export const SearchAutocompletePanel: FC<SearchAutocompletePanelProps> = ({
               ]}
               {searchOptions.buildings.length > 0 && [
                 <ListSubheader key='buildings'>
-                  このエリアの建築物
+                  周辺の建築物
                   <ListItemSecondaryAction>
                     <Button variant='text' size='small'>
                       絞り込み
@@ -194,7 +194,7 @@ export const SearchAutocompletePanel: FC<SearchAutocompletePanelProps> = ({
                   ))
               ]}
               <ListSubheader>
-                このエリアの住所
+                周辺の住所
                 <ListItemSecondaryAction>
                   <Button variant='text' size='small'>
                     絞り込み
