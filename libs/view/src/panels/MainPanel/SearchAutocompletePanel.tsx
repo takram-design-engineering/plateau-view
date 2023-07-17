@@ -21,12 +21,12 @@ import {
 import { useWindowEvent } from '@takram/plateau-react-helpers'
 import { platformAtom } from '@takram/plateau-shared-states'
 import {
+  AddressIcon,
   AppOverlayLayoutContext,
   BuildingIcon,
   DatasetIcon,
   EntityTitleButton,
   FloatingPanel,
-  LocationIcon,
   SearchAutocomplete,
   Shortcut,
   type EntityTitleButtonProps,
@@ -193,17 +193,26 @@ export const SearchAutocompletePanel: FC<SearchAutocompletePanelProps> = ({
                     />
                   ))
               ]}
-              <ListSubheader>
-                周辺の住所
-                <ListItemSecondaryAction>
-                  <Button variant='text' size='small'>
-                    絞り込み
-                  </Button>
-                </ListItemSecondaryAction>
-              </ListSubheader>
-              <EntityTitleButton iconComponent={LocationIcon} title='Address' />
-              <EntityTitleButton iconComponent={LocationIcon} title='Address' />
-              <EntityTitleButton iconComponent={LocationIcon} title='Address' />
+              {searchOptions.addresses.length > 0 && [
+                <ListSubheader key='addresses'>
+                  周辺の住所
+                  <ListItemSecondaryAction>
+                    <Button variant='text' size='small'>
+                      絞り込み
+                    </Button>
+                  </ListItemSecondaryAction>
+                </ListSubheader>,
+                ...searchOptions.addresses
+                  .slice(0, 4)
+                  .map((option, index) => (
+                    <OptionItem
+                      key={`addresses:${index}`}
+                      iconComponent={AddressIcon}
+                      option={option}
+                      onClick={handleClickOption}
+                    />
+                  ))
+              ]}
             </MenuList>
           )}
         </SearchAutocomplete>
