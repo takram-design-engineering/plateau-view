@@ -3,7 +3,7 @@ import { darken, lighten } from '@mui/system'
 import { createLayerStyles } from './createLayerStyles'
 import { createStyle } from './createStyle'
 
-const primaryColor = '#00b3db'
+const primaryColor = '#00bebe'
 const accentColor = '#ebf000'
 const subColor = '#463c64'
 
@@ -21,6 +21,9 @@ export const standardStyle = createStyle({
     roadColor: '#ffffff',
     majorRoadColor: '#dfdfdf',
     highwayColor: '#acacac',
+    roadOutlineColor: '#dfdfdf',
+    majorRoadOutlineColor: '#cccccc',
+    highwayOutlineColor: '#999999',
     railwayColor: darken(accentColor, 0.4)
   })
 })
@@ -34,6 +37,9 @@ export const lightStyle = createStyle({
     roadColor: gray(0.9),
     majorRoadColor: gray(0.9),
     highwayColor: gray(0.66),
+    roadOutlineColor: gray(0.85),
+    majorRoadOutlineColor: gray(0.85),
+    highwayOutlineColor: gray(0.6),
     railwayColor: gray(0.66)
   })
 })
@@ -47,6 +53,9 @@ export const darkStyle = createStyle({
     roadColor: gray(0.2),
     majorRoadColor: gray(0.2),
     highwayColor: gray(0.4),
+    roadOutlineColor: gray(0.3),
+    majorRoadOutlineColor: gray(0.3),
+    highwayOutlineColor: gray(0.5),
     railwayColor: gray(0.4)
   })
 })

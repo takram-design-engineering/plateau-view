@@ -14,6 +14,9 @@ export interface LayerStylesOptions {
   roadColor: Color
   majorRoadColor?: Color
   highwayColor?: Color
+  roadOutlineColor: Color
+  majorRoadOutlineColor?: Color
+  highwayOutlineColor?: Color
   railwayColor: Color
 }
 
@@ -187,6 +190,20 @@ function createRoadStyles(options: LayerStylesOptions): LayerStyles {
       options.roadColor
     ]
   ]
+  const outlineColor: Expression = [
+    'case',
+    ['==', ['get', 'vt_motorway'], 1],
+    options.highwayOutlineColor ?? options.roadOutlineColor,
+    [
+      'match',
+      ['get', 'vt_rdctg'],
+      '高速自動車国道等',
+      options.highwayOutlineColor ?? options.roadOutlineColor,
+      ['国道', '主要道路', '都道府県道'],
+      options.majorRoadOutlineColor ?? options.roadOutlineColor,
+      options.roadOutlineColor
+    ]
+  ]
   const simplifiedStyle: LineLayerStyle = {
     minZoom: null,
     paint: {
@@ -233,20 +250,55 @@ function createRoadStyles(options: LayerStylesOptions): LayerStyles {
       'line-cap': 'round'
     }
   }
+  const outlineStyle: LineLayerStyle = {
+    minZoom: null,
+    maxZoom: null,
+    paint: {
+      'line-color': outlineColor,
+      'line-opacity': roadOpacity,
+      'line-width': [
+        'let',
+        'width',
+        ['+', roadWidth, 500],
+        [
+          'interpolate',
+          ['exponential', 2],
+          ['zoom'],
+          10,
+          ['*', ['var', 'width'], 1 / 2 ** (23 - 10)],
+          23,
+          ['var', 'width']
+        ]
+      ]
+    },
+    layout: {
+      'line-cap': 'butt'
+    }
+  }
 
   return {
     '道路中心線ZL4-10国道': simplifiedStyle,
     '道路中心線ZL4-10高速': simplifiedStyle,
-    道路中心線ククリ0: style,
-    道路中心線ククリ1: style,
-    道路中心線ククリ2: style,
-    道路中心線ククリ3: style,
-    道路中心線ククリ4: style,
-    道路中心線ククリ橋0: style,
-    道路中心線ククリ橋1: style,
-    道路中心線ククリ橋2: style,
-    道路中心線ククリ橋3: style,
-    道路中心線ククリ橋4: style
+    道路中心線ククリ0: outlineStyle,
+    道路中心線ククリ1: outlineStyle,
+    道路中心線ククリ2: outlineStyle,
+    道路中心線ククリ3: outlineStyle,
+    道路中心線ククリ4: outlineStyle,
+    道路中心線ククリ橋0: outlineStyle,
+    道路中心線ククリ橋1: outlineStyle,
+    道路中心線ククリ橋2: outlineStyle,
+    道路中心線ククリ橋3: outlineStyle,
+    道路中心線ククリ橋4: outlineStyle,
+    道路中心線色0: style,
+    道路中心線色1: style,
+    道路中心線色2: style,
+    道路中心線色3: style,
+    道路中心線色4: style,
+    道路中心線色橋0: style,
+    道路中心線色橋1: style,
+    道路中心線色橋2: style,
+    道路中心線色橋3: style,
+    道路中心線色橋4: style
   }
 }
 
