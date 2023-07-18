@@ -1,6 +1,7 @@
 import { type Expression } from 'mapbox-gl'
 
 import { type LayerStyles, type LineLayerStyle } from './createStyle'
+import { filters } from './filters'
 
 type Color = string
 
@@ -289,7 +290,10 @@ function createRoadStyles(options: LayerStylesOptions): LayerStyles {
     道路中心線ククリ橋2: outlineStyle,
     道路中心線ククリ橋3: outlineStyle,
     道路中心線ククリ橋4: outlineStyle,
-    道路中心線色0: style,
+    道路中心線色0: {
+      ...style,
+      filter: filters.道路中心線色0
+    },
     道路中心線色1: style,
     道路中心線色2: style,
     道路中心線色3: style,

@@ -159,11 +159,13 @@ export interface BackgroundLayerStyle extends LayerStyleBase {
 export interface LineLayerStyle extends LayerStyleBase {
   paint?: LinePaint
   layout?: LineLayout
+  filter?: any[]
 }
 
 export interface FillLayerStyle extends LayerStyleBase {
   paint?: FillPaint
   layout?: FillLayout
+  filter?: any[]
 }
 
 export type LayerStyles = {
@@ -194,6 +196,10 @@ export function createStyle({ layerStyles }: StyleOptions): Style {
         const result: BackgroundLayer | LineLayer | FillLayer = {
           ...layer,
           paint: layerStyle?.paint ?? {},
+          ...('filter' in layerStyle &&
+            layerStyle?.filter != null && {
+              filter: layerStyle?.filter
+            }),
           ...('layout' in layer &&
             layerStyle?.layout != null && {
               layout: merge({}, layer.layout, layerStyle?.layout)
