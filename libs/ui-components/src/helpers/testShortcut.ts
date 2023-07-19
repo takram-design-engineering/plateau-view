@@ -30,8 +30,8 @@ export function testShortcut(
   return (
     ((key != null && event.key.toLowerCase() === key.toLowerCase()) ||
       (code != null && event.code.toLowerCase() === code.toLowerCase())) &&
-    ((platform === 'mac' && commandKey === event.metaKey) ||
-      (platform !== 'mac' && commandKey === event.ctrlKey)) &&
+    ((platform === 'mac' && commandKey === event.metaKey && !event.ctrlKey) ||
+      (platform !== 'mac' && commandKey === event.ctrlKey && !event.metaKey)) &&
     event.altKey === altKey &&
     event.shiftKey === shiftKey
   )

@@ -6,7 +6,6 @@ export interface ShortcutTextProps {
   platform?: Platform | null
   shortcutKey: string
   commandKey?: boolean
-  ctrlKey?: boolean
   altKey?: boolean
   shiftKey?: boolean
 }
@@ -15,15 +14,13 @@ export const ShortcutText: FC<ShortcutTextProps> = ({
   platform,
   shortcutKey,
   commandKey = false,
-  ctrlKey = false,
   altKey = false,
   shiftKey = false
 }) => {
   if (platform === 'mac') {
     return (
       <>
-        {(ctrlKey ? '⌃' : '') +
-          (altKey ? '⎇' : '') +
+        {(altKey ? '⎇' : '') +
           (shiftKey ? '⇧' : '') +
           (commandKey ? '⌘' : '') +
           shortcutKey}
@@ -32,7 +29,7 @@ export const ShortcutText: FC<ShortcutTextProps> = ({
   }
   return (
     <>
-      {(commandKey || ctrlKey ? '⌃' : '') +
+      {(commandKey ? '⌃' : '') +
         (altKey ? '⎇' : '') +
         (shiftKey ? '⇧' : '') +
         shortcutKey}

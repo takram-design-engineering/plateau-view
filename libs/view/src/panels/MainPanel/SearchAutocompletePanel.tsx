@@ -140,7 +140,7 @@ export const SearchAutocompletePanel: FC<SearchAutocompletePanelProps> = ({
     }
     if (
       testShortcut(event, platform, {
-        code: 'k',
+        code: 'KeyK',
         commandKey: true
       })
     ) {
