@@ -1,6 +1,8 @@
 import type { Expression } from 'mapbox-gl'
 
-export const filters: Record<string, Expression> = {
+import { type LayerId } from './createStyle'
+
+export const filters: { [K in LayerId]?: Expression } = {
   道路中心線色0: [
     'all',
     ['==', ['get', 'vt_lvorder'], 0],

@@ -145,7 +145,7 @@ const layers = {
 } as const
 
 type Layers = typeof layers
-type LayerId = keyof Layers
+export type LayerId = keyof Layers
 
 interface LayerStyleBase {
   minZoom?: number | null
