@@ -8,6 +8,7 @@ type Color = string
 export interface LayerStylesOptions {
   landColor: Color
   waterColor: Color
+  coastlineColor: Color
   seaRouteColor?: Color
   boundaryColor: Color
   municipalityBoundaryColor?: Color
@@ -98,6 +99,14 @@ function createLandWaterStyles(options: LayerStylesOptions): LayerStyles {
       maxZoom: null,
       paint: {
         'fill-color': options.waterColor
+      }
+    },
+    海岸線: {
+      minZoom: null,
+      maxZoom: null,
+      paint: {
+        'line-color': options.coastlineColor,
+        'line-width': 2
       }
     },
     河川中心線人工水路地下: {
