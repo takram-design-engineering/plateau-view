@@ -1,6 +1,7 @@
 import { type FC } from 'react'
 
 import { type Platform } from '@takram/plateau-shared-states'
+import { isNotFalse } from '@takram/plateau-type-helpers'
 
 export interface ShortcutTextProps {
   platform?: Platform | null
@@ -29,10 +30,9 @@ export const ShortcutText: FC<ShortcutTextProps> = ({
   }
   return (
     <>
-      {(commandKey ? '⌃' : '') +
-        (altKey ? '⎇' : '') +
-        (shiftKey ? '⇧' : '') +
-        shortcutKey}
+      {[commandKey && 'Ctrl', altKey && 'Alt', shiftKey && 'Shift', shortcutKey]
+        .filter(isNotFalse)
+        .join(' + ')}
     </>
   )
 }
