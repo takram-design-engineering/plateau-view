@@ -422,6 +422,28 @@ function createRailwayStyles(options: LayerStylesOptions): LayerStyles {
       ]
     }
   }
+  const stationStyle: LineLayerStyle = {
+    minZoom: null,
+    maxZoom: null,
+    paint: {
+      'line-color': options.railwayPhysicalWidthColor,
+      'line-opacity': railwayOpacity,
+      'line-width': [
+        'let',
+        'width',
+        ['*', railwayWidth, 3],
+        [
+          'interpolate',
+          ['exponential', 2],
+          ['zoom'],
+          10,
+          ['*', ['var', 'width'], 1 / 2 ** (23 - 10)],
+          23,
+          ['var', 'width']
+        ]
+      ]
+    }
+  }
   const constantWidthLineStyle: LineLayerStyle = {
     minZoom: null,
     maxZoom: null,
@@ -507,7 +529,17 @@ function createRailwayStyles(options: LayerStylesOptions): LayerStyles {
     鉄道中心線旗竿3: jrDashStyle,
     鉄道中心線旗竿橋3: jrDashStyle,
     鉄道中心線旗竿4: jrDashStyle,
-    鉄道中心線旗竿橋4: jrDashStyle
+    鉄道中心線旗竿橋4: jrDashStyle,
+    鉄道中心線駅ククリ0: stationStyle,
+    鉄道中心線橋駅ククリ0: stationStyle,
+    鉄道中心線駅ククリ1: stationStyle,
+    鉄道中心線橋駅ククリ1: stationStyle,
+    鉄道中心線駅ククリ2: stationStyle,
+    鉄道中心線橋駅ククリ2: stationStyle,
+    鉄道中心線駅ククリ3: stationStyle,
+    鉄道中心線橋駅ククリ3: stationStyle,
+    鉄道中心線駅ククリ4: stationStyle,
+    鉄道中心線橋駅ククリ4: stationStyle
 
     // TODO: Maintain physical line widths.
     // 軌道の中心線トンネル: {
