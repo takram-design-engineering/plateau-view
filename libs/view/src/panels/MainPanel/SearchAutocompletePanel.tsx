@@ -29,6 +29,7 @@ import {
   FloatingPanel,
   SearchAutocomplete,
   Shortcut,
+  testShortcut,
   type EntityTitleButtonProps,
   type SearchAutocompleteProps,
   type SearchOption
@@ -137,7 +138,12 @@ export const SearchAutocompletePanel: FC<SearchAutocompletePanelProps> = ({
     if (textFieldRef.current == null) {
       return
     }
-    if (event.key === 'k' && event.metaKey) {
+    if (
+      testShortcut(event, platform, {
+        code: 'k',
+        commandKey: true
+      })
+    ) {
       event.preventDefault()
       if (document.activeElement !== textFieldRef.current) {
         textFieldRef.current.select()
