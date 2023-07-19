@@ -1,4 +1,6 @@
-export const filters = {
+import type { Expression } from 'mapbox-gl'
+
+export const filters: Record<string, Expression> = {
   道路中心線色0: [
     'all',
     ['==', ['get', 'vt_lvorder'], 0],

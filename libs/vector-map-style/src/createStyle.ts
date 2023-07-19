@@ -4,6 +4,7 @@ import {
   type BackgroundLayer,
   type BackgroundLayout,
   type BackgroundPaint,
+  type Expression,
   type FillLayer,
   type FillLayout,
   type FillPaint,
@@ -159,13 +160,13 @@ export interface BackgroundLayerStyle extends LayerStyleBase {
 export interface LineLayerStyle extends LayerStyleBase {
   paint?: LinePaint
   layout?: LineLayout
-  filter?: any[]
+  filter?: Expression
 }
 
 export interface FillLayerStyle extends LayerStyleBase {
   paint?: FillPaint
   layout?: FillLayout
-  filter?: any[]
+  filter?: Expression
 }
 
 export type LayerStyles = {
