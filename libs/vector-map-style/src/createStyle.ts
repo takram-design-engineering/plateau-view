@@ -16,7 +16,7 @@ import {
 
 import { isNotNullish } from '@takram/plateau-type-helpers'
 
-import baseStyle from './assets/std.json'
+import { createBaseStyle } from './createBaseStyle'
 
 const layers = {
   background: { type: 'background' },
@@ -53,7 +53,6 @@ const layers = {
   鉄道中心線駅ククリ0: { type: 'line' },
   鉄道中心線0: { type: 'line' },
   鉄道中心線ククリ0: { type: 'line' },
-  鉄道中心線色0: { type: 'line' },
   鉄道中心線旗竿0: { type: 'line' },
   道路中心線ククリ橋0: { type: 'line' },
   道路中心線色橋0: { type: 'line' },
@@ -68,6 +67,7 @@ const layers = {
   道路中心線色1: { type: 'line' },
   鉄道中心線駅ククリ1: { type: 'line' },
   鉄道中心線1: { type: 'line' },
+  鉄道中心線ククリ1: { type: 'line' },
   鉄道中心線旗竿1: { type: 'line' },
   道路中心線ククリ橋1: { type: 'line' },
   道路中心線色橋1: { type: 'line' },
@@ -82,6 +82,7 @@ const layers = {
   道路中心線色2: { type: 'line' },
   鉄道中心線駅ククリ2: { type: 'line' },
   鉄道中心線2: { type: 'line' },
+  鉄道中心線ククリ2: { type: 'line' },
   鉄道中心線旗竿2: { type: 'line' },
   道路中心線ククリ橋2: { type: 'line' },
   道路中心線色橋2: { type: 'line' },
@@ -96,6 +97,7 @@ const layers = {
   道路中心線色3: { type: 'line' },
   鉄道中心線駅ククリ3: { type: 'line' },
   鉄道中心線3: { type: 'line' },
+  鉄道中心線ククリ3: { type: 'line' },
   鉄道中心線旗竿3: { type: 'line' },
   道路中心線ククリ橋3: { type: 'line' },
   道路中心線色橋3: { type: 'line' },
@@ -110,6 +112,7 @@ const layers = {
   道路中心線色4: { type: 'line' },
   鉄道中心線駅ククリ4: { type: 'line' },
   鉄道中心線4: { type: 'line' },
+  鉄道中心線ククリ4: { type: 'line' },
   鉄道中心線旗竿4: { type: 'line' },
   道路中心線ククリ橋4: { type: 'line' },
   道路中心線色橋4: { type: 'line' },
@@ -185,10 +188,12 @@ export interface StyleOptions {
   layerStyles: LayerStyles
 }
 
+const baseStyle = createBaseStyle()
+
 export function createStyle({ layerStyles }: StyleOptions): Style {
   return {
-    ...(baseStyle as Style),
-    layers: (baseStyle as Style).layers
+    ...baseStyle,
+    layers: baseStyle.layers
       .filter(layer => layerStyles[layer.id as LayerId] != null)
       .map(layer => {
         const layerStyle = layerStyles[layer.id as LayerId]

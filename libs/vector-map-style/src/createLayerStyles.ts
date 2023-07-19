@@ -19,6 +19,7 @@ export interface LayerStylesOptions {
   majorRoadOutlineColor?: Color
   highwayOutlineColor?: Color
   railwayColor: Color
+  railwayPhysicalWidthColor: Color
   railwayJRDashColor: Color
 }
 
@@ -390,11 +391,11 @@ function createRailwayStyles(options: LayerStylesOptions): LayerStyles {
       ]
     }
   }
-  const style: LineLayerStyle = {
+  const physicalWidthLineStyle: LineLayerStyle = {
     minZoom: null,
     maxZoom: null,
     paint: {
-      'line-color': options.railwayColor,
+      'line-color': options.railwayPhysicalWidthColor,
       'line-opacity': railwayOpacity,
       'line-width': [
         'let',
@@ -410,95 +411,84 @@ function createRailwayStyles(options: LayerStylesOptions): LayerStyles {
           ['var', 'width']
         ]
       ]
-      // 'line-width': 5
     }
   }
-  const outlineStyle: LineLayerStyle = {
-    minZoom: null,
-    maxZoom: null,
-    paint: {
-      'line-color': options.boundaryColor,
-      'line-opacity': railwayOpacity,
-      // 'line-width': [
-      //   'let',
-      //   'width',
-      //   railwayWidth,
-      //   [
-      //     'interpolate',
-      //     ['exponential', 2],
-      //     ['zoom'],
-      //     10,
-      //     ['*', ['var', 'width'], 1 / 2 ** (23 - 10)],
-      //     23,
-      //     ['var', 'width']
-      //   ]
-      // ]
-      'line-width': 6
-    }
-  }
-  const colorStyle: LineLayerStyle = {
+  const constantWidthLineStyle: LineLayerStyle = {
     minZoom: null,
     maxZoom: null,
     paint: {
       'line-color': options.railwayColor,
       'line-opacity': railwayOpacity,
-      // 'line-width': [
-      //   'let',
-      //   'width',
-      //   railwayWidth,
-      //   [
-      //     'interpolate',
-      //     ['exponential', 2],
-      //     ['zoom'],
-      //     10,
-      //     ['*', ['var', 'width'], 1 / 2 ** (23 - 10)],
-      //     23,
-      //     ['var', 'width']
-      //   ]
-      // ]
-      'line-width': 5
+      'line-width': [
+        'let',
+        'width',
+        railwayWidth,
+        [
+          'interpolate',
+          ['exponential', 2],
+          ['zoom'],
+          10,
+          ['*', ['var', 'width'], 1 / 2 ** (23 - 10)],
+          14,
+          ['*', ['var', 'width'], 1 / 2 ** (23 - 14)],
+          15,
+          6,
+          23,
+          6
+        ]
+      ]
     }
   }
   const jrDashStyle: LineLayerStyle = {
     minZoom: null,
     maxZoom: null,
     paint: {
-      // 'line-color': options.railwayJRDashColor ?? options.railwayColor,
       'line-color': options.railwayJRDashColor ?? options.railwayColor,
       'line-opacity': 1,
-      // 'line-width': [
-      //   'let',
-      //   'width',
-      //   railwayWidth,
-      //   [
-      //     'interpolate',
-      //     ['exponential', 2],
-      //     ['zoom'],
-      //     10,
-      //     ['-', ['*', ['var', 'width'], 1 / 2 ** (23 - 10)], 2],
-      //     23,
-      //     ['-', ['var', 'width'], 2]
-      //   ]
-      // ],
-      'line-width': 4,
+      'line-width': [
+        'let',
+        'width',
+        railwayWidth,
+        [
+          'interpolate',
+          ['exponential', 2],
+          ['zoom'],
+          10,
+          ['*', ['var', 'width'], 1 / 2 ** (23 - 10)],
+          14,
+          ['*', ['var', 'width'], 1 / 2 ** (23 - 14)],
+          15,
+          4,
+          23,
+          4
+        ]
+      ],
       'line-dasharray': ['literal', [5, 5]]
     }
   }
 
   return {
     '鉄道中心線ZL4-10': simplifiedStyle,
-    鉄道中心線0: style,
-    鉄道中心線ククリ0: outlineStyle,
-    鉄道中心線色0: colorStyle,
-    鉄道中心線橋0: style,
-    鉄道中心線1: style,
-    鉄道中心線橋1: style,
-    鉄道中心線2: style,
-    鉄道中心線橋2: style,
-    鉄道中心線3: style,
-    鉄道中心線橋3: style,
-    鉄道中心線4: style,
-    鉄道中心線橋4: style,
+    鉄道中心線0: physicalWidthLineStyle,
+    鉄道中心線橋ククリ黒0: physicalWidthLineStyle,
+    鉄道中心線1: physicalWidthLineStyle,
+    鉄道中心線橋ククリ黒1: physicalWidthLineStyle,
+    鉄道中心線2: physicalWidthLineStyle,
+    鉄道中心線橋ククリ黒2: physicalWidthLineStyle,
+    鉄道中心線3: physicalWidthLineStyle,
+    鉄道中心線橋ククリ黒3: physicalWidthLineStyle,
+    鉄道中心線4: physicalWidthLineStyle,
+    鉄道中心線橋ククリ黒4: physicalWidthLineStyle,
+    鉄道中心線ククリ0: constantWidthLineStyle,
+    鉄道中心線橋0: constantWidthLineStyle,
+    鉄道中心線ククリ1: constantWidthLineStyle,
+    鉄道中心線橋1: constantWidthLineStyle,
+    鉄道中心線ククリ2: constantWidthLineStyle,
+    鉄道中心線橋2: constantWidthLineStyle,
+    鉄道中心線ククリ3: constantWidthLineStyle,
+    鉄道中心線橋3: constantWidthLineStyle,
+    鉄道中心線ククリ4: constantWidthLineStyle,
+    鉄道中心線橋4: constantWidthLineStyle,
     鉄道中心線旗竿0: jrDashStyle,
     鉄道中心線旗竿橋0: jrDashStyle,
     鉄道中心線旗竿1: jrDashStyle,

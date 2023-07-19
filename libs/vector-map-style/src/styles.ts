@@ -25,6 +25,7 @@ export const standardStyle = createStyle({
     majorRoadOutlineColor: '#cccccc',
     highwayOutlineColor: '#999999',
     railwayColor: darken(accentColor, 0.4),
+    railwayPhysicalWidthColor: lighten(accentColor, 0.4),
     railwayJRDashColor: darken(accentColor, 0.1)
   })
 })
@@ -41,8 +42,9 @@ export const lightStyle = createStyle({
     roadOutlineColor: gray(0.85),
     majorRoadOutlineColor: gray(0.85),
     highwayOutlineColor: gray(0.6),
-    railwayColor: gray(0.66),
-    railwayJRDashColor: gray(0.8)
+    railwayColor: gray(0.8),
+    railwayPhysicalWidthColor: gray(0.92),
+    railwayJRDashColor: gray(0.9)
   })
 })
 
@@ -59,6 +61,7 @@ export const darkStyle = createStyle({
     majorRoadOutlineColor: gray(0.3),
     highwayOutlineColor: gray(0.5),
     railwayColor: gray(0.4),
+    railwayPhysicalWidthColor: gray(0.15),
     railwayJRDashColor: gray(0.2)
   })
 })
