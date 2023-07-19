@@ -19,6 +19,7 @@ export interface LayerStylesOptions {
   majorRoadOutlineColor?: Color
   highwayOutlineColor?: Color
   railwayColor: Color
+  railwayJRDashColor: Color
 }
 
 function createBoundaryStyles(options: LayerStylesOptions): LayerStyles {
@@ -411,6 +412,29 @@ function createRailwayStyles(options: LayerStylesOptions): LayerStyles {
       ]
     }
   }
+  const jrDashStyle: LineLayerStyle = {
+    minZoom: null,
+    maxZoom: null,
+    paint: {
+      'line-color': options.railwayJRDashColor ?? options.railwayColor,
+      'line-opacity': 1,
+      'line-width': [
+        'let',
+        'width',
+        railwayWidth,
+        [
+          'interpolate',
+          ['exponential', 2],
+          ['zoom'],
+          10,
+          ['-', ['*', ['var', 'width'], 1 / 2 ** (23 - 10)], 2],
+          23,
+          ['-', ['var', 'width'], 2]
+        ]
+      ],
+      'line-dasharray': ['literal', [5, 5]]
+    }
+  }
 
   return {
     '鉄道中心線ZL4-10': simplifiedStyle,
@@ -423,7 +447,17 @@ function createRailwayStyles(options: LayerStylesOptions): LayerStyles {
     鉄道中心線3: style,
     鉄道中心線橋3: style,
     鉄道中心線4: style,
-    鉄道中心線橋4: style
+    鉄道中心線橋4: style,
+    鉄道中心線旗竿0: jrDashStyle,
+    鉄道中心線旗竿橋0: jrDashStyle,
+    鉄道中心線旗竿1: jrDashStyle,
+    鉄道中心線旗竿橋1: jrDashStyle,
+    鉄道中心線旗竿2: jrDashStyle,
+    鉄道中心線旗竿橋2: jrDashStyle,
+    鉄道中心線旗竿3: jrDashStyle,
+    鉄道中心線旗竿橋3: jrDashStyle,
+    鉄道中心線旗竿4: jrDashStyle,
+    鉄道中心線旗竿橋4: jrDashStyle
 
     // TODO: Maintain physical line widths.
     // 軌道の中心線トンネル: {
