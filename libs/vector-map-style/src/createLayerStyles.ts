@@ -339,34 +339,34 @@ const simplifiedRailwayWidth: Expression = [
   1
 ]
 
-// const railwayWidth: Expression = [
-//   '*',
-//   [
-//     'match',
-//     ['get', 'vt_rtcode'],
-//     'JR',
-//     600,
-//     'JR以外',
-//     600,
-//     '地下鉄',
-//     500,
-//     '路面',
-//     400,
-//     '索道',
-//     400,
-//     '特殊鉄道',
-//     300,
-//     '側線',
-//     300,
-//     0
-//   ],
-//   [
-//     'case',
-//     ['in', ['get', 'vt_sngldbl'], ['literal', ['複線以上', '駅部分']]],
-//     2,
-//     1
-//   ]
-// ]
+const railwayWidth: Expression = [
+  '*',
+  [
+    'match',
+    ['get', 'vt_rtcode'],
+    'JR',
+    600,
+    'JR以外',
+    600,
+    '地下鉄',
+    500,
+    '路面',
+    400,
+    '索道',
+    400,
+    '特殊鉄道',
+    300,
+    '側線',
+    300,
+    0
+  ],
+  [
+    'case',
+    ['in', ['get', 'vt_sngldbl'], ['literal', ['複線以上', '駅部分']]],
+    2,
+    1
+  ]
+]
 
 function createRailwayStyles(options: LayerStylesOptions): LayerStyles {
   const simplifiedStyle: LineLayerStyle = {
@@ -396,6 +396,52 @@ function createRailwayStyles(options: LayerStylesOptions): LayerStyles {
     paint: {
       'line-color': options.railwayColor,
       'line-opacity': railwayOpacity,
+      'line-width': [
+        'let',
+        'width',
+        railwayWidth,
+        [
+          'interpolate',
+          ['exponential', 2],
+          ['zoom'],
+          10,
+          ['*', ['var', 'width'], 1 / 2 ** (23 - 10)],
+          23,
+          ['var', 'width']
+        ]
+      ]
+      // 'line-width': 5
+    }
+  }
+  const outlineStyle: LineLayerStyle = {
+    minZoom: null,
+    maxZoom: null,
+    paint: {
+      'line-color': options.boundaryColor,
+      'line-opacity': railwayOpacity,
+      // 'line-width': [
+      //   'let',
+      //   'width',
+      //   railwayWidth,
+      //   [
+      //     'interpolate',
+      //     ['exponential', 2],
+      //     ['zoom'],
+      //     10,
+      //     ['*', ['var', 'width'], 1 / 2 ** (23 - 10)],
+      //     23,
+      //     ['var', 'width']
+      //   ]
+      // ]
+      'line-width': 6
+    }
+  }
+  const colorStyle: LineLayerStyle = {
+    minZoom: null,
+    maxZoom: null,
+    paint: {
+      'line-color': options.railwayColor,
+      'line-opacity': railwayOpacity,
       // 'line-width': [
       //   'let',
       //   'width',
@@ -417,6 +463,7 @@ function createRailwayStyles(options: LayerStylesOptions): LayerStyles {
     minZoom: null,
     maxZoom: null,
     paint: {
+      // 'line-color': options.railwayJRDashColor ?? options.railwayColor,
       'line-color': options.railwayJRDashColor ?? options.railwayColor,
       'line-opacity': 1,
       // 'line-width': [
@@ -441,6 +488,8 @@ function createRailwayStyles(options: LayerStylesOptions): LayerStyles {
   return {
     '鉄道中心線ZL4-10': simplifiedStyle,
     鉄道中心線0: style,
+    鉄道中心線ククリ0: outlineStyle,
+    鉄道中心線色0: colorStyle,
     鉄道中心線橋0: style,
     鉄道中心線1: style,
     鉄道中心線橋1: style,

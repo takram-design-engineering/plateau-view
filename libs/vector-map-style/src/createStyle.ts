@@ -52,6 +52,8 @@ const layers = {
   道路中心線色0: { type: 'line' },
   鉄道中心線駅ククリ0: { type: 'line' },
   鉄道中心線0: { type: 'line' },
+  鉄道中心線ククリ0: { type: 'line' },
+  鉄道中心線色0: { type: 'line' },
   鉄道中心線旗竿0: { type: 'line' },
   道路中心線ククリ橋0: { type: 'line' },
   道路中心線色橋0: { type: 'line' },
