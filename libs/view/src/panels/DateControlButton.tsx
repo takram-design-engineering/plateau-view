@@ -7,8 +7,8 @@ import { useId, type FC } from 'react'
 
 import {
   AppIconButton,
-  OverlayPopover,
-  TimelineIcon
+  ClockIcon,
+  OverlayPopover
 } from '@takram/plateau-ui-components'
 
 import { DateControlPanel } from './DateControlPanel'
@@ -29,7 +29,7 @@ export const DateControlButton: FC = () => {
         disableTooltip={popoverProps.open}
         {...bindTrigger(popupState)}
       >
-        <TimelineIcon />
+        <ClockIcon />
       </AppIconButton>
       <OverlayPopover {...popoverProps} inset={1.5}>
         <DateControlPanel />

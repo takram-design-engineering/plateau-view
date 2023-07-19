@@ -1,6 +1,10 @@
 import { createSvgIcon } from '@mui/material'
 
 export const MinusIcon = createSvgIcon(
-  <path d='M5.25 12.75V11.25H18.75V12.75H5.25Z' />,
+  <path
+    fillRule='evenodd'
+    clipRule='evenodd'
+    d='M18.5 12.5999H5.5V11.3999H18.5V12.5999Z'
+  />,
   'Minus'
 )

@@ -10,9 +10,11 @@ import { MuiFilledInput } from './components/MuiFilledInput'
 import { MuiFormControlLabel } from './components/MuiFormControlLabel'
 import { MuiIconButton } from './components/MuiIconButton'
 import { MuiLink } from './components/MuiLink'
+import { MuiListSubheader } from './components/MuiListSubheader'
 import { MuiMenu } from './components/MuiMenu'
 import { MuiMenuItem } from './components/MuiMenuItem'
 import { MuiOutlinedInput } from './components/MuiOutlinedInput'
+import { MuiPaper } from './components/MuiPaper'
 import { MuiPopover } from './components/MuiPopover'
 import { MuiSelect } from './components/MuiSelect'
 import { MuiSlider } from './components/MuiSlider'
@@ -22,7 +24,6 @@ import { MuiTab } from './components/MuiTab'
 import { MuiTextField } from './components/MuiTextField'
 import { MuiToggleButton } from './components/MuiToggleButton'
 import { MuiTooltip } from './components/MuiTooltip'
-import { MuiPaper } from './components/MuiPaper'
 
 // TODO: Transition to MUI Joy when it's released.
 
@@ -124,6 +125,7 @@ export const themeOptions: ThemeOptions = {
     MuiFormControlLabel,
     MuiIconButton,
     MuiLink,
+    MuiListSubheader,
     MuiMenu,
     MuiMenuItem,
     MuiOutlinedInput,
@@ -135,8 +137,8 @@ export const themeOptions: ThemeOptions = {
     MuiSwitch,
     MuiTab,
     MuiTextField,
-    MuiTooltip,
-    MuiToggleButton
+    MuiToggleButton,
+    MuiTooltip
   }
 }
 
@@ -171,7 +173,7 @@ export const darkThemeOptions = merge<unknown, unknown, ThemeOptions>(
       mode: 'dark',
       background: {
         default: '#222222',
-        paper: '#333333',
+        paper: '#333333'
       },
       text: {
         secondary: alpha(theme.palette.common.white, 0.45)

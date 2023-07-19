@@ -24,9 +24,9 @@ import {
   GENERIC_CITY_OBJECT_LAYER,
   HIGH_TIDE_RISK_LAYER,
   INLAND_FLOODING_RISK_LAYER,
+  LAND_SLIDE_RISK_LAYER,
   LAND_USE_LAYER,
   LANDMARK_LAYER,
-  LANDSLIDE_LAYER,
   PARK_LAYER,
   PEDESTRIAN_LAYER,
   RAILWAY_LAYER,
@@ -67,7 +67,7 @@ type ViewLayerModelParams<T extends LayerType> =
   T extends typeof INLAND_FLOODING_RISK_LAYER ? never : // InlandFloodingRiskLayerModelParams
   T extends typeof LAND_USE_LAYER ? LandUseLayerModelParams :
   T extends typeof LANDMARK_LAYER ? never : // LandmarkLayerModelParams
-  T extends typeof LANDSLIDE_LAYER ? LandSlideRiskLayerModelParams :
+  T extends typeof LAND_SLIDE_RISK_LAYER ? LandSlideRiskLayerModelParams :
   T extends typeof PARK_LAYER ? never : // ParkLayerModelParams
   T extends typeof RAILWAY_LAYER ? never : // RailwayLayerModelParams
   T extends typeof RIVER_FLOODING_RISK_LAYER ? RiverFloodingRiskLayerModelParams :
@@ -102,7 +102,7 @@ export function createViewLayer<T extends LayerType>(
     case INLAND_FLOODING_RISK_LAYER: return undefined // createInlandFloodingRiskLayer(params)
     case LAND_USE_LAYER: return createLandUseLayer(params as LandUseLayerModelParams)
     case LANDMARK_LAYER: return undefined // createLandmarkLayer(params)
-    case LANDSLIDE_LAYER: return createLandSlideRiskLayer(params as LandSlideRiskLayerModelParams)
+    case LAND_SLIDE_RISK_LAYER: return createLandSlideRiskLayer(params as LandSlideRiskLayerModelParams)
     case PARK_LAYER: return undefined // createParkLayer(params)
     case RAILWAY_LAYER: return undefined // createRailwayLayer(params)
     case RIVER_FLOODING_RISK_LAYER: return createRiverFloodingRiskLayer(params as RiverFloodingRiskLayerModelParams)

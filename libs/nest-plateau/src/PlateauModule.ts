@@ -21,6 +21,7 @@ import {
 } from './PlateauStorageService'
 import { PlateauAreaFieldResolver } from './resolvers/PlateauAreaFieldResolver'
 import { PlateauDatasetFieldResolver } from './resolvers/PlateauDatasetFieldResolver'
+import { PlateauDatasetResolver } from './resolvers/PlateauDatasetResolver'
 import { PlateauMunicipalityFieldResolver } from './resolvers/PlateauMunicipalityFieldResolver'
 import { PlateauMunicipalityResolver } from './resolvers/PlateauMunicipalityResolver'
 import { PlateauPrefectureFieldResolver } from './resolvers/PlateauPrefectureFieldResolver'
@@ -67,7 +68,8 @@ import { PlateauPrefectureResolver } from './resolvers/PlateauPrefectureResolver
     PlateauMunicipalityResolver,
     PlateauMunicipalityFieldResolver,
     PlateauPrefectureResolver,
-    PlateauPrefectureFieldResolver
+    PlateauPrefectureFieldResolver,
+    PlateauDatasetResolver
   ],
   exports: [PlateauCatalogService]
 })

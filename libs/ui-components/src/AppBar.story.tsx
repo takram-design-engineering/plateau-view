@@ -8,6 +8,7 @@ import { AppBreadcrumbsItem } from './AppBreadcrumbsItem'
 import { AppToggleButton } from './AppToggleButton'
 import { AppToggleButtonGroup } from './AppToggleButtonGroup'
 import {
+  ClockIcon,
   HandIcon,
   LocationIcon,
   MinusIcon,
@@ -16,8 +17,7 @@ import {
   PointerArrowIcon,
   RotateAroundIcon,
   SettingsIcon,
-  SketchIcon,
-  TimelineIcon
+  SketchIcon
 } from './icons'
 import { Space } from './Space'
 
@@ -30,7 +30,7 @@ export default meta
 
 type Story = StoryObj<typeof AppBar>
 
-const StoryComponent: FC = () => {
+const Component: FC = () => {
   const [tool, setTool] = useState<string | null>(null)
   const handleChange = useCallback((event: unknown, value: string | null) => {
     if (value != null) {
@@ -59,7 +59,7 @@ const StoryComponent: FC = () => {
         <SettingsIcon />
       </IconButton>
       <IconButton>
-        <TimelineIcon />
+        <ClockIcon />
       </IconButton>
       <Space flexible />
       <AppBreadcrumbs>
@@ -85,5 +85,5 @@ const StoryComponent: FC = () => {
 }
 
 export const Default: Story = {
-  render: () => <StoryComponent />
+  render: () => <Component />
 }

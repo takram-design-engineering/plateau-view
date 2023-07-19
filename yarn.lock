@@ -8110,12 +8110,14 @@ __metadata:
     "@types/lodash": ^4.14.195
     "@types/mapbox__point-geometry": ^0.1.2
     "@types/minimist": ^1.2.2
+    "@types/moji": ^0.5.0
     "@types/node": 18.16.0
     "@types/object-hash": ^3.0.2
     "@types/offscreencanvas": ^2019.7.0
     "@types/polylabel": ^1.1.0
     "@types/react": 18.0.38
     "@types/react-dom": 18.0.11
+    "@types/react-window": ^1.8.5
     "@types/shapefile": ^0.6.1
     "@types/string-template": ^1.0.2
     "@types/topojson-client": ^3.1.1
@@ -8178,6 +8180,7 @@ __metadata:
     minimatch: ^9.0.1
     minimist: ^1.2.8
     mkdirp: ^3.0.1
+    moji: ^0.5.1
     nanoid: ^4.0.2
     next: 13.4.1
     nx: 16.3.2
@@ -8195,6 +8198,7 @@ __metadata:
     react-map-gl: ^7.0.25
     react-merge-refs: ^2.0.2
     react-use: ^17.4.0
+    react-window: ^1.8.9
     reflect-metadata: ^0.1.13
     rxjs: ^7.8.0
     shapefile: ^0.6.6
@@ -10521,6 +10525,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/moji@npm:^0.5.0":
+  version: 0.5.0
+  resolution: "@types/moji@npm:0.5.0"
+  checksum: b13aed7287215db4edba4f06096034aedce7f61816297da30ac0cb974b1f9c4b86df1186b59389d3cb304487e2211b1525ea20410498c0ed9cab135f5f6bf2b2
+  languageName: node
+  linkType: hard
+
 "@types/ms@npm:*":
   version: 0.7.31
   resolution: "@types/ms@npm:0.7.31"
@@ -10736,6 +10747,15 @@ __metadata:
   dependencies:
     "@types/react": "*"
   checksum: 0872143821d7ee20a1d81e965f8b1e837837f11cd2206973f1f98655751992d9390304d58bac192c9cd923eca95bff107d8c9e3364a180240d5c2a6fd70fd7c3
+  languageName: node
+  linkType: hard
+
+"@types/react-window@npm:^1.8.5":
+  version: 1.8.5
+  resolution: "@types/react-window@npm:1.8.5"
+  dependencies:
+    "@types/react": "*"
+  checksum: 5f519e1402300d11b6e6595223feb6499f3227e38da166cbc565773cd7f71862abcf855b7835d391b5119fcfacdfba79d73a965b45f60a293fc1ff25986319ed
   languageName: node
   linkType: hard
 
@@ -21783,6 +21803,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"memoize-one@npm:>=3.1.1 <6":
+  version: 5.2.1
+  resolution: "memoize-one@npm:5.2.1"
+  checksum: a3cba7b824ebcf24cdfcd234aa7f86f3ad6394b8d9be4c96ff756dafb8b51c7f71320785fbc2304f1af48a0467cbbd2a409efc9333025700ed523f254cb52e3d
+  languageName: node
+  linkType: hard
+
 "memoizerific@npm:^1.11.3":
   version: 1.11.3
   resolution: "memoizerific@npm:1.11.3"
@@ -22492,6 +22519,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"moji@npm:^0.5.1":
+  version: 0.5.1
+  resolution: "moji@npm:0.5.1"
+  dependencies:
+    object-assign: ^3.0.0
+  checksum: 6bb4914d246a73b2b7499f1d3b1c921eb69d1d163136b59cc6dc81c85a56c70243b8f23334bdd5c8f2cea2003247f84f216a9c679e23ac21d5fe4e2acddad016
+  languageName: node
+  linkType: hard
+
 "mproj@npm:0.0.36":
   version: 0.0.36
   resolution: "mproj@npm:0.0.36"
@@ -23182,6 +23218,13 @@ __metadata:
   version: 4.1.1
   resolution: "object-assign@npm:4.1.1"
   checksum: fcc6e4ea8c7fe48abfbb552578b1c53e0d194086e2e6bbbf59e0a536381a292f39943c6e9628af05b5528aa5e3318bb30d6b2e53cadaf5b8fe9e12c4b69af23f
+  languageName: node
+  linkType: hard
+
+"object-assign@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "object-assign@npm:3.0.0"
+  checksum: 56c66a77318aea95b11bd16a65c313e98786cea1db673a7fdd3bc92aced671b35f62a9819ad9cf7846921c773818329636cda5cd1b7c4fa0ce9908440e091dac
   languageName: node
   linkType: hard
 
@@ -25289,6 +25332,19 @@ __metadata:
     react: ^16.8.0  || ^17.0.0 || ^18.0.0
     react-dom: ^16.8.0  || ^17.0.0 || ^18.0.0
   checksum: 0889da919b49a186de375ec15d2778b954ae981c523acd17dd496e4a4da7b6190efe7993491e1b85fdd6de3e745d08a4eaba4caa35408d570b5f1de550f35d11
+  languageName: node
+  linkType: hard
+
+"react-window@npm:^1.8.9":
+  version: 1.8.9
+  resolution: "react-window@npm:1.8.9"
+  dependencies:
+    "@babel/runtime": ^7.0.0
+    memoize-one: ">=3.1.1 <6"
+  peerDependencies:
+    react: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
+    react-dom: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
+  checksum: cefa232f4f37269d292529ef15780fb108123d6bb5beee19eeac657e75cf8d4664be66f2da04baf0cb1bc64c5ab3d83a88199c3358f023b78940acd37b0673b2
   languageName: node
   linkType: hard
 
