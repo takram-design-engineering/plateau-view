@@ -50,7 +50,9 @@ export const themeOptions: ThemeOptions = {
     borderRadius: 5
   },
   palette: {
-    primary: cyan,
+    primary: {
+      main: '#00bebe'
+    },
     secondary: grey
   },
   typography: {

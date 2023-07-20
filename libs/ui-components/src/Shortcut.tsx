@@ -24,7 +24,6 @@ export const Shortcut = (({
   platform,
   shortcutKey,
   commandKey,
-  ctrlKey,
   altKey,
   shiftKey,
   ...props
@@ -35,7 +34,6 @@ export const Shortcut = (({
         platform={platform}
         shortcutKey={shortcutKey}
         commandKey={commandKey}
-        ctrlKey={ctrlKey}
         altKey={altKey}
         shiftKey={shiftKey}
       />

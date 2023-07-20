@@ -4,7 +4,7 @@ import { useCallback, type FC } from 'react'
 
 import { useWindowEvent } from '@takram/plateau-react-helpers'
 import { platformAtom } from '@takram/plateau-shared-states'
-import { Shortcut } from '@takram/plateau-ui-components'
+import { Shortcut, testShortcut } from '@takram/plateau-ui-components'
 
 import { showDeveloperPanelsAtom } from '../states/app'
 import { AppPanel } from './AppPanel'
@@ -27,12 +27,19 @@ const Header = styled(List)(({ theme }) => ({
 }))
 
 export const DeveloperPanels: FC = () => {
+  const platform = useAtomValue(platformAtom)
+
   // TODO: Just a temporary key binding
   const [showDeveloperPanels, setShowDeveloperPanels] = useAtom(
     showDeveloperPanelsAtom
   )
   useWindowEvent('keydown', event => {
-    if (event.code === 'Backslash' && event.metaKey) {
+    if (
+      testShortcut(event, platform, {
+        code: 'Backslash',
+        commandKey: true
+      })
+    ) {
       event.preventDefault()
       setShowDeveloperPanels(value => !value)
     }
@@ -41,8 +48,6 @@ export const DeveloperPanels: FC = () => {
   const handleClose = useCallback(() => {
     setShowDeveloperPanels(false)
   }, [setShowDeveloperPanels])
-
-  const platform = useAtomValue(platformAtom)
 
   if (!showDeveloperPanels) {
     return null
