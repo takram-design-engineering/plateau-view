@@ -16,7 +16,9 @@ import { DarkThemeOverride } from './DarkThemeOverride'
 
 import 'overlayscrollbars/overlayscrollbars.css'
 
-const Root = styled('div')({
+const Root = styled('div')<{
+  hidden?: boolean
+}>(({ hidden = false }) => ({
   display: 'grid',
   gridTemplateColumns: '1fr',
   gridAutoFlow: 'column',
@@ -28,8 +30,9 @@ const Root = styled('div')({
   pointerEvents: 'none',
   '& > *': {
     direction: 'ltr'
-  }
-})
+  },
+  ...(hidden && { visibility: 'hidden' })
+}))
 
 const DeveloperColumn = styled('div')({
   minHeight: 0
@@ -175,6 +178,7 @@ export const AppOverlayLayoutContext =
   })
 
 export interface AppOverlayLayoutProps {
+  hidden?: boolean
   spacing?: number
   mainWidth?: number
   contextWidth?: number
@@ -188,6 +192,7 @@ export interface AppOverlayLayoutProps {
 
 export const AppOverlayLayout: FC<AppOverlayLayoutProps> = memo(
   ({
+    hidden = false,
     spacing = 1,
     mainWidth = 360,
     contextWidth = mainWidth,
@@ -221,7 +226,7 @@ export const AppOverlayLayout: FC<AppOverlayLayoutProps> = memo(
 
     return (
       <AppOverlayLayoutContext.Provider value={contextValue}>
-        <Root>
+        <Root hidden={hidden}>
           <RootColumn>
             <RootGrid spacing={spacing}>
               <SizeContainer ref={mainRef}>

@@ -9,6 +9,7 @@ import { type TerrainType } from '../containers/Terrains'
 import { shadowMapEnabledAtom } from './graphics'
 
 export const readyAtom = atom<boolean>(false)
+export const hideAppOverlayAtom = atom(false)
 export const showDeveloperPanelsAtom = atom(false)
 
 const environmentTypePrimitiveAtom = atomWithReset<EnvironmentType>('map')
