@@ -72,6 +72,7 @@
     "moji": "^0.5.1",
     "nanoid": "^4.0.2",
     "next": "13.4.1",
+    "notistack": "^3.0.1",
     "object-hash": "^3.0.0",
     "overlayscrollbars": "^2.2.0",
     "overlayscrollbars-react": "^0.5.0",

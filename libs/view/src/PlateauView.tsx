@@ -20,6 +20,7 @@ import { Areas } from './containers/Areas'
 import { Canvas } from './containers/Canvas'
 import { Environments } from './containers/Environments'
 import { KeyBindings } from './containers/KeyBindings'
+import { Notifications } from './containers/Notifications'
 import { ReverseGeocoding } from './containers/ReverseGeocoding'
 import { ScreenSpaceCamera } from './containers/ScreenSpaceCamera'
 import { ScreenSpaceSelection } from './containers/ScreenSpaceSelection'
@@ -116,6 +117,7 @@ export const PlateauView: FC<PlateauViewProps> = () => {
       <KeyBindings />
       <ScreenSpaceSelection />
       <AppOverlay />
+      <Notifications />
       <InitialLayers />
     </AppFrame>
   )
