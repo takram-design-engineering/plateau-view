@@ -22,7 +22,7 @@ import {
   Shortcut
 } from '@takram/plateau-ui-components'
 
-import { showDeveloperPanelsAtom } from '../states/app'
+import { hideAppOverlayAtom, showDeveloperPanelsAtom } from '../states/app'
 
 export interface MainMenuButtonProps extends Omit<IconButtonProps, 'onClick'> {
   onClick?: (event: MouseEvent<HTMLElement>, name: string) => void
@@ -38,6 +38,7 @@ export const MainMenuButton = forwardRef<
     popupId: id
   })
 
+  const [hideAppOverlay, setHideAppOverlay] = useAtom(hideAppOverlayAtom)
   const [showDeveloperPanels, setShowDeveloperPanels] = useAtom(
     showDeveloperPanelsAtom
   )
@@ -52,6 +53,9 @@ export const MainMenuButton = forwardRef<
         return
       }
       switch (name) {
+        case 'hide-ui':
+          setHideAppOverlay(value => !value)
+          break
         case 'developer':
           setShowDeveloperPanels(value => !value)
           break
@@ -59,7 +63,7 @@ export const MainMenuButton = forwardRef<
       onClickRef.current?.(event, name)
       popupState.close()
     },
-    [popupState, setShowDeveloperPanels]
+    [popupState, setHideAppOverlay, setShowDeveloperPanels]
   )
 
   const platform = useAtomValue(platformAtom)
@@ -110,6 +114,16 @@ export const MainMenuButton = forwardRef<
           フィードバック
         </SelectItem>
         <Divider light />
+        <SelectItem
+          selected={showDeveloperPanels}
+          data-name='hide-ui'
+          onClick={handleClick}
+        >
+          UIを{hideAppOverlay ? '表示' : '隠す'}
+          <ListItemSecondaryAction>
+            <Shortcut platform={platform} shortcutKey='/' commandKey />
+          </ListItemSecondaryAction>
+        </SelectItem>
         <SelectItem
           selected={showDeveloperPanels}
           data-name='developer'

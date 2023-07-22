@@ -1,5 +1,5 @@
 import { alpha, createTheme, type ThemeOptions } from '@mui/material'
-import { cyan, grey } from '@mui/material/colors'
+import { grey } from '@mui/material/colors'
 import { type Shadows } from '@mui/material/styles/shadows'
 import { merge } from 'lodash'
 import { type CSSProperties } from 'react'
@@ -18,6 +18,7 @@ import { MuiPaper } from './components/MuiPaper'
 import { MuiPopover } from './components/MuiPopover'
 import { MuiSelect } from './components/MuiSelect'
 import { MuiSlider } from './components/MuiSlider'
+import { MuiSnackbar } from './components/MuiSnackbar'
 import { MuiSvgIcon } from './components/MuiSvgIcon'
 import { MuiSwitch } from './components/MuiSwitch'
 import { MuiTab } from './components/MuiTab'
@@ -135,6 +136,7 @@ export const themeOptions: ThemeOptions = {
     MuiPopover,
     MuiSelect,
     MuiSlider,
+    MuiSnackbar,
     MuiSvgIcon,
     MuiSwitch,
     MuiTab,

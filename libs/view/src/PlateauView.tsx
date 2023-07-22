@@ -1,18 +1,12 @@
 import { Cartesian3, HeadingPitchRoll } from '@cesium/engine'
 import { useSetAtom } from 'jotai'
-import dynamic from 'next/dynamic'
 import { Suspense, useCallback, useEffect, type FC } from 'react'
 
 import { CurrentTime, ViewLocator } from '@takram/plateau-cesium'
 import { SuspendUntilTilesLoaded } from '@takram/plateau-cesium-helpers'
 import { LayersRenderer, useAddLayer } from '@takram/plateau-layers'
 import { isNotFalse } from '@takram/plateau-type-helpers'
-import {
-  AppBar,
-  AppFrame,
-  AppOverlayLayout,
-  Space
-} from '@takram/plateau-ui-components'
+import { AppFrame } from '@takram/plateau-ui-components'
 import {
   BUILDING_LAYER,
   createViewLayer,
@@ -20,10 +14,13 @@ import {
   PEDESTRIAN_LAYER
 } from '@takram/plateau-view-layers'
 
+import { AppHeader } from './containers/AppHeader'
+import { AppOverlay } from './containers/AppOverlay'
 import { Areas } from './containers/Areas'
 import { Canvas } from './containers/Canvas'
 import { Environments } from './containers/Environments'
 import { KeyBindings } from './containers/KeyBindings'
+import { Notifications } from './containers/Notifications'
 import { ReverseGeocoding } from './containers/ReverseGeocoding'
 import { ScreenSpaceCamera } from './containers/ScreenSpaceCamera'
 import { ScreenSpaceSelection } from './containers/ScreenSpaceSelection'
@@ -31,21 +28,7 @@ import { SelectionBoundingSphere } from './containers/SelectionBoundingSphere'
 import { SelectionCoordinator } from './containers/SelectionCoordinator'
 import { Terrains } from './containers/Terrains'
 import { ToolMachineEvents } from './containers/ToolMachineEvents'
-import { DeveloperPanels } from './developer/DeveloperPanels'
-import { CameraButtons } from './panels/CameraButtons'
-import { DateControlButton } from './panels/DateControlButton'
-import { EnvironmentSelect } from './panels/EnvironmentSelect'
-import { LocationBreadcrumbs } from './panels/LocationBreadcrumbs'
-import { MainMenuButton } from './panels/MainMenuButton'
-import { SelectionPanel } from './panels/SelectionPanel'
-import { SettingsButton } from './panels/SettingsButton'
-import { ToolButtons } from './panels/ToolButtons'
 import { readyAtom } from './states/app'
-
-const MainPanel = dynamic(
-  async () => (await import('./panels/MainPanel')).MainPanel,
-  { ssr: false }
-)
 
 const initialDestination = Cartesian3.fromDegrees(139.755, 35.675, 1000)
 const initialOrientation = new HeadingPitchRoll(Math.PI * 0.4, -Math.PI * 0.2)
@@ -102,23 +85,7 @@ export const PlateauView: FC<PlateauViewProps> = () => {
   }, [setReady])
 
   return (
-    <AppFrame
-      header={
-        <AppBar>
-          <MainMenuButton />
-          <Space size={2} />
-          <ToolButtons />
-          <Space />
-          <SettingsButton />
-          <DateControlButton />
-          <EnvironmentSelect />
-          <Space flexible />
-          <LocationBreadcrumbs />
-          <Space flexible />
-          <CameraButtons />
-        </AppBar>
-      }
-    >
+    <AppFrame header={<AppHeader />}>
       <Canvas>
         <ScreenSpaceCamera tiltByRightButton />
         <CurrentTime hours={7} />
@@ -149,15 +116,8 @@ export const PlateauView: FC<PlateauViewProps> = () => {
       </Canvas>
       <KeyBindings />
       <ScreenSpaceSelection />
-      <AppOverlayLayout
-        main={
-          <Suspense>
-            <MainPanel />
-          </Suspense>
-        }
-        aside={<SelectionPanel />}
-        developer={<DeveloperPanels />}
-      />
+      <AppOverlay />
+      <Notifications />
       <InitialLayers />
     </AppFrame>
   )
