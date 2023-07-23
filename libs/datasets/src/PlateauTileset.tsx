@@ -64,7 +64,7 @@ function initTile(
         ({ type, value }) => type === PLATEAU_TILE_FEATURE && value.key === id
       ) === true
     ) {
-      feature.setProperty('selected', true)
+      feature.setProperty('__selected', true)
     }
   })
 }
@@ -109,7 +109,7 @@ function useSelectionResponder({
         return
       }
       features.forEach(feature => {
-        feature.setProperty('selected', true)
+        feature.setProperty('__selected', true)
       })
     },
     onDeselect: value => {
@@ -118,7 +118,7 @@ function useSelectionResponder({
         return
       }
       features.forEach(feature => {
-        feature.setProperty('selected', false)
+        feature.setProperty('__selected', false)
       })
     },
     computeBoundingSphere: (value, result) => {
