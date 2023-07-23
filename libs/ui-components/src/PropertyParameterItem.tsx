@@ -12,6 +12,7 @@ import {
   Typography,
   type SelectChangeEvent
 } from '@mui/material'
+import { median } from 'd3'
 import { atom, useAtom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
 import { max, mean, min, round } from 'lodash'
@@ -107,10 +108,12 @@ const NumberValue: FC<{
     <NumberValueRoot>
       {format === 'mean'
         ? round(mean(values), 1)
+        : format === 'median'
+        ? round(median(values) ?? 0, 1)
         : format === 'max'
-        ? max(values)
+        ? round(max(values) ?? 0, 1)
         : format === 'min'
-        ? min(values)
+        ? round(min(values) ?? 0, 1)
         : null}
       <StyledSelect
         variant='filled'
@@ -120,6 +123,9 @@ const NumberValue: FC<{
       >
         <SelectItem value='mean'>
           <Typography variant='body2'>平均</Typography>
+        </SelectItem>
+        <SelectItem value='median'>
+          <Typography variant='body2'>中央</Typography>
         </SelectItem>
         <SelectItem value='min'>
           <Typography variant='body2'>最小</Typography>
