@@ -1,6 +1,7 @@
 export * from './AddressIcon'
 export * from './BuildingIcon'
 export * from './ClockIcon'
+export * from './CloseIcon'
 export * from './DatasetIcon'
 export * from './DropDownIcon'
 export * from './ExpandArrowIcon'

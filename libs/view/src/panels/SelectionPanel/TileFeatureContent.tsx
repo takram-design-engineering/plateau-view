@@ -1,9 +1,10 @@
-import { Divider, IconButton, Tooltip } from '@mui/material'
+import { Divider, IconButton, List, Tooltip } from '@mui/material'
 import { useSetAtom } from 'jotai'
 import { useCallback, useState, type FC } from 'react'
 
 import { type PLATEAU_TILE_FEATURE } from '@takram/plateau-datasets'
 import { withEphemerality } from '@takram/plateau-react-helpers'
+import { screenSpaceSelectionAtom } from '@takram/plateau-screen-space-selection'
 import {
   BuildingIcon,
   InspectorActions,
@@ -41,12 +42,18 @@ export const TileFeatureContent: FC<TileFeatureContentProps> = withEphemerality(
       setHidden(false)
     }, [values, showFeatures])
 
+    const setSelection = useSetAtom(screenSpaceSelectionAtom)
+    const handleClose = useCallback(() => {
+      setSelection([])
+    }, [setSelection])
+
     return (
-      <>
+      <List disablePadding>
         <InspectorHeader
           // TODO: Change name and icon according to the feature type.
           title={`${values.length}個の建築物`}
           iconComponent={BuildingIcon}
+          onClose={handleClose}
         />
         <Divider light />
         <InspectorActions>
@@ -60,7 +67,7 @@ export const TileFeatureContent: FC<TileFeatureContentProps> = withEphemerality(
             </IconButton>
           </Tooltip>
         </InspectorActions>
-      </>
+      </List>
     )
   }
 )

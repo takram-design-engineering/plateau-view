@@ -1,7 +1,9 @@
-import { Divider } from '@mui/material'
+import { Divider, List } from '@mui/material'
+import { useSetAtom } from 'jotai'
+import { useCallback } from 'react'
 import invariant from 'tiny-invariant'
 
-import { type LayerType } from '@takram/plateau-layers'
+import { layerSelectionAtom, type LayerType } from '@takram/plateau-layers'
 import { InspectorHeader, InspectorItem } from '@takram/plateau-ui-components'
 import { layerTypeIcons, layerTypeNames } from '@takram/plateau-view-layers'
 
@@ -28,8 +30,13 @@ export function LayerContent<T extends LayerType>({
   invariant(values.length > 0)
   const type = values[0].type
 
+  const setSelection = useSetAtom(layerSelectionAtom)
+  const handleClose = useCallback(() => {
+    setSelection([])
+  }, [setSelection])
+
   return (
-    <>
+    <List disablePadding>
       <InspectorHeader
         title={
           values.length === 1
@@ -37,6 +44,7 @@ export function LayerContent<T extends LayerType>({
             : `${values.length}個の${layerTypeNames[type]}レイヤー`
         }
         iconComponent={layerTypeIcons[type]}
+        onClose={handleClose}
       />
       <Divider light />
       <LayerActions values={values} />
@@ -47,6 +55,6 @@ export function LayerContent<T extends LayerType>({
         <LayerShowWireframeSection layers={values} />
         <LayerColorSection layers={values} />
       </InspectorItem>
-    </>
+    </List>
   )
 }
