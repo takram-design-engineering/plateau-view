@@ -12,6 +12,7 @@ import {
   type SelectionGroup
 } from '../../states/selection'
 import { TileFeatureActions } from './TileFeatureActions'
+import { TileFeaturePropertiesSection } from './TileFeaturePropertiesSection'
 
 export interface TileFeatureContentProps {
   values: (SelectionGroup & {
@@ -39,6 +40,8 @@ export const TileFeatureContent: FC<TileFeatureContentProps> = withEphemerality(
         />
         <Divider light />
         <TileFeatureActions values={values} />
+        <Divider light />
+        <TileFeaturePropertiesSection values={values} />
       </List>
     )
   }
