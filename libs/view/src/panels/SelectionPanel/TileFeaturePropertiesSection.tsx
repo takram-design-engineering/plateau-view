@@ -20,10 +20,7 @@ export interface TileFeaturePropertiesSectionProps {
   })['values']
 }
 
-interface PropertySet {
-  name: string
-  values: string[] | number[] | object[]
-}
+const excludedPropertyNames = ['LOD1立ち上げに使用する高さ']
 
 export const TileFeaturePropertiesSection: FC<
   TileFeaturePropertiesSectionProps
@@ -36,10 +33,12 @@ export const TileFeaturePropertiesSection: FC<
     [values]
   )
 
-  const properties: PropertySet[] = useMemo(
+  const properties = useMemo(
     () =>
       intersection(...features.map(feature => feature.getPropertyIds()))
-        .filter(name => !name.startsWith('_'))
+        .filter(
+          name => !name.startsWith('_') && !excludedPropertyNames.includes(name)
+        )
         .map(name => ({
           name,
           values: features
