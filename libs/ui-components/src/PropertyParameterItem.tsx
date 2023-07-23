@@ -1,5 +1,7 @@
 import {
   alpha,
+  Collapse,
+  IconButton,
   Select,
   selectClasses,
   styled,
@@ -15,7 +17,7 @@ import {
 import { median } from 'd3'
 import { atom, useAtom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
-import { max, mean, min, round } from 'lodash'
+import { groupBy, max, mean, min, round } from 'lodash'
 import {
   forwardRef,
   useCallback,
@@ -23,6 +25,8 @@ import {
   type FC
 } from 'react'
 
+import { TreeArrowCollapsedIcon } from './icons/TreeArrowCollapsedIcon'
+import { TreeArrowExpandedIcon } from './icons/TreeArrowExpandedIcon'
 import { SelectItem } from './SelectItem'
 
 const Root = styled('div', {
@@ -138,6 +142,85 @@ const NumberValue: FC<{
   )
 }
 
+const Property: FC<{
+  property: PropertySet
+  level?: number
+}> = ({ property: { name, values }, level = 0 }) => (
+  <TableRow>
+    <TableCell variant='head' width='50%' sx={{ paddingLeft: level * 2 + 2 }}>
+      {name.replaceAll('_', ' ')}
+    </TableCell>
+    <TableCell width='50%'>
+      {typeof values[0] === 'string' ? (
+        <StringValue name={name} values={values as string[]} />
+      ) : typeof values[0] === 'number' ? (
+        <NumberValue name={name} values={values as number[]} />
+      ) : null}
+    </TableCell>
+  </TableRow>
+)
+
+const groupExpandedAtomFamily = atomFamily((name: string) => atom(false))
+
+const PropertyGroupCell = styled(TableCell)({
+  borderBottomWidth: 0
+})
+
+const PropertyGroupName = styled('div')(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  marginLeft: theme.spacing(-1)
+}))
+
+const PropertyGroup: FC<{
+  name: string
+  properties: readonly PropertySet[]
+}> = ({ name, properties }) => {
+  const expandedAtom = groupExpandedAtomFamily(name)
+  const [expanded, setExpanded] = useAtom(expandedAtom)
+  const handleClick = useCallback(() => {
+    setExpanded(value => !value)
+  }, [setExpanded])
+  return (
+    <>
+      <TableRow>
+        <PropertyGroupCell variant='head' colSpan={2}>
+          <PropertyGroupName>
+            <IconButton size='small' onClick={handleClick}>
+              {expanded ? (
+                <TreeArrowExpandedIcon />
+              ) : (
+                <TreeArrowCollapsedIcon />
+              )}
+            </IconButton>
+            {name}
+          </PropertyGroupName>
+        </PropertyGroupCell>
+      </TableRow>
+      <TableRow>
+        <TableCell variant='head' colSpan={2} padding='none'>
+          <Collapse in={expanded} timeout='auto' unmountOnExit>
+            <StyledTable size='small'>
+              <TableBody>
+                {properties.map(property => (
+                  <Property
+                    key={property.name}
+                    property={{
+                      ...property,
+                      name: property.name.slice(name.length + 1)
+                    }}
+                    level={1}
+                  />
+                ))}
+              </TableBody>
+            </StyledTable>
+          </Collapse>
+        </TableCell>
+      </TableRow>
+    </>
+  )
+}
+
 export interface PropertyParameterItemProps
   extends Omit<ComponentPropsWithRef<typeof Root>, 'children'> {
   properties: readonly PropertySet[]
@@ -147,27 +230,23 @@ export interface PropertyParameterItemProps
 export const PropertyParameterItem = forwardRef<
   HTMLDivElement,
   PropertyParameterItemProps
->(({ properties, labelFontSize = 'small', ...props }, ref) => (
-  <Root ref={ref} {...props}>
-    <StyledTable size='small'>
-      <TableBody>
-        {properties
-          .filter(({ values }) => typeof values[0] !== 'object')
-          .map(({ name, values }) => (
-            <TableRow key={name}>
-              <TableCell variant='head' width='60%'>
-                {name.replaceAll('_', ' ')}
-              </TableCell>
-              <TableCell width='40%'>
-                {typeof values[0] === 'string' ? (
-                  <StringValue name={name} values={values as string[]} />
-                ) : typeof values[0] === 'number' ? (
-                  <NumberValue name={name} values={values as number[]} />
-                ) : null}
-              </TableCell>
-            </TableRow>
-          ))}
-      </TableBody>
-    </StyledTable>
-  </Root>
-))
+>(({ properties, labelFontSize = 'small', ...props }, ref) => {
+  const groups = Object.entries(
+    groupBy(properties, property => property.name.split('_')[0])
+  ).map(([name, properties]) => ({ name, properties }))
+  return (
+    <Root ref={ref} {...props}>
+      <StyledTable size='small'>
+        <TableBody>
+          {groups.map(({ name, properties }) =>
+            properties.length === 1 ? (
+              <Property key={properties[0].name} property={properties[0]} />
+            ) : (
+              <PropertyGroup key={name} name={name} properties={properties} />
+            )
+          )}
+        </TableBody>
+      </StyledTable>
+    </Root>
+  )
+})
