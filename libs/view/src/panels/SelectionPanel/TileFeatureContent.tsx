@@ -1,23 +1,17 @@
-import { Divider, IconButton, List, Tooltip } from '@mui/material'
+import { Divider, List } from '@mui/material'
 import { useSetAtom } from 'jotai'
-import { useCallback, useState, type FC } from 'react'
+import { useCallback, type FC } from 'react'
 
 import { type PLATEAU_TILE_FEATURE } from '@takram/plateau-datasets'
 import { withEphemerality } from '@takram/plateau-react-helpers'
 import { screenSpaceSelectionAtom } from '@takram/plateau-screen-space-selection'
-import {
-  BuildingIcon,
-  InspectorActions,
-  InspectorHeader,
-  VisibilityOffIcon,
-  VisibilityOnIcon
-} from '@takram/plateau-ui-components'
-import { hideFeaturesAtom, showFeaturesAtom } from '@takram/plateau-view-layers'
+import { BuildingIcon, InspectorHeader } from '@takram/plateau-ui-components'
 
 import {
   type SCREEN_SPACE_SELECTION,
   type SelectionGroup
 } from '../../states/selection'
+import { TileFeatureActions } from './TileFeatureActions'
 
 export interface TileFeatureContentProps {
   values: (SelectionGroup & {
@@ -30,18 +24,6 @@ export const TileFeatureContent: FC<TileFeatureContentProps> = withEphemerality(
   null,
   ['values'],
   ({ values }) => {
-    const [hidden, setHidden] = useState(false)
-    const hideFeatures = useSetAtom(hideFeaturesAtom)
-    const showFeatures = useSetAtom(showFeaturesAtom)
-    const handleHide = useCallback(() => {
-      hideFeatures(values.map(value => value.key))
-      setHidden(true)
-    }, [values, hideFeatures])
-    const handleShow = useCallback(() => {
-      showFeatures(values.map(value => value.key))
-      setHidden(false)
-    }, [values, showFeatures])
-
     const setSelection = useSetAtom(screenSpaceSelectionAtom)
     const handleClose = useCallback(() => {
       setSelection([])
@@ -56,17 +38,7 @@ export const TileFeatureContent: FC<TileFeatureContentProps> = withEphemerality(
           onClose={handleClose}
         />
         <Divider light />
-        <InspectorActions>
-          <Tooltip title={hidden ? '表示' : '隠す'}>
-            <IconButton
-              color='inherit'
-              aria-label={hidden ? '表示' : '隠す'}
-              onClick={hidden ? handleShow : handleHide}
-            >
-              {hidden ? <VisibilityOffIcon /> : <VisibilityOnIcon />}
-            </IconButton>
-          </Tooltip>
-        </InspectorActions>
+        <TileFeatureActions values={values} />
       </List>
     )
   }
