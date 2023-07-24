@@ -7,6 +7,7 @@ import { type LayerModelBase } from '@takram/plateau-layers'
 import { type LayerTitle } from './types'
 
 export interface ViewLayerModelParams {
+  id?: string
   title?: string
 }
 
@@ -18,6 +19,7 @@ export function createViewLayerBase(
   params: ViewLayerModelParams
 ): Omit<SetOptional<ViewLayerModel, 'id'>, 'type'> {
   return {
+    id: params.id,
     isViewLayer: true,
     titleAtom: atom<LayerTitle | null>(params.title ?? null),
     loadingAtom: atom(false),
