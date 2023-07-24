@@ -8,7 +8,6 @@ import {
 import { useId, type FC, type ReactNode } from 'react'
 
 import { SettingsIcon } from './icons'
-import { InspectorItem } from './InspectorItem'
 import { ParameterItem, type ParameterItemProps } from './ParameterItem'
 
 export interface GroupedParameterItemProps
@@ -54,7 +53,7 @@ export const GroupedParameterItem: FC<GroupedParameterItemProps> = ({
           vertical: 'top'
         }}
       >
-        <InspectorItem>{children}</InspectorItem>
+        {children}
       </Popover>
     </>
   )

@@ -57,7 +57,7 @@ export const Inspector = forwardRef<HTMLDivElement, InspectorProps>(
             width: defaultWidth,
             height: 'auto'
           }}
-          minWidth={360}
+          minWidth={320}
           enable={{
             left: true,
             right: true

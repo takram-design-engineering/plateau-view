@@ -1,11 +1,14 @@
-import { atom, useAtomValue } from 'jotai'
+import { Divider, Typography } from '@mui/material'
+import { atom, useAtomValue, useSetAtom } from 'jotai'
 import { intersectionBy } from 'lodash'
-import { useMemo, type FC } from 'react'
+import { useLayoutEffect, useMemo, type FC } from 'react'
 
 import { type LayerModel } from '@takram/plateau-layers'
 import { isNotFalse, isNotNullish } from '@takram/plateau-type-helpers'
 import {
   ColorSchemeParameterItem,
+  GroupedParameterItem,
+  InspectorItem,
   ParameterList,
   SelectParameterItem,
   SliderParameterItem
@@ -113,32 +116,63 @@ export const LayerColorSection: FC<LayerColorSectionProps> = ({ layers }) => {
     return [property.minimum, property.maximum]
   }, [properties, colorProperty])
 
+  const setColorRange = useSetAtom(
+    useMemo(
+      () =>
+        atom(null, (get, set, value: number[]) => {
+          colorRangeAtoms.forEach(colorRange => {
+            set(colorRange, value)
+          })
+        }),
+      [colorRangeAtoms]
+    )
+  )
+  // Update color range when properties change.
+  useLayoutEffect(() => {
+    if (colorProperty != null && minMax != null) {
+      setColorRange(minMax)
+    }
+  }, [colorProperty, minMax, setColorRange])
+
   if (!hasColorAtoms(layers)) {
     return null
   }
   return (
-    <ParameterList>
-      <SelectParameterItem
-        label='色分け'
-        atom={colorPropertyAtoms}
-        items={propertyItems}
-        layout='stack'
-        displayEmpty
-      />
-      {colorProperty != null && (
-        <>
-          <ColorSchemeParameterItem label='配色' atom={colorSchemeAtoms} />
-          {minMax != null && (
-            <SliderParameterItem
-              label='値範囲'
-              min={minMax[0]}
-              max={minMax[1]}
-              range
-              atom={colorRangeAtoms}
-            />
-          )}
-        </>
-      )}
-    </ParameterList>
+    <>
+      <Divider light />
+      <InspectorItem>
+        <ParameterList>
+          <GroupedParameterItem label='色分け'>
+            <InspectorItem sx={{ width: 320 }}>
+              <ParameterList>
+                <Typography variant='subtitle1' sx={{ marginY: 1 }}>
+                  色分け
+                </Typography>
+                <SelectParameterItem
+                  label='モデル属性'
+                  atom={colorPropertyAtoms}
+                  items={propertyItems}
+                  layout='stack'
+                  displayEmpty
+                />
+                <ColorSchemeParameterItem
+                  label='配色'
+                  atom={colorSchemeAtoms}
+                />
+                {minMax != null && (
+                  <SliderParameterItem
+                    label='値範囲'
+                    min={minMax[0]}
+                    max={minMax[1]}
+                    range
+                    atom={colorRangeAtoms}
+                  />
+                )}
+              </ParameterList>
+            </InspectorItem>
+          </GroupedParameterItem>
+        </ParameterList>
+      </InspectorItem>
+    </>
   )
 }

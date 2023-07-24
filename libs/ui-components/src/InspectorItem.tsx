@@ -1,5 +1,5 @@
 import { styled } from '@mui/material'
-import { type FC, type ReactNode } from 'react'
+import { type ComponentPropsWithoutRef, type FC } from 'react'
 
 const Root = styled('div', {
   shouldForwardProp: prop => prop !== 'disablePadding'
@@ -11,12 +11,9 @@ const Root = styled('div', {
   })
 }))
 
-export interface InspectorItemProps {
-  disablePadding?: boolean
-  children?: ReactNode
-}
+export interface InspectorItemProps
+  extends ComponentPropsWithoutRef<typeof Root> {}
 
-export const InspectorItem: FC<InspectorItemProps> = ({
-  disablePadding = false,
-  children
-}) => <Root disablePadding={disablePadding}>{children}</Root>
+export const InspectorItem: FC<InspectorItemProps> = props => (
+  <Root {...props} />
+)

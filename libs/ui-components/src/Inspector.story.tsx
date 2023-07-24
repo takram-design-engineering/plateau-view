@@ -94,26 +94,28 @@ export const Default: Story = {
               atom={sliderAtom1}
             />
             <GroupedParameterItem label='Group'>
-              <ParameterList>
-                <SliderParameterItem
-                  label='Range Slider'
-                  min={0}
-                  max={10}
-                  range
-                  atom={sliderAtom2}
-                />
-                <SegmentParameterItem
-                  label='Segment'
-                  // @ts-expect-error TODO: Fix type
-                  atom={segmentAtom}
-                  items={[
-                    [1, 'Value 1'],
-                    [2, 'Value 2'],
-                    [3, 'Value 3'],
-                    [4, 'Value 4']
-                  ]}
-                />
-              </ParameterList>
+              <InspectorItem>
+                <ParameterList>
+                  <SliderParameterItem
+                    label='Range Slider'
+                    min={0}
+                    max={10}
+                    range
+                    atom={sliderAtom2}
+                  />
+                  <SegmentParameterItem
+                    label='Segment'
+                    // @ts-expect-error TODO: Fix type
+                    atom={segmentAtom}
+                    items={[
+                      [1, 'Value 1'],
+                      [2, 'Value 2'],
+                      [3, 'Value 3'],
+                      [4, 'Value 4']
+                    ]}
+                  />
+                </ParameterList>
+              </InspectorItem>
             </GroupedParameterItem>
           </ParameterList>
         </InspectorItem>
