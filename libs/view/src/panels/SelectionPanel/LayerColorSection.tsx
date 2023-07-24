@@ -91,7 +91,9 @@ const Legend: FC<{
   }
   return (
     <LegendRoot spacing={1}>
-      <Typography variant='body2'>{colorProperty}</Typography>
+      <Typography variant='body2'>
+        {colorProperty.replaceAll('_', ' ')}
+      </Typography>
       <QuantitativeColorLegend
         colorScheme={colorScheme}
         min={colorRange[0]}
