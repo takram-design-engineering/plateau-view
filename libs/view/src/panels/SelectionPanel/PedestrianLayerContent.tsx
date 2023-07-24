@@ -6,7 +6,11 @@ import invariant from 'tiny-invariant'
 
 import { useCesium, usePreRender } from '@takram/plateau-cesium'
 import { parse } from '@takram/plateau-cesium-helpers'
-import { layersAtom, useFindLayer } from '@takram/plateau-layers'
+import {
+  layersAtom,
+  useFindLayer,
+  type LayerModel
+} from '@takram/plateau-layers'
 import {
   StreetView,
   useStreetViewState,
@@ -43,21 +47,9 @@ export interface PedestrianLayerContentProps {
     ))['values']
 }
 
-export const PedestrianLayerContent: FC<PedestrianLayerContentProps> = ({
-  values
-}) => {
-  const layers = useAtomValue(layersAtom)
-  const findLayer = useFindLayer()
-  // TODO: Support multiple layers
-  const layer =
-    typeof values[0] === 'string'
-      ? findLayer(layers, {
-          type: PEDESTRIAN_LAYER,
-          id: parse(values[0]).key
-        })
-      : values[0]
-  invariant(layer != null)
-
+export const Content: FC<{
+  layer: LayerModel<typeof PEDESTRIAN_LAYER>
+}> = ({ layer }) => {
   const { synchronizeAtom, locationAtom, headingPitchAtom, zoomAtom } =
     useStreetViewState({
       synchronizeAtom: layer.synchronizeStreetViewAtom,
@@ -116,4 +108,24 @@ export const PedestrianLayerContent: FC<PedestrianLayerContentProps> = ({
       </InspectorItem>
     </>
   )
+}
+
+export const PedestrianLayerContent: FC<PedestrianLayerContentProps> = ({
+  values
+}) => {
+  const layers = useAtomValue(layersAtom)
+  const findLayer = useFindLayer()
+  // TODO: Support multiple layers
+  const layer =
+    typeof values[0] === 'string'
+      ? findLayer(layers, {
+          type: PEDESTRIAN_LAYER,
+          id: parse(values[0]).key
+        })
+      : values[0]
+
+  if (layer == null) {
+    return null
+  }
+  return <Content layer={layer} />
 }
