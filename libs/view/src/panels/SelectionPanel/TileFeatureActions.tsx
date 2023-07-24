@@ -1,14 +1,20 @@
 import { IconButton, Tooltip } from '@mui/material'
-import { useSetAtom } from 'jotai'
+import { useAtomValue, useSetAtom } from 'jotai'
 import { useCallback, useState } from 'react'
 
 import { type PLATEAU_TILE_FEATURE } from '@takram/plateau-datasets'
+import { layerSelectionAtom } from '@takram/plateau-layers'
 import {
   InspectorActions,
+  LayerIcon,
   VisibilityOffIcon,
   VisibilityOnIcon
 } from '@takram/plateau-ui-components'
-import { hideFeaturesAtom, showFeaturesAtom } from '@takram/plateau-view-layers'
+import {
+  hideFeaturesAtom,
+  highlightedTilesetLayersAtom,
+  showFeaturesAtom
+} from '@takram/plateau-view-layers'
 
 import {
   type SCREEN_SPACE_SELECTION,
@@ -37,8 +43,23 @@ export function TileFeatureActions({
     setHidden(false)
   }, [values, showFeatures])
 
+  const tilesetLayers = useAtomValue(highlightedTilesetLayersAtom)
+  const setLayerSelection = useSetAtom(layerSelectionAtom)
+  const handleSelectLayers = useCallback(() => {
+    setLayerSelection(tilesetLayers.map(layer => layer.id))
+  }, [tilesetLayers, setLayerSelection])
+
   return (
     <InspectorActions>
+      <Tooltip title='レイヤーを選択'>
+        <IconButton
+          color='inherit'
+          aria-label='レイヤーを選択'
+          onClick={handleSelectLayers}
+        >
+          <LayerIcon />
+        </IconButton>
+      </Tooltip>
       <Tooltip title={hidden ? '表示' : '隠す'}>
         <IconButton
           color='inherit'

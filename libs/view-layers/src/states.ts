@@ -25,7 +25,7 @@ export const pedestrianLayersAtom = atom(get =>
   )
 )
 
-const highlightedTilesetLayersAtom = atom(get => {
+export const highlightedTilesetLayersAtom = atom(get => {
   const featureKeys = get(featureSelectionAtom).map(({ value }) => value.key)
   const tilesetLayers = get(tilesetLayersAtom)
   return tilesetLayers.filter(layer => {
@@ -36,7 +36,7 @@ const highlightedTilesetLayersAtom = atom(get => {
   })
 })
 
-const highlightedPedestrianLayersAtom = atom(get => {
+export const highlightedPedestrianLayersAtom = atom(get => {
   const entityIds = get(pedestrianSelectionAtom).map(({ value }) => value)
   const pedestrianLayers = get(pedestrianLayersAtom)
   return pedestrianLayers.filter(layer => {
