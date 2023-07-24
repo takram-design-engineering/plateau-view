@@ -18,13 +18,15 @@ import { type MotionPosition } from './useMotionPosition'
 export interface LevitationCircleProps {
   motionPosition: MotionPosition
   offset?: Cartesian3
+  radius?: number
 }
 
 const positionScratch = new Cartesian3()
 
 export const LevitationCircle: FC<LevitationCircleProps> = ({
   motionPosition,
-  offset = Cartesian3.ZERO
+  offset = Cartesian3.ZERO,
+  radius = 100
 }) => {
   const scene = useCesium(({ scene }) => scene)
 
@@ -74,10 +76,10 @@ export const LevitationCircle: FC<LevitationCircleProps> = ({
   const semiAxisProperty = useMemo(
     () =>
       new CallbackProperty(
-        () => Math.max(0.1, motionLevitation.get() * 100),
+        () => Math.max(0.1, motionLevitation.get() * radius),
         false
       ),
-    [motionLevitation]
+    [radius, motionLevitation]
   )
 
   const theme = useTheme()
