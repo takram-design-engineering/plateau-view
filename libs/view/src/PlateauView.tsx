@@ -21,6 +21,7 @@ import { Canvas } from './containers/Canvas'
 import { Environments } from './containers/Environments'
 import { KeyBindings } from './containers/KeyBindings'
 import { Notifications } from './containers/Notifications'
+import { PedestrianTool } from './containers/PedestrianTool'
 import { ReverseGeocoding } from './containers/ReverseGeocoding'
 import { ScreenSpaceCamera } from './containers/ScreenSpaceCamera'
 import { ScreenSpaceSelection } from './containers/ScreenSpaceSelection'
@@ -111,6 +112,7 @@ export const PlateauView: FC<PlateauViewProps> = () => {
         <Areas />
         <ReverseGeocoding />
         <ToolMachineEvents />
+        <PedestrianTool />
         <SelectionCoordinator />
         <SelectionBoundingSphere />
       </Canvas>
