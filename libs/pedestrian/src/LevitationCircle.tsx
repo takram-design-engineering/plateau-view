@@ -48,12 +48,17 @@ export const LevitationCircle: FC<LevitationCircleProps> = ({
     })
   }, [scene, motionLevitation])
 
-  const positionPropertyCallback = (): Cartesian3 => {
+  const positionPropertyCallback = (): Cartesian3 | undefined => {
     const position = Cartesian3.fromElements(
       ...motionPosition.get(),
       positionScratch
     )
-    return Cartesian3.add(position, offset, position)
+    const result = Cartesian3.add(position, offset, position)
+    if (result.equals(Cartesian3.ZERO)) {
+      // Entity requires non-zero magnitude position.
+      return undefined
+    }
+    return result
   }
   const positionPropertyCallbackRef = useRef(positionPropertyCallback)
   positionPropertyCallbackRef.current = positionPropertyCallback
