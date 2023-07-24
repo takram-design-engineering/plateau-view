@@ -1,4 +1,5 @@
 import { PerspectiveFrustum } from '@cesium/engine'
+import { styled } from '@mui/material'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { Suspense, useRef, type FC } from 'react'
 import invariant from 'tiny-invariant'
@@ -23,6 +24,10 @@ import {
   type SCREEN_SPACE_SELECTION,
   type SelectionGroup
 } from '../../states/selection'
+
+const StreetViewFallback = styled('div')(({ theme }) => ({
+  backgroundColor: theme.palette.divider
+}))
 
 export interface PedestrianLayerContentProps {
   values: (SelectionGroup &
@@ -67,14 +72,21 @@ export const PedestrianLayerContent: FC<PedestrianLayerContentProps> = ({
   const setZoom = useSetAtom(zoomAtom)
 
   const streetViewRef = useRef<HTMLDivElement>(null)
+  const streetViewFallbackRef = useRef<HTMLDivElement>(null)
   const camera = useCesium(({ camera }) => camera, { indirect: true })
   usePreRender(() => {
-    if (streetViewRef.current == null || camera == null) {
+    if (camera == null) {
       return
     }
     const frustum = camera.frustum
-    if (frustum instanceof PerspectiveFrustum) {
+    if (!(frustum instanceof PerspectiveFrustum)) {
+      return
+    }
+    if (streetViewRef.current != null) {
       streetViewRef.current.style.aspectRatio = `${frustum.aspectRatio}`
+    }
+    if (streetViewFallbackRef.current != null) {
+      streetViewFallbackRef.current.style.aspectRatio = `${frustum.aspectRatio}`
     }
   })
 
@@ -84,7 +96,7 @@ export const PedestrianLayerContent: FC<PedestrianLayerContentProps> = ({
   )
   return (
     <>
-      <Suspense>
+      <Suspense fallback={<StreetViewFallback ref={streetViewFallbackRef} />}>
         <StreetView
           ref={streetViewRef}
           apiKey={process.env.NEXT_PUBLIC_GOOGLE_STREET_VIEW_API_KEY}
