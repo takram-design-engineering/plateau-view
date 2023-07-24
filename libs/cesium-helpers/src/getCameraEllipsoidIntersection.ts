@@ -31,8 +31,8 @@ export function getCameraEllipsoidIntersection(
       result
     )
   }
-  rayScratch.origin = scene.camera.positionWC
-  rayScratch.direction = scene.camera.directionWC
+  scene.camera.positionWC.clone(rayScratch.origin)
+  scene.camera.directionWC.clone(rayScratch.direction)
   return getRayEllipsoidIntersection(
     rayScratch,
     scene.globe.ellipsoid,
