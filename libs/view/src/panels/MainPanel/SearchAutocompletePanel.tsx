@@ -112,11 +112,11 @@ export const SearchAutocompletePanel: FC<SearchAutocompletePanelProps> = ({
           setFilters([])
           return
         }
-        if (values.length !== 1) {
-          return
-        }
-        const [value] = values
-        if (typeof value === 'string') {
+        const [value] = values.filter(
+          (value: SearchOption | string): value is SearchOption =>
+            typeof value !== 'string' && value.type !== 'filter'
+        )
+        if (value == null) {
           return
         }
         selectOption(value)

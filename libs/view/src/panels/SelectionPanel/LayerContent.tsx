@@ -48,12 +48,12 @@ export function LayerContent<T extends LayerType>({
       />
       <Divider light />
       <LayerActions values={values} />
+      <LayerHiddenFeaturesSection layers={values} />
+      <LayerColorSection layers={values} />
       <Divider light />
       <InspectorItem>
-        <LayerHiddenFeaturesSection layers={values} />
         <LayerOpacitySection layers={values} />
         <LayerShowWireframeSection layers={values} />
-        <LayerColorSection layers={values} />
       </InspectorItem>
     </List>
   )

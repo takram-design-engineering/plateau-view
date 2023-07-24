@@ -1,5 +1,6 @@
 import {
   ListItem,
+  listItemSecondaryActionClasses,
   ListItemText,
   listItemTextClasses,
   styled
@@ -11,6 +12,16 @@ const Root = styled('div', {
 })<{ gutterBottom?: boolean }>(({ theme, gutterBottom = false }) => ({
   ...(gutterBottom && {
     marginBottom: theme.spacing(1)
+  })
+}))
+
+const StyledListItem = styled(ListItem)<{
+  secondaryActionSpace?: 'normal' | 'button'
+}>(({ theme, secondaryActionSpace = 'normal' }) => ({
+  ...(secondaryActionSpace === 'button' && {
+    [`& .${listItemSecondaryActionClasses.root}`]: {
+      right: theme.spacing(-1)
+    }
   })
 }))
 
@@ -34,6 +45,7 @@ export interface ParameterItemProps extends ComponentPropsWithRef<typeof Root> {
   label?: ReactNode
   description?: ReactNode
   control?: ReactNode
+  controlSpace?: 'normal' | 'button'
   labelFontSize?: 'small' | 'medium'
 }
 
@@ -43,6 +55,7 @@ export const ParameterItem = forwardRef<HTMLDivElement, ParameterItemProps>(
       label,
       description,
       control,
+      controlSpace = 'normal',
       labelFontSize = 'small',
       children,
       ...props
@@ -50,7 +63,11 @@ export const ParameterItem = forwardRef<HTMLDivElement, ParameterItemProps>(
     ref
   ) => (
     <Root ref={ref} {...props}>
-      <ListItem disableGutters secondaryAction={control}>
+      <StyledListItem
+        disableGutters
+        secondaryAction={control}
+        secondaryActionSpace={controlSpace}
+      >
         {(label != null || description != null) && (
           <StyledListItemText
             primary={label}
@@ -58,7 +75,7 @@ export const ParameterItem = forwardRef<HTMLDivElement, ParameterItemProps>(
             fontSize={labelFontSize}
           />
         )}
-      </ListItem>
+      </StyledListItem>
       {children}
     </Root>
   )

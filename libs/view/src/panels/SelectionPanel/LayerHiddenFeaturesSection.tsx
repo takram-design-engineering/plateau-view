@@ -1,10 +1,11 @@
-import { IconButton, Stack, Tooltip, Typography } from '@mui/material'
+import { Divider, IconButton, Stack, Tooltip, Typography } from '@mui/material'
 import { atom, useAtom } from 'jotai'
 import { sumBy } from 'lodash'
 import { useMemo, type FC } from 'react'
 
 import { type LayerModel } from '@takram/plateau-layers'
 import {
+  InspectorItem,
   MinusIcon,
   ParameterList,
   ValueParameterItem
@@ -46,33 +47,36 @@ export const LayerHiddenFeaturesSection: FC<
     return null
   }
   return (
-    <ParameterList>
-      {hiddenFeatureCount > 0 && (
-        <ValueParameterItem
-          label='非表示の建築物'
-          value={
-            <Stack
-              direction='row'
-              spacing={1}
-              alignItems='center'
-              sx={{ marginRight: -1 }}
-            >
-              <Typography variant='body2' color='text.secondary'>
-                {hiddenFeatureCount}個
-              </Typography>
-              <Tooltip title='再表示'>
-                <IconButton
-                  aria-label='再表示'
-                  color='inherit'
-                  onClick={showAllHiddenFeatures}
-                >
-                  <MinusIcon fontSize='small' />
-                </IconButton>
-              </Tooltip>
-            </Stack>
-          }
-        />
-      )}
-    </ParameterList>
+    <>
+      <Divider light />
+      <InspectorItem>
+        <ParameterList>
+          <ValueParameterItem
+            label='非表示の建築物'
+            value={
+              <Stack
+                direction='row'
+                spacing={1}
+                alignItems='center'
+                sx={{ marginRight: -1 }}
+              >
+                <Typography variant='body2' color='text.secondary'>
+                  {hiddenFeatureCount}個
+                </Typography>
+                <Tooltip title='再表示'>
+                  <IconButton
+                    aria-label='再表示'
+                    color='inherit'
+                    onClick={showAllHiddenFeatures}
+                  >
+                    <MinusIcon fontSize='small' />
+                  </IconButton>
+                </Tooltip>
+              </Stack>
+            }
+          />
+        </ParameterList>
+      </InspectorItem>
+    </>
   )
 }
