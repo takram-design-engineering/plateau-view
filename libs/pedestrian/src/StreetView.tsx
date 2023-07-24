@@ -30,7 +30,7 @@ export const StreetView = forwardRef<HTMLDivElement, StreetViewProps>(
     {
       apiKey,
       location,
-      radius = 1000,
+      radius = 100,
       onLocationChange,
       onHeadingPitchChange,
       onZoomChange,
