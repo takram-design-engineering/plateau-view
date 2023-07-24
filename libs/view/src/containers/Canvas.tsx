@@ -106,7 +106,6 @@ export const Canvas = forwardRef<HTMLDivElement, CanvasProps>(
         msaaSamples={msaaSamples[antialiasType] ?? 0}
         useBrowserRecommendedResolution={!nativeResolutionEnabled}
         requestRenderMode={explicitRenderingEnabled}
-        shouldAnimate
         maximumRenderTimeChange={1}
         {...props}
       >

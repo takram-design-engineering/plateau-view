@@ -32,8 +32,6 @@ export const CurrentTime: FC<CurrentTimeProps> = memo(
       scene.requestRender()
     }, [date, clock, scene])
 
-    // Let clock animate.
-
     return null
   }
 )

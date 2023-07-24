@@ -88,7 +88,6 @@ const Page: NextPage = () => {
           msaaSamples={4}
           useBrowserRecommendedResolution={false}
           requestRenderMode
-          shouldAnimate
           maximumRenderTimeChange={1}
           sx={{
             position: 'absolute',
