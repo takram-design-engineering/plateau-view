@@ -17,9 +17,9 @@ import {
   EntityTitleButton,
   type EntityTitleButtonProps
 } from './EntityTitleButton'
-import { TrashIcon } from './icons/TrashIcon'
-import { VisibilityOffIcon } from './icons/VisibilityOffIcon'
-import { VisibilityOnIcon } from './icons/VisibilityOnIcon'
+import { TrashSmallIcon } from './icons/TrashSmallIcon'
+import { VisibilityOffSmallIcon } from './icons/VisibilityOffSmallIcon'
+import { VisibilityOnSmallIcon } from './icons/VisibilityOnSmallIcon'
 
 const HoverMenuRoot = styled(ListItemSecondaryAction)(({ theme }) => ({
   position: 'relative',
@@ -55,7 +55,7 @@ const HoverMenu: FC<HoverMenuProps> = ({
       {(hovered || !hidden) && (
         <Tooltip title='削除'>
           <IconButton color='inherit' aria-label='削除' onClick={onRemove}>
-            <TrashIcon fontSize='small' />
+            <TrashSmallIcon fontSize='small' />
           </IconButton>
         </Tooltip>
       )}
@@ -66,9 +66,9 @@ const HoverMenu: FC<HoverMenuProps> = ({
           onClick={onToggleHidden}
         >
           {hidden ? (
-            <VisibilityOffIcon fontSize='small' />
+            <VisibilityOffSmallIcon fontSize='small' />
           ) : (
-            <VisibilityOnIcon fontSize='small' />
+            <VisibilityOnSmallIcon fontSize='small' />
           )}
         </IconButton>
       </Tooltip>

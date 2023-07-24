@@ -16,7 +16,6 @@ export const ShortcutTooltip: FC<ShortcutTooltipProps> = ({
   platform,
   shortcutKey,
   commandKey,
-  ctrlKey,
   altKey,
   shiftKey,
   ...props
@@ -35,7 +34,6 @@ export const ShortcutTooltip: FC<ShortcutTooltipProps> = ({
                   platform={platform}
                   shortcutKey={shortcutKey}
                   commandKey={commandKey}
-                  ctrlKey={ctrlKey}
                   altKey={altKey}
                   shiftKey={shiftKey}
                 />

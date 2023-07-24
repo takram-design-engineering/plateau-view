@@ -5,7 +5,7 @@ import { useCesium } from '@takram/plateau-cesium'
 import { animateZoom } from '@takram/plateau-cesium-helpers'
 import {
   AppIconButton,
-  KeyboardIcon,
+  KeyboardMovementIcon,
   LocationIcon,
   MinusIcon,
   PlusIcon,
@@ -57,7 +57,7 @@ export const CameraButtons: FC = () => {
         title='キーボード操作'
         {...enableKeyboardCameraControlProps}
       >
-        <KeyboardIcon />
+        <KeyboardMovementIcon />
       </AppIconButton>
       <AppIconButton title='現在地' disabled>
         <LocationIcon />

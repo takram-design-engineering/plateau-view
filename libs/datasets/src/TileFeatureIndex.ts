@@ -1,18 +1,47 @@
 import {
+  Event as CesiumEvent,
   type Cesium3DTile,
   type Cesium3DTileContent,
   type Cesium3DTileFeature
 } from '@cesium/engine'
+import moji from 'moji'
 
 import { forEachTileFeature } from '@takram/plateau-cesium-helpers'
+
+function cleanseName(text: string): string {
+  return moji(text)
+    .convert('ZE', 'HE')
+    .convert('ZS', 'HS')
+    .convert('HK', 'ZK')
+    .toString()
+    .replace(/ +/g, ' ')
+    .replace(/([^ ])\(/g, '$1 (')
+    .replace(/\)([^ ])/g, ') $1')
+    .trim()
+}
 
 interface IndexRecord {
   content: Cesium3DTileContent
   batchId: number
 }
 
+export interface SearchableFeatureRecord {
+  feature: Cesium3DTileFeature
+  key: string
+  name: string
+  longitude: number
+  latitude: number
+}
+
 export class TileFeatureIndex {
   private readonly records = new Map<string, IndexRecord[]>()
+  readonly #searchableFeatures: SearchableFeatureRecord[] = []
+
+  readonly onUpdate = new CesiumEvent<() => void>()
+
+  get searchableFeatures(): ReadonlyArray<Readonly<SearchableFeatureRecord>> {
+    return this.#searchableFeatures
+  }
 
   has(key: string): boolean {
     return this.records.has(key)
@@ -49,5 +78,22 @@ export class TileFeatureIndex {
     } else {
       record.push({ content, batchId })
     }
+
+    const feature = content.getFeature(batchId)
+    // Only PLATEAU 2020 datasets are supported.
+    const name: string | undefined = feature.getProperty('名称')
+    const longitude: number | undefined = feature.getProperty('_x')
+    const latitude: number | undefined = feature.getProperty('_y')
+    if (name == null || longitude == null || latitude == null) {
+      return
+    }
+    this.#searchableFeatures.push({
+      feature,
+      key,
+      name: cleanseName(name),
+      longitude,
+      latitude
+    })
+    this.onUpdate.raiseEvent()
   }
 }

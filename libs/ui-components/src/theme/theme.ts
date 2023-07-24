@@ -1,5 +1,5 @@
 import { alpha, createTheme, type ThemeOptions } from '@mui/material'
-import { cyan, grey } from '@mui/material/colors'
+import { grey } from '@mui/material/colors'
 import { type Shadows } from '@mui/material/styles/shadows'
 import { merge } from 'lodash'
 import { type CSSProperties } from 'react'
@@ -10,19 +10,21 @@ import { MuiFilledInput } from './components/MuiFilledInput'
 import { MuiFormControlLabel } from './components/MuiFormControlLabel'
 import { MuiIconButton } from './components/MuiIconButton'
 import { MuiLink } from './components/MuiLink'
+import { MuiListSubheader } from './components/MuiListSubheader'
 import { MuiMenu } from './components/MuiMenu'
 import { MuiMenuItem } from './components/MuiMenuItem'
 import { MuiOutlinedInput } from './components/MuiOutlinedInput'
+import { MuiPaper } from './components/MuiPaper'
 import { MuiPopover } from './components/MuiPopover'
 import { MuiSelect } from './components/MuiSelect'
 import { MuiSlider } from './components/MuiSlider'
+import { MuiSnackbar } from './components/MuiSnackbar'
 import { MuiSvgIcon } from './components/MuiSvgIcon'
 import { MuiSwitch } from './components/MuiSwitch'
 import { MuiTab } from './components/MuiTab'
 import { MuiTextField } from './components/MuiTextField'
 import { MuiToggleButton } from './components/MuiToggleButton'
 import { MuiTooltip } from './components/MuiTooltip'
-import { MuiPaper } from './components/MuiPaper'
 
 // TODO: Transition to MUI Joy when it's released.
 
@@ -49,7 +51,9 @@ export const themeOptions: ThemeOptions = {
     borderRadius: 5
   },
   palette: {
-    primary: cyan,
+    primary: {
+      main: '#00bebe'
+    },
     secondary: grey
   },
   typography: {
@@ -124,6 +128,7 @@ export const themeOptions: ThemeOptions = {
     MuiFormControlLabel,
     MuiIconButton,
     MuiLink,
+    MuiListSubheader,
     MuiMenu,
     MuiMenuItem,
     MuiOutlinedInput,
@@ -131,12 +136,13 @@ export const themeOptions: ThemeOptions = {
     MuiPopover,
     MuiSelect,
     MuiSlider,
+    MuiSnackbar,
     MuiSvgIcon,
     MuiSwitch,
     MuiTab,
     MuiTextField,
-    MuiTooltip,
-    MuiToggleButton
+    MuiToggleButton,
+    MuiTooltip
   }
 }
 
@@ -171,7 +177,7 @@ export const darkThemeOptions = merge<unknown, unknown, ThemeOptions>(
       mode: 'dark',
       background: {
         default: '#222222',
-        paper: '#333333',
+        paper: '#333333'
       },
       text: {
         secondary: alpha(theme.palette.common.white, 0.45)

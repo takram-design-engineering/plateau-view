@@ -78,15 +78,38 @@ export class PlateauCatalogService {
     return dataset
   }
 
+  private filterBySearchTokens(
+    datasets: readonly PlateauDataset[],
+    searchTokens: readonly string[]
+  ): PlateauDataset[] {
+    return datasets.filter(dataset => {
+      const data = dataset.catalog.data
+      return searchTokens.some(
+        token =>
+          data.name.includes(token) ||
+          data.pref.includes(token) ||
+          data.city?.includes(token) === true ||
+          ('ward' in data && data.ward?.includes(token) === true)
+      )
+    })
+  }
+
   // TODO: Pagination
   async findAll(
     params: {
       municipalityCode?: string
+      municipalityCodes?: readonly string[]
+      searchTokens?: readonly string[]
       includeTypes?: readonly PlateauDatasetType[]
       excludeTypes?: readonly PlateauDatasetType[]
     } = {}
   ): Promise<PlateauDataset[]> {
-    if (params.municipalityCode == null) {
+    const municipalityCodes = [
+      params.municipalityCode,
+      ...(params.municipalityCodes ?? [])
+    ].filter(isNotNullish)
+
+    if (municipalityCodes.length === 0) {
       let query: Query<PlateauCatalog> = this.catalogCollection
       if (params.includeTypes != null) {
         query = query.where('data.type', 'in', params.includeTypes)
@@ -96,47 +119,67 @@ export class PlateauCatalogService {
       }
       query = query.orderBy('data.type').orderBy('data.name')
       const snapshot = await query.get()
-      return snapshot.docs
+      const datasets = snapshot.docs
         .map(doc => this.createDataset(doc.data()))
         .filter(isNotNullish)
+      return params.searchTokens != null
+        ? this.filterBySearchTokens(datasets, params.searchTokens)
+        : datasets
     }
 
-    // TODO: Use logical OR when @google-cloud/firestore supports it.
-    let cityQuery: Query<PlateauCatalog> = this.catalogCollection.where(
-      'data.city_code',
-      '==',
-      params.municipalityCode
-    )
-    let wardQuery: Query<PlateauCatalog> = this.catalogCollection.where(
-      'data.ward_code',
-      '==',
-      params.municipalityCode
-    )
-    if (params.includeTypes != null) {
-      cityQuery = cityQuery.where('data.type', 'in', params.includeTypes)
-      wardQuery = wardQuery.where('data.type', 'in', params.includeTypes)
-    }
-    if (params.excludeTypes != null) {
-      cityQuery = cityQuery.where('data.type', 'not-in', params.excludeTypes)
-      wardQuery = wardQuery.where('data.type', 'not-in', params.excludeTypes)
-    }
-    cityQuery = cityQuery.orderBy('data.type').orderBy('data.name')
-    wardQuery = wardQuery.orderBy('data.type').orderBy('data.name')
-    const [citySnapshot, wardSnapshot] = await Promise.all([
-      cityQuery.get(),
-      wardQuery.get()
-    ])
-    return [
-      // Firestore currently doesn't have query to match null values.
-      ...citySnapshot.docs
-        .map(doc => doc.data())
-        .filter(
-          data => !('ward_code' in data.data) || data.data.ward_code == null
-        ),
-      ...wardSnapshot.docs.map(doc => doc.data())
-    ]
-      .map(data => this.createDataset(data))
-      .filter(isNotNullish)
+    return (
+      await Promise.all(
+        municipalityCodes.map(async municipalityCode => {
+          let cityQuery: Query<PlateauCatalog> = this.catalogCollection.where(
+            'data.city_code',
+            '==',
+            municipalityCode
+          )
+          let wardQuery: Query<PlateauCatalog> = this.catalogCollection.where(
+            'data.ward_code',
+            '==',
+            municipalityCode
+          )
+          if (params.includeTypes != null) {
+            cityQuery = cityQuery.where('data.type', 'in', params.includeTypes)
+            wardQuery = wardQuery.where('data.type', 'in', params.includeTypes)
+          }
+          if (params.excludeTypes != null) {
+            cityQuery = cityQuery.where(
+              'data.type',
+              'not-in',
+              params.excludeTypes
+            )
+            wardQuery = wardQuery.where(
+              'data.type',
+              'not-in',
+              params.excludeTypes
+            )
+          }
+          cityQuery = cityQuery.orderBy('data.type').orderBy('data.name')
+          wardQuery = wardQuery.orderBy('data.type').orderBy('data.name')
+          const [citySnapshot, wardSnapshot] = await Promise.all([
+            cityQuery.get(),
+            wardQuery.get()
+          ])
+          const datasets = [
+            // Firestore currently doesn't have query to match null values.
+            ...citySnapshot.docs
+              .map(doc => doc.data())
+              .filter(
+                data =>
+                  !('ward_code' in data.data) || data.data.ward_code == null
+              ),
+            ...wardSnapshot.docs.map(doc => doc.data())
+          ]
+            .map(data => this.createDataset(data))
+            .filter(isNotNullish)
+          return params.searchTokens != null
+            ? this.filterBySearchTokens(datasets, params.searchTokens)
+            : datasets
+        })
+      )
+    ).flat()
   }
 
   async syncWithRemote(): Promise<void> {
