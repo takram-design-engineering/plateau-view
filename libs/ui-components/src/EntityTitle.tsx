@@ -21,7 +21,7 @@ export const EntityTitleIcon = styled('div')(({ theme }) => ({
   }
 }))
 
-export const EntityTitleText = styled(ListItemText)(({ theme }) => ({
+export const EntityTitleText = styled(ListItemText)({
   marginTop: 4,
   marginBottom: 4,
   [`& .${listItemTextClasses.primary}`]: {
@@ -35,7 +35,7 @@ export const EntityTitleText = styled(ListItemText)(({ theme }) => ({
     textOverflow: 'ellipsis',
     marginTop: '0.1em'
   }
-}))
+})
 
 export interface EntityTitleProps extends Omit<ListItemProps<'div'>, 'title'> {
   title?:
