@@ -142,14 +142,22 @@ const NumberValue: FC<{
   )
 }
 
+const PropertyNameCell = styled(TableCell)<{
+  level?: number
+}>(({ theme, level }) => ({
+  ...(level != null && {
+    paddingLeft: theme.spacing(level * 2.5 + 2)
+  })
+}))
+
 const Property: FC<{
   property: PropertySet
   level?: number
-}> = ({ property: { name, values }, level = 0 }) => (
+}> = ({ property: { name, values }, level }) => (
   <TableRow>
-    <TableCell variant='head' width='50%' sx={{ paddingLeft: level * 2 + 2 }}>
+    <PropertyNameCell variant='head' width='50%' level={level}>
       {name.replaceAll('_', ' ')}
-    </TableCell>
+    </PropertyNameCell>
     <TableCell width='50%'>
       {typeof values[0] === 'string' ? (
         <StringValue name={name} values={values as string[]} />
@@ -167,9 +175,15 @@ const PropertyGroupCell = styled(TableCell)({
 })
 
 const PropertyGroupName = styled('div')(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  marginLeft: theme.spacing(-1)
+  position: 'relative',
+  paddingLeft: theme.spacing(2.5)
+}))
+
+const TreeArrowButton = styled(IconButton)(({ theme }) => ({
+  position: 'absolute',
+  top: '50%',
+  left: `calc(${theme.spacing(-2)} + 4px)`,
+  transform: 'translateY(-50%)'
 }))
 
 const PropertyGroup: FC<{
@@ -186,13 +200,13 @@ const PropertyGroup: FC<{
       <TableRow>
         <PropertyGroupCell variant='head' colSpan={2}>
           <PropertyGroupName>
-            <IconButton size='small' onClick={handleClick}>
+            <TreeArrowButton size='small' onClick={handleClick}>
               {expanded ? (
                 <TreeArrowExpandedIcon />
               ) : (
                 <TreeArrowCollapsedIcon />
               )}
-            </IconButton>
+            </TreeArrowButton>
             {name}
           </PropertyGroupName>
         </PropertyGroupCell>
