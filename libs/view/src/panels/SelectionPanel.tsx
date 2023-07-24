@@ -7,7 +7,7 @@ import { PEDESTRIAN_OBJECT } from '@takram/plateau-pedestrian'
 import { Inspector } from '@takram/plateau-ui-components'
 import { PEDESTRIAN_LAYER } from '@takram/plateau-view-layers'
 
-import { inspectorWidthAtom } from '../states/app'
+import { inspectorWidthAtom, pedestrianInspectorWidthAtom } from '../states/app'
 import {
   LAYER_SELECTION,
   SCREEN_SPACE_SELECTION,
@@ -19,6 +19,7 @@ import { TileFeatureContent } from './SelectionPanel/TileFeatureContent'
 
 export const SelectionPanel: FC = () => {
   let content = null
+  let contentType: 'default' | 'pedestrian' = 'default'
   const selectionGroups = useAtomValue(selectionGroupsAtom)
   if (selectionGroups.length === 1) {
     const [selectionGroup] = selectionGroups
@@ -28,6 +29,7 @@ export const SelectionPanel: FC = () => {
         switch (subtype) {
           case PEDESTRIAN_LAYER:
             content = <PedestrianLayerContent values={selectionGroup.values} />
+            contentType = 'pedestrian'
             break
           default:
             content = <LayerContent values={selectionGroup.values} />
@@ -41,6 +43,7 @@ export const SelectionPanel: FC = () => {
             break
           case PEDESTRIAN_OBJECT:
             content = <PedestrianLayerContent values={selectionGroup.values} />
+            contentType = 'pedestrian'
             break
         }
     }
@@ -56,11 +59,36 @@ export const SelectionPanel: FC = () => {
     [setInspectorWidth]
   )
 
+  const [pedestrianInspectorWidth, setPedestrianInspectorWidth] = useAtom(
+    pedestrianInspectorWidthAtom
+  )
+  const handlePedestrianResizeStop: ResizeCallback = useCallback(
+    (event, direction, element, delta) => {
+      setPedestrianInspectorWidth(prevValue => prevValue + delta.width)
+    },
+    [setPedestrianInspectorWidth]
+  )
+
   if (content == null) {
     return null
   }
+  if (contentType === 'pedestrian') {
+    return (
+      <Inspector
+        key='pedestrian'
+        defaultWidth={pedestrianInspectorWidth}
+        onResizeStop={handlePedestrianResizeStop}
+      >
+        <div>{content}</div>
+      </Inspector>
+    )
+  }
   return (
-    <Inspector defaultWidth={inspectorWidth} onResizeStop={handleResizeStop}>
+    <Inspector
+      key='default'
+      defaultWidth={inspectorWidth}
+      onResizeStop={handleResizeStop}
+    >
       <div>{content}</div>
     </Inspector>
   )
