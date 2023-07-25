@@ -90,6 +90,7 @@ export const Content: FC<{
     <>
       <Suspense fallback={<StreetViewFallback ref={streetViewFallbackRef} />}>
         <StreetView
+          key={layer.id}
           ref={streetViewRef}
           apiKey={process.env.NEXT_PUBLIC_GOOGLE_STREET_VIEW_API_KEY}
           location={location}

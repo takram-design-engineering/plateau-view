@@ -31,7 +31,7 @@ interface StreetViewFrustumProps {
   location: Location
   streetViewLocation: Location
   headingPitch: HeadingPitch
-  zoom?: number
+  zoom: number
   aspectRatio?: number
   length?: number
 }
@@ -60,7 +60,7 @@ export const StreetViewFrustum: FC<StreetViewFrustumProps> = ({
   location,
   streetViewLocation,
   headingPitch,
-  zoom = 1,
+  zoom,
   aspectRatio = 3 / 2,
   length = 200
 }) => {

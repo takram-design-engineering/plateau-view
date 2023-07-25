@@ -133,6 +133,7 @@ export const PedestrianObject: FC<PedestrianObjectProps> = withEphemerality(
 
     const scene = useCesium(({ scene }) => scene)
     scene.requestRender()
+
     useEffect(() => {
       return () => {
         scene.requestRender()
@@ -150,7 +151,6 @@ export const PedestrianObject: FC<PedestrianObjectProps> = withEphemerality(
       } else {
         balloon.color = Color.BLACK
       }
-      scene.requestRender()
     }, [selected, scene, theme])
 
     const position = useMemo(

@@ -46,6 +46,9 @@ export interface PedestrianProps {
   onChange?: (location: Location) => void
 }
 
+const cartesianScratch = new Cartesian3()
+const cartographicScratch = new Cartographic()
+
 export const Pedestrian: FC<PedestrianProps> = withEphemerality(
   () => useCesium(({ scene }) => scene),
   [],
@@ -105,10 +108,16 @@ export const Pedestrian: FC<PedestrianProps> = withEphemerality(
         const position = Cartesian3.fromDegrees(
           referenceLocation.longitude,
           referenceLocation.latitude,
-          referenceLocation.height
+          referenceLocation.height,
+          scene.globe.ellipsoid,
+          cartesianScratch
         )
         Cartesian3.add(position, offset, position)
-        const cartographic = Cartographic.fromCartesian(position)
+        const cartographic = Cartographic.fromCartesian(
+          position,
+          scene.globe.ellipsoid,
+          cartographicScratch
+        )
         setLevitated(false)
         onChange?.({
           longitude: CesiumMath.toDegrees(cartographic.longitude),
@@ -116,7 +125,7 @@ export const Pedestrian: FC<PedestrianProps> = withEphemerality(
           height: referenceLocation.height
         })
       },
-      [location, streetViewLocation, onChange]
+      [location, streetViewLocation, onChange, scene]
     )
 
     return (
