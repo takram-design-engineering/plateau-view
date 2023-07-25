@@ -2,6 +2,7 @@ import { styled } from '@mui/material'
 import {
   forwardRef,
   useEffect,
+  useLayoutEffect,
   useRef,
   type ComponentPropsWithRef
 } from 'react'
@@ -19,6 +20,8 @@ const Root = styled('div')({})
 export interface StreetViewProps extends ComponentPropsWithRef<typeof Root> {
   apiKey: string
   location: Location
+  headingPitch?: HeadingPitch
+  zoom?: number
   radius?: number
   onLocationChange?: (location: Location | null) => void
   onHeadingPitchChange?: (headingPitch: HeadingPitch) => void
@@ -30,6 +33,8 @@ export const StreetView = forwardRef<HTMLDivElement, StreetViewProps>(
     {
       apiKey,
       location,
+      headingPitch,
+      zoom,
       radius = 100,
       onLocationChange,
       onHeadingPitchChange,
@@ -41,7 +46,7 @@ export const StreetView = forwardRef<HTMLDivElement, StreetViewProps>(
     const { container, panorama, service } = useStreetView(apiKey)
 
     const ref = useRef<HTMLDivElement>(null)
-    useEffect(() => {
+    useLayoutEffect(() => {
       const element = ref.current
       invariant(element != null)
 
@@ -54,16 +59,7 @@ export const StreetView = forwardRef<HTMLDivElement, StreetViewProps>(
       }
     }, [container])
 
-    const callbackRefs = useRef({
-      onLocationChange,
-      onHeadingPitchChange,
-      onZoomChange
-    })
-    Object.assign(callbackRefs.current, {
-      onLocationChange,
-      onHeadingPitchChange,
-      onZoomChange
-    })
+    const setInitialPanoRef = useRef(false)
 
     useEffect(() => {
       let canceled = false
@@ -81,6 +77,7 @@ export const StreetView = forwardRef<HTMLDivElement, StreetViewProps>(
         }
         if (data.location != null) {
           panorama.setPano(data.location.pano)
+          setInitialPanoRef.current = true
         }
       })().catch(error => {
         console.error(error)
@@ -90,9 +87,21 @@ export const StreetView = forwardRef<HTMLDivElement, StreetViewProps>(
       }
     }, [location, radius, panorama, service])
 
-    usePanoramaLocationChange(panorama, onLocationChange)
-    usePanoramaHeadingPitchChange(panorama, onHeadingPitchChange)
-    usePanoramaZoomChange(panorama, onZoomChange)
+    usePanoramaLocationChange(panorama, location => {
+      if (setInitialPanoRef.current) {
+        onLocationChange?.(location)
+      }
+    })
+    usePanoramaHeadingPitchChange(panorama, headingPitch => {
+      if (setInitialPanoRef.current) {
+        onHeadingPitchChange?.(headingPitch)
+      }
+    })
+    usePanoramaZoomChange(panorama, zoom => {
+      if (setInitialPanoRef.current) {
+        onZoomChange?.(zoom)
+      }
+    })
 
     return <Root ref={mergeRefs([ref, forwardedRef])} {...props} />
   }
