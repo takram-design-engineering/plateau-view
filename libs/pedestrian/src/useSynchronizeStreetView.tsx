@@ -41,7 +41,7 @@ interface CameraState {
 
 const cartesianScratch = new Cartesian3()
 
-export function useStreetViewState(
+export function useSynchronizeStreetView(
   params: StreetViewStateParams
 ): StreetViewState {
   const scene = useCesium(({ scene }) => scene, { indirect: true })

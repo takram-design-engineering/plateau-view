@@ -13,7 +13,7 @@ import {
 } from '@takram/plateau-layers'
 import {
   StreetView,
-  useStreetViewState,
+  useSynchronizeStreetView,
   type PEDESTRIAN_OBJECT
 } from '@takram/plateau-pedestrian'
 import {
