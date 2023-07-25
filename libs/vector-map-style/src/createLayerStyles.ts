@@ -22,6 +22,7 @@ export interface LayerStylesOptions {
   railwayColor: Color
   railwayPhysicalWidthColor: Color
   railwayJRDashColor: Color
+  stationColor: Color
 }
 
 function createBoundaryStyles(options: LayerStylesOptions): LayerStyles {
@@ -259,7 +260,7 @@ function createRoadStyles(options: LayerStylesOptions): LayerStyles {
       ]
     },
     layout: {
-      'line-cap': 'round'
+      'line-cap': 'butt'
     }
   }
   const outlineStyle: LineLayerStyle = {
@@ -426,7 +427,7 @@ function createRailwayStyles(options: LayerStylesOptions): LayerStyles {
     minZoom: null,
     maxZoom: null,
     paint: {
-      'line-color': options.railwayPhysicalWidthColor,
+      'line-color': options.stationColor,
       'line-opacity': railwayOpacity,
       'line-width': [
         'let',
@@ -454,6 +455,8 @@ function createRailwayStyles(options: LayerStylesOptions): LayerStyles {
         'let',
         'width',
         railwayWidth,
+        'constantWidth',
+        ['match', ['get', 'vt_rtcode'], 'JR', 6, 4],
         [
           'interpolate',
           ['exponential', 2],
@@ -463,9 +466,9 @@ function createRailwayStyles(options: LayerStylesOptions): LayerStyles {
           14,
           ['*', ['var', 'width'], 1 / 2 ** (23 - 14)],
           15,
-          6,
+          ['var', 'constantWidth'],
           23,
-          6
+          ['var', 'constantWidth']
         ]
       ]
     }
@@ -497,9 +500,57 @@ function createRailwayStyles(options: LayerStylesOptions): LayerStyles {
       'line-dasharray': ['literal', [5, 5]]
     }
   }
+  const otherDashStyle: LineLayerStyle = {
+    minZoom: null,
+    maxZoom: 16,
+    paint: {
+      'line-color': options.railwayColor,
+      'line-opacity': 1,
+      'line-width': [
+        'let',
+        'width',
+        ['*', railwayWidth, 3],
+        [
+          'interpolate',
+          ['exponential', 2],
+          ['zoom'],
+          10,
+          ['*', ['var', 'width'], 1 / 2 ** (23 - 10)],
+          14,
+          ['*', ['var', 'width'], 1 / 2 ** (23 - 14)],
+          15,
+          12,
+          23,
+          12
+        ]
+      ],
+      'line-dasharray': ['literal', [0.2, 2]]
+    }
+  }
+
+  const trackLineStyle: LineLayerStyle = {
+    minZoom: null,
+    maxZoom: null,
+    paint: {
+      'line-color': options.railwayColor,
+      'line-width': 2
+    }
+  }
+
+  const trackLineDashStyle: LineLayerStyle = {
+    minZoom: null,
+    maxZoom: null,
+    paint: {
+      'line-color': options.railwayColor,
+      'line-width': 10,
+      'line-dasharray': ['literal', [0.1, 1]]
+    }
+  }
 
   return {
     '鉄道中心線ZL4-10': simplifiedStyle,
+
+    // physical width; normal + bridge
     鉄道中心線0: physicalWidthLineStyle,
     鉄道中心線橋ククリ黒0: physicalWidthLineStyle,
     鉄道中心線1: physicalWidthLineStyle,
@@ -510,6 +561,8 @@ function createRailwayStyles(options: LayerStylesOptions): LayerStyles {
     鉄道中心線橋ククリ黒3: physicalWidthLineStyle,
     鉄道中心線4: physicalWidthLineStyle,
     鉄道中心線橋ククリ黒4: physicalWidthLineStyle,
+
+    // constant width; normal + bridge
     鉄道中心線ククリ0: constantWidthLineStyle,
     鉄道中心線橋0: constantWidthLineStyle,
     鉄道中心線ククリ1: constantWidthLineStyle,
@@ -520,6 +573,8 @@ function createRailwayStyles(options: LayerStylesOptions): LayerStyles {
     鉄道中心線橋3: constantWidthLineStyle,
     鉄道中心線ククリ4: constantWidthLineStyle,
     鉄道中心線橋4: constantWidthLineStyle,
+
+    // jr dash; normal + bridge
     鉄道中心線旗竿0: jrDashStyle,
     鉄道中心線旗竿橋0: jrDashStyle,
     鉄道中心線旗竿1: jrDashStyle,
@@ -530,6 +585,35 @@ function createRailwayStyles(options: LayerStylesOptions): LayerStyles {
     鉄道中心線旗竿橋3: jrDashStyle,
     鉄道中心線旗竿4: jrDashStyle,
     鉄道中心線旗竿橋4: jrDashStyle,
+
+    // other dash (barbed wire); normal + bridge
+    鉄道中心線点線0: otherDashStyle,
+    鉄道中心線橋ククリ白0: {
+      ...otherDashStyle,
+      filter: filters.鉄道中心線橋ククリ白0
+    },
+    鉄道中心線点線1: otherDashStyle,
+    鉄道中心線橋ククリ白1: {
+      ...otherDashStyle,
+      filter: filters.鉄道中心線橋ククリ白1
+    },
+    鉄道中心線点線2: otherDashStyle,
+    鉄道中心線橋ククリ白2: {
+      ...otherDashStyle,
+      filter: filters.鉄道中心線橋ククリ白2
+    },
+    鉄道中心線点線3: otherDashStyle,
+    鉄道中心線橋ククリ白3: {
+      ...otherDashStyle,
+      filter: filters.鉄道中心線橋ククリ白3
+    },
+    鉄道中心線点線4: otherDashStyle,
+    鉄道中心線橋ククリ白4: {
+      ...otherDashStyle,
+      filter: filters.鉄道中心線橋ククリ白4
+    },
+
+    // station; normal + bridge
     鉄道中心線駅ククリ0: stationStyle,
     鉄道中心線橋駅ククリ0: stationStyle,
     鉄道中心線駅ククリ1: stationStyle,
@@ -539,7 +623,7 @@ function createRailwayStyles(options: LayerStylesOptions): LayerStyles {
     鉄道中心線駅ククリ3: stationStyle,
     鉄道中心線橋駅ククリ3: stationStyle,
     鉄道中心線駅ククリ4: stationStyle,
-    鉄道中心線橋駅ククリ4: stationStyle
+    鉄道中心線橋駅ククリ4: stationStyle,
 
     // TODO: Maintain physical line widths.
     // 軌道の中心線トンネル: {
@@ -551,14 +635,9 @@ function createRailwayStyles(options: LayerStylesOptions): LayerStyles {
     //     'line-width': 2
     //   }
     // },
-    // 軌道の中心線: {
-    //   minZoom: null,
-    //   maxZoom: null,
-    //   paint: {
-    //     'line-color': options.railwayColor,
-    //     'line-width': 2
-    //   }
-    // }
+
+    軌道の中心線: trackLineStyle,
+    軌道の中心線点線: trackLineDashStyle
   }
 }
 
