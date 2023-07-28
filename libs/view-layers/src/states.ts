@@ -1,6 +1,7 @@
 import { atom } from 'jotai'
 import { fromPairs, uniq, without } from 'lodash'
 
+import { compose } from '@takram/plateau-cesium-helpers'
 import { featureSelectionAtom } from '@takram/plateau-datasets'
 import { layersAtom } from '@takram/plateau-layers'
 import { pedestrianSelectionAtom } from '@takram/plateau-pedestrian'
@@ -40,7 +41,8 @@ export const highlightedPedestrianLayersAtom = atom(get => {
   const entityIds = get(pedestrianSelectionAtom).map(({ value }) => value)
   const pedestrianLayers = get(pedestrianLayersAtom)
   return pedestrianLayers.filter(layer => {
-    return entityIds.some(entityId => entityId === `Pedestrian:${layer.id}`)
+    const id = compose({ type: 'Pedestrian', key: layer.id })
+    return entityIds.some(entityId => entityId === id)
   })
 })
 
