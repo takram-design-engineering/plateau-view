@@ -1,7 +1,7 @@
 import { PerspectiveFrustum } from '@cesium/engine'
 import { styled } from '@mui/material'
 import { useAtomValue, useSetAtom } from 'jotai'
-import { Suspense, useRef, type FC } from 'react'
+import { Suspense, useCallback, useRef, type FC } from 'react'
 import invariant from 'tiny-invariant'
 
 import { useCesium, usePreRender } from '@takram/plateau-cesium'
@@ -14,6 +14,8 @@ import {
 import {
   StreetView,
   useSynchronizeStreetView,
+  type HeadingPitch,
+  type Location,
   type PEDESTRIAN_OBJECT
 } from '@takram/plateau-pedestrian'
 import {
@@ -29,9 +31,15 @@ import {
   type SelectionGroup
 } from '../../states/selection'
 
-const StreetViewFallback = styled('div')(({ theme }) => ({
+const StreetViewContainer = styled('div')(({ theme }) => ({
+  position: 'relative',
   backgroundColor: theme.palette.divider
 }))
+
+const StyledStreetView = styled(StreetView)({
+  width: '100%',
+  height: '100%'
+})
 
 export interface PedestrianLayerContentProps {
   values: (SelectionGroup &
@@ -51,20 +59,32 @@ export const Content: FC<{
   layer: LayerModel<typeof PEDESTRIAN_LAYER>
 }> = ({ layer }) => {
   const { synchronizeAtom, locationAtom, headingPitchAtom, zoomAtom } =
-    useStreetViewState({
+    useSynchronizeStreetView({
       synchronizeAtom: layer.synchronizeStreetViewAtom,
       locationAtom: layer.streetViewLocationAtom,
-      headingPitchAtom: layer.streetViewHeadingPitchAtom,
-      zoomAtom: layer.streetViewZoomAtom
+      headingPitchAtom: layer.headingPitchAtom,
+      zoomAtom: layer.zoomAtom
     })
 
   const location = useAtomValue(layer.locationAtom)
+  const headingPitch = useAtomValue(layer.headingPitchAtom)
+  const zoom = useAtomValue(layer.zoomAtom)
+
   const setLocation = useSetAtom(locationAtom)
   const setHeadingPitch = useSetAtom(headingPitchAtom)
   const setZoom = useSetAtom(zoomAtom)
 
+  const handleLoad = useCallback(
+    (location: Location, headingPitch: HeadingPitch, zoom: number) => {
+      setLocation(location)
+      setHeadingPitch(headingPitch)
+      setZoom(zoom)
+    },
+    [setLocation, setHeadingPitch, setZoom]
+  )
+
   const streetViewRef = useRef<HTMLDivElement>(null)
-  const streetViewFallbackRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
   const camera = useCesium(({ camera }) => camera, { indirect: true })
   usePreRender(() => {
     if (camera == null) {
@@ -74,11 +94,8 @@ export const Content: FC<{
     if (!(frustum instanceof PerspectiveFrustum)) {
       return
     }
-    if (streetViewRef.current != null) {
-      streetViewRef.current.style.aspectRatio = `${frustum.aspectRatio}`
-    }
-    if (streetViewFallbackRef.current != null) {
-      streetViewFallbackRef.current.style.aspectRatio = `${frustum.aspectRatio}`
+    if (containerRef.current != null) {
+      containerRef.current.style.aspectRatio = `${frustum.aspectRatio}`
     }
   })
 
@@ -88,17 +105,22 @@ export const Content: FC<{
   )
   return (
     <>
-      <Suspense fallback={<StreetViewFallback ref={streetViewFallbackRef} />}>
-        <StreetView
-          key={layer.id}
-          ref={streetViewRef}
-          apiKey={process.env.NEXT_PUBLIC_GOOGLE_STREET_VIEW_API_KEY}
-          location={location}
-          onLocationChange={setLocation}
-          onHeadingPitchChange={setHeadingPitch}
-          onZoomChange={setZoom}
-        />
-      </Suspense>
+      <StreetViewContainer ref={containerRef}>
+        <Suspense>
+          <StyledStreetView
+            key={layer.id}
+            ref={streetViewRef}
+            apiKey={process.env.NEXT_PUBLIC_GOOGLE_STREET_VIEW_API_KEY}
+            location={location}
+            headingPitch={headingPitch ?? undefined}
+            zoom={zoom ?? undefined}
+            onLoad={handleLoad}
+            onLocationChange={setLocation}
+            onHeadingPitchChange={setHeadingPitch}
+            onZoomChange={setZoom}
+          />
+        </Suspense>
+      </StreetViewContainer>
       <InspectorItem>
         <ParameterList>
           <SwitchParameterItem

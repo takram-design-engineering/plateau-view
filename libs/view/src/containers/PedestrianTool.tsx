@@ -21,8 +21,10 @@ export const PedestrianTool: FC = () => {
       const layer = createViewLayer({
         id,
         type: PEDESTRIAN_LAYER,
-        longitude: CesiumMath.toDegrees(location.longitude),
-        latitude: CesiumMath.toDegrees(location.latitude)
+        location: {
+          longitude: CesiumMath.toDegrees(location.longitude),
+          latitude: CesiumMath.toDegrees(location.latitude)
+        }
       })
       addLayer(layer)
       setLayerSelection([id])

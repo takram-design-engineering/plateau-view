@@ -62,8 +62,10 @@ const InitialLayers: FC = () => {
         addLayer(
           createViewLayer({
             type: PEDESTRIAN_LAYER,
-            longitude: 139.769,
-            latitude: 35.68
+            location: {
+              longitude: 139.769,
+              latitude: 35.68
+            }
           })
         )
     ].filter(isNotFalse)

@@ -93,7 +93,7 @@ export const LevitationCircle: FC<LevitationCircleProps> = ({
         material: new ColorMaterialProperty(
           Color.fromCssColorString(theme.palette.primary.main).withAlpha(0.2)
         ),
-        classificationType: ClassificationType.TERRAIN
+        classificationType: ClassificationType.BOTH
       }
     }),
     [theme, positionProperty, semiAxisProperty]

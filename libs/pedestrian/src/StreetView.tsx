@@ -73,6 +73,11 @@ export const StreetView = forwardRef<HTMLDivElement, StreetViewProps>(
     // initial location. Ignore any events until this flag becomes true.
     const panoSetRef = useRef(false)
 
+    const headingPitchRef = useRef(headingPitch)
+    const zoomRef = useRef(zoom)
+    headingPitchRef.current = headingPitch
+    zoomRef.current = zoom
+
     useEffect(() => {
       let canceled = false
       ;(async () => {
@@ -89,6 +94,12 @@ export const StreetView = forwardRef<HTMLDivElement, StreetViewProps>(
         }
         if (data.location != null) {
           panorama.setPano(data.location.pano)
+          if (headingPitchRef.current != null) {
+            panorama.setPov(headingPitchRef.current)
+          }
+          if (zoomRef.current != null) {
+            panorama.setZoom(zoomRef.current)
+          }
           panoSetRef.current = true
         }
       })().catch(error => {
