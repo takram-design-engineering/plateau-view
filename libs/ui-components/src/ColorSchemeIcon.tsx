@@ -32,7 +32,7 @@ const Gradient = styled('div', {
 })<{
   colorScheme: ColorScheme
   colorCount?: number
-}>(({ theme, colorScheme, colorCount = 8 }) => {
+}>(({ colorScheme, colorCount = 8 }) => {
   const stops = [...Array(colorCount)].map((_, index, { length }) =>
     chroma.gl(...colorScheme.linear(index / length)).hex()
   )

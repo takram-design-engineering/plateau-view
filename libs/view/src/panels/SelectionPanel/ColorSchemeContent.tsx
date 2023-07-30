@@ -15,6 +15,8 @@ import {
   type LayerModel
 } from '@takram/plateau-layers'
 import {
+  ColorList,
+  ColorListIcon,
   ColorSchemeIcon,
   InspectorHeader,
   QuantitativeColorLegend
@@ -29,7 +31,7 @@ import {
   type SelectionGroup
 } from '../../states/selection'
 
-function Content({ layer }: { layer: LayerModel }): JSX.Element | null {
+const Content: FC<{ layer: LayerModel }> = ({ layer }) => {
   const colorPropertyAtom =
     'colorPropertyAtom' in layer ? layer.colorPropertyAtom : undefined
   const colorProperty = useAtomValue(
@@ -61,6 +63,20 @@ function Content({ layer }: { layer: LayerModel }): JSX.Element | null {
     )
   )
 
+  const colorListAtom =
+    'colorListAtom' in layer ? layer.colorListAtom : undefined
+  const colorList = useAtomValue(
+    useMemo(
+      () =>
+        atom(get =>
+          colorListAtom != null
+            ? get(colorListAtom).map(item => get(item))
+            : null
+        ),
+      [colorListAtom]
+    )
+  )
+
   const setSelection = useSetAtom(colorSchemeSelectionAtom)
   const handleClose = useCallback(() => {
     setSelection([])
@@ -76,6 +92,8 @@ function Content({ layer }: { layer: LayerModel }): JSX.Element | null {
         icon={
           colorScheme != null ? (
             <ColorSchemeIcon colorScheme={colorScheme} />
+          ) : colorList != null ? (
+            <ColorListIcon colorList={colorList} />
           ) : undefined
         }
         onClose={handleClose}
@@ -95,6 +113,11 @@ function Content({ layer }: { layer: LayerModel }): JSX.Element | null {
               />
             </Stack>
           </ListItemText>
+        </ListItem>
+      )}
+      {colorListAtom != null && (
+        <ListItem>
+          <ColorList atom={colorListAtom} />
         </ListItem>
       )}
     </List>
