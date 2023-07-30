@@ -5,6 +5,7 @@ import { compose } from '@takram/plateau-cesium-helpers'
 import { featureSelectionAtom } from '@takram/plateau-datasets'
 import { layersAtom } from '@takram/plateau-layers'
 import { pedestrianSelectionAtom } from '@takram/plateau-pedestrian'
+import { atomsWithSelection } from '@takram/plateau-shared-states'
 import { isNotNullish } from '@takram/plateau-type-helpers'
 
 import { type PlateauTilesetLayerModel } from './createPlateauTilesetLayerBase'
@@ -119,3 +120,17 @@ export const showAllFeaturesAtom = atom(null, (get, set) => {
     set(hiddenFeaturesAtom, null)
   })
 })
+
+const {
+  selectionAtom: colorSchemeSelectionAtom,
+  addAtom: addColorSchemeSelectionAtom,
+  removeAtom: removeColorSchemeSelectionAtom,
+  clearAtom: clearColorSchemeSelectionAtom
+} = atomsWithSelection<string>()
+
+export {
+  colorSchemeSelectionAtom,
+  addColorSchemeSelectionAtom,
+  removeColorSchemeSelectionAtom,
+  clearColorSchemeSelectionAtom
+}

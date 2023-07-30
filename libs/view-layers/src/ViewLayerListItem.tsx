@@ -1,6 +1,6 @@
 import { IconButton } from '@mui/material'
 import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai'
-import { memo, useCallback, useMemo, type FC } from 'react'
+import { memo, useCallback, useMemo, type FC, type SyntheticEvent } from 'react'
 
 import { useCesium } from '@takram/plateau-cesium'
 import { flyToBoundingSphere } from '@takram/plateau-cesium-helpers'
@@ -12,7 +12,11 @@ import {
 import { ColorSchemeIcon, LayerListItem } from '@takram/plateau-ui-components'
 
 import { layerTypeIcons } from './layerTypeIcons'
-import { highlightedLayersAtom } from './states'
+import { colorSchemeSelectionAtom, highlightedLayersAtom } from './states'
+
+function stopPropagation(event: SyntheticEvent): void {
+  event.stopPropagation()
+}
 
 export type ViewLayerListItemProps<T extends LayerType = LayerType> =
   LayerProps<T>
@@ -81,6 +85,17 @@ export const ViewLayerListItem: FC<ViewLayerListItemProps> = memo(
       )
     )
 
+    const [colorSchemeSelection, setColorSchemeSelection] = useAtom(
+      colorSchemeSelectionAtom
+    )
+    const colorSchemeSelected = useMemo(
+      () => colorSchemeSelection.includes(id),
+      [id, colorSchemeSelection]
+    )
+    const handleColorSchemeClick = useCallback(() => {
+      setColorSchemeSelection([id])
+    }, [id, setColorSchemeSelection])
+
     return (
       <LayerListItem
         {...itemProps}
@@ -92,8 +107,15 @@ export const ViewLayerListItem: FC<ViewLayerListItemProps> = memo(
         hidden={hidden}
         accessory={
           colorScheme != null ? (
-            <IconButton>
-              <ColorSchemeIcon colorScheme={colorScheme} />
+            <IconButton
+              onMouseDown={stopPropagation}
+              onDoubleClick={stopPropagation}
+              onClick={handleColorSchemeClick}
+            >
+              <ColorSchemeIcon
+                colorScheme={colorScheme}
+                selected={colorSchemeSelected}
+              />
             </IconButton>
           ) : undefined
         }
