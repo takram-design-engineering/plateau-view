@@ -1,9 +1,12 @@
-import { schemeCategory10 } from 'd3'
-import { useAtomValue, useSetAtom } from 'jotai'
-import { useEffect, type FC } from 'react'
+import { atom, useAtomValue, useSetAtom } from 'jotai'
+import { useEffect, useMemo, type FC } from 'react'
 import { type SetOptional } from 'type-fest'
 
 import { useCesium } from '@takram/plateau-cesium'
+import {
+  landSlideRiskColorSet,
+  type QualitativeColorSet
+} from '@takram/plateau-datasets'
 import {
   PlateauDatasetFormat,
   PlateauDatasetType,
@@ -24,14 +27,17 @@ import { useDatasetLayerTitle } from './useDatasetLayerTitle'
 export interface LandSlideRiskLayerModelParams
   extends DatasetLayerModelParams {}
 
-export interface LandSlideRiskLayerModel extends DatasetLayerModel {}
+export interface LandSlideRiskLayerModel extends DatasetLayerModel {
+  colorSet: QualitativeColorSet
+}
 
 export function createLandSlideRiskLayer(
   params: LandSlideRiskLayerModelParams
 ): SetOptional<LandSlideRiskLayerModel, 'id'> {
   return {
     ...createDatasetLayerBase(params),
-    type: LAND_SLIDE_RISK_LAYER
+    type: LAND_SLIDE_RISK_LAYER,
+    colorSet: landSlideRiskColorSet
   }
 }
 
@@ -42,7 +48,8 @@ export const LandSlideRiskLayer: FC<
   hiddenAtom,
   boundingSphereAtom,
   municipalityCode,
-  datumIdAtom
+  datumIdAtom,
+  colorSet
 }) => {
   const query = useMunicipalityDatasetsQuery({
     variables: {
@@ -75,6 +82,22 @@ export const LandSlideRiskLayer: FC<
     }
   }, [scene])
 
+  const styles = useAtomValue(
+    useMemo(
+      () =>
+        atom(get =>
+          get(colorSet.colorsAtom).map(({ value, color }) => ({
+            filter: ['all', ['==', 'urf:areaType_code', value]],
+            type: 'fill',
+            paint: {
+              'fill-color': color
+            }
+          }))
+        ),
+      [colorSet]
+    )
+  )
+
   if (hidden || datum == null) {
     return null
   }
@@ -89,21 +112,3 @@ export const LandSlideRiskLayer: FC<
   }
   return null
 }
-
-// TODO: Separate definition.
-// https://www.mlit.go.jp/plateaudocument/#toc4_09_04
-const values = [
-  '1', // 土砂災害警戒区域（指定済）
-  '2', // 土砂災害特別警戒区域（指定済）
-  '3', // 土砂災害警戒区域（指定前）
-  '4' // 土砂災害特別警戒区域（指定前）
-]
-
-// TODO: Make configurable.
-const styles = values.map((value, index) => ({
-  filter: ['all', ['==', 'urf:areaType_code', value]],
-  type: 'fill',
-  paint: {
-    'fill-color': schemeCategory10[index % schemeCategory10.length]
-  }
-}))
