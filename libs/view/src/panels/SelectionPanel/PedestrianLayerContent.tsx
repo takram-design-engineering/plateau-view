@@ -1,13 +1,15 @@
 import { PerspectiveFrustum } from '@cesium/engine'
-import { styled } from '@mui/material'
-import { useAtomValue, useSetAtom } from 'jotai'
+import { Divider, IconButton, List, styled, Tooltip } from '@mui/material'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { Suspense, useCallback, useRef, type FC } from 'react'
 import invariant from 'tiny-invariant'
 
 import { useCesium, usePreRender } from '@takram/plateau-cesium'
-import { parse } from '@takram/plateau-cesium-helpers'
+import { flyToBoundingSphere, parse } from '@takram/plateau-cesium-helpers'
 import {
   layersAtom,
+  layerSelectionAtom,
+  removeLayerAtom,
   useFindLayer,
   type LayerModel
 } from '@takram/plateau-layers'
@@ -18,10 +20,14 @@ import {
   type Location,
   type PEDESTRIAN_OBJECT
 } from '@takram/plateau-pedestrian'
+import { screenSpaceSelectionAtom } from '@takram/plateau-screen-space-selection'
 import {
-  InspectorItem,
-  ParameterList,
-  SwitchParameterItem
+  AddressIcon,
+  InspectorHeader,
+  PedestrianIcon,
+  TrashIcon,
+  VisibilityOffIcon,
+  VisibilityOnIcon
 } from '@takram/plateau-ui-components'
 import { PEDESTRIAN_LAYER } from '@takram/plateau-view-layers'
 
@@ -58,13 +64,14 @@ export interface PedestrianLayerContentProps {
 export const Content: FC<{
   layer: LayerModel<typeof PEDESTRIAN_LAYER>
 }> = ({ layer }) => {
-  const { synchronizeAtom, locationAtom, headingPitchAtom, zoomAtom } =
-    useSynchronizeStreetView({
+  const { locationAtom, headingPitchAtom, zoomAtom } = useSynchronizeStreetView(
+    {
       synchronizeAtom: layer.synchronizeStreetViewAtom,
       locationAtom: layer.locationAtom,
       headingPitchAtom: layer.headingPitchAtom,
       zoomAtom: layer.zoomAtom
-    })
+    }
+  )
 
   const location = useAtomValue(layer.locationAtom)
   const headingPitch = useAtomValue(layer.headingPitchAtom)
@@ -99,12 +106,74 @@ export const Content: FC<{
     }
   })
 
+  const title = useAtomValue(layer.titleAtom)
+
+  const setLayerSelection = useSetAtom(layerSelectionAtom)
+  const setScreenSpaceSelection = useSetAtom(screenSpaceSelectionAtom)
+  const handleClose = useCallback(() => {
+    setLayerSelection([])
+    setScreenSpaceSelection([])
+  }, [setLayerSelection, setScreenSpaceSelection])
+
+  const [hidden, setHidden] = useAtom(layer.hiddenAtom)
+  const handleToggleHidden = useCallback(() => {
+    setHidden(value => !value)
+  }, [setHidden])
+
+  const boundingSphere = useAtomValue(layer.boundingSphereAtom)
+  const scene = useCesium(({ scene }) => scene, { indirect: true })
+  const handleMove = useCallback(() => {
+    if (boundingSphere == null || scene == null) {
+      return
+    }
+    void flyToBoundingSphere(scene, boundingSphere)
+  }, [boundingSphere, scene])
+
+  const remove = useSetAtom(removeLayerAtom)
+  const handleRemove = useCallback(() => {
+    remove(layer.id)
+  }, [layer, remove])
+
   invariant(
     process.env.NEXT_PUBLIC_GOOGLE_STREET_VIEW_API_KEY != null,
     'Missing environment variable: NEXT_PUBLIC_GOOGLE_STREET_VIEW_API_KEY'
   )
   return (
-    <>
+    <List disablePadding>
+      <InspectorHeader
+        title={title ?? undefined}
+        iconComponent={PedestrianIcon}
+        actions={
+          <>
+            <Tooltip title={hidden ? '表示' : '隠す'}>
+              <IconButton
+                aria-label={hidden ? '表示' : '隠す'}
+                onClick={handleToggleHidden}
+              >
+                {hidden ? <VisibilityOffIcon /> : <VisibilityOnIcon />}
+              </IconButton>
+            </Tooltip>
+            <Tooltip title='移動'>
+              <span>
+                <IconButton
+                  aria-label='移動'
+                  disabled={boundingSphere == null}
+                  onClick={handleMove}
+                >
+                  <AddressIcon />
+                </IconButton>
+              </span>
+            </Tooltip>
+            <Tooltip title='削除'>
+              <IconButton aria-label='削除' onClick={handleRemove}>
+                <TrashIcon />
+              </IconButton>
+            </Tooltip>
+          </>
+        }
+        onClose={handleClose}
+      />
+      <Divider light />
       <StreetViewContainer ref={containerRef}>
         <Suspense>
           <StyledStreetView
@@ -121,15 +190,7 @@ export const Content: FC<{
           />
         </Suspense>
       </StreetViewContainer>
-      <InspectorItem>
-        <ParameterList>
-          <SwitchParameterItem
-            label='カメラを歩行者視点と同期'
-            atom={synchronizeAtom}
-          />
-        </ParameterList>
-      </InspectorItem>
-    </>
+    </List>
   )
 }
 
