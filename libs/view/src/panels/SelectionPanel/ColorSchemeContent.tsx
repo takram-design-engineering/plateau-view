@@ -19,7 +19,10 @@ import {
   InspectorHeader,
   QuantitativeColorLegend
 } from '@takram/plateau-ui-components'
-import { colorSchemeSelectionAtom } from '@takram/plateau-view-layers'
+import {
+  colorSchemeSelectionAtom,
+  layerTypeNames
+} from '@takram/plateau-view-layers'
 
 import {
   type COLOR_SCHEME_SELECTION,
@@ -66,7 +69,10 @@ function Content({ layer }: { layer: LayerModel }): JSX.Element | null {
   return (
     <List disablePadding>
       <InspectorHeader
-        title={colorProperty?.replaceAll('_', ' ') ?? ''}
+        title={{
+          primary: '色分け',
+          secondary: `${layerTypeNames[layer.type]}レイヤー`
+        }}
         icon={
           colorScheme != null ? (
             <ColorSchemeIcon colorScheme={colorScheme} />
