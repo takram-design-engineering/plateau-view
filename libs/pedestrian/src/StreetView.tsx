@@ -104,6 +104,7 @@ export const StreetView = forwardRef<HTMLDivElement, StreetViewProps>(
 
     useEffect(() => {
       if (panoRef.current != null) {
+        panorama.setPano(panoRef.current)
         return
       }
       let canceled = false
