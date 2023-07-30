@@ -1,5 +1,6 @@
+import { IconButton } from '@mui/material'
 import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai'
-import { memo, useCallback, useMemo, type FC } from 'react'
+import { memo, useCallback, useMemo, type FC, type SyntheticEvent } from 'react'
 
 import { useCesium } from '@takram/plateau-cesium'
 import { flyToBoundingSphere } from '@takram/plateau-cesium-helpers'
@@ -8,10 +9,18 @@ import {
   type LayerProps,
   type LayerType
 } from '@takram/plateau-layers'
-import { LayerListItem } from '@takram/plateau-ui-components'
+import {
+  ColorSchemeIcon,
+  ColorSetIcon,
+  LayerListItem
+} from '@takram/plateau-ui-components'
 
 import { layerTypeIcons } from './layerTypeIcons'
-import { highlightedLayersAtom } from './states'
+import { colorSchemeSelectionAtom, highlightedLayersAtom } from './states'
+
+function stopPropagation(event: SyntheticEvent): void {
+  event.stopPropagation()
+}
 
 export type ViewLayerListItemProps<T extends LayerType = LayerType> =
   LayerProps<T>
@@ -25,7 +34,8 @@ export const ViewLayerListItem: FC<ViewLayerListItemProps> = memo(
     loadingAtom,
     hiddenAtom,
     boundingSphereAtom,
-    itemProps
+    itemProps,
+    ...otherProps
   }: ViewLayerListItemProps) => {
     const title = useAtomValue(titleAtom)
     const loading = useAtomValue(loadingAtom)
@@ -56,6 +66,48 @@ export const ViewLayerListItem: FC<ViewLayerListItemProps> = memo(
       remove(id)
     }, [id, remove])
 
+    const colorSchemeAtom =
+      'colorSchemeAtom' in otherProps ? otherProps.colorSchemeAtom : undefined
+    const colorPropertyAtom =
+      'colorPropertyAtom' in otherProps
+        ? otherProps.colorPropertyAtom
+        : undefined
+    const colorScheme = useAtomValue(
+      useMemo(
+        () =>
+          atom(get => {
+            if (colorSchemeAtom == null) {
+              return null
+            }
+            const colorScheme = get(colorSchemeAtom)
+            if (colorPropertyAtom != null) {
+              return get(colorPropertyAtom) != null ? colorScheme : null
+            }
+            return colorScheme
+          }),
+        [colorSchemeAtom, colorPropertyAtom]
+      )
+    )
+
+    const colorSet = 'colorSet' in otherProps ? otherProps.colorSet : undefined
+    const colors = useAtomValue(
+      useMemo(
+        () => atom(get => (colorSet != null ? get(colorSet.colorsAtom) : null)),
+        [colorSet]
+      )
+    )
+
+    const [colorSchemeSelection, setColorSchemeSelection] = useAtom(
+      colorSchemeSelectionAtom
+    )
+    const colorSchemeSelected = useMemo(
+      () => colorSchemeSelection.includes(id),
+      [id, colorSchemeSelection]
+    )
+    const handleColorSchemeClick = useCallback(() => {
+      setColorSchemeSelection([id])
+    }, [id, setColorSchemeSelection])
+
     return (
       <LayerListItem
         {...itemProps}
@@ -65,6 +117,28 @@ export const ViewLayerListItem: FC<ViewLayerListItemProps> = memo(
         selected={selected}
         loading={loading}
         hidden={hidden}
+        accessory={
+          colorScheme != null ? (
+            <IconButton
+              onMouseDown={stopPropagation}
+              onDoubleClick={stopPropagation}
+              onClick={handleColorSchemeClick}
+            >
+              <ColorSchemeIcon
+                colorScheme={colorScheme}
+                selected={colorSchemeSelected}
+              />
+            </IconButton>
+          ) : colors != null ? (
+            <IconButton
+              onMouseDown={stopPropagation}
+              onDoubleClick={stopPropagation}
+              onClick={handleColorSchemeClick}
+            >
+              <ColorSetIcon colors={colors} selected={colorSchemeSelected} />
+            </IconButton>
+          ) : undefined
+        }
         onDoubleClick={handleDoubleClick}
         onRemove={handleRemove}
         onToggleHidden={handleToggleHidden}

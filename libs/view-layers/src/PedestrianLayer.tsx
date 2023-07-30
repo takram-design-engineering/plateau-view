@@ -90,6 +90,7 @@ export function createPedestrianLayer(
   return {
     ...createViewLayerBase({
       ...params,
+      // TODO: Avoid side-effect
       title: `歩行者視点${nextLayerIndex++}`
     }),
     type: PEDESTRIAN_LAYER,

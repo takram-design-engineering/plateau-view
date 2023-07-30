@@ -1,13 +1,9 @@
-import {
-  IconButton,
-  ListItemSecondaryAction,
-  styled,
-  Tooltip
-} from '@mui/material'
+import { IconButton, Stack, styled, Tooltip } from '@mui/material'
 import {
   useState,
   type FC,
   type MouseEventHandler,
+  type ReactNode,
   type SyntheticEvent
 } from 'react'
 
@@ -21,13 +17,8 @@ import { TrashSmallIcon } from './icons/TrashSmallIcon'
 import { VisibilityOffSmallIcon } from './icons/VisibilityOffSmallIcon'
 import { VisibilityOnSmallIcon } from './icons/VisibilityOnSmallIcon'
 
-const HoverMenuRoot = styled(ListItemSecondaryAction)(({ theme }) => ({
-  position: 'relative',
-  inset: 0,
-  transform: 'none',
-  flexShrink: 0,
-  flexGrow: 0,
-  marginRight: theme.spacing(-1)
+const StyledEntityTitleButton = styled(EntityTitleButton)(({ theme }) => ({
+  paddingRight: theme.spacing(1)
 }))
 
 function stopPropagation(event: SyntheticEvent): void {
@@ -51,7 +42,7 @@ const HoverMenu: FC<HoverMenuProps> = ({
     return null
   }
   return (
-    <HoverMenuRoot onMouseDown={stopPropagation}>
+    <Stack direction='row' onMouseDown={stopPropagation}>
       {(hovered || !hidden) && (
         <Tooltip title='削除'>
           <IconButton color='inherit' aria-label='削除' onClick={onRemove}>
@@ -72,15 +63,18 @@ const HoverMenu: FC<HoverMenuProps> = ({
           )}
         </IconButton>
       </Tooltip>
-    </HoverMenuRoot>
+    </Stack>
   )
 }
 
 export interface LayerListItemProps
   extends EntityTitleButtonProps,
-    Omit<HoverMenuProps, 'hidden'> {}
+    Omit<HoverMenuProps, 'hidden'> {
+  accessory?: ReactNode
+}
 
 export const LayerListItem: FC<LayerListItemProps> = ({
+  accessory,
   hidden = false,
   onRemove,
   onToggleHidden,
@@ -96,18 +90,21 @@ export const LayerListItem: FC<LayerListItemProps> = ({
     setHovered(false)
   })
   return (
-    <EntityTitleButton
+    <StyledEntityTitleButton
       {...props}
       hidden={hidden}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <HoverMenu
-        hovered={hovered}
-        hidden={hidden}
-        onRemove={onRemove}
-        onToggleHidden={onToggleHidden}
-      />
-    </EntityTitleButton>
+      <Stack direction='row' spacing={0.5}>
+        <HoverMenu
+          hovered={hovered}
+          hidden={hidden}
+          onRemove={onRemove}
+          onToggleHidden={onToggleHidden}
+        />
+        {accessory}
+      </Stack>
+    </StyledEntityTitleButton>
   )
 }

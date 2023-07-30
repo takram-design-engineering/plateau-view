@@ -3,9 +3,28 @@ import { type ComponentType } from 'react'
 
 import { type LayerType } from '@takram/plateau-layers'
 import {
+  BorderIcon,
+  BridgeIcon,
   BuildingIcon,
-  LayerIcon,
-  PedestrianIcon
+  CityFurnitureIcon,
+  EmergencyRouteIcon,
+  GenericCityObjectIcon,
+  HighTideRiskIcon,
+  InlandFloodingRiskIcon,
+  LandmarkIcon,
+  LandSlideRiskIcon,
+  LandUseIcon,
+  ParkIcon,
+  PedestrianIcon,
+  RailwayIcon,
+  RiverFloodingRiskIcon,
+  RoadIcon,
+  ShelterIcon,
+  StationIcon,
+  TsunamiRiskIcon,
+  UrbanPlanningIcon,
+  UseCaseIcon,
+  VegetationIcon
 } from '@takram/plateau-ui-components/icons'
 
 import {
@@ -36,25 +55,25 @@ import {
 export const layerTypeIcons: Record<LayerType, ComponentType<SvgIconProps>> = {
   [PEDESTRIAN_LAYER]: PedestrianIcon,
   // Dataset layers
-  [BORDER_LAYER]: LayerIcon,
-  [BRIDGE_LAYER]: LayerIcon,
+  [BORDER_LAYER]: BorderIcon,
+  [BRIDGE_LAYER]: BridgeIcon,
   [BUILDING_LAYER]: BuildingIcon,
-  [CITY_FURNITURE_LAYER]: LayerIcon,
-  [EMERGENCY_ROUTE_LAYER]: LayerIcon,
-  [GENERIC_CITY_OBJECT_LAYER]: LayerIcon,
-  [HIGH_TIDE_RISK_LAYER]: LayerIcon,
-  [INLAND_FLOODING_RISK_LAYER]: LayerIcon,
-  [LAND_USE_LAYER]: LayerIcon,
-  [LANDMARK_LAYER]: LayerIcon,
-  [LAND_SLIDE_RISK_LAYER]: LayerIcon,
-  [PARK_LAYER]: LayerIcon,
-  [RAILWAY_LAYER]: LayerIcon,
-  [RIVER_FLOODING_RISK_LAYER]: LayerIcon,
-  [ROAD_LAYER]: LayerIcon,
-  [SHELTER_LAYER]: LayerIcon,
-  [STATION_LAYER]: LayerIcon,
-  [TSUNAMI_RISK_LAYER]: LayerIcon,
-  [URBAN_PLANNING_LAYER]: LayerIcon,
-  [USE_CASE_LAYER]: LayerIcon,
-  [VEGETATION_LAYER]: LayerIcon
+  [CITY_FURNITURE_LAYER]: CityFurnitureIcon,
+  [EMERGENCY_ROUTE_LAYER]: EmergencyRouteIcon,
+  [GENERIC_CITY_OBJECT_LAYER]: GenericCityObjectIcon,
+  [HIGH_TIDE_RISK_LAYER]: HighTideRiskIcon,
+  [INLAND_FLOODING_RISK_LAYER]: InlandFloodingRiskIcon,
+  [LAND_USE_LAYER]: LandUseIcon,
+  [LANDMARK_LAYER]: LandmarkIcon,
+  [LAND_SLIDE_RISK_LAYER]: LandSlideRiskIcon,
+  [PARK_LAYER]: ParkIcon,
+  [RAILWAY_LAYER]: RailwayIcon,
+  [RIVER_FLOODING_RISK_LAYER]: RiverFloodingRiskIcon,
+  [ROAD_LAYER]: RoadIcon,
+  [SHELTER_LAYER]: ShelterIcon,
+  [STATION_LAYER]: StationIcon,
+  [TSUNAMI_RISK_LAYER]: TsunamiRiskIcon,
+  [URBAN_PLANNING_LAYER]: UrbanPlanningIcon,
+  [USE_CASE_LAYER]: UseCaseIcon,
+  [VEGETATION_LAYER]: VegetationIcon
 }
