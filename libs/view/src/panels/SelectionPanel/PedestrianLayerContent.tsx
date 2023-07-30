@@ -166,7 +166,6 @@ export const Content: FC<{
           <>
             <Tooltip title={hidden ? '表示' : '隠す'}>
               <IconButton
-                color='inherit'
                 aria-label={hidden ? '表示' : '隠す'}
                 onClick={handleToggleHidden}
               >
@@ -176,7 +175,6 @@ export const Content: FC<{
             <Tooltip title='移動'>
               <span>
                 <IconButton
-                  color='inherit'
                   aria-label='移動'
                   disabled={boundingSphere == null}
                   onClick={handleMove}
@@ -186,11 +184,7 @@ export const Content: FC<{
               </span>
             </Tooltip>
             <Tooltip title='削除'>
-              <IconButton
-                color='inherit'
-                aria-label='削除'
-                onClick={handleRemove}
-              >
+              <IconButton aria-label='削除' onClick={handleRemove}>
                 <TrashIcon />
               </IconButton>
             </Tooltip>

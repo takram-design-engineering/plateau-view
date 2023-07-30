@@ -69,7 +69,6 @@ export const TileFeatureContent: FC<TileFeatureContentProps> = withEphemerality(
             <>
               <Tooltip title='レイヤーを選択'>
                 <IconButton
-                  color='inherit'
                   aria-label='レイヤーを選択'
                   onClick={handleSelectLayers}
                 >
@@ -78,7 +77,6 @@ export const TileFeatureContent: FC<TileFeatureContentProps> = withEphemerality(
               </Tooltip>
               <Tooltip title={hidden ? '表示' : '隠す'}>
                 <IconButton
-                  color='inherit'
                   aria-label={hidden ? '表示' : '隠す'}
                   onClick={hidden ? handleShow : handleHide}
                 >

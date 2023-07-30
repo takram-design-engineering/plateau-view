@@ -66,7 +66,6 @@ export const LayerHiddenFeaturesSection: FC<
                 <Tooltip title='再表示'>
                   <IconButton
                     aria-label='再表示'
-                    color='inherit'
                     onClick={showAllHiddenFeatures}
                   >
                     <MinusIcon fontSize='small' />

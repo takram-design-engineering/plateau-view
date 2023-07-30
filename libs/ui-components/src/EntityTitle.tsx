@@ -1,5 +1,6 @@
 import {
   ListItem,
+  listItemSecondaryActionClasses,
   ListItemText,
   listItemTextClasses,
   styled,
@@ -11,7 +12,13 @@ import { forwardRef, type ComponentType } from 'react'
 
 const StyledListItem = styled(ListItem)(({ theme }) => ({
   alignItems: 'center',
-  minHeight: theme.spacing(5)
+  minHeight: theme.spacing(5),
+  paddingRight: theme.spacing(0.5),
+  [`& .${listItemSecondaryActionClasses.root}`]: {
+    position: 'relative',
+    transform: 'none',
+    flexGrow: 0
+  }
 })) as unknown as typeof ListItem // For generics
 
 export const EntityTitleIcon = styled('div')(({ theme }) => ({
@@ -22,6 +29,7 @@ export const EntityTitleIcon = styled('div')(({ theme }) => ({
 }))
 
 export const EntityTitleText = styled(ListItemText)({
+  flexGrow: 1,
   marginTop: 4,
   marginBottom: 4,
   overflow: 'hidden',

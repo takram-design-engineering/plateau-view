@@ -46,6 +46,6 @@ export const inspectorWidthAtom = atomWithStorageValidation({
 
 export const pedestrianInspectorWidthAtom = atomWithStorageValidation({
   key: 'pedestrianInspectorWidth',
-  initialValue: 480,
+  initialValue: 540,
   validate: isNumber
 })
