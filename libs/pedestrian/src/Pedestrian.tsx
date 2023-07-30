@@ -89,7 +89,7 @@ export const Pedestrian: FC<PedestrianProps> = withEphemerality(
       },
       computeBoundingSphere: (value, result = new BoundingSphere()) => {
         computeCartographicToCartesian(scene, location, result.center)
-        result.radius = 50 // Arbitrary size
+        result.radius = 200 // Arbitrary size
         return result
       }
     })

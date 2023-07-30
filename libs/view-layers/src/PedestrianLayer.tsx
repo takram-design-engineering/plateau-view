@@ -1,3 +1,4 @@
+import { BoundingSphere, Cartesian3, Cartographic } from '@cesium/engine'
 import {
   atom,
   useAtom,
@@ -10,6 +11,7 @@ import { useCallback, useEffect, useMemo, type FC } from 'react'
 import invariant from 'tiny-invariant'
 import { type SetOptional } from 'type-fest'
 
+import { useCesium } from '@takram/plateau-cesium'
 import { match } from '@takram/plateau-cesium-helpers'
 import { useAddress } from '@takram/plateau-geocoder'
 import { type LayerProps } from '@takram/plateau-layers'
@@ -98,6 +100,8 @@ export function createPedestrianLayer(
   }
 }
 
+const cartographicScratch = new Cartographic()
+
 export const PedestrianLayer: FC<LayerProps<typeof PEDESTRIAN_LAYER>> = ({
   id,
   selected,
@@ -132,6 +136,30 @@ export const PedestrianLayer: FC<LayerProps<typeof PEDESTRIAN_LAYER>> = ({
     },
     [setLocation]
   )
+
+  const setBoundingSphere = useSetAtom(boundingSphereAtom)
+  const scene = useCesium(({ scene }) => scene, { indirect: true })
+  useEffect(() => {
+    const boundingSphere = new BoundingSphere()
+    const groundHeight =
+      scene?.globe.getHeight(
+        Cartographic.fromDegrees(
+          location.longitude,
+          location.latitude,
+          undefined,
+          cartographicScratch
+        )
+      ) ?? 0
+    Cartesian3.fromDegrees(
+      location.longitude,
+      location.latitude,
+      groundHeight + (location.height ?? 0),
+      scene?.globe.ellipsoid,
+      boundingSphere.center
+    )
+    boundingSphere.radius = 200 // Arbitrary size
+    setBoundingSphere(boundingSphere)
+  }, [location, setBoundingSphere, scene])
 
   const setTitle = useSetAtom(titleAtom)
   const setAddress = useSetAtom(addressAtom)
