@@ -2,13 +2,16 @@ import {
   atom,
   useAtom,
   useAtomValue,
+  useSetAtom,
   type PrimitiveAtom,
   type SetStateAction
 } from 'jotai'
-import { useCallback, useMemo, type FC } from 'react'
+import { useCallback, useEffect, useMemo, type FC } from 'react'
+import invariant from 'tiny-invariant'
 import { type SetOptional } from 'type-fest'
 
 import { match } from '@takram/plateau-cesium-helpers'
+import { useAddress } from '@takram/plateau-geocoder'
 import { type LayerProps } from '@takram/plateau-layers'
 import {
   Pedestrian,
@@ -25,6 +28,8 @@ import {
 } from './createViewLayerBase'
 import { PEDESTRIAN_LAYER } from './layerTypes'
 
+let nextLayerIndex = 1
+
 export interface PedestrianLayerModelParams extends ViewLayerModelParams {
   location: Location
   headingPitchAtom?: HeadingPitch
@@ -36,6 +41,7 @@ export interface PedestrianLayerModel extends ViewLayerModel {
   headingPitchAtom: PrimitiveAtom<HeadingPitch | null>
   zoomAtom: PrimitiveAtom<number | null>
   synchronizeStreetViewAtom: PrimitiveAtom<boolean>
+  addressAtom: PrimitiveAtom<string | null>
 }
 
 export function createPedestrianLayer(
@@ -81,25 +87,28 @@ export function createPedestrianLayer(
   return {
     ...createViewLayerBase({
       ...params,
-      title: '歩行者視点'
+      title: `歩行者視点${nextLayerIndex++}`
     }),
     type: PEDESTRIAN_LAYER,
     locationAtom,
     headingPitchAtom,
     zoomAtom: atom<number | null>(params.zoomAtom ?? null),
-    synchronizeStreetViewAtom: atom(false)
+    synchronizeStreetViewAtom: atom(false),
+    addressAtom: atom<string | null>(null)
   }
 }
 
 export const PedestrianLayer: FC<LayerProps<typeof PEDESTRIAN_LAYER>> = ({
   id,
   selected,
+  titleAtom,
   hiddenAtom,
   boundingSphereAtom,
   locationAtom,
   headingPitchAtom,
   zoomAtom,
-  synchronizeStreetViewAtom
+  synchronizeStreetViewAtom,
+  addressAtom
 }) => {
   const [location, setLocation] = useAtom(locationAtom)
   const headingPitch = useAtomValue(headingPitchAtom)
@@ -123,6 +132,24 @@ export const PedestrianLayer: FC<LayerProps<typeof PEDESTRIAN_LAYER>> = ({
     },
     [setLocation]
   )
+
+  const setTitle = useSetAtom(titleAtom)
+  const setAddress = useSetAtom(addressAtom)
+  const address = useAddress({
+    longitude: location.longitude,
+    latitude: location.latitude
+  })
+  useEffect(() => {
+    setTitle(title => {
+      const primary = typeof title === 'string' ? title : title?.primary
+      invariant(primary != null)
+      return {
+        primary,
+        secondary: address?.address
+      }
+    })
+    setAddress(address?.address ?? null)
+  }, [setTitle, setAddress, address])
 
   const hidden = useAtomValue(hiddenAtom)
   if (hidden) {
