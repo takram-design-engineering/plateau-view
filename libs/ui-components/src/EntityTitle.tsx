@@ -24,16 +24,17 @@ export const EntityTitleIcon = styled('div')(({ theme }) => ({
 export const EntityTitleText = styled(ListItemText)({
   marginTop: 4,
   marginBottom: 4,
+  overflow: 'hidden',
+  whiteSpace: 'nowrap',
+  textOverflow: 'ellipsis',
   [`& .${listItemTextClasses.primary}`]: {
-    overflow: 'hidden',
-    whiteSpace: 'nowrap',
-    textOverflow: 'ellipsis'
+    display: 'inline'
   },
   [`& .${listItemTextClasses.secondary}`]: {
-    overflow: 'hidden',
-    whiteSpace: 'nowrap',
-    textOverflow: 'ellipsis',
-    marginTop: '0.1em'
+    display: 'inline'
+  },
+  [`& .${listItemTextClasses.primary} + .${listItemTextClasses.secondary}`]: {
+    marginLeft: '1em'
   }
 })
 
