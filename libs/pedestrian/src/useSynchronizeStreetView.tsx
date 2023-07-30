@@ -22,14 +22,14 @@ import { type HeadingPitch, type HeadingPitchFov, type Location } from './types'
 
 export interface StreetViewStateParams {
   synchronizeAtom: PrimitiveAtom<boolean>
-  locationAtom: PrimitiveAtom<Location | null>
+  locationAtom: PrimitiveAtom<Location>
   headingPitchAtom: PrimitiveAtom<HeadingPitch | null>
   zoomAtom: PrimitiveAtom<number | null>
 }
 
 export interface StreetViewState {
   synchronizeAtom: PrimitiveAtom<boolean>
-  locationAtom: PrimitiveAtom<Location | null>
+  locationAtom: PrimitiveAtom<Location>
   headingPitchAtom: PrimitiveAtom<HeadingPitch | null>
   zoomAtom: PrimitiveAtom<number | null>
 }
@@ -41,7 +41,7 @@ interface CameraState {
 
 const cartesianScratch = new Cartesian3()
 
-export function useStreetViewState(
+export function useSynchronizeStreetView(
   params: StreetViewStateParams
 ): StreetViewState {
   const scene = useCesium(({ scene }) => scene, { indirect: true })
@@ -107,7 +107,7 @@ export function useStreetViewState(
 
     const locationAtom = atom(
       get => get(paramsRef.current.locationAtom),
-      (get, set, value: SetStateAction<Location | null>) => {
+      (get, set, value: SetStateAction<Location>) => {
         const params = paramsRef.current
         const prevValue = get(params.locationAtom)
         const nextValue = typeof value === 'function' ? value(prevValue) : value

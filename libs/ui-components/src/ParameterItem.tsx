@@ -15,7 +15,9 @@ const Root = styled('div', {
   })
 }))
 
-const StyledListItem = styled(ListItem)<{
+const StyledListItem = styled(ListItem, {
+  shouldForwardProp: prop => prop !== 'secondaryActionSpace'
+})<{
   secondaryActionSpace?: 'normal' | 'button'
 }>(({ theme, secondaryActionSpace = 'normal' }) => ({
   ...(secondaryActionSpace === 'button' && {

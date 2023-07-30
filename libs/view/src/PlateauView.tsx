@@ -21,6 +21,7 @@ import { Canvas } from './containers/Canvas'
 import { Environments } from './containers/Environments'
 import { KeyBindings } from './containers/KeyBindings'
 import { Notifications } from './containers/Notifications'
+import { PedestrianTool } from './containers/PedestrianTool'
 import { ReverseGeocoding } from './containers/ReverseGeocoding'
 import { ScreenSpaceCamera } from './containers/ScreenSpaceCamera'
 import { ScreenSpaceSelection } from './containers/ScreenSpaceSelection'
@@ -61,8 +62,10 @@ const InitialLayers: FC = () => {
         addLayer(
           createViewLayer({
             type: PEDESTRIAN_LAYER,
-            longitude: 139.769,
-            latitude: 35.68
+            location: {
+              longitude: 139.769,
+              latitude: 35.68
+            }
           })
         )
     ].filter(isNotFalse)
@@ -111,6 +114,7 @@ export const PlateauView: FC<PlateauViewProps> = () => {
         <Areas />
         <ReverseGeocoding />
         <ToolMachineEvents />
+        <PedestrianTool />
         <SelectionCoordinator />
         <SelectionBoundingSphere />
       </Canvas>

@@ -2,7 +2,9 @@ import { styled } from '@mui/material'
 import {
   forwardRef,
   useEffect,
+  useLayoutEffect,
   useRef,
+  useState,
   type ComponentPropsWithRef
 } from 'react'
 import { mergeRefs } from 'react-merge-refs'
@@ -14,13 +16,30 @@ import { usePanoramaLocationChange } from './usePanoramaLocationChange'
 import { usePanoramaZoomChange } from './usePanoramaZoomChange'
 import { useStreetView } from './useStreetView'
 
-const Root = styled('div')({})
+const Root = styled('div', {
+  shouldForwardProp: prop => prop !== 'hidden'
+})<{ hidden?: boolean }>(({ hidden = false }) => ({
+  ...(hidden && {
+    visibility: 'hidden'
+  })
+}))
 
-export interface StreetViewProps extends ComponentPropsWithRef<typeof Root> {
+export interface StreetViewProps
+  extends Omit<ComponentPropsWithRef<typeof Root>, 'onLoad' | 'onError'> {
   apiKey: string
+  pano?: string
   location: Location
+  headingPitch?: HeadingPitch
+  zoom?: number
   radius?: number
-  onLocationChange?: (location: Location | null) => void
+  onLoad?: (
+    pano: string,
+    location: Location,
+    headingPitch: HeadingPitch,
+    zoom: number
+  ) => void
+  onError?: (error: Error) => void
+  onLocationChange?: (pano: string, location: Location) => void
   onHeadingPitchChange?: (headingPitch: HeadingPitch) => void
   onZoomChange?: (zoom: number) => void
 }
@@ -29,8 +48,13 @@ export const StreetView = forwardRef<HTMLDivElement, StreetViewProps>(
   (
     {
       apiKey,
+      pano,
       location,
-      radius = 1000,
+      headingPitch,
+      zoom,
+      radius = 100,
+      onLoad,
+      onError,
       onLocationChange,
       onHeadingPitchChange,
       onZoomChange,
@@ -41,7 +65,7 @@ export const StreetView = forwardRef<HTMLDivElement, StreetViewProps>(
     const { container, panorama, service } = useStreetView(apiKey)
 
     const ref = useRef<HTMLDivElement>(null)
-    useEffect(() => {
+    useLayoutEffect(() => {
       const element = ref.current
       invariant(element != null)
 
@@ -54,18 +78,35 @@ export const StreetView = forwardRef<HTMLDivElement, StreetViewProps>(
       }
     }, [container])
 
-    const callbackRefs = useRef({
-      onLocationChange,
-      onHeadingPitchChange,
-      onZoomChange
-    })
-    Object.assign(callbackRefs.current, {
-      onLocationChange,
-      onHeadingPitchChange,
-      onZoomChange
-    })
+    // Street View's Panorama is reused across different pedestrian layers, and
+    // fires events for the previous layer before the current layer sets the
+    // initial location. Ignore any events until this flag becomes true.
+    const panoSetRef = useRef(false)
+
+    // Street View's getPanorama() sometimes returns another location for the
+    // previously returned location:
+    //   const locationA = getPanorama(...)
+    //   const locationB = getPanorama(locationA)
+    //   const locationA = getPanorama(locationB)
+    // and it makes indefinite loop. Prevent it by changing panorama only when
+    // pano is not defined.
+    const panoRef = useRef(pano)
+    panoRef.current = pano
+
+    const headingPitchRef = useRef(headingPitch)
+    const zoomRef = useRef(zoom)
+    headingPitchRef.current = headingPitch
+    zoomRef.current = zoom
+
+    const [hasError, setHasError] = useState(false)
+    const onErrorRef = useRef(onError)
+    onErrorRef.current = onError
 
     useEffect(() => {
+      if (panoRef.current != null) {
+        panorama.setPano(panoRef.current)
+        return
+      }
       let canceled = false
       ;(async () => {
         const { data } = await service.getPanorama({
@@ -79,21 +120,64 @@ export const StreetView = forwardRef<HTMLDivElement, StreetViewProps>(
         if (canceled) {
           return
         }
-        if (data.location != null) {
-          panorama.setPano(data.location.pano)
+        if (data.location == null) {
+          return
         }
+        panorama.setPano(data.location.pano)
+        if (headingPitchRef.current != null) {
+          panorama.setPov(headingPitchRef.current)
+        }
+        if (zoomRef.current != null) {
+          panorama.setZoom(zoomRef.current)
+        }
+        panoSetRef.current = true
+        setHasError(false)
       })().catch(error => {
-        console.error(error)
+        setHasError(true)
+        onErrorRef.current?.(error)
       })
       return () => {
         canceled = true
       }
-    }, [location, radius, panorama, service])
+    }, [pano, location, radius, panorama, service])
 
-    usePanoramaLocationChange(panorama, onLocationChange)
-    usePanoramaHeadingPitchChange(panorama, onHeadingPitchChange)
-    usePanoramaZoomChange(panorama, onZoomChange)
+    // I'm going to invoke onLoad or onError callbacks at the first time
+    // location changes after it's set. This keeps track of that state.
+    const locationChangedRef = useRef(false)
 
-    return <Root ref={mergeRefs([ref, forwardedRef])} {...props} />
+    usePanoramaLocationChange(panorama, location => {
+      if (!panoSetRef.current) {
+        return
+      }
+      if (!locationChangedRef.current) {
+        invariant(location != null)
+        onLoad?.(
+          panorama.getPano(),
+          location,
+          panorama.getPov(),
+          panorama.getZoom()
+        )
+        locationChangedRef.current = true
+      } else {
+        invariant(location != null)
+        onLocationChange?.(panorama.getPano(), location)
+      }
+    })
+    usePanoramaHeadingPitchChange(panorama, headingPitch => {
+      if (!panoSetRef.current) {
+        return
+      }
+      onHeadingPitchChange?.(headingPitch)
+    })
+    usePanoramaZoomChange(panorama, zoom => {
+      if (!panoSetRef.current) {
+        return
+      }
+      onZoomChange?.(zoom)
+    })
+
+    return (
+      <Root ref={mergeRefs([ref, forwardedRef])} {...props} hidden={hasError} />
+    )
   }
 )
