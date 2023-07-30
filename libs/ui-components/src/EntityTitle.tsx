@@ -8,7 +8,7 @@ import {
   type ListItemProps,
   type SvgIconProps
 } from '@mui/material'
-import { forwardRef, type ComponentType } from 'react'
+import { forwardRef, type ComponentType, type ReactNode } from 'react'
 
 const StyledListItem = styled(ListItem)(({ theme }) => ({
   alignItems: 'center',
@@ -54,16 +54,21 @@ export interface EntityTitleProps extends Omit<ListItemProps<'div'>, 'title'> {
         secondary?: string
       }
   iconComponent?: ComponentType<SvgIconProps>
+  icon?: ReactNode
 }
 
 export const EntityTitle = forwardRef<HTMLDivElement, EntityTitleProps>(
-  ({ title, iconComponent, children, ...props }, ref) => {
+  ({ title, iconComponent, icon, children, ...props }, ref) => {
     const Icon = iconComponent
     return (
       <StyledListItem ref={ref} {...props} component='div'>
-        {Icon != null && (
+        {(icon != null || Icon != null) && (
           <EntityTitleIcon>
-            <Icon fontSize='medium' />
+            {icon != null ? (
+              icon
+            ) : Icon != null ? (
+              <Icon fontSize='medium' />
+            ) : null}
           </EntityTitleIcon>
         )}
         <EntityTitleText

@@ -9,10 +9,12 @@ import { PEDESTRIAN_LAYER } from '@takram/plateau-view-layers'
 
 import { inspectorWidthAtom, pedestrianInspectorWidthAtom } from '../states/app'
 import {
+  COLOR_SCHEME_SELECTION,
   LAYER_SELECTION,
   SCREEN_SPACE_SELECTION,
   selectionGroupsAtom
 } from '../states/selection'
+import { ColorSchemeContent } from './SelectionPanel/ColorSchemeContent'
 import { LayerContent } from './SelectionPanel/LayerContent'
 import { PedestrianLayerContent } from './SelectionPanel/PedestrianLayerContent'
 import { TileFeatureContent } from './SelectionPanel/TileFeatureContent'
@@ -46,6 +48,10 @@ export const SelectionPanel: FC = () => {
             contentType = 'pedestrian'
             break
         }
+        break
+      case COLOR_SCHEME_SELECTION:
+        content = <ColorSchemeContent values={selectionGroup.values} />
+        break
     }
   } else if (selectionGroups.length > 1) {
     content = null // TODO: Show mixed content
