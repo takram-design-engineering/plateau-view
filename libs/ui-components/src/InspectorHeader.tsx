@@ -1,7 +1,8 @@
 import {
   IconButton,
   listItemSecondaryActionClasses,
-  styled
+  styled,
+  Tooltip
 } from '@mui/material'
 import { type FC, type MouseEvent } from 'react'
 
@@ -27,9 +28,11 @@ export const InspectorHeader: FC<InspectorHeaderProps> = ({
     {...props}
     secondaryAction={
       onClose != null && (
-        <IconButton onClick={onClose}>
-          <CloseIcon />
-        </IconButton>
+        <Tooltip title='閉じる'>
+          <IconButton aria-label='閉じる' onClick={onClose}>
+            <CloseIcon />
+          </IconButton>
+        </Tooltip>
       )
     }
   />
