@@ -8,12 +8,9 @@ import {
 } from '@mui/material'
 import { atom, useAtomValue, useSetAtom } from 'jotai'
 import { useCallback, useMemo, type FC } from 'react'
+import invariant from 'tiny-invariant'
 
-import {
-  layersAtom,
-  useFindLayer,
-  type LayerModel
-} from '@takram/plateau-layers'
+import { type LayerModel } from '@takram/plateau-layers'
 import {
   ColorSchemeIcon,
   ColorSetIcon,
@@ -21,54 +18,94 @@ import {
   InspectorHeader,
   QuantitativeColorLegend
 } from '@takram/plateau-ui-components'
-import {
-  colorSchemeSelectionAtom,
-  layerTypeNames
-} from '@takram/plateau-view-layers'
+import { colorSchemeSelectionAtom } from '@takram/plateau-view-layers'
 
 import {
   type COLOR_SCHEME_SELECTION,
   type SelectionGroup
 } from '../../states/selection'
 
-const Content: FC<{ layer: LayerModel }> = ({ layer }) => {
-  const colorPropertyAtom =
-    'colorPropertyAtom' in layer ? layer.colorPropertyAtom : undefined
-  const colorProperty = useAtomValue(
-    useMemo(
-      () =>
-        atom(get =>
-          colorPropertyAtom != null ? get(colorPropertyAtom) : null
-        ),
-      [colorPropertyAtom]
-    )
+function hasQuantitativeAtoms(
+  values: readonly LayerModel[]
+): values is ReadonlyArray<
+  Extract<
+    LayerModel,
+    {
+      colorPropertyAtom: unknown
+      colorRangeAtom: unknown
+      colorSchemeAtom: unknown
+    }
+  >
+> {
+  return values.every(
+    value =>
+      'colorPropertyAtom' in value &&
+      'colorRangeAtom' in value &&
+      'colorSchemeAtom' in value
   )
+}
 
-  const colorSchemeAtom =
-    'colorSchemeAtom' in layer ? layer.colorSchemeAtom : undefined
-  const colorScheme = useAtomValue(
-    useMemo(
-      () =>
-        atom(get => (colorSchemeAtom != null ? get(colorSchemeAtom) : null)),
-      [colorSchemeAtom]
-    )
+function hasQualitativeAtoms(
+  values: readonly LayerModel[]
+): values is ReadonlyArray<Extract<LayerModel, { colorSet: unknown }>> {
+  return values.every(value => 'colorSet' in value)
+}
+
+const QuantitativeContent: FC<{
+  layer: Extract<
+    LayerModel,
+    {
+      colorPropertyAtom: unknown
+      colorRangeAtom: unknown
+      colorSchemeAtom: unknown
+    }
+  >
+}> = ({ layer }) => {
+  const title = useAtomValue(layer.titleAtom)
+  const colorProperty = useAtomValue(layer.colorPropertyAtom)
+  const colorScheme = useAtomValue(layer.colorSchemeAtom)
+  const colorRange = useAtomValue(layer.colorRangeAtom)
+
+  const setSelection = useSetAtom(colorSchemeSelectionAtom)
+  const handleClose = useCallback(() => {
+    setSelection([])
+  }, [setSelection])
+
+  return (
+    <List disablePadding>
+      <InspectorHeader
+        title={{
+          primary: '色分け',
+          secondary: typeof title === 'string' ? title : title?.primary
+        }}
+        icon={<ColorSchemeIcon colorScheme={colorScheme} />}
+        onClose={handleClose}
+      />
+      <Divider />
+      <ListItem>
+        <ListItemText>
+          <Stack spacing={1}>
+            <Typography variant='body2'>
+              {colorProperty?.replaceAll('_', ' ')}
+            </Typography>
+            <QuantitativeColorLegend
+              colorScheme={colorScheme}
+              min={colorRange[0]}
+              max={colorRange[1]}
+            />
+          </Stack>
+        </ListItemText>
+      </ListItem>
+    </List>
   )
+}
 
-  const colorRangeAtom =
-    'colorRangeAtom' in layer ? layer.colorRangeAtom : undefined
-  const colorRange = useAtomValue(
-    useMemo(
-      () => atom(get => (colorRangeAtom != null ? get(colorRangeAtom) : null)),
-      [colorRangeAtom]
-    )
-  )
-
-  const colorSet = 'colorSet' in layer ? layer.colorSet : undefined
+const QualitativeContent: FC<{
+  layer: Extract<LayerModel, { colorSet: unknown }>
+}> = ({ layer }) => {
+  const colorSet = layer.colorSet
   const colors = useAtomValue(
-    useMemo(
-      () => atom(get => (colorSet != null ? get(colorSet.colorsAtom) : null)),
-      [colorSet]
-    )
+    useMemo(() => atom(get => get(colorSet.colorsAtom)), [colorSet])
   )
 
   const setSelection = useSetAtom(colorSchemeSelectionAtom)
@@ -79,45 +116,14 @@ const Content: FC<{ layer: LayerModel }> = ({ layer }) => {
   return (
     <List disablePadding>
       <InspectorHeader
-        title={
-          colorSet != null
-            ? colorSet.name
-            : {
-                primary: '色分け',
-                secondary: `${layerTypeNames[layer.type]}レイヤー`
-              }
-        }
-        icon={
-          colorScheme != null ? (
-            <ColorSchemeIcon colorScheme={colorScheme} />
-          ) : colors != null ? (
-            <ColorSetIcon colors={colors} />
-          ) : undefined
-        }
+        title={colorSet.name}
+        icon={<ColorSetIcon colors={colors} />}
         onClose={handleClose}
       />
       <Divider />
-      {colorProperty != null && colorScheme != null && colorRange != null && (
-        <ListItem>
-          <ListItemText>
-            <Stack spacing={1}>
-              <Typography variant='body2'>
-                {colorProperty.replaceAll('_', ' ')}
-              </Typography>
-              <QuantitativeColorLegend
-                colorScheme={colorScheme}
-                min={colorRange[0]}
-                max={colorRange[1]}
-              />
-            </Stack>
-          </ListItemText>
-        </ListItem>
-      )}
-      {colorSet != null && (
-        <ListItem>
-          <ColorSetList colorsAtom={colorSet.colorAtomsAtom} />
-        </ListItem>
-      )}
+      <ListItem>
+        <ColorSetList colorsAtom={colorSet.colorAtomsAtom} />
+      </ListItem>
     </List>
   )
 }
@@ -129,18 +135,13 @@ export interface ColorSchemeContentProps {
 }
 
 export const ColorSchemeContent: FC<ColorSchemeContentProps> = ({ values }) => {
-  const layers = useAtomValue(layersAtom)
-  const findLayer = useFindLayer()
+  invariant(values.length > 0)
   // TODO: Support multiple layers
-  const layer =
-    typeof values[0] === 'string'
-      ? findLayer(layers, {
-          id: values[0]
-        })
-      : values[0]
-
-  if (layer == null) {
-    return null
+  if (hasQuantitativeAtoms(values)) {
+    return <QuantitativeContent layer={values[0]} />
   }
-  return <Content layer={layer} />
+  if (hasQualitativeAtoms(values)) {
+    return <QualitativeContent layer={values[0]} />
+  }
+  return null
 }
