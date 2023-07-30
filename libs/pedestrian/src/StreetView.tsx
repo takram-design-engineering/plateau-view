@@ -4,6 +4,7 @@ import {
   useEffect,
   useLayoutEffect,
   useRef,
+  useState,
   type ComponentPropsWithRef
 } from 'react'
 import { mergeRefs } from 'react-merge-refs'
@@ -15,22 +16,29 @@ import { usePanoramaLocationChange } from './usePanoramaLocationChange'
 import { usePanoramaZoomChange } from './usePanoramaZoomChange'
 import { useStreetView } from './useStreetView'
 
-const Root = styled('div')({})
+const Root = styled('div', {
+  shouldForwardProp: prop => prop !== 'hidden'
+})<{ hidden?: boolean }>(({ hidden = false }) => ({
+  ...(hidden && {
+    visibility: 'hidden'
+  })
+}))
 
 export interface StreetViewProps
-  extends Omit<ComponentPropsWithRef<typeof Root>, 'onLoad'> {
+  extends Omit<ComponentPropsWithRef<typeof Root>, 'onLoad' | 'onError'> {
   apiKey: string
   location: Location
   headingPitch?: HeadingPitch
   zoom?: number
   radius?: number
   onLoad?: (
+    pano: string,
     location: Location,
     headingPitch: HeadingPitch,
     zoom: number
   ) => void
-  onNotFound?: () => void
-  onLocationChange?: (location: Location) => void
+  onError?: (error: Error) => void
+  onLocationChange?: (pano: string, location: Location) => void
   onHeadingPitchChange?: (headingPitch: HeadingPitch) => void
   onZoomChange?: (zoom: number) => void
 }
@@ -44,7 +52,7 @@ export const StreetView = forwardRef<HTMLDivElement, StreetViewProps>(
       zoom,
       radius = 100,
       onLoad,
-      onNotFound,
+      onError,
       onLocationChange,
       onHeadingPitchChange,
       onZoomChange,
@@ -78,6 +86,10 @@ export const StreetView = forwardRef<HTMLDivElement, StreetViewProps>(
     headingPitchRef.current = headingPitch
     zoomRef.current = zoom
 
+    const [hasError, setHasError] = useState(false)
+    const onErrorRef = useRef(onError)
+    onErrorRef.current = onError
+
     useEffect(() => {
       let canceled = false
       ;(async () => {
@@ -92,25 +104,28 @@ export const StreetView = forwardRef<HTMLDivElement, StreetViewProps>(
         if (canceled) {
           return
         }
-        if (data.location != null) {
-          panorama.setPano(data.location.pano)
-          if (headingPitchRef.current != null) {
-            panorama.setPov(headingPitchRef.current)
-          }
-          if (zoomRef.current != null) {
-            panorama.setZoom(zoomRef.current)
-          }
-          panoSetRef.current = true
+        if (data.location == null) {
+          return
         }
+        panorama.setPano(data.location.pano)
+        if (headingPitchRef.current != null) {
+          panorama.setPov(headingPitchRef.current)
+        }
+        if (zoomRef.current != null) {
+          panorama.setZoom(zoomRef.current)
+        }
+        panoSetRef.current = true
+        setHasError(false)
       })().catch(error => {
-        console.error(error)
+        setHasError(true)
+        onErrorRef.current?.(error)
       })
       return () => {
         canceled = true
       }
     }, [location, radius, panorama, service])
 
-    // I'm going to invoke onLoad or onNotFound callbacks at the first time
+    // I'm going to invoke onLoad or onError callbacks at the first time
     // location changes after it's set. This keeps track of that state.
     const locationChangedRef = useRef(false)
 
@@ -119,15 +134,17 @@ export const StreetView = forwardRef<HTMLDivElement, StreetViewProps>(
         return
       }
       if (!locationChangedRef.current) {
-        if (location != null) {
-          onLoad?.(location, panorama.getPov(), panorama.getZoom())
-          locationChangedRef.current = true
-        } else {
-          onNotFound?.()
-        }
+        invariant(location != null)
+        onLoad?.(
+          panorama.getPano(),
+          location,
+          panorama.getPov(),
+          panorama.getZoom()
+        )
+        locationChangedRef.current = true
       } else {
         invariant(location != null)
-        onLocationChange?.(location)
+        onLocationChange?.(panorama.getPano(), location)
       }
     })
     usePanoramaHeadingPitchChange(panorama, headingPitch => {
@@ -143,6 +160,8 @@ export const StreetView = forwardRef<HTMLDivElement, StreetViewProps>(
       onZoomChange?.(zoom)
     })
 
-    return <Root ref={mergeRefs([ref, forwardedRef])} {...props} />
+    return (
+      <Root ref={mergeRefs([ref, forwardedRef])} {...props} hidden={hasError} />
+    )
   }
 )

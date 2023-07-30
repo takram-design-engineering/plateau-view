@@ -1,5 +1,5 @@
 import { PerspectiveFrustum } from '@cesium/engine'
-import { Divider, IconButton, List, styled, Tooltip } from '@mui/material'
+import { IconButton, List, styled, Tooltip } from '@mui/material'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { Suspense, useCallback, useRef, type FC } from 'react'
 import invariant from 'tiny-invariant'
@@ -77,18 +77,37 @@ export const Content: FC<{
   const headingPitch = useAtomValue(layer.headingPitchAtom)
   const zoom = useAtomValue(layer.zoomAtom)
 
+  const setPano = useSetAtom(layer.panoAtom)
   const setLocation = useSetAtom(locationAtom)
   const setHeadingPitch = useSetAtom(headingPitchAtom)
   const setZoom = useSetAtom(zoomAtom)
 
   const handleLoad = useCallback(
-    (location: Location, headingPitch: HeadingPitch, zoom: number) => {
+    (
+      pano: string,
+      location: Location,
+      headingPitch: HeadingPitch,
+      zoom: number
+    ) => {
+      setPano(pano)
       setLocation(location)
       setHeadingPitch(headingPitch)
       setZoom(zoom)
     },
-    [setLocation, setHeadingPitch, setZoom]
+    [setPano, setLocation, setHeadingPitch, setZoom]
   )
+
+  const handleLocationChange = useCallback(
+    (pano: string, location: Location) => {
+      setPano(pano)
+      setLocation(location)
+    },
+    [setPano, setLocation]
+  )
+
+  const handleError = useCallback(() => {
+    setPano(null)
+  }, [setPano])
 
   const streetViewRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -179,7 +198,6 @@ export const Content: FC<{
         }
         onClose={handleClose}
       />
-      <Divider light />
       <StreetViewContainer ref={containerRef}>
         <Suspense>
           <StyledStreetView
@@ -190,7 +208,8 @@ export const Content: FC<{
             headingPitch={headingPitch ?? undefined}
             zoom={zoom ?? undefined}
             onLoad={handleLoad}
-            onLocationChange={setLocation}
+            onError={handleError}
+            onLocationChange={handleLocationChange}
             onHeadingPitchChange={setHeadingPitch}
             onZoomChange={setZoom}
           />
