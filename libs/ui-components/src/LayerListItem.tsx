@@ -8,6 +8,7 @@ import {
   useState,
   type FC,
   type MouseEventHandler,
+  type ReactNode,
   type SyntheticEvent
 } from 'react'
 
@@ -21,14 +22,17 @@ import { TrashSmallIcon } from './icons/TrashSmallIcon'
 import { VisibilityOffSmallIcon } from './icons/VisibilityOffSmallIcon'
 import { VisibilityOnSmallIcon } from './icons/VisibilityOnSmallIcon'
 
-const HoverMenuRoot = styled(ListItemSecondaryAction)(({ theme }) => ({
+const StyledEntityTitleButton = styled(EntityTitleButton)(({ theme }) => ({
+  paddingRight: theme.spacing(1)
+}))
+
+const HoverMenuRoot = styled(ListItemSecondaryAction)({
   position: 'relative',
   inset: 0,
   transform: 'none',
   flexShrink: 0,
-  flexGrow: 0,
-  marginRight: theme.spacing(-1)
-}))
+  flexGrow: 0
+})
 
 function stopPropagation(event: SyntheticEvent): void {
   event.stopPropagation()
@@ -78,9 +82,12 @@ const HoverMenu: FC<HoverMenuProps> = ({
 
 export interface LayerListItemProps
   extends EntityTitleButtonProps,
-    Omit<HoverMenuProps, 'hidden'> {}
+    Omit<HoverMenuProps, 'hidden'> {
+  accessory?: ReactNode
+}
 
 export const LayerListItem: FC<LayerListItemProps> = ({
+  accessory,
   hidden = false,
   onRemove,
   onToggleHidden,
@@ -96,7 +103,7 @@ export const LayerListItem: FC<LayerListItemProps> = ({
     setHovered(false)
   })
   return (
-    <EntityTitleButton
+    <StyledEntityTitleButton
       {...props}
       hidden={hidden}
       onMouseEnter={handleMouseEnter}
@@ -108,6 +115,7 @@ export const LayerListItem: FC<LayerListItemProps> = ({
         onRemove={onRemove}
         onToggleHidden={onToggleHidden}
       />
-    </EntityTitleButton>
+      {accessory}
+    </StyledEntityTitleButton>
   )
 }
