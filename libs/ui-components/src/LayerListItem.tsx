@@ -1,9 +1,4 @@
-import {
-  IconButton,
-  ListItemSecondaryAction,
-  styled,
-  Tooltip
-} from '@mui/material'
+import { IconButton, Stack, styled, Tooltip } from '@mui/material'
 import {
   useState,
   type FC,
@@ -26,14 +21,6 @@ const StyledEntityTitleButton = styled(EntityTitleButton)(({ theme }) => ({
   paddingRight: theme.spacing(1)
 }))
 
-const HoverMenuRoot = styled(ListItemSecondaryAction)({
-  position: 'relative',
-  inset: 0,
-  transform: 'none',
-  flexShrink: 0,
-  flexGrow: 0
-})
-
 function stopPropagation(event: SyntheticEvent): void {
   event.stopPropagation()
 }
@@ -55,7 +42,7 @@ const HoverMenu: FC<HoverMenuProps> = ({
     return null
   }
   return (
-    <HoverMenuRoot onMouseDown={stopPropagation}>
+    <Stack direction='row' onMouseDown={stopPropagation}>
       {(hovered || !hidden) && (
         <Tooltip title='削除'>
           <IconButton color='inherit' aria-label='削除' onClick={onRemove}>
@@ -76,7 +63,7 @@ const HoverMenu: FC<HoverMenuProps> = ({
           )}
         </IconButton>
       </Tooltip>
-    </HoverMenuRoot>
+    </Stack>
   )
 }
 
@@ -109,13 +96,15 @@ export const LayerListItem: FC<LayerListItemProps> = ({
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <HoverMenu
-        hovered={hovered}
-        hidden={hidden}
-        onRemove={onRemove}
-        onToggleHidden={onToggleHidden}
-      />
-      {accessory}
+      <Stack direction='row' spacing={0.5}>
+        <HoverMenu
+          hovered={hovered}
+          hidden={hidden}
+          onRemove={onRemove}
+          onToggleHidden={onToggleHidden}
+        />
+        {accessory}
+      </Stack>
     </StyledEntityTitleButton>
   )
 }
