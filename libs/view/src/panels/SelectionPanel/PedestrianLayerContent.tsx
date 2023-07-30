@@ -73,11 +73,11 @@ export const Content: FC<{
     }
   )
 
+  const [pano, setPano] = useAtom(layer.panoAtom)
   const location = useAtomValue(layer.locationAtom)
   const headingPitch = useAtomValue(layer.headingPitchAtom)
   const zoom = useAtomValue(layer.zoomAtom)
 
-  const setPano = useSetAtom(layer.panoAtom)
   const setLocation = useSetAtom(locationAtom)
   const setHeadingPitch = useSetAtom(headingPitchAtom)
   const setZoom = useSetAtom(zoomAtom)
@@ -198,6 +198,7 @@ export const Content: FC<{
             key={layer.id}
             ref={streetViewRef}
             apiKey={process.env.NEXT_PUBLIC_GOOGLE_STREET_VIEW_API_KEY}
+            pano={pano ?? undefined}
             location={location}
             headingPitch={headingPitch ?? undefined}
             zoom={zoom ?? undefined}

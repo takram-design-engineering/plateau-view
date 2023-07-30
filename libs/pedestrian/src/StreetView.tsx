@@ -27,6 +27,7 @@ const Root = styled('div', {
 export interface StreetViewProps
   extends Omit<ComponentPropsWithRef<typeof Root>, 'onLoad' | 'onError'> {
   apiKey: string
+  pano?: string
   location: Location
   headingPitch?: HeadingPitch
   zoom?: number
@@ -47,6 +48,7 @@ export const StreetView = forwardRef<HTMLDivElement, StreetViewProps>(
   (
     {
       apiKey,
+      pano,
       location,
       headingPitch,
       zoom,
@@ -81,6 +83,16 @@ export const StreetView = forwardRef<HTMLDivElement, StreetViewProps>(
     // initial location. Ignore any events until this flag becomes true.
     const panoSetRef = useRef(false)
 
+    // Street View's getPanorama() sometimes returns another location for the
+    // previously returned location:
+    //   const locationA = getPanorama(...)
+    //   const locationB = getPanorama(locationA)
+    //   const locationA = getPanorama(locationB)
+    // and it makes indefinite loop. Prevent it by changing panorama only when
+    // pano is not defined.
+    const panoRef = useRef(pano)
+    panoRef.current = pano
+
     const headingPitchRef = useRef(headingPitch)
     const zoomRef = useRef(zoom)
     headingPitchRef.current = headingPitch
@@ -91,6 +103,9 @@ export const StreetView = forwardRef<HTMLDivElement, StreetViewProps>(
     onErrorRef.current = onError
 
     useEffect(() => {
+      if (panoRef.current != null) {
+        return
+      }
       let canceled = false
       ;(async () => {
         const { data } = await service.getPanorama({
@@ -123,7 +138,7 @@ export const StreetView = forwardRef<HTMLDivElement, StreetViewProps>(
       return () => {
         canceled = true
       }
-    }, [location, radius, panorama, service])
+    }, [pano, location, radius, panorama, service])
 
     // I'm going to invoke onLoad or onError callbacks at the first time
     // location changes after it's set. This keeps track of that state.
