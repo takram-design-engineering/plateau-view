@@ -15,9 +15,9 @@ import {
   type LayerModel
 } from '@takram/plateau-layers'
 import {
-  ColorList,
-  ColorListIcon,
   ColorSchemeIcon,
+  ColorSetIcon,
+  ColorSetList,
   InspectorHeader,
   QuantitativeColorLegend
 } from '@takram/plateau-ui-components'
@@ -63,17 +63,11 @@ const Content: FC<{ layer: LayerModel }> = ({ layer }) => {
     )
   )
 
-  const colorListAtom =
-    'colorListAtom' in layer ? layer.colorListAtom : undefined
-  const colorList = useAtomValue(
+  const colorSet = 'colorSet' in layer ? layer.colorSet : undefined
+  const colors = useAtomValue(
     useMemo(
-      () =>
-        atom(get =>
-          colorListAtom != null
-            ? get(colorListAtom).map(item => get(item))
-            : null
-        ),
-      [colorListAtom]
+      () => atom(get => (colorSet != null ? get(colorSet.colorsAtom) : null)),
+      [colorSet]
     )
   )
 
@@ -85,15 +79,19 @@ const Content: FC<{ layer: LayerModel }> = ({ layer }) => {
   return (
     <List disablePadding>
       <InspectorHeader
-        title={{
-          primary: '色分け',
-          secondary: `${layerTypeNames[layer.type]}レイヤー`
-        }}
+        title={
+          colorSet != null
+            ? colorSet.name
+            : {
+                primary: '色分け',
+                secondary: `${layerTypeNames[layer.type]}レイヤー`
+              }
+        }
         icon={
           colorScheme != null ? (
             <ColorSchemeIcon colorScheme={colorScheme} />
-          ) : colorList != null ? (
-            <ColorListIcon colorList={colorList} />
+          ) : colors != null ? (
+            <ColorSetIcon colors={colors} />
           ) : undefined
         }
         onClose={handleClose}
@@ -115,9 +113,9 @@ const Content: FC<{ layer: LayerModel }> = ({ layer }) => {
           </ListItemText>
         </ListItem>
       )}
-      {colorListAtom != null && (
+      {colorSet != null && (
         <ListItem>
-          <ColorList atom={colorListAtom} />
+          <ColorSetList colorsAtom={colorSet.colorAtomsAtom} />
         </ListItem>
       )}
     </List>

@@ -1,7 +1,7 @@
 import { alpha, styled } from '@mui/material'
 import { type FC } from 'react'
 
-import { type QualitativeColor } from '@takram/plateau-color-schemes'
+import { type QualitativeColor } from '@takram/plateau-datasets'
 
 const Root = styled('div', {
   shouldForwardProp: prop => prop !== 'selected'
@@ -42,18 +42,15 @@ const Item = styled('div')({
   flexBasis: '50%'
 })
 
-export interface ColorListIconProps {
-  colorList: readonly QualitativeColor[]
+export interface ColorSetIconProps {
+  colors: readonly QualitativeColor[]
   selected?: boolean
 }
 
-export const ColorListIcon: FC<ColorListIconProps> = ({
-  colorList,
-  selected
-}) => (
+export const ColorSetIcon: FC<ColorSetIconProps> = ({ colors, selected }) => (
   <Root selected={selected}>
     <Grid>
-      {colorList.slice(0, 4).map(({ value, color }) => (
+      {colors.slice(0, 4).map(({ value, color }) => (
         <Item key={value} style={{ backgroundColor: color }} />
       ))}
     </Grid>

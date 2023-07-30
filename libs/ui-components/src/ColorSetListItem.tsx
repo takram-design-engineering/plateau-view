@@ -15,7 +15,7 @@ import {
 import { useCallback, useId, useState, type FC } from 'react'
 import { ChromePicker, type ColorChangeHandler } from 'react-color'
 
-import { type QualitativeColor } from '@takram/plateau-color-schemes'
+import { type QualitativeColor } from '@takram/plateau-datasets'
 
 import { ColorIcon } from './ColorIcon'
 
@@ -25,11 +25,11 @@ const StyledIconButton = styled(IconButton)(({ theme }) => ({
   marginLeft: theme.spacing(-1)
 }))
 
-export interface ColorListItemProps {
-  atom: PrimitiveAtom<QualitativeColor>
+export interface ColorSetListItemProps {
+  colorAtom: PrimitiveAtom<QualitativeColor>
 }
 
-export const ColorListItem: FC<ColorListItemProps> = ({ atom }) => {
+export const ColorSetListItem: FC<ColorSetListItemProps> = ({ colorAtom }) => {
   const id = useId()
   const popupState = usePopupState({
     variant: 'popover',
@@ -37,21 +37,21 @@ export const ColorListItem: FC<ColorListItemProps> = ({ atom }) => {
   })
   const popoverProps = bindPopover(popupState)
 
-  const [item, setItem] = useAtom(atom)
-  const [color, setColor] = useState(item.color)
+  const [color, setColor] = useAtom(colorAtom)
+  const [indeterminateColor, setIndeterminateColor] = useState(color.color)
 
-  const handleChange: ColorChangeHandler = useCallback(color => {
-    setColor(color.hex)
+  const handleChange: ColorChangeHandler = useCallback(result => {
+    setIndeterminateColor(result.hex)
   }, [])
 
   const handleChangeComplete: ColorChangeHandler = useCallback(
-    color => {
-      setItem(item => ({
-        ...item,
-        color: color.hex
+    result => {
+      setColor(color => ({
+        ...color,
+        color: result.hex
       }))
     },
-    [setItem]
+    [setColor]
   )
 
   return (
@@ -59,9 +59,9 @@ export const ColorListItem: FC<ColorListItemProps> = ({ atom }) => {
       <ListItem disableGutters>
         <Stack direction='row' spacing={0.5} alignItems='center'>
           <StyledIconButton {...bindTrigger(popupState)}>
-            <ColorIcon color={color} />
+            <ColorIcon color={indeterminateColor} />
           </StyledIconButton>
-          <Typography variant='body2'>{item.name}</Typography>
+          <Typography variant='body2'>{color.name}</Typography>
         </Stack>
       </ListItem>
       <Popover
@@ -76,7 +76,7 @@ export const ColorListItem: FC<ColorListItemProps> = ({ atom }) => {
         }}
       >
         <ChromePicker
-          color={color}
+          color={indeterminateColor}
           disableAlpha
           onChange={handleChange}
           onChangeComplete={handleChangeComplete}

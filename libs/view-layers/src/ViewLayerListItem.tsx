@@ -10,8 +10,8 @@ import {
   type LayerType
 } from '@takram/plateau-layers'
 import {
-  ColorListIcon,
   ColorSchemeIcon,
+  ColorSetIcon,
   LayerListItem
 } from '@takram/plateau-ui-components'
 
@@ -89,17 +89,11 @@ export const ViewLayerListItem: FC<ViewLayerListItemProps> = memo(
       )
     )
 
-    const colorListAtom =
-      'colorListAtom' in otherProps ? otherProps.colorListAtom : undefined
-    const colorList = useAtomValue(
+    const colorSet = 'colorSet' in otherProps ? otherProps.colorSet : undefined
+    const colors = useAtomValue(
       useMemo(
-        () =>
-          atom(get =>
-            colorListAtom != null
-              ? get(colorListAtom).map(item => get(item))
-              : null
-          ),
-        [colorListAtom]
+        () => atom(get => (colorSet != null ? get(colorSet.colorsAtom) : null)),
+        [colorSet]
       )
     )
 
@@ -135,16 +129,13 @@ export const ViewLayerListItem: FC<ViewLayerListItemProps> = memo(
                 selected={colorSchemeSelected}
               />
             </IconButton>
-          ) : colorList != null ? (
+          ) : colors != null ? (
             <IconButton
               onMouseDown={stopPropagation}
               onDoubleClick={stopPropagation}
               onClick={handleColorSchemeClick}
             >
-              <ColorListIcon
-                colorList={colorList}
-                selected={colorSchemeSelected}
-              />
+              <ColorSetIcon colors={colors} selected={colorSchemeSelected} />
             </IconButton>
           ) : undefined
         }
