@@ -41,7 +41,6 @@ export interface PedestrianProps {
   location: Location
   headingPitch?: HeadingPitch
   zoom?: number
-  streetViewLocation?: Location
   hideFrustum?: boolean
   onChange?: (location: Location) => void
 }
@@ -58,7 +57,6 @@ export const Pedestrian: FC<PedestrianProps> = withEphemerality(
     location,
     headingPitch,
     zoom,
-    streetViewLocation,
     hideFrustum = false,
     onChange
   }) => {
@@ -96,13 +94,14 @@ export const Pedestrian: FC<PedestrianProps> = withEphemerality(
       }
     })
 
+    const [dragKey, setDragKey] = useState(0)
     const [levitated, setLevitated] = useState(false)
     const handleDragStart = useCallback((event: DragStartEvent) => {
       setLevitated(true)
     }, [])
     const handleDragEnd = useCallback(
       (event: DragEndEvent) => {
-        const referenceLocation = streetViewLocation ?? location
+        const referenceLocation = location
         const offset = event.active.data.current
         invariant(offset instanceof Cartesian3)
         const position = Cartesian3.fromDegrees(
@@ -118,6 +117,7 @@ export const Pedestrian: FC<PedestrianProps> = withEphemerality(
           scene.globe.ellipsoid,
           cartographicScratch
         )
+        setDragKey(Math.random())
         setLevitated(false)
         onChange?.({
           longitude: CesiumMath.toDegrees(cartographic.longitude),
@@ -125,7 +125,7 @@ export const Pedestrian: FC<PedestrianProps> = withEphemerality(
           height: referenceLocation.height
         })
       },
-      [location, streetViewLocation, onChange, scene]
+      [location, onChange, scene]
     )
 
     return (
@@ -135,9 +135,9 @@ export const Pedestrian: FC<PedestrianProps> = withEphemerality(
         onDragEnd={handleDragEnd}
       >
         <PedestrianObject
+          key={dragKey}
           id={objectId}
           location={location}
-          streetViewLocation={streetViewLocation}
           selected={selected || highlighted}
           levitated={levitated}
         />
@@ -145,12 +145,10 @@ export const Pedestrian: FC<PedestrianProps> = withEphemerality(
           {selected &&
             !levitated &&
             !hideFrustum &&
-            streetViewLocation != null &&
             headingPitch != null &&
             zoom != null && (
               <StreetViewFrustum
                 location={location}
-                streetViewLocation={streetViewLocation}
                 headingPitch={headingPitch}
                 zoom={zoom}
               />

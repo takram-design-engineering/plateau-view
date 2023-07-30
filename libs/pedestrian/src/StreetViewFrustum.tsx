@@ -29,7 +29,6 @@ import { useMotionPosition } from './useMotionPosition'
 
 interface StreetViewFrustumProps {
   location: Location
-  streetViewLocation: Location
   headingPitch: HeadingPitch
   zoom: number
   aspectRatio?: number
@@ -58,7 +57,6 @@ const colorGeometryAttribute = new GeometryAttribute({
 
 export const StreetViewFrustum: FC<StreetViewFrustumProps> = ({
   location,
-  streetViewLocation,
   headingPitch,
   zoom,
   aspectRatio = 3 / 2,
@@ -108,6 +106,12 @@ export const StreetViewFrustum: FC<StreetViewFrustumProps> = ({
   const scene = useCesium(({ scene }) => scene)
   scene.requestRender()
 
+  useEffect(() => {
+    return () => {
+      scene.requestRender()
+    }
+  }, [scene])
+
   const motionVisibility = useMotionValue(0)
   const ready = useReady(primitive)
   const [present, safeToRemove] = usePresence()
@@ -128,7 +132,7 @@ export const StreetViewFrustum: FC<StreetViewFrustumProps> = ({
   }, [primitive, motionVisibility, ready, present, safeToRemove])
 
   useEffect(() => {
-    return motionVisibility.on('change', () => {
+    return motionVisibility.on('renderRequest', () => {
       scene.requestRender()
     })
   }, [scene, motionVisibility])
@@ -137,17 +141,14 @@ export const StreetViewFrustum: FC<StreetViewFrustumProps> = ({
     () => computeCartographicToCartesian(scene, location),
     [scene, location]
   )
-  const streetViewPosition = useMemo(
-    () => computeCartographicToCartesian(scene, streetViewLocation),
-    [scene, streetViewLocation]
-  )
   const motionPosition = useMotionPosition(position)
-  useEffect(() => {
-    return motionPosition.animatePosition(streetViewPosition)
-  }, [streetViewPosition, motionPosition])
 
   useEffect(() => {
-    return motionPosition.on('change', () => {
+    return motionPosition.animatePosition(position)
+  }, [position, motionPosition])
+
+  useEffect(() => {
+    return motionPosition.on('renderRequest', () => {
       scene.requestRender()
     })
   }, [scene, motionPosition])

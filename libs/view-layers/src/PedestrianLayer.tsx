@@ -36,37 +36,45 @@ export interface PedestrianLayerModel extends ViewLayerModel {
   headingPitchAtom: PrimitiveAtom<HeadingPitch | null>
   zoomAtom: PrimitiveAtom<number | null>
   synchronizeStreetViewAtom: PrimitiveAtom<boolean>
-  streetViewLocationAtom: PrimitiveAtom<Location | null>
 }
 
 export function createPedestrianLayer(
   params: PedestrianLayerModelParams
 ): SetOptional<PedestrianLayerModel, 'id'> {
-  const locationAtom = atom<Location>({
+  const locationPrimitiveAtom = atom<Location>({
     longitude: params.location.longitude,
     latitude: params.location.latitude,
     height: 2.5
   })
-  const headingPitchAtom = atom<HeadingPitch | null>(
+  const locationAtom = atom(
+    get => get(locationPrimitiveAtom),
+    (get, set, value: SetStateAction<Location>) => {
+      const prevValue = get(locationPrimitiveAtom)
+      const nextValue = typeof value === 'function' ? value(prevValue) : value
+      if (
+        nextValue.longitude !== prevValue.longitude ||
+        nextValue.latitude !== prevValue.latitude ||
+        nextValue.height !== prevValue.height
+      ) {
+        set(locationPrimitiveAtom, nextValue)
+      }
+    }
+  )
+
+  const headingPitchPrimitiveAtom = atom<HeadingPitch | null>(
     params.headingPitchAtom ?? null
   )
-  const zoomAtom = atom<number | null>(params.zoomAtom ?? null)
-
-  const targetLocationAtom = atom<Location | null>(null)
-  const actualLocationAtom = atom<Location | null>(null)
-  const streetViewLocationAtom = atom(
-    get => {
-      const location = get(locationAtom)
-      const target = get(targetLocationAtom)
-      const actual = get(actualLocationAtom)
-      return target?.longitude === location.longitude &&
-        target?.latitude === location.latitude
-        ? actual
-        : null
-    },
-    (get, set, value: SetStateAction<Location | null>) => {
-      set(targetLocationAtom, get(locationAtom))
-      set(actualLocationAtom, value)
+  const headingPitchAtom = atom(
+    get => get(headingPitchPrimitiveAtom),
+    (get, set, value: SetStateAction<HeadingPitch | null>) => {
+      const prevValue = get(headingPitchAtom)
+      const nextValue = typeof value === 'function' ? value(prevValue) : value
+      if (
+        nextValue?.heading !== prevValue?.heading ||
+        nextValue?.pitch !== prevValue?.pitch
+      ) {
+        set(headingPitchPrimitiveAtom, nextValue)
+      }
     }
   )
 
@@ -78,9 +86,8 @@ export function createPedestrianLayer(
     type: PEDESTRIAN_LAYER,
     locationAtom,
     headingPitchAtom,
-    zoomAtom,
-    synchronizeStreetViewAtom: atom(false),
-    streetViewLocationAtom
+    zoomAtom: atom<number | null>(params.zoomAtom ?? null),
+    synchronizeStreetViewAtom: atom(false)
   }
 }
 
@@ -92,14 +99,12 @@ export const PedestrianLayer: FC<LayerProps<typeof PEDESTRIAN_LAYER>> = ({
   locationAtom,
   headingPitchAtom,
   zoomAtom,
-  synchronizeStreetViewAtom,
-  streetViewLocationAtom
+  synchronizeStreetViewAtom
 }) => {
   const [location, setLocation] = useAtom(locationAtom)
   const headingPitch = useAtomValue(headingPitchAtom)
   const zoom = useAtomValue(zoomAtom)
   const synchronizeStreetView = useAtomValue(synchronizeStreetViewAtom)
-  const streetViewLocation = useAtomValue(streetViewLocationAtom)
 
   const selection = useAtomValue(screenSpaceSelectionAtom)
   const objectSelected = useMemo(
@@ -130,7 +135,6 @@ export const PedestrianLayer: FC<LayerProps<typeof PEDESTRIAN_LAYER>> = ({
       location={location}
       headingPitch={headingPitch ?? undefined}
       zoom={zoom ?? undefined}
-      streetViewLocation={streetViewLocation ?? undefined}
       hideFrustum={synchronizeStreetView}
       onChange={handleChange}
     />

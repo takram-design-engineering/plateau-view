@@ -45,7 +45,7 @@ export const LevitationCircle: FC<LevitationCircleProps> = ({
   }, [motionLevitation, present, safeToRemove])
 
   useEffect(() => {
-    return motionLevitation.on('change', () => {
+    return motionLevitation.on('renderRequest', () => {
       scene.requestRender()
     })
   }, [scene, motionLevitation])

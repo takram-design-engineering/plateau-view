@@ -61,7 +61,7 @@ export const Content: FC<{
   const { synchronizeAtom, locationAtom, headingPitchAtom, zoomAtom } =
     useSynchronizeStreetView({
       synchronizeAtom: layer.synchronizeStreetViewAtom,
-      locationAtom: layer.streetViewLocationAtom,
+      locationAtom: layer.locationAtom,
       headingPitchAtom: layer.headingPitchAtom,
       zoomAtom: layer.zoomAtom
     })
