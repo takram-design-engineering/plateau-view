@@ -85,9 +85,9 @@ export const StreetView = forwardRef<HTMLDivElement, StreetViewProps>(
 
     // Street View's getPanorama() sometimes returns another location for the
     // previously returned location:
-    //   const locationA = getPanorama(...)
-    //   const locationB = getPanorama(locationA)
-    //   const locationA = getPanorama(locationB)
+    //   const A = getPanorama(...)
+    //   const B = getPanorama(A)
+    //   const A = getPanorama(B)
     // and it makes indefinite loop. Prevent it by changing panorama only when
     // pano is not defined.
     const panoRef = useRef(pano)
@@ -103,27 +103,30 @@ export const StreetView = forwardRef<HTMLDivElement, StreetViewProps>(
     onErrorRef.current = onError
 
     useEffect(() => {
-      if (panoRef.current != null) {
-        panorama.setPano(panoRef.current)
-        return
-      }
       let canceled = false
       ;(async () => {
-        const { data } = await service.getPanorama({
-          location: {
-            lng: location.longitude,
-            lat: location.latitude
-          },
-          radius,
-          source: google.maps.StreetViewSource.OUTDOOR
-        })
-        if (canceled) {
-          return
+        if (panoRef.current == null) {
+          const { data } = await service.getPanorama({
+            location: {
+              lng: location.longitude,
+              lat: location.latitude
+            },
+            radius,
+            source: google.maps.StreetViewSource.OUTDOOR
+          })
+          if (canceled || data.location == null) {
+            return
+          }
+          panorama.setPano(data.location.pano)
+        } else {
+          // WORKAROUND: Street View won't load when I set pano synchronously.
+          // Perhaps because Street View isn't ready yet.
+          await new Promise(resolve => setTimeout(resolve, 0))
+          if (canceled) {
+            return
+          }
+          panorama.setPano(panoRef.current)
         }
-        if (data.location == null) {
-          return
-        }
-        panorama.setPano(data.location.pano)
         if (headingPitchRef.current != null) {
           panorama.setPov(headingPitchRef.current)
         }
