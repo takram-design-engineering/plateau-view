@@ -1,8 +1,6 @@
 import { useAtom, type PrimitiveAtom } from 'jotai'
-import { useCallback, useRef, type FC } from 'react'
+import { useCallback, type FC } from 'react'
 
-import { useCesium } from '@takram/plateau-cesium'
-import { animateZoom } from '@takram/plateau-cesium-helpers'
 import {
   AppIconButton,
   KeyboardMovementIcon,
@@ -12,6 +10,7 @@ import {
   RotateAroundIcon
 } from '@takram/plateau-ui-components'
 
+import { useCameraZoom } from '../hooks/useCameraZoom'
 import { enableKeyboardCameraControlAtom } from '../states/app'
 
 function useBooleanAtomProps(atom: PrimitiveAtom<boolean>): {
@@ -30,26 +29,7 @@ export const CameraButtons: FC = () => {
     enableKeyboardCameraControlAtom
   )
 
-  const scene = useCesium(({ scene }) => scene, { indirect: true })
-
-  const zoomPromise = useRef(Promise.resolve())
-  const handleZoomOut = useCallback(() => {
-    if (scene == null) {
-      return
-    }
-    zoomPromise.current = zoomPromise.current.then(async () => {
-      await animateZoom(scene, -1)
-    })
-  }, [scene])
-
-  const handleZoomIn = useCallback(() => {
-    if (scene == null) {
-      return
-    }
-    zoomPromise.current = zoomPromise.current.then(async () => {
-      await animateZoom(scene, 1 / 2)
-    })
-  }, [scene])
+  const { zoomIn, zoomOut } = useCameraZoom()
 
   return (
     <>
@@ -65,10 +45,10 @@ export const CameraButtons: FC = () => {
       <AppIconButton title='自動回転' disabled>
         <RotateAroundIcon />
       </AppIconButton>
-      <AppIconButton title='縮小' onClick={handleZoomOut}>
+      <AppIconButton title='縮小' onClick={zoomOut}>
         <MinusIcon />
       </AppIconButton>
-      <AppIconButton title='拡大' onClick={handleZoomIn}>
+      <AppIconButton title='拡大' onClick={zoomIn}>
         <PlusIcon />
       </AppIconButton>
     </>
