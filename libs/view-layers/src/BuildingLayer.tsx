@@ -11,7 +11,10 @@ import { type SetOptional } from 'type-fest'
 
 import { useCesium } from '@takram/plateau-cesium'
 import { type ColorScheme } from '@takram/plateau-color-schemes'
-import { PlateauBuildingTileset } from '@takram/plateau-datasets'
+import {
+  floodRankColorSet,
+  PlateauBuildingTileset
+} from '@takram/plateau-datasets'
 import {
   PlateauDatasetFormat,
   PlateauDatasetType,
@@ -27,8 +30,10 @@ import {
   type PlateauTilesetLayerModelParams
 } from './createPlateauTilesetLayerBase'
 import { BUILDING_LAYER } from './layerTypes'
-import { PlateauTilesetLayerContent } from './PlateauTilesetLayerContent'
-import { useEvaluateTileFeatureColor } from './useEvaluateTileFeatureColor'
+import {
+  PlateauTilesetLayerContent,
+  type QualitativeProperty
+} from './PlateauTilesetLayerContent'
 import { useMunicipalityName } from './useMunicipalityName'
 
 export interface BuildingLayerModelParams
@@ -93,6 +98,13 @@ function matchDatum(
   )
   return sorted[0]
 }
+
+const qualitativeProperties: QualitativeProperty[] = [
+  {
+    testProperty: propertyName => propertyName.endsWith('浸水ランク'),
+    colorSet: floodRankColorSet
+  }
+]
 
 export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
   titleAtom,
@@ -162,12 +174,6 @@ export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
     setTextured(datum.textured)
   }, [setVersion, setLod, setTextured, datum])
 
-  const color = useEvaluateTileFeatureColor({
-    colorPropertyAtom,
-    colorSchemeAtom,
-    colorRangeAtom
-  })
-  const opacity = useAtomValue(opacityAtom)
   const showWireframe = useAtomValue(showWireframeAtom)
 
   if (hidden || datum == null) {
@@ -178,12 +184,15 @@ export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
       <PlateauTilesetLayerContent
         url={datum.url}
         component={PlateauBuildingTileset}
+        qualitativeProperties={qualitativeProperties}
         boundingSphereAtom={boundingSphereAtom}
         featureIndexAtom={featureIndexAtom}
         hiddenFeaturesAtom={hiddenFeaturesAtom}
         propertiesAtom={propertiesAtom}
-        color={color}
-        opacity={opacity}
+        colorPropertyAtom={colorPropertyAtom}
+        colorSchemeAtom={colorSchemeAtom}
+        colorRangeAtom={colorRangeAtom}
+        opacityAtom={opacityAtom}
         showWireframe={showWireframe}
       />
     )

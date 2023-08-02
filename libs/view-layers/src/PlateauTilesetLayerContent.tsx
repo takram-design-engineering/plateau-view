@@ -1,16 +1,26 @@
 import { type Cesium3DTileset } from '@cesium/engine'
-import { useAtom, useSetAtom } from 'jotai'
+import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai'
 import {
   useEffect,
+  useMemo,
   useState,
   type ComponentType,
   type RefAttributes
 } from 'react'
 
-import { type PlateauTilesetProps } from '@takram/plateau-datasets'
+import {
+  type PlateauTilesetProps,
+  type QualitativeColorSet
+} from '@takram/plateau-datasets'
 import { isNotNullish } from '@takram/plateau-type-helpers'
 
 import { type PlateauTilesetLayerModel } from './createPlateauTilesetLayerBase'
+import { useEvaluateTileFeatureColor } from './useEvaluateTileFeatureColor'
+
+export interface QualitativeProperty {
+  testProperty: (name: string, value: unknown) => boolean
+  colorSet: QualitativeColorSet
+}
 
 export type PlateauTilesetLayerContentProps<
   Props extends PlateauTilesetProps & RefAttributes<Cesium3DTileset>
@@ -20,10 +30,15 @@ export type PlateauTilesetLayerContentProps<
   | 'featureIndexAtom'
   | 'hiddenFeaturesAtom'
   | 'propertiesAtom'
+  | 'colorPropertyAtom'
+  | 'colorSchemeAtom'
+  | 'colorRangeAtom'
+  | 'opacityAtom'
 > &
   Props & {
     url: string
     component: ComponentType<Props>
+    qualitativeProperties?: readonly QualitativeProperty[]
   }
 
 export function PlateauTilesetLayerContent<
@@ -31,10 +46,15 @@ export function PlateauTilesetLayerContent<
 >({
   url,
   component,
+  qualitativeProperties,
   boundingSphereAtom,
   featureIndexAtom,
   hiddenFeaturesAtom,
   propertiesAtom,
+  colorPropertyAtom,
+  colorSchemeAtom,
+  colorRangeAtom,
+  opacityAtom,
   ...props
 }: PlateauTilesetLayerContentProps<Props>): JSX.Element {
   const setFeatureIndex = useSetAtom(featureIndexAtom)
@@ -43,6 +63,7 @@ export function PlateauTilesetLayerContent<
   const [tileset, setTileset] = useState<Cesium3DTileset | null>(null)
   const setBoundingSphere = useSetAtom(boundingSphereAtom)
   const setProperties = useSetAtom(propertiesAtom)
+
   useEffect(() => {
     if (tileset == null) {
       setBoundingSphere(null)
@@ -59,6 +80,16 @@ export function PlateauTilesetLayerContent<
             typeof value !== 'object'
           ) {
             return undefined
+          }
+          const qualitativeProperty = qualitativeProperties?.find(
+            ({ testProperty }) => testProperty(name, value)
+          )
+          if (qualitativeProperty != null) {
+            return {
+              name,
+              type: 'qualitative' as const,
+              colorSet: qualitativeProperty.colorSet
+            }
           }
           if (
             'minimum' in value &&
@@ -80,7 +111,39 @@ export function PlateauTilesetLayerContent<
         })
         .filter(isNotNullish)
     )
-  }, [tileset, setBoundingSphere, setProperties])
+  }, [qualitativeProperties, tileset, setBoundingSphere, setProperties])
+
+  const colorProperty = useAtomValue(colorPropertyAtom)
+  const colorScheme = useAtomValue(colorSchemeAtom)
+  const colorRange = useAtomValue(colorRangeAtom)
+  const colorSet = useAtomValue(
+    useMemo(
+      () =>
+        atom(get => {
+          const properties = get(propertiesAtom)
+          const colorProperty = get(colorPropertyAtom)
+          if (colorProperty == null) {
+            return undefined
+          }
+          const property = properties?.find(
+            property => property.name === colorProperty
+          )
+          return property?.type === 'qualitative'
+            ? property.colorSet
+            : undefined
+        }),
+      [propertiesAtom, colorPropertyAtom]
+    )
+  )
+
+  const color = useEvaluateTileFeatureColor({
+    colorProperty: colorProperty ?? undefined,
+    colorScheme,
+    colorRange,
+    colorSet
+  })
+
+  const opacity = useAtomValue(opacityAtom)
 
   const Component = component as ComponentType<
     PlateauTilesetProps & RefAttributes<Cesium3DTileset>
@@ -91,6 +154,8 @@ export function PlateauTilesetLayerContent<
       featureIndexRef={setFeatureIndex}
       url={url}
       hiddenFeatures={hiddenFeatures ?? undefined}
+      color={color}
+      opacity={opacity}
       {...props}
     />
   )

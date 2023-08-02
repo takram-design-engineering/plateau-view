@@ -1,9 +1,12 @@
-import { useAtomValue, useSetAtom } from 'jotai'
+import { atom, useAtomValue, useSetAtom } from 'jotai'
 import { useEffect, type FC } from 'react'
 import { type SetOptional } from 'type-fest'
 
 import { useCesium } from '@takram/plateau-cesium'
-import { PlateauWaterSurfaceTileset } from '@takram/plateau-datasets'
+import {
+  floodRankColorSet,
+  PlateauWaterSurfaceTileset
+} from '@takram/plateau-datasets'
 import {
   PlateauDatasetFormat,
   PlateauDatasetType,
@@ -17,10 +20,12 @@ import {
   type PlateauTilesetLayerModelParams
 } from './createPlateauTilesetLayerBase'
 import { RIVER_FLOODING_RISK_LAYER } from './layerTypes'
-import { PlateauTilesetLayerContent } from './PlateauTilesetLayerContent'
+import {
+  PlateauTilesetLayerContent,
+  type QualitativeProperty
+} from './PlateauTilesetLayerContent'
 import { useDatasetDatum } from './useDatasetDatum'
 import { useDatasetLayerTitle } from './useDatasetLayerTitle'
-import { useEvaluateTileFeatureColor } from './useEvaluateTileFeatureColor'
 
 export interface RiverFloodingRiskLayerModelParams
   extends PlateauTilesetLayerModelParams {}
@@ -32,9 +37,17 @@ export function createRiverFloodingRiskLayer(
 ): SetOptional<RiverFloodingRiskLayerModel, 'id'> {
   return {
     ...createPlateauTilesetLayerBase(params),
-    type: RIVER_FLOODING_RISK_LAYER
+    type: RIVER_FLOODING_RISK_LAYER,
+    opacityAtom: atom(0.5)
   }
 }
+
+const qualitativeProperties: QualitativeProperty[] = [
+  {
+    testProperty: propertyName => propertyName === 'rank_code',
+    colorSet: floodRankColorSet
+  }
+]
 
 export const RiverFloodingRiskLayer: FC<
   LayerProps<typeof RIVER_FLOODING_RISK_LAYER>
@@ -49,7 +62,8 @@ export const RiverFloodingRiskLayer: FC<
   propertiesAtom,
   colorPropertyAtom,
   colorSchemeAtom,
-  colorRangeAtom
+  colorRangeAtom,
+  opacityAtom
 }) => {
   const query = useMunicipalityDatasetsQuery({
     variables: {
@@ -82,12 +96,6 @@ export const RiverFloodingRiskLayer: FC<
     }
   }, [scene])
 
-  const color = useEvaluateTileFeatureColor({
-    colorPropertyAtom,
-    colorSchemeAtom,
-    colorRangeAtom
-  })
-
   if (hidden || datum == null) {
     return null
   }
@@ -96,11 +104,15 @@ export const RiverFloodingRiskLayer: FC<
       <PlateauTilesetLayerContent
         url={datum.url}
         component={PlateauWaterSurfaceTileset}
+        qualitativeProperties={qualitativeProperties}
         boundingSphereAtom={boundingSphereAtom}
         featureIndexAtom={featureIndexAtom}
         hiddenFeaturesAtom={hiddenFeaturesAtom}
         propertiesAtom={propertiesAtom}
-        color={color}
+        colorPropertyAtom={colorPropertyAtom}
+        colorSchemeAtom={colorSchemeAtom}
+        colorRangeAtom={colorRangeAtom}
+        opacityAtom={opacityAtom}
       />
     )
   }

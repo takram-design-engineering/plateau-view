@@ -1,42 +1,67 @@
-import { type Cesium3DTileFeature, type Color } from '@cesium/engine'
-import { useAtomValue, type Atom } from 'jotai'
+import { Color, type Cesium3DTileFeature } from '@cesium/engine'
+import { atom, useAtomValue } from 'jotai'
 import { useMemo } from 'react'
 
 import { type ColorScheme } from '@takram/plateau-color-schemes'
-import { type EvaluateTileFeatureColor } from '@takram/plateau-datasets'
+import {
+  type EvaluateTileFeatureColor,
+  type QualitativeColorSet
+} from '@takram/plateau-datasets'
 
 export interface EvaluateTileFeatureColorParams {
-  colorPropertyAtom: Atom<string | null>
-  colorSchemeAtom: Atom<ColorScheme>
-  colorRangeAtom: Atom<number[]>
+  colorProperty?: string
+  colorScheme: ColorScheme
+  colorRange: number[]
+  colorSet?: QualitativeColorSet
 }
 
 export function useEvaluateTileFeatureColor({
-  colorPropertyAtom,
-  colorSchemeAtom,
-  colorRangeAtom
+  colorProperty,
+  colorScheme,
+  colorRange,
+  colorSet
 }: EvaluateTileFeatureColorParams): EvaluateTileFeatureColor | undefined {
-  const colorProperty = useAtomValue(colorPropertyAtom)
-  const colorScheme = useAtomValue(colorSchemeAtom)
-  const colorRange = useAtomValue(colorRangeAtom)
-  return useMemo(
-    () =>
-      colorProperty != null
-        ? (feature: Cesium3DTileFeature, result: Color): Color => {
-            const property = feature.getProperty(colorProperty) ?? 0
-            const [minValue, maxValue] = colorRange
-            if (minValue === maxValue) {
-              return result
-            }
-            const color = colorScheme.linear(
-              (property - minValue) / (maxValue - minValue)
-            )
-            result.red = color[0]
-            result.green = color[1]
-            result.blue = color[2]
-            return result
-          }
-        : undefined,
-    [colorProperty, colorScheme, colorRange]
+  const colorSetColors = useAtomValue(
+    useMemo(
+      () =>
+        atom(get =>
+          colorSet != null
+            ? get(colorSet.colorsAtom).map(color => ({
+                ...color,
+                color: Color.fromCssColorString(color.color)
+              }))
+            : undefined
+        ),
+      [colorSet]
+    )
   )
+
+  return useMemo(() => {
+    if (colorProperty == null) {
+      return
+    }
+    if (colorSetColors != null) {
+      return (feature: Cesium3DTileFeature, result: Color): Color => {
+        const property = feature.getProperty(colorProperty) ?? null
+        colorSetColors
+          .find(({ value }) => property === value)
+          ?.color.clone(result)
+        return result
+      }
+    }
+    return (feature: Cesium3DTileFeature, result: Color): Color => {
+      const property = feature.getProperty(colorProperty) ?? 0
+      const [minValue, maxValue] = colorRange
+      if (minValue === maxValue) {
+        return result
+      }
+      const color = colorScheme.linear(
+        (property - minValue) / (maxValue - minValue)
+      )
+      result.red = color[0]
+      result.green = color[1]
+      result.blue = color[2]
+      return result
+    }
+  }, [colorProperty, colorScheme, colorRange, colorSetColors])
 }

@@ -5,7 +5,10 @@ import {
   colorSchemePlateau,
   type ColorScheme
 } from '@takram/plateau-color-schemes'
-import { type TileFeatureIndex } from '@takram/plateau-datasets'
+import {
+  type QualitativeColorSet,
+  type TileFeatureIndex
+} from '@takram/plateau-datasets'
 
 import {
   createDatasetLayerBase,
@@ -35,6 +38,10 @@ export type PlateauTilesetProperty = { name: string } & (
       type: 'number'
       minimum: number
       maximum: number
+    }
+  | {
+      type: 'qualitative'
+      colorSet: QualitativeColorSet
     }
 )
 
