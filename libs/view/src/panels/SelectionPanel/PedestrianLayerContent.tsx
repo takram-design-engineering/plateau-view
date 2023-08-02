@@ -83,7 +83,7 @@ export interface PedestrianLayerContentProps {
     ))['values']
 }
 
-export const Content: FC<{
+export const StreetViewContent: FC<{
   layer: LayerModel<typeof PEDESTRIAN_LAYER>
 }> = ({ layer }) => {
   const { locationAtom, headingPitchAtom, zoomAtom, synchronizedAtom } =
@@ -141,22 +141,41 @@ export const Content: FC<{
     }
   }, [setSynchronized])
 
-  const streetViewRef = useRef<HTMLDivElement>(null)
-  const containerRef = useRef<HTMLDivElement>(null)
-  const camera = useCesium(({ camera }) => camera, { indirect: true })
-  usePreRender(() => {
-    if (camera == null) {
-      return
-    }
-    const frustum = camera.frustum
-    if (!(frustum instanceof PerspectiveFrustum)) {
-      return
-    }
-    if (containerRef.current != null) {
-      containerRef.current.style.aspectRatio = `${frustum.aspectRatio}`
-    }
-  })
+  invariant(
+    process.env.NEXT_PUBLIC_GOOGLE_STREET_VIEW_API_KEY != null,
+    'Missing environment variable: NEXT_PUBLIC_GOOGLE_STREET_VIEW_API_KEY'
+  )
+  return (
+    <>
+      <StyledStreetView
+        key={layer.id}
+        apiKey={process.env.NEXT_PUBLIC_GOOGLE_STREET_VIEW_API_KEY}
+        pano={pano ?? undefined}
+        location={location}
+        headingPitch={headingPitch ?? undefined}
+        zoom={zoom ?? undefined}
+        onLoad={handleLoad}
+        onError={handleError}
+        onLocationChange={handleLocationChange}
+        onHeadingPitchChange={setHeadingPitch}
+        onZoomChange={setZoom}
+      />
+      <StreetViewOverlay>
+        <DarkThemeOverride>
+          {!synchronized && (
+            <OverlayButton variant='contained' onClick={handleSynchronize}>
+              カメラをここに移動
+            </OverlayButton>
+          )}
+        </DarkThemeOverride>
+      </StreetViewOverlay>
+    </>
+  )
+}
 
+export const Content: FC<{
+  layer: LayerModel<typeof PEDESTRIAN_LAYER>
+}> = ({ layer }) => {
   const title = useAtomValue(layer.titleAtom)
 
   const setLayerSelection = useSetAtom(layerSelectionAtom)
@@ -184,6 +203,21 @@ export const Content: FC<{
   const handleRemove = useCallback(() => {
     remove(layer.id)
   }, [layer, remove])
+
+  const containerRef = useRef<HTMLDivElement>(null)
+  const camera = useCesium(({ camera }) => camera, { indirect: true })
+  usePreRender(() => {
+    if (camera == null) {
+      return
+    }
+    const frustum = camera.frustum
+    if (!(frustum instanceof PerspectiveFrustum)) {
+      return
+    }
+    if (containerRef.current != null) {
+      containerRef.current.style.aspectRatio = `${frustum.aspectRatio}`
+    }
+  })
 
   invariant(
     process.env.NEXT_PUBLIC_GOOGLE_STREET_VIEW_API_KEY != null,
@@ -226,29 +260,7 @@ export const Content: FC<{
       />
       <StreetViewContainer ref={containerRef}>
         <Suspense>
-          <StyledStreetView
-            key={layer.id}
-            ref={streetViewRef}
-            apiKey={process.env.NEXT_PUBLIC_GOOGLE_STREET_VIEW_API_KEY}
-            pano={pano ?? undefined}
-            location={location}
-            headingPitch={headingPitch ?? undefined}
-            zoom={zoom ?? undefined}
-            onLoad={handleLoad}
-            onError={handleError}
-            onLocationChange={handleLocationChange}
-            onHeadingPitchChange={setHeadingPitch}
-            onZoomChange={setZoom}
-          />
-          <StreetViewOverlay>
-            <DarkThemeOverride>
-              {!synchronized && (
-                <OverlayButton variant='contained' onClick={handleSynchronize}>
-                  カメラをここに移動
-                </OverlayButton>
-              )}
-            </DarkThemeOverride>
-          </StreetViewOverlay>
+          <StreetViewContent layer={layer} />
         </Suspense>
       </StreetViewContainer>
     </List>
