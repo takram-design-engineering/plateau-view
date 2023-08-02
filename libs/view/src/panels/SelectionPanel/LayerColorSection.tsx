@@ -148,7 +148,7 @@ export const LayerColorSection: FC<LayerColorSectionProps> = ({ layers }) => {
       [null, 'なし'],
       ...(properties
         .map((property): [string, string] | undefined =>
-          property.type === 'number'
+          property.type === 'number' || property.type === 'qualitative'
             ? [property.name, property.name.replaceAll('_', ' ')]
             : undefined
         )
@@ -157,33 +157,24 @@ export const LayerColorSection: FC<LayerColorSectionProps> = ({ layers }) => {
     [properties]
   )
 
-  const colorPropertyAtom = useMemo(
-    () =>
-      atom(get => {
-        if (!hasColorAtoms(layers) || layers.length === 0) {
-          return
-        }
-        const values = layers.map(layer => get(layer.colorPropertyAtom))
-        const [value] = values
-        return value != null &&
-          values.slice(1).every(another => another === value)
-          ? value
-          : undefined
-      }),
-    [layers]
+  const property = useAtomValue(
+    useMemo(
+      () =>
+        atom(get => {
+          if (!hasColorAtoms(layers) || layers.length === 0) {
+            return
+          }
+          const properties = get(propertiesAtom)
+          const values = layers.map(layer => get(layer.colorPropertyAtom))
+          const value = values[0]
+          return value != null &&
+            values.slice(1).every(another => another === value)
+            ? properties.find(({ name }) => name === value)
+            : undefined
+        }),
+      [layers, propertiesAtom]
+    )
   )
-  const colorProperty = useAtomValue(colorPropertyAtom)
-
-  const minMax = useMemo(() => {
-    if (colorProperty == null) {
-      return
-    }
-    const property = properties.find(({ name }) => name === colorProperty)
-    if (property?.type !== 'number') {
-      return
-    }
-    return [property.minimum, property.maximum]
-  }, [properties, colorProperty])
 
   const setColorRange = useSetAtom(
     useMemo(
@@ -198,10 +189,10 @@ export const LayerColorSection: FC<LayerColorSectionProps> = ({ layers }) => {
   )
   // Update color range when properties change.
   useLayoutEffect(() => {
-    if (colorProperty != null && minMax != null) {
-      setColorRange(minMax)
+    if (property?.type === 'number') {
+      setColorRange([property.minimum, property.maximum])
     }
-  }, [colorProperty, minMax, setColorRange])
+  }, [property, setColorRange])
 
   if (!hasColorAtoms(layers)) {
     return null
@@ -224,18 +215,20 @@ export const LayerColorSection: FC<LayerColorSectionProps> = ({ layers }) => {
                   layout='stack'
                   displayEmpty
                 />
-                <ColorSchemeParameterItem
-                  label='配色'
-                  atom={colorSchemeAtoms}
-                />
-                {minMax != null && (
-                  <SliderParameterItem
-                    label='値範囲'
-                    min={minMax[0]}
-                    max={minMax[1]}
-                    range
-                    atom={colorRangeAtoms}
-                  />
+                {property?.type === 'number' && (
+                  <>
+                    <ColorSchemeParameterItem
+                      label='配色'
+                      atom={colorSchemeAtoms}
+                    />
+                    <SliderParameterItem
+                      label='値範囲'
+                      min={property.minimum}
+                      max={property.maximum}
+                      range
+                      atom={colorRangeAtoms}
+                    />
+                  </>
                 )}
               </ParameterList>
             </InspectorItem>
