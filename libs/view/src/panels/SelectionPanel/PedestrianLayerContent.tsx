@@ -1,7 +1,7 @@
 import { PerspectiveFrustum } from '@cesium/engine'
-import { IconButton, List, styled, Tooltip } from '@mui/material'
+import { alpha, Button, IconButton, List, styled, Tooltip } from '@mui/material'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
-import { Suspense, useCallback, useRef, type FC } from 'react'
+import { Suspense, useCallback, useEffect, useRef, type FC } from 'react'
 import invariant from 'tiny-invariant'
 
 import { useCesium, usePreRender } from '@takram/plateau-cesium'
@@ -23,6 +23,7 @@ import {
 import { screenSpaceSelectionAtom } from '@takram/plateau-screen-space-selection'
 import {
   AddressIcon,
+  DarkThemeOverride,
   InspectorHeader,
   PedestrianIcon,
   TrashIcon,
@@ -47,6 +48,27 @@ const StyledStreetView = styled(StreetView)({
   height: '100%'
 })
 
+const StreetViewOverlay = styled('div')(({ theme }) => ({
+  position: 'absolute',
+  top: theme.spacing(1),
+  left: '50%',
+  zIndex: 1,
+  transform: 'translateX(-50%)',
+  pointerEvents: 'none',
+  '& > *': {
+    pointerEvents: 'auto'
+  }
+}))
+
+const OverlayButton = styled(Button)(({ theme }) => ({
+  ...theme.typography.body2,
+  minHeight: theme.spacing(4),
+  color: theme.palette.text.primary,
+  backgroundColor: alpha(theme.palette.background.default, 0.5),
+  fontWeight: theme.typography.button.fontWeight,
+  backdropFilter: 'blur(32px)'
+}))
+
 export interface PedestrianLayerContentProps {
   values: (SelectionGroup &
     (
@@ -64,14 +86,13 @@ export interface PedestrianLayerContentProps {
 export const Content: FC<{
   layer: LayerModel<typeof PEDESTRIAN_LAYER>
 }> = ({ layer }) => {
-  const { locationAtom, headingPitchAtom, zoomAtom } = useSynchronizeStreetView(
-    {
-      synchronizeAtom: layer.synchronizeStreetViewAtom,
+  const { locationAtom, headingPitchAtom, zoomAtom, synchronizedAtom } =
+    useSynchronizeStreetView({
       locationAtom: layer.locationAtom,
       headingPitchAtom: layer.headingPitchAtom,
-      zoomAtom: layer.zoomAtom
-    }
-  )
+      zoomAtom: layer.zoomAtom,
+      synchronizedAtom: layer.synchronizedAtom
+    })
 
   const [pano, setPano] = useAtom(layer.panoAtom)
   const location = useAtomValue(layer.locationAtom)
@@ -81,6 +102,7 @@ export const Content: FC<{
   const setLocation = useSetAtom(locationAtom)
   const setHeadingPitch = useSetAtom(headingPitchAtom)
   const setZoom = useSetAtom(zoomAtom)
+  const [synchronized, setSynchronized] = useAtom(synchronizedAtom)
 
   const handleLoad = useCallback(
     (
@@ -108,6 +130,16 @@ export const Content: FC<{
   const handleError = useCallback(() => {
     setPano(null)
   }, [setPano])
+
+  const handleSynchronize = useCallback(() => {
+    setSynchronized(true)
+  }, [setSynchronized])
+
+  useEffect(() => {
+    return () => {
+      setSynchronized(false)
+    }
+  }, [setSynchronized])
 
   const streetViewRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -208,6 +240,15 @@ export const Content: FC<{
             onHeadingPitchChange={setHeadingPitch}
             onZoomChange={setZoom}
           />
+          <StreetViewOverlay>
+            <DarkThemeOverride>
+              {!synchronized && (
+                <OverlayButton variant='contained' onClick={handleSynchronize}>
+                  カメラをここに移動
+                </OverlayButton>
+              )}
+            </DarkThemeOverride>
+          </StreetViewOverlay>
         </Suspense>
       </StreetViewContainer>
     </List>

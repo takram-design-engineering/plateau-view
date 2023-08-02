@@ -21,17 +21,17 @@ import { getFieldOfView } from './getFieldOfView'
 import { type HeadingPitch, type HeadingPitchFov, type Location } from './types'
 
 export interface StreetViewStateParams {
-  synchronizeAtom: PrimitiveAtom<boolean>
   locationAtom: PrimitiveAtom<Location>
   headingPitchAtom: PrimitiveAtom<HeadingPitch | null>
   zoomAtom: PrimitiveAtom<number | null>
+  synchronizedAtom: PrimitiveAtom<boolean>
 }
 
 export interface StreetViewState {
-  synchronizeAtom: PrimitiveAtom<boolean>
   locationAtom: PrimitiveAtom<Location>
   headingPitchAtom: PrimitiveAtom<HeadingPitch | null>
   zoomAtom: PrimitiveAtom<number | null>
+  synchronizedAtom: PrimitiveAtom<boolean>
 }
 
 interface CameraState {
@@ -52,59 +52,6 @@ export function useSynchronizeStreetView(
   paramsRef.current = params
 
   return useMemo(() => {
-    const cameraStateAtom = atom<CameraState | null>(null)
-
-    const synchronizeAtom = atom(
-      get => get(paramsRef.current.synchronizeAtom),
-      (get, set, value: SetStateAction<boolean>) => {
-        const params = paramsRef.current
-        const prevValue = get(params.synchronizeAtom)
-        const nextValue = typeof value === 'function' ? value(prevValue) : value
-        set(params.synchronizeAtom, nextValue)
-
-        const scene = sceneRef.current
-        if (scene == null) {
-          return
-        }
-        if (nextValue) {
-          // Remember the current camera's heading, pitch and roll to restore
-          // them later.
-          const frustum = scene.camera.frustum
-          invariant(frustum instanceof PerspectiveFrustum)
-          set(cameraStateAtom, {
-            position: scene.camera.position.clone(),
-            headingPitchFov: {
-              heading: scene.camera.heading,
-              pitch: scene.camera.pitch,
-              fov: frustum.fov
-            }
-          })
-
-          const location = get(params.locationAtom)
-          const headingPitch = get(params.headingPitchAtom)
-          const zoom = get(params.zoomAtom)
-          if (location == null || headingPitch == null || zoom == null) {
-            return
-          }
-          const position = computeCartographicToCartesian(scene, location)
-          void flyToDestination(scene, position, {
-            heading: CesiumMath.toRadians(headingPitch.heading),
-            pitch: CesiumMath.toRadians(headingPitch.pitch),
-            fov: getFieldOfView(scene.camera, zoom)
-          })
-        } else {
-          const state = get(cameraStateAtom)
-          if (state == null) {
-            console.warn(
-              'Camera state before synchronization unexpectedly not found.'
-            )
-            return
-          }
-          void flyToDestination(scene, state.position, state.headingPitchFov)
-        }
-      }
-    )
-
     const locationAtom = atom(
       get => get(paramsRef.current.locationAtom),
       (get, set, value: SetStateAction<Location>) => {
@@ -117,7 +64,7 @@ export function useSynchronizeStreetView(
         if (nextValue == null || scene == null) {
           return
         }
-        if (get(params.synchronizeAtom)) {
+        if (get(params.synchronizedAtom)) {
           if (prevValue != null) {
             const prevPosition = computeCartographicToCartesian(
               scene,
@@ -170,7 +117,7 @@ export function useSynchronizeStreetView(
         if (nextValue == null || scene == null) {
           return
         }
-        if (get(params.synchronizeAtom)) {
+        if (get(params.synchronizedAtom)) {
           scene.camera.setView({
             orientation: {
               heading: CesiumMath.toRadians(nextValue.heading),
@@ -193,7 +140,7 @@ export function useSynchronizeStreetView(
         if (nextValue == null || scene == null) {
           return
         }
-        if (get(params.synchronizeAtom)) {
+        if (get(params.synchronizedAtom)) {
           const frustum = scene.camera.frustum
           invariant(frustum instanceof PerspectiveFrustum)
           frustum.fov = getFieldOfView(scene.camera, nextValue)
@@ -201,8 +148,61 @@ export function useSynchronizeStreetView(
       }
     )
 
+    const cameraStateAtom = atom<CameraState | null>(null)
+
+    const synchronizedAtom = atom(
+      get => get(paramsRef.current.synchronizedAtom),
+      (get, set, value: SetStateAction<boolean>) => {
+        const params = paramsRef.current
+        const prevValue = get(params.synchronizedAtom)
+        const nextValue = typeof value === 'function' ? value(prevValue) : value
+        set(params.synchronizedAtom, nextValue)
+
+        const scene = sceneRef.current
+        if (scene == null) {
+          return
+        }
+        if (nextValue) {
+          // Remember the current camera's heading, pitch and roll to restore
+          // them later.
+          const frustum = scene.camera.frustum
+          invariant(frustum instanceof PerspectiveFrustum)
+          set(cameraStateAtom, {
+            position: scene.camera.position.clone(),
+            headingPitchFov: {
+              heading: scene.camera.heading,
+              pitch: scene.camera.pitch,
+              fov: frustum.fov
+            }
+          })
+
+          const location = get(params.locationAtom)
+          const headingPitch = get(params.headingPitchAtom)
+          const zoom = get(params.zoomAtom)
+          if (location == null || headingPitch == null || zoom == null) {
+            return
+          }
+          const position = computeCartographicToCartesian(scene, location)
+          void flyToDestination(scene, position, {
+            heading: CesiumMath.toRadians(headingPitch.heading),
+            pitch: CesiumMath.toRadians(headingPitch.pitch),
+            fov: getFieldOfView(scene.camera, zoom)
+          })
+        } else {
+          const state = get(cameraStateAtom)
+          if (state == null) {
+            console.warn(
+              'Camera state before synchronization unexpectedly not found.'
+            )
+            return
+          }
+          void flyToDestination(scene, state.position, state.headingPitchFov)
+        }
+      }
+    )
+
     return {
-      synchronizeAtom,
+      synchronizedAtom,
       locationAtom,
       headingPitchAtom,
       zoomAtom

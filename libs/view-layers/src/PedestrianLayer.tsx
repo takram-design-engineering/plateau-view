@@ -43,7 +43,7 @@ export interface PedestrianLayerModel extends ViewLayerModel {
   locationAtom: PrimitiveAtom<Location>
   headingPitchAtom: PrimitiveAtom<HeadingPitch | null>
   zoomAtom: PrimitiveAtom<number | null>
-  synchronizeStreetViewAtom: PrimitiveAtom<boolean>
+  synchronizedAtom: PrimitiveAtom<boolean>
   addressAtom: PrimitiveAtom<string | null>
 }
 
@@ -98,7 +98,7 @@ export function createPedestrianLayer(
     locationAtom,
     headingPitchAtom,
     zoomAtom: atom<number | null>(params.zoomAtom ?? null),
-    synchronizeStreetViewAtom: atom(false),
+    synchronizedAtom: atom(false),
     addressAtom: atom<string | null>(null)
   }
 }
@@ -115,14 +115,14 @@ export const PedestrianLayer: FC<LayerProps<typeof PEDESTRIAN_LAYER>> = ({
   locationAtom,
   headingPitchAtom,
   zoomAtom,
-  synchronizeStreetViewAtom,
+  synchronizedAtom,
   addressAtom
 }) => {
   const [pano, setPano] = useAtom(panoAtom)
   const [location, setLocation] = useAtom(locationAtom)
   const headingPitch = useAtomValue(headingPitchAtom)
   const zoom = useAtomValue(zoomAtom)
-  const synchronizeStreetView = useAtomValue(synchronizeStreetViewAtom)
+  const synchronized = useAtomValue(synchronizedAtom)
 
   const selection = useAtomValue(screenSpaceSelectionAtom)
   const objectSelected = useMemo(
@@ -196,7 +196,7 @@ export const PedestrianLayer: FC<LayerProps<typeof PEDESTRIAN_LAYER>> = ({
       location={location}
       headingPitch={headingPitch ?? undefined}
       zoom={zoom ?? undefined}
-      hideFrustum={pano == null || synchronizeStreetView}
+      hideFrustum={pano == null || synchronized}
       onChange={handleChange}
     />
   )
