@@ -16,11 +16,11 @@ export interface PlateauWaterSurfaceTilesetProps extends PlateauTilesetProps {
 export const PlateauWaterSurfaceTileset = forwardRef<
   Cesium3DTileset,
   PlateauWaterSurfaceTilesetProps
->(({ color, opacity, style, ...props }, forwardedRef) => {
+>(({ color, opacity = 0.5, style, ...props }, forwardedRef) => {
   const theme = useTheme()
   const defaultStyle = useDefaultTileStyle({
     color: color ?? theme.palette.primary.main,
-    opacity: 0.5
+    opacity
   })
 
   const ref = useRef<Cesium3DTileset>(null)
