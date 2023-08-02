@@ -43,11 +43,17 @@ export const ScreenSpaceElement = forwardRef<
     if (ref.current == null || scene == null) {
       return
     }
-    const windowPosition = SceneTransforms.wgs84ToWindowCoordinates(
-      scene,
-      position,
-      windowPositionScratch
-    )
+    let windowPosition
+    try {
+      windowPosition = SceneTransforms.wgs84ToWindowCoordinates(
+        scene,
+        position,
+        windowPositionScratch
+      )
+    } catch (error) {
+      motionDisplay.set('none')
+      return
+    }
     occluder.cameraPosition = scene.camera.position
     if (
       windowPosition == null ||

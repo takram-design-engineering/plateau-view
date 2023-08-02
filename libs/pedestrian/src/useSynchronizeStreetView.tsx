@@ -60,11 +60,12 @@ export function useSynchronizeStreetView(
         const nextValue = typeof value === 'function' ? value(prevValue) : value
         set(params.locationAtom, nextValue)
 
+        const synchronized = get(params.synchronizedAtom)
         const scene = sceneRef.current
         if (nextValue == null || scene == null) {
           return
         }
-        if (get(params.synchronizedAtom)) {
+        if (synchronized) {
           if (prevValue != null) {
             const prevPosition = computeCartographicToCartesian(
               scene,
@@ -113,11 +114,12 @@ export function useSynchronizeStreetView(
         const nextValue = typeof value === 'function' ? value(prevValue) : value
         set(params.headingPitchAtom, nextValue)
 
+        const synchronized = get(params.synchronizedAtom)
         const scene = sceneRef.current
         if (nextValue == null || scene == null) {
           return
         }
-        if (get(params.synchronizedAtom)) {
+        if (synchronized) {
           scene.camera.setView({
             orientation: {
               heading: CesiumMath.toRadians(nextValue.heading),
@@ -136,11 +138,12 @@ export function useSynchronizeStreetView(
         const nextValue = typeof value === 'function' ? value(prevValue) : value
         set(params.zoomAtom, nextValue)
 
+        const synchronized = get(params.synchronizedAtom)
         const scene = sceneRef.current
         if (nextValue == null || scene == null) {
           return
         }
-        if (get(params.synchronizedAtom)) {
+        if (synchronized) {
           const frustum = scene.camera.frustum
           invariant(frustum instanceof PerspectiveFrustum)
           frustum.fov = getFieldOfView(scene.camera, nextValue)

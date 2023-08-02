@@ -43,11 +43,16 @@ export function convertScreenToPositionOffset(
     radiiScratch,
     ellipsoidScratch
   )
-  const windowPosition = SceneTransforms.wgs84ToWindowCoordinates(
-    scene,
-    position,
-    windowPositionScratch
-  )
+  let windowPosition
+  try {
+    windowPosition = SceneTransforms.wgs84ToWindowCoordinates(
+      scene,
+      position,
+      windowPositionScratch
+    )
+  } catch (error) {
+    return
+  }
   windowPosition.x += screenOffset.x
   windowPosition.y += screenOffset.y
   const ray = scene.camera.getPickRay(windowPosition, rayScratch)
