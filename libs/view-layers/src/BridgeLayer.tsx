@@ -48,7 +48,7 @@ export const BridgeLayer: FC<LayerProps<typeof BRIDGE_LAYER>> = ({
   hiddenFeaturesAtom,
   propertiesAtom,
   colorPropertyAtom,
-  colorSchemeAtom,
+  colorMapAtom,
   colorRangeAtom,
   opacityAtom
 }) => {
@@ -92,7 +92,7 @@ export const BridgeLayer: FC<LayerProps<typeof BRIDGE_LAYER>> = ({
         hiddenFeaturesAtom={hiddenFeaturesAtom}
         propertiesAtom={propertiesAtom}
         colorPropertyAtom={colorPropertyAtom}
-        colorSchemeAtom={colorSchemeAtom}
+        colorMapAtom={colorMapAtom}
         colorRangeAtom={colorRangeAtom}
         opacityAtom={opacityAtom}
       />

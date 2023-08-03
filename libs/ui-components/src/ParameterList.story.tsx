@@ -1,13 +1,10 @@
 import { type Meta, type StoryObj } from '@storybook/react'
 import { atom } from 'jotai'
 
-import {
-  colorSchemeMagma,
-  type ColorScheme
-} from '@takram/plateau-color-maps'
+import { colorMapMagma, type ColorMap } from '@takram/plateau-color-maps'
 
 import { ButtonParameterItem } from './ButtonParameterItem'
-import { ColorSchemeParameterItem } from './ColorSchemeParameterItem'
+import { ColorMapParameterItem } from './ColorMapParameterItem'
 import { ParameterList } from './ParameterList'
 import { SegmentParameterItem } from './SegmentParameterItem'
 import { SelectParameterItem } from './SelectParameterItem'
@@ -29,7 +26,7 @@ const sliderAtom1 = atom(1)
 const sliderAtom2 = atom(1)
 const sliderAtom3 = atom([1, 5])
 const segmentAtom = atom([1])
-const colorSchemeAtom = atom<ColorScheme>(colorSchemeMagma)
+const colorMapAtom = atom<ColorMap>(colorMapMagma)
 
 export const Default: Story = {
   render: () => (
@@ -83,7 +80,7 @@ export const Default: Story = {
         ]}
       />
       <ButtonParameterItem label='Button'>Button</ButtonParameterItem>
-      <ColorSchemeParameterItem label='Color Scheme' atom={colorSchemeAtom} />
+      <ColorMapParameterItem label='Color Map' atom={colorMapAtom} />
     </ParameterList>
   )
 }

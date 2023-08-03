@@ -2,7 +2,7 @@ import { alpha, styled } from '@mui/material'
 import chroma from 'chroma-js'
 import { type FC } from 'react'
 
-import { type ColorScheme } from '@takram/plateau-color-maps'
+import { type ColorMap } from '@takram/plateau-color-maps'
 
 const Root = styled('div', {
   shouldForwardProp: prop => prop !== 'selected'
@@ -28,13 +28,13 @@ const Root = styled('div', {
 }))
 
 const Gradient = styled('div', {
-  shouldForwardProp: prop => prop !== 'colorScheme' && prop !== 'colorCount'
+  shouldForwardProp: prop => prop !== 'colorMap' && prop !== 'colorCount'
 })<{
-  colorScheme: ColorScheme
+  colorMap: ColorMap
   colorCount?: number
-}>(({ colorScheme, colorCount = 8 }) => {
+}>(({ colorMap, colorCount = 8 }) => {
   const stops = [...Array(colorCount)].map((_, index, { length }) =>
-    chroma.gl(...colorScheme.linear(index / length)).hex()
+    chroma.gl(...colorMap.linear(index / length)).hex()
   )
   return {
     width: 16,
@@ -44,18 +44,18 @@ const Gradient = styled('div', {
   }
 })
 
-export interface ColorSchemeIconProps {
-  colorScheme: ColorScheme
+export interface ColorMapIconProps {
+  colorMap: ColorMap
   colorCount?: number
   selected?: boolean
 }
 
-export const ColorSchemeIcon: FC<ColorSchemeIconProps> = ({
-  colorScheme,
+export const ColorMapIcon: FC<ColorMapIconProps> = ({
+  colorMap,
   colorCount,
   selected
 }) => (
   <Root selected={selected}>
-    <Gradient colorScheme={colorScheme} colorCount={colorCount} />
+    <Gradient colorMap={colorMap} colorCount={colorCount} />
   </Root>
 )

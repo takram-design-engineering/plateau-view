@@ -10,7 +10,7 @@ import {
   type LayerType
 } from '@takram/plateau-layers'
 import {
-  ColorSchemeIcon,
+  ColorMapIcon,
   ColorSetIcon,
   LayerListItem
 } from '@takram/plateau-ui-components'
@@ -68,26 +68,26 @@ export const ViewLayerListItem: FC<ViewLayerListItemProps> = memo(
 
     const propertiesAtom =
       'propertiesAtom' in otherProps ? otherProps.propertiesAtom : undefined
-    const colorSchemeAtom =
-      'colorSchemeAtom' in otherProps ? otherProps.colorSchemeAtom : undefined
+    const colorMapAtom =
+      'colorMapAtom' in otherProps ? otherProps.colorMapAtom : undefined
     const colorPropertyAtom =
       'colorPropertyAtom' in otherProps
         ? otherProps.colorPropertyAtom
         : undefined
-    const colorScheme = useAtomValue(
+    const colorMap = useAtomValue(
       useMemo(
         () =>
           atom(get => {
-            if (colorSchemeAtom == null) {
+            if (colorMapAtom == null) {
               return null
             }
-            const colorScheme = get(colorSchemeAtom)
+            const colorMap = get(colorMapAtom)
             if (colorPropertyAtom != null) {
-              return get(colorPropertyAtom) != null ? colorScheme : null
+              return get(colorPropertyAtom) != null ? colorMap : null
             }
-            return colorScheme
+            return colorMap
           }),
-        [colorSchemeAtom, colorPropertyAtom]
+        [colorMapAtom, colorPropertyAtom]
       )
     )
 
@@ -147,14 +147,14 @@ export const ViewLayerListItem: FC<ViewLayerListItemProps> = memo(
                 selected={colorSchemeSelected}
               />
             </IconButton>
-          ) : colorScheme != null ? (
+          ) : colorMap != null ? (
             <IconButton
               onMouseDown={stopPropagation}
               onDoubleClick={stopPropagation}
               onClick={handleColorSchemeClick}
             >
-              <ColorSchemeIcon
-                colorScheme={colorScheme}
+              <ColorMapIcon
+                colorMap={colorMap}
                 selected={colorSchemeSelected}
               />
             </IconButton>

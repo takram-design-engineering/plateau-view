@@ -14,7 +14,7 @@ import { useCesium } from '@takram/plateau-cesium'
 import { type QualitativeColorSet } from '@takram/plateau-datasets'
 import { type LayerModel } from '@takram/plateau-layers'
 import {
-  ColorSchemeIcon,
+  ColorMapIcon,
   ColorSetIcon,
   ColorSetList,
   InspectorHeader,
@@ -36,7 +36,7 @@ function hasQuantitativeAtoms(
       propertiesAtom: unknown
       colorPropertyAtom: unknown
       colorRangeAtom: unknown
-      colorSchemeAtom: unknown
+      colorMapAtom: unknown
     }
   >
 > {
@@ -45,7 +45,7 @@ function hasQuantitativeAtoms(
       'propertiesAtom' in value &&
       'colorPropertyAtom' in value &&
       'colorRangeAtom' in value &&
-      'colorSchemeAtom' in value
+      'colorMapAtom' in value
   )
 }
 
@@ -99,13 +99,13 @@ const DefaultContent: FC<{
       propertiesAtom: unknown
       colorPropertyAtom: unknown
       colorRangeAtom: unknown
-      colorSchemeAtom: unknown
+      colorMapAtom: unknown
     }
   >
 }> = ({ layer }) => {
   const title = useAtomValue(layer.titleAtom)
   const colorProperty = useAtomValue(layer.colorPropertyAtom)
-  const colorScheme = useAtomValue(layer.colorSchemeAtom)
+  const colorMap = useAtomValue(layer.colorMapAtom)
   const colorRange = useAtomValue(layer.colorRangeAtom)
 
   const colorSet = useAtomValue(
@@ -140,7 +140,7 @@ const DefaultContent: FC<{
           primary: '色分け',
           secondary: typeof title === 'string' ? title : title?.primary
         }}
-        icon={<ColorSchemeIcon colorScheme={colorScheme} />}
+        icon={<ColorMapIcon colorMap={colorMap} />}
         onClose={handleClose}
       />
       <Divider />
@@ -151,7 +151,7 @@ const DefaultContent: FC<{
               {colorProperty?.replaceAll('_', ' ')}
             </Typography>
             <QuantitativeColorLegend
-              colorScheme={colorScheme}
+              colorMap={colorMap}
               min={colorRange[0]}
               max={colorRange[1]}
             />

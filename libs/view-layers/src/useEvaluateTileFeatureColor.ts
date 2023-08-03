@@ -2,7 +2,7 @@ import { Color } from '@cesium/engine'
 import { atom, useAtomValue } from 'jotai'
 import { useMemo } from 'react'
 
-import { type ColorScheme } from '@takram/plateau-color-maps'
+import { type ColorMap } from '@takram/plateau-color-maps'
 import {
   type EvaluateTileFeatureColor,
   type QualitativeColorSet
@@ -10,14 +10,14 @@ import {
 
 export interface EvaluateTileFeatureColorParams {
   colorProperty?: string
-  colorScheme: ColorScheme
+  colorMap: ColorMap
   colorRange: number[]
   colorSet?: QualitativeColorSet
 }
 
 export function useEvaluateTileFeatureColor({
   colorProperty,
-  colorScheme,
+  colorMap,
   colorRange,
   colorSet
 }: EvaluateTileFeatureColorParams): EvaluateTileFeatureColor | undefined {
@@ -56,7 +56,7 @@ export function useEvaluateTileFeatureColor({
       if (minValue === maxValue) {
         return result
       }
-      const color = colorScheme.linear(
+      const color = colorMap.linear(
         (property - minValue) / (maxValue - minValue)
       )
       result.red = color[0]
@@ -64,5 +64,5 @@ export function useEvaluateTileFeatureColor({
       result.blue = color[2]
       return result
     }
-  }, [colorProperty, colorScheme, colorRange, colorSetColors])
+  }, [colorProperty, colorMap, colorRange, colorSetColors])
 }

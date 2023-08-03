@@ -43,7 +43,7 @@ export type PlateauTilesetLayerContentProps<
   | 'hiddenFeaturesAtom'
   | 'propertiesAtom'
   | 'colorPropertyAtom'
-  | 'colorSchemeAtom'
+  | 'colorMapAtom'
   | 'colorRangeAtom'
   | 'opacityAtom'
 > &
@@ -62,7 +62,7 @@ export function PlateauTilesetLayerContent<
   hiddenFeaturesAtom,
   propertiesAtom,
   colorPropertyAtom,
-  colorSchemeAtom,
+  colorMapAtom,
   colorRangeAtom,
   opacityAtom,
   ...props
@@ -124,7 +124,7 @@ export function PlateauTilesetLayerContent<
   }, [tileset, setBoundingSphere, setProperties])
 
   const colorProperty = useAtomValue(colorPropertyAtom)
-  const colorScheme = useAtomValue(colorSchemeAtom)
+  const colorMap = useAtomValue(colorMapAtom)
   const colorRange = useAtomValue(colorRangeAtom)
   const colorSet = useAtomValue(
     useMemo(
@@ -148,7 +148,7 @@ export function PlateauTilesetLayerContent<
 
   const color = useEvaluateTileFeatureColor({
     colorProperty: colorProperty ?? undefined,
-    colorScheme,
+    colorMap,
     colorRange,
     colorSet
   })

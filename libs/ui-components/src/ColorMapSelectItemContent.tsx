@@ -1,9 +1,9 @@
 import { styled } from '@mui/material'
 import { type FC } from 'react'
 
-import { type ColorScheme } from '@takram/plateau-color-maps'
+import { type ColorMap } from '@takram/plateau-color-maps'
 
-import { ColorSchemeGradient } from './ColorSchemeGradient'
+import { ColorMapGradient } from './ColorMapGradient'
 
 const Root = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -23,15 +23,15 @@ const Name = styled('div')(({ theme }) => ({
   textOverflow: 'ellipsis'
 }))
 
-export interface ColorSchemeSelectItemContentProps {
-  colorScheme: ColorScheme
+export interface ColorMapSelectItemContentProps {
+  colorMap: ColorMap
 }
 
-export const ColorSchemeSelectItemContent: FC<
-  ColorSchemeSelectItemContentProps
-> = ({ colorScheme }) => (
+export const ColorMapSelectItemContent: FC<ColorMapSelectItemContentProps> = ({
+  colorMap
+}) => (
   <Root>
-    <Name>{colorScheme.name}</Name>
-    <ColorSchemeGradient colorScheme={colorScheme} />
+    <Name>{colorMap.name}</Name>
+    <ColorMapGradient colorMap={colorMap} />
   </Root>
 )

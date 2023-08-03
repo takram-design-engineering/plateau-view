@@ -1,10 +1,7 @@
 import { atom, type PrimitiveAtom } from 'jotai'
 import { type SetOptional } from 'type-fest'
 
-import {
-  colorSchemePlateau,
-  type ColorScheme
-} from '@takram/plateau-color-maps'
+import { colorMapPlateau, type ColorMap } from '@takram/plateau-color-maps'
 import {
   type QualitativeColorSet,
   type TileFeatureIndex
@@ -27,7 +24,7 @@ export interface PlateauTilesetLayerModel extends DatasetLayerModel {
   hiddenFeaturesAtom: PrimitiveAtom<readonly string[] | null>
   propertiesAtom: PrimitiveAtom<readonly PlateauTilesetProperty[] | null>
   colorPropertyAtom: PrimitiveAtom<string | null>
-  colorSchemeAtom: PrimitiveAtom<ColorScheme>
+  colorMapAtom: PrimitiveAtom<ColorMap>
   colorRangeAtom: PrimitiveAtom<number[]>
   opacityAtom: PrimitiveAtom<number>
 }
@@ -55,7 +52,7 @@ export function createPlateauTilesetLayerBase(
     hiddenFeaturesAtom: atom<readonly string[] | null>(null),
     propertiesAtom: atom<readonly PlateauTilesetProperty[] | null>(null),
     colorPropertyAtom: atom<string | null>(null),
-    colorSchemeAtom: atom<ColorScheme>(colorSchemePlateau),
+    colorMapAtom: atom<ColorMap>(colorMapPlateau),
     colorRangeAtom: atom([0, 100]),
     opacityAtom: atom(1)
   }

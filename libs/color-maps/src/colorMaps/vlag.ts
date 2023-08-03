@@ -1,8 +1,8 @@
-import { ColorScheme } from '../ColorScheme'
+import { ColorMap } from '../ColorMap'
 
 // Reference: https://github.com/mwaskom/seaborn/blob/master/seaborn/cm.py
 // TODO: Pack into binary.
-export default new ColorScheme('diverging', 'Vlag', [
+export default new ColorMap('diverging', 'Vlag', [
   [0.13850039, 0.41331206, 0.74052025],
   [0.15077609, 0.41762684, 0.73970427],
   [0.16235219, 0.4219191, 0.7389667],

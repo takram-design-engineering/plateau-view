@@ -48,7 +48,7 @@ export const RiverFloodingRiskLayer: FC<
   hiddenFeaturesAtom,
   propertiesAtom,
   colorPropertyAtom,
-  colorSchemeAtom,
+  colorMapAtom,
   colorRangeAtom,
   opacityAtom
 }) => {
@@ -96,7 +96,7 @@ export const RiverFloodingRiskLayer: FC<
         hiddenFeaturesAtom={hiddenFeaturesAtom}
         propertiesAtom={propertiesAtom}
         colorPropertyAtom={colorPropertyAtom}
-        colorSchemeAtom={colorSchemeAtom}
+        colorMapAtom={colorMapAtom}
         colorRangeAtom={colorRangeAtom}
         opacityAtom={opacityAtom}
       />

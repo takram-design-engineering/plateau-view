@@ -1,8 +1,8 @@
-import { ColorScheme } from '../ColorScheme'
+import { ColorMap } from '../ColorMap'
 
 // Reference: https://github.com/matplotlib/matplotlib/blob/main/lib/matplotlib/_cm_listed.py
 // TODO: Pack into binary.
-export default new ColorScheme('sequential', 'Magma', [
+export default new ColorMap('sequential', 'Magma', [
   [0.001462, 0.000466, 0.013866],
   [0.002258, 0.001295, 0.018331],
   [0.003279, 0.002305, 0.023708],

@@ -10,7 +10,6 @@ import { useEffect, useMemo, type FC } from 'react'
 import { type SetOptional } from 'type-fest'
 
 import { useCesium } from '@takram/plateau-cesium'
-import { type ColorScheme } from '@takram/plateau-color-maps'
 import { PlateauBuildingTileset } from '@takram/plateau-datasets'
 import {
   PlateauDatasetFormat,
@@ -42,9 +41,6 @@ export interface BuildingLayerModel
   versionAtom: PrimitiveAtom<string | null>
   lodAtom: PrimitiveAtom<number | null>
   texturedAtom: PrimitiveAtom<boolean | null>
-  colorPropertyAtom: PrimitiveAtom<string | null>
-  colorSchemeAtom: PrimitiveAtom<ColorScheme>
-  colorRangeAtom: PrimitiveAtom<number[]>
   showWireframeAtom: PrimitiveAtom<boolean>
 }
 
@@ -105,7 +101,7 @@ export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
   hiddenFeaturesAtom,
   propertiesAtom,
   colorPropertyAtom,
-  colorSchemeAtom,
+  colorMapAtom,
   colorRangeAtom,
   opacityAtom,
   showWireframeAtom
@@ -176,7 +172,7 @@ export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
         hiddenFeaturesAtom={hiddenFeaturesAtom}
         propertiesAtom={propertiesAtom}
         colorPropertyAtom={colorPropertyAtom}
-        colorSchemeAtom={colorSchemeAtom}
+        colorMapAtom={colorMapAtom}
         colorRangeAtom={colorRangeAtom}
         opacityAtom={opacityAtom}
         showWireframe={showWireframe}

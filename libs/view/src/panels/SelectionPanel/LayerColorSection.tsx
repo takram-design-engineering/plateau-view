@@ -3,11 +3,11 @@ import { atom, useAtomValue, useSetAtom, type PrimitiveAtom } from 'jotai'
 import { intersectionBy, uniq, uniqWith } from 'lodash'
 import { useLayoutEffect, useMemo, type FC } from 'react'
 
-import { type ColorScheme } from '@takram/plateau-color-maps'
+import { type ColorMap } from '@takram/plateau-color-maps'
 import { type LayerModel } from '@takram/plateau-layers'
 import { isNotFalse, isNotNullish } from '@takram/plateau-type-helpers'
 import {
-  ColorSchemeParameterItem,
+  ColorMapParameterItem,
   GroupedParameterItem,
   InspectorItem,
   ParameterList,
@@ -22,8 +22,8 @@ function hasColorAtoms(values: readonly LayerModel[]): values is ReadonlyArray<
     {
       propertiesAtom: unknown
       colorPropertyAtom: unknown
+      colorMapAtom: unknown
       colorRangeAtom: unknown
-      colorSchemeAtom: unknown
     }
   >
 > {
@@ -31,8 +31,8 @@ function hasColorAtoms(values: readonly LayerModel[]): values is ReadonlyArray<
     value =>
       'propertiesAtom' in value &&
       'colorPropertyAtom' in value &&
-      'colorRangeAtom' in value &&
-      'colorSchemeAtom' in value
+      'colorMapAtom' in value &&
+      'colorRangeAtom' in value
   )
 }
 
@@ -43,9 +43,9 @@ const LegendRoot = styled(Stack)(({ theme }) => ({
 
 const Legend: FC<{
   colorPropertyAtoms: Array<PrimitiveAtom<string | null>>
-  colorSchemeAtoms: Array<PrimitiveAtom<ColorScheme>>
+  colorMapAtoms: Array<PrimitiveAtom<ColorMap>>
   colorRangeAtoms: Array<PrimitiveAtom<number[]>>
-}> = ({ colorPropertyAtoms, colorSchemeAtoms, colorRangeAtoms }) => {
+}> = ({ colorPropertyAtoms, colorMapAtoms, colorRangeAtoms }) => {
   const colorProperty = useAtomValue(
     useMemo(
       () =>
@@ -60,16 +60,16 @@ const Legend: FC<{
       [colorPropertyAtoms]
     )
   )
-  const colorScheme = useAtomValue(
+  const colorMap = useAtomValue(
     useMemo(
       () =>
         atom(get => {
-          const colorSchemes = uniq(
-            colorSchemeAtoms.map(colorSchemeAtom => get(colorSchemeAtom))
+          const colorMaps = uniq(
+            colorMapAtoms.map(colorMapAtom => get(colorMapAtom))
           )
-          return colorSchemes.length === 1 ? colorSchemes[0] : undefined
+          return colorMaps.length === 1 ? colorMaps[0] : undefined
         }),
-      [colorSchemeAtoms]
+      [colorMapAtoms]
     )
   )
   const colorRange = useAtomValue(
@@ -86,7 +86,7 @@ const Legend: FC<{
     )
   )
 
-  if (colorProperty == null || colorScheme == null || colorRange == null) {
+  if (colorProperty == null || colorMap == null || colorRange == null) {
     return null
   }
   return (
@@ -95,7 +95,7 @@ const Legend: FC<{
         {colorProperty.replaceAll('_', ' ')}
       </Typography>
       <QuantitativeColorLegend
-        colorScheme={colorScheme}
+        colorMap={colorMap}
         min={colorRange[0]}
         max={colorRange[1]}
       />
@@ -127,10 +127,10 @@ export const LayerColorSection: FC<LayerColorSectionProps> = ({ layers }) => {
         .filter(isNotFalse),
     [layers]
   )
-  const colorSchemeAtoms = useMemo(
+  const colorMapAtoms = useMemo(
     () =>
       layers
-        .map(layer => 'colorSchemeAtom' in layer && layer.colorSchemeAtom)
+        .map(layer => 'colorMapAtom' in layer && layer.colorMapAtom)
         .filter(isNotFalse),
     [layers]
   )
@@ -217,10 +217,7 @@ export const LayerColorSection: FC<LayerColorSectionProps> = ({ layers }) => {
                 />
                 {property?.type === 'number' && (
                   <>
-                    <ColorSchemeParameterItem
-                      label='配色'
-                      atom={colorSchemeAtoms}
-                    />
+                    <ColorMapParameterItem label='配色' atom={colorMapAtoms} />
                     <SliderParameterItem
                       label='値範囲'
                       min={property.minimum}
@@ -235,7 +232,7 @@ export const LayerColorSection: FC<LayerColorSectionProps> = ({ layers }) => {
           </GroupedParameterItem>
           <Legend
             colorPropertyAtoms={colorPropertyAtoms}
-            colorSchemeAtoms={colorSchemeAtoms}
+            colorMapAtoms={colorMapAtoms}
             colorRangeAtoms={colorRangeAtoms}
           />
         </ParameterList>
