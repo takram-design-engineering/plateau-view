@@ -3,10 +3,7 @@ import { useEffect, type FC } from 'react'
 import { type SetOptional } from 'type-fest'
 
 import { useCesium } from '@takram/plateau-cesium'
-import {
-  floodRankColorSet,
-  PlateauWaterSurfaceTileset
-} from '@takram/plateau-datasets'
+import { PlateauWaterSurfaceTileset } from '@takram/plateau-datasets'
 import {
   PlateauDatasetFormat,
   PlateauDatasetType,
@@ -20,10 +17,7 @@ import {
   type PlateauTilesetLayerModelParams
 } from './createPlateauTilesetLayerBase'
 import { RIVER_FLOODING_RISK_LAYER } from './layerTypes'
-import {
-  PlateauTilesetLayerContent,
-  type QualitativeProperty
-} from './PlateauTilesetLayerContent'
+import { PlateauTilesetLayerContent } from './PlateauTilesetLayerContent'
 import { useDatasetDatum } from './useDatasetDatum'
 import { useDatasetLayerTitle } from './useDatasetLayerTitle'
 
@@ -41,13 +35,6 @@ export function createRiverFloodingRiskLayer(
     opacityAtom: atom(0.5)
   }
 }
-
-const qualitativeProperties: QualitativeProperty[] = [
-  {
-    testProperty: propertyName => propertyName === 'rank_code',
-    colorSet: floodRankColorSet
-  }
-]
 
 export const RiverFloodingRiskLayer: FC<
   LayerProps<typeof RIVER_FLOODING_RISK_LAYER>
@@ -104,7 +91,6 @@ export const RiverFloodingRiskLayer: FC<
       <PlateauTilesetLayerContent
         url={datum.url}
         component={PlateauWaterSurfaceTileset}
-        qualitativeProperties={qualitativeProperties}
         boundingSphereAtom={boundingSphereAtom}
         featureIndexAtom={featureIndexAtom}
         hiddenFeaturesAtom={hiddenFeaturesAtom}

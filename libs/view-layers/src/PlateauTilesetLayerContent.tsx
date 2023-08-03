@@ -9,6 +9,7 @@ import {
 } from 'react'
 
 import {
+  floodRankColorSet,
   type PlateauTilesetProps,
   type QualitativeColorSet
 } from '@takram/plateau-datasets'
@@ -17,10 +18,21 @@ import { isNotNullish } from '@takram/plateau-type-helpers'
 import { type PlateauTilesetLayerModel } from './createPlateauTilesetLayerBase'
 import { useEvaluateTileFeatureColor } from './useEvaluateTileFeatureColor'
 
-export interface QualitativeProperty {
+interface QualitativeProperty {
   testProperty: (name: string, value: unknown) => boolean
   colorSet: QualitativeColorSet
 }
+
+const qualitativeProperties: QualitativeProperty[] = [
+  {
+    testProperty: propertyName =>
+      // For building layers
+      propertyName.endsWith('浸水ランク') ||
+      // For river flooding risk layers
+      propertyName === 'rank_code',
+    colorSet: floodRankColorSet
+  }
+]
 
 export type PlateauTilesetLayerContentProps<
   Props extends PlateauTilesetProps & RefAttributes<Cesium3DTileset>
@@ -38,7 +50,6 @@ export type PlateauTilesetLayerContentProps<
   Props & {
     url: string
     component: ComponentType<Props>
-    qualitativeProperties?: readonly QualitativeProperty[]
   }
 
 export function PlateauTilesetLayerContent<
@@ -46,7 +57,6 @@ export function PlateauTilesetLayerContent<
 >({
   url,
   component,
-  qualitativeProperties,
   boundingSphereAtom,
   featureIndexAtom,
   hiddenFeaturesAtom,
@@ -111,7 +121,7 @@ export function PlateauTilesetLayerContent<
         })
         .filter(isNotNullish)
     )
-  }, [qualitativeProperties, tileset, setBoundingSphere, setProperties])
+  }, [tileset, setBoundingSphere, setProperties])
 
   const colorProperty = useAtomValue(colorPropertyAtom)
   const colorScheme = useAtomValue(colorSchemeAtom)
