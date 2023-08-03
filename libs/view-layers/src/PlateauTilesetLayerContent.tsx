@@ -91,22 +91,24 @@ export function PlateauTilesetLayerContent<
           ) {
             return undefined
           }
-          const qualitativeProperty = qualitativeProperties?.find(
-            ({ testProperty }) => testProperty(name, value)
-          )
-          if (qualitativeProperty != null) {
-            return {
-              name,
-              type: 'qualitative' as const,
-              colorSet: qualitativeProperty.colorSet
-            }
-          }
           if (
             'minimum' in value &&
             'maximum' in value &&
             typeof value.minimum === 'number' &&
             typeof value.maximum === 'number'
           ) {
+            // TODO: Support qualitative properties of non-number type if there
+            // are any.
+            const qualitativeProperty = qualitativeProperties?.find(
+              ({ testProperty }) => testProperty(name, value)
+            )
+            if (qualitativeProperty != null) {
+              return {
+                name,
+                type: 'qualitative' as const,
+                colorSet: qualitativeProperty.colorSet
+              }
+            }
             return {
               name,
               type: 'number' as const,

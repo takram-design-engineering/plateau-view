@@ -35,8 +35,8 @@ function hasQuantitativeAtoms(
     {
       propertiesAtom: unknown
       colorPropertyAtom: unknown
-      colorRangeAtom: unknown
       colorMapAtom: unknown
+      colorRangeAtom: unknown
     }
   >
 > {
@@ -44,8 +44,8 @@ function hasQuantitativeAtoms(
     value =>
       'propertiesAtom' in value &&
       'colorPropertyAtom' in value &&
-      'colorRangeAtom' in value &&
-      'colorMapAtom' in value
+      'colorMapAtom' in value &&
+      'colorRangeAtom' in value
   )
 }
 
@@ -98,8 +98,8 @@ const DefaultContent: FC<{
     {
       propertiesAtom: unknown
       colorPropertyAtom: unknown
-      colorRangeAtom: unknown
       colorMapAtom: unknown
+      colorRangeAtom: unknown
     }
   >
 }> = ({ layer }) => {
