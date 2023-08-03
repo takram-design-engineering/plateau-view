@@ -1,4 +1,4 @@
-import { Color, type Cesium3DTileFeature } from '@cesium/engine'
+import { Color } from '@cesium/engine'
 import { atom, useAtomValue } from 'jotai'
 import { useMemo } from 'react'
 
@@ -41,16 +41,17 @@ export function useEvaluateTileFeatureColor({
       return
     }
     if (colorSetColors != null) {
-      return (feature: Cesium3DTileFeature, result: Color): Color => {
+      return (feature, result) => {
         const property = feature.getProperty(colorProperty) ?? null
-        colorSetColors
-          .find(({ value }) => property === value)
-          ?.color.clone(result)
-        return result
+        const color = colorSetColors.find(({ value }) => property === value)
+        return color != null ? color.color.clone(result) : undefined
       }
     }
-    return (feature: Cesium3DTileFeature, result: Color): Color => {
-      const property = feature.getProperty(colorProperty) ?? 0
+    return (feature, result) => {
+      const property = feature.getProperty(colorProperty)
+      if (property == null) {
+        return undefined
+      }
       const [minValue, maxValue] = colorRange
       if (minValue === maxValue) {
         return result
