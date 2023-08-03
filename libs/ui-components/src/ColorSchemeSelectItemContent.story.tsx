@@ -15,7 +15,7 @@ import {
   colorSchemeTurbo,
   colorSchemeViridis,
   colorSchemeVlag
-} from '@takram/plateau-color-schemes'
+} from '@takram/plateau-color-maps'
 
 import { ColorSchemeSelectItemContent } from './ColorSchemeSelectItemContent'
 import { SelectItem } from './SelectItem'

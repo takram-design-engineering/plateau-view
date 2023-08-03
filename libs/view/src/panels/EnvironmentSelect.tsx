@@ -8,7 +8,7 @@ import {
 import NextImage from 'next/image'
 import { useCallback, useId, type FC } from 'react'
 
-import { colorSchemeTurbo } from '@takram/plateau-color-schemes'
+import { colorSchemeTurbo } from '@takram/plateau-color-maps'
 import { colorModeAtom } from '@takram/plateau-shared-states'
 import {
   AppIconButton,

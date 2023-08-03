@@ -2,7 +2,7 @@ import { Color } from '@cesium/engine'
 import { atom, useAtomValue } from 'jotai'
 import { useMemo } from 'react'
 
-import { type ColorScheme } from '@takram/plateau-color-schemes'
+import { type ColorScheme } from '@takram/plateau-color-maps'
 import {
   type EvaluateTileFeatureColor,
   type QualitativeColorSet

@@ -4,7 +4,7 @@ import { type SetOptional } from 'type-fest'
 import {
   colorSchemePlateau,
   type ColorScheme
-} from '@takram/plateau-color-schemes'
+} from '@takram/plateau-color-maps'
 import {
   type QualitativeColorSet,
   type TileFeatureIndex

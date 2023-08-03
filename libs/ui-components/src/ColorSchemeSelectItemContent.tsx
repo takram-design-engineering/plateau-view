@@ -1,7 +1,7 @@
 import { styled } from '@mui/material'
 import { type FC } from 'react'
 
-import { type ColorScheme } from '@takram/plateau-color-schemes'
+import { type ColorScheme } from '@takram/plateau-color-maps'
 
 import { ColorSchemeGradient } from './ColorSchemeGradient'
 

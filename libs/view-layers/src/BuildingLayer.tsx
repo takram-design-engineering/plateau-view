@@ -10,7 +10,7 @@ import { useEffect, useMemo, type FC } from 'react'
 import { type SetOptional } from 'type-fest'
 
 import { useCesium } from '@takram/plateau-cesium'
-import { type ColorScheme } from '@takram/plateau-color-schemes'
+import { type ColorScheme } from '@takram/plateau-color-maps'
 import { PlateauBuildingTileset } from '@takram/plateau-datasets'
 import {
   PlateauDatasetFormat,

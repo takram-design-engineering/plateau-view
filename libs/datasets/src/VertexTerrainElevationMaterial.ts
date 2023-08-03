@@ -1,6 +1,6 @@
 import { Ellipsoid, Material } from '@cesium/engine'
 
-import { colorSchemeTurbo } from '@takram/plateau-color-schemes'
+import { colorSchemeTurbo } from '@takram/plateau-color-maps'
 
 import { JapanSeaLevelEllipsoid } from './JapanSeaLevelEllipsoid'
 import source from './shaders/vertexTerrainElevationMaterial.glsl?raw'

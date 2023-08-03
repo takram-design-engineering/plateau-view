@@ -20,9 +20,9 @@ const config: StorybookConfig = {
       // WORKAROUND: https://github.com/nrwl/nx/issues/17156
       resolve: {
         alias: {
-          '@takram/plateau-color-schemes': path.resolve(
+          '@takram/plateau-color-maps': path.resolve(
             __dirname,
-            '../../color-schemes/src/index.ts'
+            '../../color-maps/src/index.ts'
           )
         }
       }

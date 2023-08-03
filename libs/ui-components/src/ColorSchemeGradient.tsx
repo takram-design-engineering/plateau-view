@@ -3,7 +3,7 @@ import chroma from 'chroma-js'
 import { scaleLinear } from 'd3'
 import { useId, useMemo, type FC } from 'react'
 
-import { type ColorScheme } from '@takram/plateau-color-schemes'
+import { type ColorScheme } from '@takram/plateau-color-maps'
 
 const height = 5
 const tickSize = 2

@@ -2,7 +2,7 @@ import { alpha, styled } from '@mui/material'
 import chroma from 'chroma-js'
 import { type FC } from 'react'
 
-import { type ColorScheme } from '@takram/plateau-color-schemes'
+import { type ColorScheme } from '@takram/plateau-color-maps'
 
 const Root = styled('div', {
   shouldForwardProp: prop => prop !== 'selected'

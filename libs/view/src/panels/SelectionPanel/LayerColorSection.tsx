@@ -3,7 +3,7 @@ import { atom, useAtomValue, useSetAtom, type PrimitiveAtom } from 'jotai'
 import { intersectionBy, uniq, uniqWith } from 'lodash'
 import { useLayoutEffect, useMemo, type FC } from 'react'
 
-import { type ColorScheme } from '@takram/plateau-color-schemes'
+import { type ColorScheme } from '@takram/plateau-color-maps'
 import { type LayerModel } from '@takram/plateau-layers'
 import { isNotFalse, isNotNullish } from '@takram/plateau-type-helpers'
 import {

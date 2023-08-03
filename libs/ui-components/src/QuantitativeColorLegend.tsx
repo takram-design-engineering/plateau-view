@@ -2,7 +2,7 @@ import { Stack, styled, type StackProps } from '@mui/material'
 import { scaleLinear } from 'd3'
 import { useMemo, type FC, type ReactNode } from 'react'
 
-import { type ColorScheme } from '@takram/plateau-color-schemes'
+import { type ColorScheme } from '@takram/plateau-color-maps'
 
 import { ColorSchemeGradient } from './ColorSchemeGradient'
 import { formatValue } from './helpers/formatValue'

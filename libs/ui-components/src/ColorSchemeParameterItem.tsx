@@ -28,7 +28,7 @@ import {
   colorSchemeViridis,
   colorSchemeVlag,
   type ColorScheme
-} from '@takram/plateau-color-schemes'
+} from '@takram/plateau-color-maps'
 
 import { ColorSchemeSelectItemContent } from './ColorSchemeSelectItemContent'
 import { ParameterItem, type ParameterItemProps } from './ParameterItem'

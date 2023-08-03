@@ -4,7 +4,7 @@ import { atom } from 'jotai'
 import {
   colorSchemeMagma,
   type ColorScheme
-} from '@takram/plateau-color-schemes'
+} from '@takram/plateau-color-maps'
 
 import { ButtonParameterItem } from './ButtonParameterItem'
 import { ColorSchemeParameterItem } from './ColorSchemeParameterItem'

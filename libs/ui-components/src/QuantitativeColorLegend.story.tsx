@@ -7,7 +7,7 @@ import {
   colorSchemeCividis,
   colorSchemeTurbo,
   colorSchemeViridis
-} from '@takram/plateau-color-schemes'
+} from '@takram/plateau-color-maps'
 
 import { QuantitativeColorLegend } from './QuantitativeColorLegend'
 import { SliderParameterItem } from './SliderParameterItem'
