@@ -8,12 +8,19 @@ import { ColorSetListItem } from './ColorSetListItem'
 
 export const ColorSetList: FC<{
   colorsAtom: QualitativeColorSet['colorAtomsAtom']
-}> = ({ colorsAtom }) => {
+  continuous?: boolean
+  onChange?: () => void
+}> = ({ colorsAtom, continuous = false, onChange }) => {
   const colorsAtoms = useAtomValue(colorsAtom)
   return (
     <List disablePadding>
       {colorsAtoms.map(colorAtom => (
-        <ColorSetListItem key={`${colorAtom}`} colorAtom={colorAtom} />
+        <ColorSetListItem
+          key={`${colorAtom}`}
+          colorAtom={colorAtom}
+          continuous={continuous}
+          onChange={onChange}
+        />
       ))}
     </List>
   )

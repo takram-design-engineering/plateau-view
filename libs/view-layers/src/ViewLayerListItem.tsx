@@ -66,6 +66,8 @@ export const ViewLayerListItem: FC<ViewLayerListItemProps> = memo(
       remove(id)
     }, [id, remove])
 
+    const propertiesAtom =
+      'propertiesAtom' in otherProps ? otherProps.propertiesAtom : undefined
     const colorSchemeAtom =
       'colorSchemeAtom' in otherProps ? otherProps.colorSchemeAtom : undefined
     const colorPropertyAtom =
@@ -90,10 +92,26 @@ export const ViewLayerListItem: FC<ViewLayerListItemProps> = memo(
     )
 
     const colorSet = 'colorSet' in otherProps ? otherProps.colorSet : undefined
-    const colors = useAtomValue(
+    const colorSetColors = useAtomValue(
       useMemo(
-        () => atom(get => (colorSet != null ? get(colorSet.colorsAtom) : null)),
-        [colorSet]
+        () =>
+          atom(get => {
+            if (colorSet != null) {
+              return get(colorSet.colorsAtom)
+            }
+            if (propertiesAtom != null && colorPropertyAtom != null) {
+              const properties = get(propertiesAtom)
+              const colorProperty = get(colorPropertyAtom)
+              const property = properties?.find(
+                ({ name }) => name === colorProperty
+              )
+              return property?.type === 'qualitative'
+                ? get(property.colorSet.colorsAtom)
+                : undefined
+            }
+            return undefined
+          }),
+        [colorSet, propertiesAtom, colorPropertyAtom]
       )
     )
 
@@ -118,7 +136,18 @@ export const ViewLayerListItem: FC<ViewLayerListItemProps> = memo(
         loading={loading}
         hidden={hidden}
         accessory={
-          colorScheme != null ? (
+          colorSetColors != null ? (
+            <IconButton
+              onMouseDown={stopPropagation}
+              onDoubleClick={stopPropagation}
+              onClick={handleColorSchemeClick}
+            >
+              <ColorSetIcon
+                colors={colorSetColors}
+                selected={colorSchemeSelected}
+              />
+            </IconButton>
+          ) : colorScheme != null ? (
             <IconButton
               onMouseDown={stopPropagation}
               onDoubleClick={stopPropagation}
@@ -128,14 +157,6 @@ export const ViewLayerListItem: FC<ViewLayerListItemProps> = memo(
                 colorScheme={colorScheme}
                 selected={colorSchemeSelected}
               />
-            </IconButton>
-          ) : colors != null ? (
-            <IconButton
-              onMouseDown={stopPropagation}
-              onDoubleClick={stopPropagation}
-              onClick={handleColorSchemeClick}
-            >
-              <ColorSetIcon colors={colors} selected={colorSchemeSelected} />
             </IconButton>
           ) : undefined
         }

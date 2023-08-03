@@ -28,7 +28,6 @@ export interface QuantitativeColorLegendProps extends StackProps {
   max: number
   colorScheme: ColorScheme<'sequential' | 'diverging'>
   unit?: ReactNode
-  gradientHeight?: number
 }
 
 export const QuantitativeColorLegend: FC<QuantitativeColorLegendProps> = ({
@@ -36,7 +35,6 @@ export const QuantitativeColorLegend: FC<QuantitativeColorLegendProps> = ({
   max,
   colorScheme,
   unit,
-  gradientHeight = 5,
   ...props
 }) => {
   const percents = useMemo(
