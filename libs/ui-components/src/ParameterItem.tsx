@@ -54,7 +54,7 @@ export const ParameterItem = forwardRef<HTMLDivElement, ParameterItemProps>(
       description,
       control,
       controlSpace = 'normal',
-      labelFontSize = 'small',
+      labelFontSize = 'medium',
       children,
       ...props
     },

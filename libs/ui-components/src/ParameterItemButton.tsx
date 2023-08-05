@@ -36,7 +36,7 @@ export const ParameterItemButton = forwardRef<
   ParameterItemButtonProps
 >(
   (
-    { label, description, labelFontSize = 'small', icon, children, ...props },
+    { label, description, labelFontSize = 'medium', icon, children, ...props },
     ref
   ) => (
     <Root ref={ref} {...props}>
