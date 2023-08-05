@@ -1,4 +1,4 @@
-import { IconButton } from '@mui/material'
+import { IconButton, Tooltip } from '@mui/material'
 import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { memo, useCallback, useMemo, type FC, type SyntheticEvent } from 'react'
 
@@ -113,27 +113,33 @@ export const ViewLayerListItem: FC<ViewLayerListItemProps> = memo(
         hidden={hidden}
         accessory={
           colorMap != null ? (
-            <IconButton
-              onMouseDown={stopPropagation}
-              onDoubleClick={stopPropagation}
-              onClick={handleColorSchemeClick}
-            >
-              <ColorMapIcon
-                colorMap={colorMap}
-                selected={colorSchemeSelected}
-              />
-            </IconButton>
+            <Tooltip title={colorScheme?.name}>
+              <IconButton
+                aria-label={colorScheme?.name}
+                onMouseDown={stopPropagation}
+                onDoubleClick={stopPropagation}
+                onClick={handleColorSchemeClick}
+              >
+                <ColorMapIcon
+                  colorMap={colorMap}
+                  selected={colorSchemeSelected}
+                />
+              </IconButton>
+            </Tooltip>
           ) : colorSetColors != null ? (
-            <IconButton
-              onMouseDown={stopPropagation}
-              onDoubleClick={stopPropagation}
-              onClick={handleColorSchemeClick}
-            >
-              <ColorSetIcon
-                colors={colorSetColors}
-                selected={colorSchemeSelected}
-              />
-            </IconButton>
+            <Tooltip title={colorScheme?.name}>
+              <IconButton
+                aria-label={colorScheme?.name}
+                onMouseDown={stopPropagation}
+                onDoubleClick={stopPropagation}
+                onClick={handleColorSchemeClick}
+              >
+                <ColorSetIcon
+                  colors={colorSetColors}
+                  selected={colorSchemeSelected}
+                />
+              </IconButton>
+            </Tooltip>
           ) : undefined
         }
         onDoubleClick={handleDoubleClick}
