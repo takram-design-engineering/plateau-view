@@ -1,4 +1,4 @@
-import { IconButton, Popover, useTheme } from '@mui/material'
+import { Divider, Popover, useTheme } from '@mui/material'
 import {
   anchorRef,
   bindPopover,
@@ -8,10 +8,13 @@ import {
 import { useId, type FC, type ReactNode } from 'react'
 
 import { SettingsIcon } from './icons'
-import { ParameterItem, type ParameterItemProps } from './ParameterItem'
+import { InspectorHeader } from './InspectorHeader'
+import { type ParameterItemProps } from './ParameterItem'
+import { ParameterItemButton } from './ParameterItemButton'
 
 export interface GroupedParameterItemProps
   extends Pick<ParameterItemProps, 'label' | 'labelFontSize' | 'description'> {
+  content?: ReactNode
   children?: ReactNode
 }
 
@@ -19,6 +22,7 @@ export const GroupedParameterItem: FC<GroupedParameterItemProps> = ({
   label,
   labelFontSize,
   description,
+  content,
   children
 }) => {
   const id = useId()
@@ -30,22 +34,20 @@ export const GroupedParameterItem: FC<GroupedParameterItemProps> = ({
   const theme = useTheme()
   return (
     <>
-      <ParameterItem
+      <ParameterItemButton
         ref={anchorRef(popupState)}
         label={label}
         labelFontSize={labelFontSize}
         description={description}
-        control={
-          <IconButton {...bindTrigger(popupState)}>
-            <SettingsIcon />
-          </IconButton>
-        }
-        controlSpace='button'
-      />
+        icon={<SettingsIcon />}
+        {...bindTrigger(popupState)}
+      >
+        {content}
+      </ParameterItemButton>
       <Popover
         {...bindPopover(popupState)}
         anchorOrigin={{
-          horizontal: parseFloat(theme.spacing(-2)),
+          horizontal: parseFloat(theme.spacing(-1)),
           vertical: 'top'
         }}
         transformOrigin={{
@@ -53,6 +55,8 @@ export const GroupedParameterItem: FC<GroupedParameterItemProps> = ({
           vertical: 'top'
         }}
       >
+        <InspectorHeader title={label} onClose={popupState.close} />
+        <Divider light />
         {children}
       </Popover>
     </>

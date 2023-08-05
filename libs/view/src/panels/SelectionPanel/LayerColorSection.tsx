@@ -1,4 +1,4 @@
-import { Divider, Stack, styled, Typography } from '@mui/material'
+import { Divider, Stack, Typography } from '@mui/material'
 import { atom, useAtomValue, useSetAtom, type Getter } from 'jotai'
 import { intersection, isEqual, min, uniqWith } from 'lodash'
 import { useMemo, type FC } from 'react'
@@ -17,11 +17,6 @@ import {
   SliderParameterItem
 } from '@takram/plateau-ui-components'
 import { type PlateauTilesetProperty } from '@takram/plateau-view-layers'
-
-const LegendRoot = styled(Stack)(({ theme }) => ({
-  paddingTop: theme.spacing(1),
-  paddingBottom: theme.spacing(1)
-}))
 
 const Legend: FC<{
   layers: readonly LayerModel[]
@@ -81,7 +76,7 @@ const Legend: FC<{
     return null
   }
   return (
-    <LegendRoot spacing={1}>
+    <Stack spacing={1} marginY={1}>
       <Typography variant='body2'>{colorScheme.name}</Typography>
       {colorScheme.type === 'quantitative' && (
         <QuantitativeColorLegend
@@ -93,7 +88,7 @@ const Legend: FC<{
       {colorScheme.type === 'qualitative' && (
         <QualitativeColorLegend colors={colorScheme.colors} />
       )}
-    </LegendRoot>
+    </Stack>
   )
 }
 
@@ -245,12 +240,12 @@ export const LayerColorSection: FC<LayerColorSectionProps> = ({ layers }) => {
       <Divider light />
       <InspectorItem>
         <ParameterList>
-          <GroupedParameterItem label='色分け'>
+          <GroupedParameterItem
+            label='色分け'
+            content={<Legend layers={layers} />}
+          >
             <InspectorItem sx={{ width: 320 }}>
               <ParameterList>
-                <Typography variant='subtitle1' sx={{ marginY: 1 }}>
-                  色分け
-                </Typography>
                 <SelectParameterItem
                   label='モデル属性'
                   atom={colorPropertyAtoms}
@@ -274,7 +269,6 @@ export const LayerColorSection: FC<LayerColorSectionProps> = ({ layers }) => {
               </ParameterList>
             </InspectorItem>
           </GroupedParameterItem>
-          <Legend layers={layers} />
         </ParameterList>
       </InspectorItem>
     </>

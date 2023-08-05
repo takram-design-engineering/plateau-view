@@ -48,10 +48,10 @@ export const EntityTitleText = styled(ListItemText)({
 
 export interface EntityTitleProps extends Omit<ListItemProps<'div'>, 'title'> {
   title?:
-    | string
+    | ReactNode
     | {
-        primary: string
-        secondary?: string
+        primary: ReactNode
+        secondary?: ReactNode
       }
   iconComponent?: ComponentType<SvgIconProps>
   icon?: ReactNode
@@ -72,8 +72,16 @@ export const EntityTitle = forwardRef<HTMLDivElement, EntityTitleProps>(
           </EntityTitleIcon>
         )}
         <EntityTitleText
-          primary={typeof title === 'object' ? title?.primary : title}
-          secondary={typeof title === 'object' ? title?.secondary : undefined}
+          primary={
+            typeof title === 'object' && title != null && 'primary' in title
+              ? title?.primary
+              : title
+          }
+          secondary={
+            typeof title === 'object' && title != null && 'secondary' in title
+              ? title?.secondary
+              : undefined
+          }
           primaryTypographyProps={{
             variant: 'body1'
           }}
