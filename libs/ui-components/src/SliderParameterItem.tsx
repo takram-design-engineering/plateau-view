@@ -188,9 +188,13 @@ export const SliderParameterItem = forwardRef<
               ? '混在'
               : value != null && (
                   <>
-                    {typeof value === 'number'
-                      ? format(value)
-                      : value.map(value => format(value)).join(' ~ ')}
+                    {typeof value === 'number' ? (
+                      format(value)
+                    ) : (
+                      <>
+                        {format(value[0])} ~ {format(value[1])}
+                      </>
+                    )}
                     {unit != null && <> {unit}</>}
                   </>
                 )}

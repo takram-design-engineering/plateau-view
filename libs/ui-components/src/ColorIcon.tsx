@@ -1,5 +1,5 @@
 import { alpha, styled } from '@mui/material'
-import { type FC } from 'react'
+import { forwardRef, type ComponentPropsWithRef } from 'react'
 
 const Root = styled('div', {
   shouldForwardProp: prop => prop !== 'selected'
@@ -35,13 +35,15 @@ const Item = styled('div')(({ theme }) => ({
   boxShadow: `inset 0 0 0 1px ${alpha(theme.palette.text.primary, 0.1)}`
 }))
 
-export interface ColorIconProps {
+export interface ColorIconProps extends ComponentPropsWithRef<typeof Root> {
   color: string
   selected?: boolean
 }
 
-export const ColorIcon: FC<ColorIconProps> = ({ color, selected }) => (
-  <Root selected={selected}>
-    <Item style={{ backgroundColor: color }} />
-  </Root>
+export const ColorIcon = forwardRef<HTMLDivElement, ColorIconProps>(
+  ({ color, selected, ...props }, ref) => (
+    <Root ref={ref} {...props} selected={selected}>
+      <Item style={{ backgroundColor: color }} />
+    </Root>
+  )
 )

@@ -1,6 +1,6 @@
 import { alpha, styled } from '@mui/material'
 import chroma from 'chroma-js'
-import { type FC } from 'react'
+import { forwardRef, type ComponentPropsWithRef } from 'react'
 
 import { type ColorMap } from '@takram/plateau-color-maps'
 
@@ -44,18 +44,16 @@ const Gradient = styled('div', {
   }
 })
 
-export interface ColorMapIconProps {
+export interface ColorMapIconProps extends ComponentPropsWithRef<typeof Root> {
   colorMap: ColorMap
   colorCount?: number
   selected?: boolean
 }
 
-export const ColorMapIcon: FC<ColorMapIconProps> = ({
-  colorMap,
-  colorCount,
-  selected
-}) => (
-  <Root selected={selected}>
-    <Gradient colorMap={colorMap} colorCount={colorCount} />
-  </Root>
+export const ColorMapIcon = forwardRef<HTMLDivElement, ColorMapIconProps>(
+  ({ colorMap, colorCount, selected, ...props }, ref) => (
+    <Root ref={ref} {...props} selected={selected}>
+      <Gradient colorMap={colorMap} colorCount={colorCount} />
+    </Root>
+  )
 )

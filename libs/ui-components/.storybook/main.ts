@@ -23,6 +23,10 @@ const config: StorybookConfig = {
           '@takram/plateau-color-maps': path.resolve(
             __dirname,
             '../../color-maps/src/index.ts'
+          ),
+          '@takram/plateau-datasets': path.resolve(
+            __dirname,
+            '../../datasets/src/index.ts'
           )
         }
       }
