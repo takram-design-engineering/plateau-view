@@ -237,7 +237,7 @@ export const LayerColorSection: FC<LayerColorSectionProps> = ({ layers }) => {
   }
   return (
     <>
-      <Divider light />
+      <Divider />
       <InspectorItem>
         <ParameterList>
           <GroupedParameterItem

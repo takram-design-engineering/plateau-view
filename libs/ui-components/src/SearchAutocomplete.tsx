@@ -63,7 +63,7 @@ const PopperComponent = forwardRef<HTMLDivElement, PopperProps>(
     invariant(typeof children !== 'function')
     return open ? (
       <>
-        <Divider light />
+        <Divider />
         <PopperRoot ref={ref}>{children}</PopperRoot>
       </>
     ) : null

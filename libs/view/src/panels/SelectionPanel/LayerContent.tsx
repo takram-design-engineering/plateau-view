@@ -142,7 +142,7 @@ export function LayerContent<T extends LayerType>({
       />
       <LayerHiddenFeaturesSection layers={values} />
       <LayerColorSection layers={values} />
-      <Divider light />
+      <Divider />
       <InspectorItem>
         <LayerOpacitySection layers={values} />
         <LayerShowWireframeSection layers={values} />

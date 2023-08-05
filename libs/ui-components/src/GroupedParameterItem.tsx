@@ -56,7 +56,7 @@ export const GroupedParameterItem: FC<GroupedParameterItemProps> = ({
         }}
       >
         <InspectorHeader title={label} onClose={popupState.close} />
-        <Divider light />
+        <Divider />
         {children}
       </Popover>
     </>

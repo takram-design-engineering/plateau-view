@@ -80,7 +80,7 @@ export const InspectorHeader: FC<InspectorHeaderProps> = ({
       />
       {actions != null && !inline && (
         <>
-          <Divider light />
+          <Divider />
           <InspectorActions>{actions}</InspectorActions>
         </>
       )}
