@@ -52,7 +52,7 @@ const StyledSelectItem = styled(SelectItem)(({ theme }) => ({
   '&:last-of-type': {
     marginBottom: theme.spacing(1)
   }
-}))
+})) as typeof SelectItem // For generics
 
 const Image = styled('div')(({ theme }) => ({
   overflow: 'hidden',
