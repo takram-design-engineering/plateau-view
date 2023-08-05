@@ -1,8 +1,8 @@
-import { ColorScheme } from '../ColorScheme'
+import { ColorMap } from '../ColorMap'
 
 // Reference: https://github.com/matplotlib/matplotlib/blob/main/lib/matplotlib/_cm_listed.py
 // TODO: Pack into binary.
-export default new ColorScheme('sequential', 'Inferno', [
+export default new ColorMap('sequential', 'Inferno', [
   [0.001462, 0.000466, 0.013866],
   [0.002267, 0.00127, 0.01857],
   [0.003299, 0.002249, 0.024239],

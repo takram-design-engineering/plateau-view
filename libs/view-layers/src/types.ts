@@ -1,6 +1,10 @@
 import { type BoundingSphere } from '@cesium/engine'
-import { type PrimitiveAtom } from 'jotai'
+import { type Atom, type PrimitiveAtom } from 'jotai'
 
+import {
+  type QualitativeColorSet,
+  type QuantitativeColorMap
+} from '@takram/plateau-datasets'
 import { type LayerListItemProps } from '@takram/plateau-ui-components'
 
 import { type BridgeLayerModel } from './BridgeLayer'
@@ -38,12 +42,15 @@ import { type UrbanPlanningLayerModel } from './UrbanPlanningLayer'
 
 export type LayerTitle = LayerListItemProps['title']
 
+export type LayerColorScheme = QuantitativeColorMap | QualitativeColorSet
+
 declare module '@takram/plateau-layers' {
   interface LayerModelBase {
     titleAtom: PrimitiveAtom<LayerTitle | null>
     loadingAtom: PrimitiveAtom<boolean>
     hiddenAtom: PrimitiveAtom<boolean>
     boundingSphereAtom: PrimitiveAtom<BoundingSphere | null>
+    colorSchemeAtom: Atom<LayerColorScheme | null>
   }
 
   interface LayerModelOverrides {

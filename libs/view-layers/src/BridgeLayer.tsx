@@ -19,7 +19,6 @@ import {
 import { BRIDGE_LAYER } from './layerTypes'
 import { PlateauTilesetLayerContent } from './PlateauTilesetLayerContent'
 import { useDatasetDatum } from './useDatasetDatum'
-import { useEvaluateTileFeatureColor } from './useEvaluateTileFeatureColor'
 import { useMunicipalityName } from './useMunicipalityName'
 
 export interface BridgeLayerModelParams
@@ -50,9 +49,7 @@ export const BridgeLayer: FC<LayerProps<typeof BRIDGE_LAYER>> = ({
   propertiesAtom,
   colorPropertyAtom,
   colorSchemeAtom,
-  colorRangeAtom,
-  opacityAtom,
-  showWireframeAtom
+  opacityAtom
 }) => {
   const query = useMunicipalityDatasetsQuery({
     variables: {
@@ -81,14 +78,6 @@ export const BridgeLayer: FC<LayerProps<typeof BRIDGE_LAYER>> = ({
 
   const datum = useDatasetDatum(datumIdAtom, query.data?.municipality?.datasets)
 
-  const color = useEvaluateTileFeatureColor({
-    colorPropertyAtom,
-    colorSchemeAtom,
-    colorRangeAtom
-  })
-  const opacity = useAtomValue(opacityAtom)
-  const showWireframe = useAtomValue(showWireframeAtom)
-
   if (hidden || datum == null) {
     return null
   }
@@ -101,9 +90,9 @@ export const BridgeLayer: FC<LayerProps<typeof BRIDGE_LAYER>> = ({
         featureIndexAtom={featureIndexAtom}
         hiddenFeaturesAtom={hiddenFeaturesAtom}
         propertiesAtom={propertiesAtom}
-        color={color}
-        opacity={opacity}
-        showWireframe={showWireframe}
+        colorPropertyAtom={colorPropertyAtom}
+        colorSchemeAtom={colorSchemeAtom}
+        opacityAtom={opacityAtom}
       />
     )
   }

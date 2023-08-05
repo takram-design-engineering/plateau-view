@@ -1,7 +1,7 @@
 {
-  "name": "color-schemes",
+  "name": "color-maps",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/color-schemes/src",
+  "sourceRoot": "libs/color-maps/src",
   "projectType": "library",
   "tags": [],
   "targets": {
@@ -9,7 +9,7 @@
       "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/color-schemes/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": ["libs/color-maps/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "build": {
@@ -17,7 +17,7 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/libs/color-schemes"
+        "outputPath": "dist/libs/color-maps"
       },
       "configurations": {
         "development": {
@@ -32,7 +32,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "libs/color-schemes/jest.config.ts",
+        "jestConfig": "libs/color-maps/jest.config.ts",
         "passWithNoTests": true
       },
       "configurations": {

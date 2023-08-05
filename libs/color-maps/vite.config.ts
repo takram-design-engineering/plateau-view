@@ -7,7 +7,7 @@ import dts from 'vite-plugin-dts'
 import viteTsConfigPaths from 'vite-tsconfig-paths'
 
 export default defineConfig({
-  cacheDir: '../../node_modules/.vite/color-schemes',
+  cacheDir: '../../node_modules/.vite/color-maps',
 
   plugins: [
     dts({
@@ -36,7 +36,7 @@ export default defineConfig({
     lib: {
       // Could also be a dictionary or array of multiple entry points.
       entry: 'src/index.ts',
-      name: 'color-schemes',
+      name: 'color-maps',
       fileName: 'index',
       // Change this to the formats you want to support.
       // Don't forgot to update your package.json as well.

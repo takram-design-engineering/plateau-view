@@ -97,7 +97,7 @@ export const MainMenuButton = forwardRef<
         >
           <PlateauLogotype sx={{ height: 32, marginX: 2, marginY: 1 }} />
         </MenuItem>
-        <Divider light />
+        <Divider />
         <SelectItem
           component='a'
           href='https://www.geospatial.jp/ckan/dataset/plateau'
@@ -113,7 +113,7 @@ export const MainMenuButton = forwardRef<
         <SelectItem disabled data-name='feedback' onClick={handleClick}>
           フィードバック
         </SelectItem>
-        <Divider light />
+        <Divider />
         <SelectItem
           selected={showDeveloperPanels}
           data-name='hide-ui'

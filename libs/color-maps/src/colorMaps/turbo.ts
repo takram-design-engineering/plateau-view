@@ -1,8 +1,8 @@
-import { ColorScheme } from '../ColorScheme'
+import { ColorMap } from '../ColorMap'
 
 // Reference: https://gist.github.com/mikhailov-work/6a308c20e494d9e0ccc29036b28faa7a
 // TODO: Pack into binary.
-export default new ColorScheme('sequential', 'Turbo', [
+export default new ColorMap('sequential', 'Turbo', [
   [0.18995, 0.07176, 0.23217],
   [0.19483, 0.08339, 0.26149],
   [0.19956, 0.09498, 0.29024],

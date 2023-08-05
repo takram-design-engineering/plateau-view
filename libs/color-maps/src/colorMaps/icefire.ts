@@ -1,8 +1,8 @@
-import { ColorScheme } from '../ColorScheme'
+import { ColorMap } from '../ColorMap'
 
 // Reference: https://github.com/mwaskom/seaborn/blob/master/seaborn/cm.py
 // TODO: Pack into binary.
-export default new ColorScheme('diverging', 'Icefire', [
+export default new ColorMap('diverging', 'Icefire', [
   [0.73936227, 0.90443867, 0.85757238],
   [0.72888063, 0.89639109, 0.85488394],
   [0.71834255, 0.88842162, 0.8521605],

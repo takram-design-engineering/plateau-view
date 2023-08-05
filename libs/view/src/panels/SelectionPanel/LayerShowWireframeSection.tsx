@@ -27,7 +27,10 @@ export const LayerShowWireframeSection: FC<LayerShowWireframeSectionProps> = ({
   }
   return (
     <ParameterList>
-      <SwitchParameterItem label='ワイヤフレーム表示' atom={showWireframeAtoms} />
+      <SwitchParameterItem
+        label='ワイヤフレーム表示'
+        atom={showWireframeAtoms}
+      />
     </ParameterList>
   )
 }

@@ -58,7 +58,7 @@ export const LayerList = forwardRef<HTMLDivElement, LayerListProps>(
               {children}
             </List>
           </StyledScrollable>
-          <Divider light />
+          <Divider />
         </>
       )}
       <Footer

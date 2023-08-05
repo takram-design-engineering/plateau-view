@@ -1,8 +1,8 @@
-import { ColorScheme } from '../ColorScheme'
+import { ColorMap } from '../ColorMap'
 
 // Reference: https://github.com/mwaskom/seaborn/blob/master/seaborn/cm.py
 // TODO: Pack into binary.
-export default new ColorScheme('sequential', 'Crest', [
+export default new ColorMap('sequential', 'Crest', [
   [0.6468274, 0.80289262, 0.56592265],
   [0.64233318, 0.80081141, 0.56639461],
   [0.63791969, 0.7987162, 0.56674976],

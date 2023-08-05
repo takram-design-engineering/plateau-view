@@ -10,7 +10,6 @@ import { useEffect, useMemo, type FC } from 'react'
 import { type SetOptional } from 'type-fest'
 
 import { useCesium } from '@takram/plateau-cesium'
-import { type ColorScheme } from '@takram/plateau-color-schemes'
 import { PlateauBuildingTileset } from '@takram/plateau-datasets'
 import {
   PlateauDatasetFormat,
@@ -28,7 +27,6 @@ import {
 } from './createPlateauTilesetLayerBase'
 import { BUILDING_LAYER } from './layerTypes'
 import { PlateauTilesetLayerContent } from './PlateauTilesetLayerContent'
-import { useEvaluateTileFeatureColor } from './useEvaluateTileFeatureColor'
 import { useMunicipalityName } from './useMunicipalityName'
 
 export interface BuildingLayerModelParams
@@ -43,9 +41,6 @@ export interface BuildingLayerModel
   versionAtom: PrimitiveAtom<string | null>
   lodAtom: PrimitiveAtom<number | null>
   texturedAtom: PrimitiveAtom<boolean | null>
-  colorPropertyAtom: PrimitiveAtom<string | null>
-  colorSchemeAtom: PrimitiveAtom<ColorScheme>
-  colorRangeAtom: PrimitiveAtom<number[]>
   showWireframeAtom: PrimitiveAtom<boolean>
 }
 
@@ -107,7 +102,6 @@ export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
   propertiesAtom,
   colorPropertyAtom,
   colorSchemeAtom,
-  colorRangeAtom,
   opacityAtom,
   showWireframeAtom
 }) => {
@@ -162,12 +156,6 @@ export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
     setTextured(datum.textured)
   }, [setVersion, setLod, setTextured, datum])
 
-  const color = useEvaluateTileFeatureColor({
-    colorPropertyAtom,
-    colorSchemeAtom,
-    colorRangeAtom
-  })
-  const opacity = useAtomValue(opacityAtom)
   const showWireframe = useAtomValue(showWireframeAtom)
 
   if (hidden || datum == null) {
@@ -182,8 +170,9 @@ export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
         featureIndexAtom={featureIndexAtom}
         hiddenFeaturesAtom={hiddenFeaturesAtom}
         propertiesAtom={propertiesAtom}
-        color={color}
-        opacity={opacity}
+        colorPropertyAtom={colorPropertyAtom}
+        colorSchemeAtom={colorSchemeAtom}
+        opacityAtom={opacityAtom}
         showWireframe={showWireframe}
       />
     )

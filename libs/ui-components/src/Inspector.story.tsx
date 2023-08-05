@@ -47,7 +47,7 @@ export const Default: Story = {
           }}
           iconComponent={BuildingIcon}
         />
-        <Divider light />
+        <Divider />
         <InspectorActions>
           <IconButton>
             <VisibilityOnIcon />
@@ -62,7 +62,7 @@ export const Default: Story = {
             <TrashIcon />
           </IconButton>
         </InspectorActions>
-        <Divider light />
+        <Divider />
         <InspectorItem>
           <ParameterList>
             <SwitchParameterItem label='Switch' atom={switchAtom} />

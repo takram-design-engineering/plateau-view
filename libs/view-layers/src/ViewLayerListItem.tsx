@@ -1,4 +1,4 @@
-import { IconButton } from '@mui/material'
+import { IconButton, Tooltip } from '@mui/material'
 import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { memo, useCallback, useMemo, type FC, type SyntheticEvent } from 'react'
 
@@ -10,7 +10,7 @@ import {
   type LayerType
 } from '@takram/plateau-layers'
 import {
-  ColorSchemeIcon,
+  ColorMapIcon,
   ColorSetIcon,
   LayerListItem
 } from '@takram/plateau-ui-components'
@@ -26,17 +26,18 @@ export type ViewLayerListItemProps<T extends LayerType = LayerType> =
   LayerProps<T>
 
 export const ViewLayerListItem: FC<ViewLayerListItemProps> = memo(
-  ({
-    id,
-    type,
-    selected,
-    titleAtom,
-    loadingAtom,
-    hiddenAtom,
-    boundingSphereAtom,
-    itemProps,
-    ...otherProps
-  }: ViewLayerListItemProps) => {
+  (props: ViewLayerListItemProps) => {
+    const {
+      id,
+      type,
+      selected,
+      titleAtom,
+      loadingAtom,
+      hiddenAtom,
+      boundingSphereAtom,
+      itemProps
+    } = props
+
     const title = useAtomValue(titleAtom)
     const loading = useAtomValue(loadingAtom)
 
@@ -66,34 +67,27 @@ export const ViewLayerListItem: FC<ViewLayerListItemProps> = memo(
       remove(id)
     }, [id, remove])
 
-    const colorSchemeAtom =
-      'colorSchemeAtom' in otherProps ? otherProps.colorSchemeAtom : undefined
-    const colorPropertyAtom =
-      'colorPropertyAtom' in otherProps
-        ? otherProps.colorPropertyAtom
-        : undefined
-    const colorScheme = useAtomValue(
+    const colorScheme = useAtomValue(props.colorSchemeAtom)
+    const colorMap = useAtomValue(
       useMemo(
         () =>
-          atom(get => {
-            if (colorSchemeAtom == null) {
-              return null
-            }
-            const colorScheme = get(colorSchemeAtom)
-            if (colorPropertyAtom != null) {
-              return get(colorPropertyAtom) != null ? colorScheme : null
-            }
-            return colorScheme
-          }),
-        [colorSchemeAtom, colorPropertyAtom]
+          atom(get =>
+            colorScheme?.type === 'quantitative'
+              ? get(colorScheme.colorMapAtom)
+              : null
+          ),
+        [colorScheme]
       )
     )
-
-    const colorSet = 'colorSet' in otherProps ? otherProps.colorSet : undefined
-    const colors = useAtomValue(
+    const colorSetColors = useAtomValue(
       useMemo(
-        () => atom(get => (colorSet != null ? get(colorSet.colorsAtom) : null)),
-        [colorSet]
+        () =>
+          atom(get =>
+            colorScheme?.type === 'qualitative'
+              ? get(colorScheme.colorsAtom)
+              : null
+          ),
+        [colorScheme]
       )
     )
 
@@ -118,25 +112,34 @@ export const ViewLayerListItem: FC<ViewLayerListItemProps> = memo(
         loading={loading}
         hidden={hidden}
         accessory={
-          colorScheme != null ? (
-            <IconButton
-              onMouseDown={stopPropagation}
-              onDoubleClick={stopPropagation}
-              onClick={handleColorSchemeClick}
-            >
-              <ColorSchemeIcon
-                colorScheme={colorScheme}
-                selected={colorSchemeSelected}
-              />
-            </IconButton>
-          ) : colors != null ? (
-            <IconButton
-              onMouseDown={stopPropagation}
-              onDoubleClick={stopPropagation}
-              onClick={handleColorSchemeClick}
-            >
-              <ColorSetIcon colors={colors} selected={colorSchemeSelected} />
-            </IconButton>
+          colorMap != null ? (
+            <Tooltip title={colorScheme?.name}>
+              <IconButton
+                aria-label={colorScheme?.name}
+                onMouseDown={stopPropagation}
+                onDoubleClick={stopPropagation}
+                onClick={handleColorSchemeClick}
+              >
+                <ColorMapIcon
+                  colorMap={colorMap}
+                  selected={colorSchemeSelected}
+                />
+              </IconButton>
+            </Tooltip>
+          ) : colorSetColors != null ? (
+            <Tooltip title={colorScheme?.name}>
+              <IconButton
+                aria-label={colorScheme?.name}
+                onMouseDown={stopPropagation}
+                onDoubleClick={stopPropagation}
+                onClick={handleColorSchemeClick}
+              >
+                <ColorSetIcon
+                  colors={colorSetColors}
+                  selected={colorSchemeSelected}
+                />
+              </IconButton>
+            </Tooltip>
           ) : undefined
         }
         onDoubleClick={handleDoubleClick}

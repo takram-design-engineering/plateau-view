@@ -83,7 +83,7 @@ export const TileFeatureContent: FC<TileFeatureContentProps> = ({ values }) => {
         }
         onClose={handleClose}
       />
-      <Divider light />
+      <Divider />
       <TileFeaturePropertiesSection values={values} />
     </List>
   )
