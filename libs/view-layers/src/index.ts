@@ -3,6 +3,7 @@ export type {
   DatasetLayerModelParams,
   DatasetLayerModel
 } from './createDatasetLayerBase'
+export type { PlateauTilesetProperty } from './createPlateauTilesetLayerBase'
 export type {
   ViewLayerModel,
   ViewLayerModelParams

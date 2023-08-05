@@ -14,40 +14,40 @@ import {
 } from 'react'
 
 import {
-  colorSchemeCividis,
-  colorSchemeCrest,
-  colorSchemeFlare,
-  colorSchemeIcefire,
-  colorSchemeInferno,
-  colorSchemeMagma,
-  colorSchemeMako,
-  colorSchemePlasma,
-  colorSchemePlateau,
-  colorSchemeRocket,
-  colorSchemeTurbo,
-  colorSchemeViridis,
-  colorSchemeVlag,
-  type ColorScheme
-} from '@takram/plateau-color-schemes'
+  colorMapCividis,
+  colorMapCrest,
+  colorMapFlare,
+  colorMapIcefire,
+  colorMapInferno,
+  colorMapMagma,
+  colorMapMako,
+  colorMapPlasma,
+  colorMapPlateau,
+  colorMapRocket,
+  colorMapTurbo,
+  colorMapViridis,
+  colorMapVlag,
+  type ColorMap
+} from '@takram/plateau-color-maps'
 
-import { ColorSchemeSelectItemContent } from './ColorSchemeSelectItemContent'
+import { ColorMapSelectItemContent } from './ColorMapSelectItemContent'
 import { ParameterItem, type ParameterItemProps } from './ParameterItem'
 import { SelectItem } from './SelectItem'
 
-const colorSchemes = [
-  colorSchemePlateau,
-  colorSchemeCividis,
-  colorSchemeCrest,
-  colorSchemeFlare,
-  colorSchemeIcefire,
-  colorSchemeInferno,
-  colorSchemeMagma,
-  colorSchemeMako,
-  colorSchemePlasma,
-  colorSchemeRocket,
-  colorSchemeTurbo,
-  colorSchemeViridis,
-  colorSchemeVlag
+const colorMaps = [
+  colorMapPlateau,
+  colorMapCividis,
+  colorMapCrest,
+  colorMapFlare,
+  colorMapIcefire,
+  colorMapInferno,
+  colorMapMagma,
+  colorMapMako,
+  colorMapPlasma,
+  colorMapRocket,
+  colorMapTurbo,
+  colorMapViridis,
+  colorMapVlag
 ]
 
 const StyledSelect = styled(Select)(({ theme }) => ({
@@ -62,17 +62,17 @@ const Value = styled('div')(({ theme }) => ({
   textOverflow: 'ellipsis'
 }))
 
-export interface ColorSchemeParameterItemProps
+export interface ColorMapParameterItemProps
   extends PropsWithoutRef<Omit<SelectProps<string | null>, 'value'>>,
     Pick<ParameterItemProps, 'label' | 'labelFontSize' | 'description'> {
-  atom: PrimitiveAtom<ColorScheme> | Array<PrimitiveAtom<ColorScheme>>
+  atom: PrimitiveAtom<ColorMap> | Array<PrimitiveAtom<ColorMap>>
 }
 
 const MIXED = 'MIXED'
 
-export const ColorSchemeParameterItem = forwardRef<
+export const ColorMapParameterItem = forwardRef<
   HTMLDivElement,
-  ColorSchemeParameterItemProps
+  ColorMapParameterItemProps
 >(
   (
     {
@@ -100,7 +100,7 @@ export const ColorSchemeParameterItem = forwardRef<
                   ? value
                   : MIXED
               },
-              (get, set, value: SetStateAction<ColorScheme>) => {
+              (get, set, value: SetStateAction<ColorMap>) => {
                 atomOrAtoms.forEach(atom => {
                   set(atom, value)
                 })
@@ -113,13 +113,13 @@ export const ColorSchemeParameterItem = forwardRef<
 
     const handleChange = useCallback(
       (event: SelectChangeEvent<string | null>, child: ReactNode) => {
-        const colorScheme = colorSchemes.find(
+        const colorMap = colorMaps.find(
           ({ name }) => name === event.target.value
         )
-        if (colorScheme == null) {
+        if (colorMap == null) {
           return
         }
-        setValue(colorScheme)
+        setValue(colorMap)
         onChange?.(event, child)
       },
       [onChange, setValue]
@@ -145,9 +145,9 @@ export const ColorSchemeParameterItem = forwardRef<
               <Value>混在</Value>
             </SelectItem>
           )}
-          {colorSchemes.map(colorScheme => (
-            <SelectItem key={colorScheme.name} value={colorScheme.name}>
-              <ColorSchemeSelectItemContent colorScheme={colorScheme} />
+          {colorMaps.map(colorMap => (
+            <SelectItem key={colorMap.name} value={colorMap.name}>
+              <ColorMapSelectItemContent colorMap={colorMap} />
             </SelectItem>
           ))}
         </StyledSelect>

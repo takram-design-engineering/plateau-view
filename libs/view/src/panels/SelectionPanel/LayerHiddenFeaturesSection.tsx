@@ -48,7 +48,7 @@ export const LayerHiddenFeaturesSection: FC<
   }
   return (
     <>
-      <Divider light />
+      <Divider />
       <InspectorItem>
         <ParameterList>
           <ValueParameterItem

@@ -1,5 +1,5 @@
 import { alpha, styled } from '@mui/material'
-import { type FC } from 'react'
+import { forwardRef, type ComponentPropsWithRef } from 'react'
 
 import { type QualitativeColor } from '@takram/plateau-datasets'
 
@@ -42,17 +42,19 @@ const Item = styled('div')({
   flexBasis: '50%'
 })
 
-export interface ColorSetIconProps {
+export interface ColorSetIconProps extends ComponentPropsWithRef<typeof Root> {
   colors: readonly QualitativeColor[]
   selected?: boolean
 }
 
-export const ColorSetIcon: FC<ColorSetIconProps> = ({ colors, selected }) => (
-  <Root selected={selected}>
-    <Grid>
-      {colors.slice(0, 4).map(({ value, color }) => (
-        <Item key={value} style={{ backgroundColor: color }} />
-      ))}
-    </Grid>
-  </Root>
+export const ColorSetIcon = forwardRef<HTMLDivElement, ColorSetIconProps>(
+  ({ colors, selected, ...props }, ref) => (
+    <Root ref={ref} {...props} selected={selected}>
+      <Grid>
+        {colors.slice(0, 4).map(({ value, color }) => (
+          <Item key={value} style={{ backgroundColor: color }} />
+        ))}
+      </Grid>
+    </Root>
+  )
 )

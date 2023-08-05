@@ -2,9 +2,9 @@ import { Stack, styled, type StackProps } from '@mui/material'
 import { scaleLinear } from 'd3'
 import { useMemo, type FC, type ReactNode } from 'react'
 
-import { type ColorScheme } from '@takram/plateau-color-schemes'
+import { type ColorMap } from '@takram/plateau-color-maps'
 
-import { ColorSchemeGradient } from './ColorSchemeGradient'
+import { ColorMapGradient } from './ColorMapGradient'
 import { formatValue } from './helpers/formatValue'
 
 const Values = styled('div')(({ theme }) => ({
@@ -26,17 +26,15 @@ const Value = styled('div')({
 export interface QuantitativeColorLegendProps extends StackProps {
   min: number
   max: number
-  colorScheme: ColorScheme<'sequential' | 'diverging'>
+  colorMap: ColorMap<'sequential' | 'diverging'>
   unit?: ReactNode
-  gradientHeight?: number
 }
 
 export const QuantitativeColorLegend: FC<QuantitativeColorLegendProps> = ({
   min,
   max,
-  colorScheme,
+  colorMap,
   unit,
-  gradientHeight = 5,
   ...props
 }) => {
   const percents = useMemo(
@@ -53,7 +51,7 @@ export const QuantitativeColorLegend: FC<QuantitativeColorLegendProps> = ({
   )
   return (
     <Stack {...props} spacing={0.25}>
-      <ColorSchemeGradient colorScheme={colorScheme} min={min} max={max} />
+      <ColorMapGradient colorMap={colorMap} min={min} max={max} />
       {percents !== false && (
         <Values>
           {percents.map(({ value, percent }, index, { length }) => (

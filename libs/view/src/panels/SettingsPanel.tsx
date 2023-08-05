@@ -1,4 +1,4 @@
-import { styled, Typography } from '@mui/material'
+import { styled } from '@mui/material'
 import { type FC } from 'react'
 
 import {
@@ -15,15 +15,18 @@ import {
 
 const Root = styled(FloatingPanel)(({ theme }) => ({
   width: 360,
-  padding: theme.spacing(2)
+  padding: theme.spacing(1)
+}))
+
+const Title = styled('div')(({ theme }) => ({
+  ...theme.typography.h5,
+  margin: theme.spacing(1)
 }))
 
 export const SettingsPanel: FC = () => {
   return (
     <Root>
-      <Typography variant='h5' gutterBottom>
-        設定
-      </Typography>
+      <Title>設定</Title>
       <ParameterList>
         <SegmentParameterItem
           label='グラフィック品質'

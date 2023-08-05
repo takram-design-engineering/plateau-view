@@ -1,9 +1,9 @@
-import { ColorScheme } from '../ColorScheme'
+import { ColorMap } from '../ColorMap'
 
 // TODO: Make perceptually uniform precisely.
 // https://davidjohnstone.net/lch-lab-colour-gradient-picker#4c3969,7e3ddf,c988de,d3ba67,f6d784,f8fc4e
 // TODO: Pack into binary.
-export default new ColorScheme('sequential', 'Plateau', [
+export default new ColorMap('sequential', 'Plateau', [
   [76 / 255, 57 / 255, 105 / 255], // #4c3969
   [100 / 255, 61 / 255, 157 / 255], // #643d9d
   [122 / 255, 61 / 255, 212 / 255], // #7a3dd4

@@ -1,11 +1,7 @@
-import {
-  ListItem,
-  listItemSecondaryActionClasses,
-  ListItemText,
-  listItemTextClasses,
-  styled
-} from '@mui/material'
+import { ListItem, listItemSecondaryActionClasses, styled } from '@mui/material'
 import { forwardRef, type ComponentPropsWithRef, type ReactNode } from 'react'
+
+import { ParameterItemText } from './ParameterItemText'
 
 const Root = styled('div', {
   shouldForwardProp: prop => prop !== 'gutterBottom'
@@ -19,28 +15,28 @@ const StyledListItem = styled(ListItem, {
   shouldForwardProp: prop => prop !== 'secondaryActionSpace'
 })<{
   secondaryActionSpace?: 'normal' | 'button'
-}>(({ theme, secondaryActionSpace = 'normal' }) => ({
-  ...(secondaryActionSpace === 'button' && {
-    [`& .${listItemSecondaryActionClasses.root}`]: {
-      right: theme.spacing(-1)
-    }
+}>(
+  ({
+    theme,
+    // @ts-expect-error Missing type
+    ownerState,
+    secondaryActionSpace = 'normal'
+  }) => ({
+    paddingLeft: theme.spacing(1),
+    ...(ownerState?.hasSecondaryAction === true && {
+      paddingRight: theme.spacing(1)
+    }),
+    ...(secondaryActionSpace === 'button' && {
+      [`& .${listItemSecondaryActionClasses.root}`]: {
+        right: 0
+      }
+    })
   })
-}))
+)
 
-const StyledListItemText = styled(ListItemText, {
-  shouldForwardProp: prop => prop !== 'fontSize'
-})<{
-  fontSize?: 'small' | 'medium'
-}>(({ theme, fontSize = 'small' }) => ({
-  [`& .${listItemTextClasses.primary}`]: {
-    ...(fontSize === 'medium' ? theme.typography.body1 : theme.typography.body2)
-  },
-  [`& .${listItemTextClasses.secondary}`]: {
-    ...theme.typography.caption
-  },
-  [`& .${listItemTextClasses.primary} + .${listItemTextClasses.secondary}`]: {
-    marginTop: theme.spacing(0.5)
-  }
+const Children = styled('div')(({ theme }) => ({
+  paddingLeft: theme.spacing(1),
+  paddingRight: theme.spacing(1)
 }))
 
 export interface ParameterItemProps extends ComponentPropsWithRef<typeof Root> {
@@ -66,19 +62,18 @@ export const ParameterItem = forwardRef<HTMLDivElement, ParameterItemProps>(
   ) => (
     <Root ref={ref} {...props}>
       <StyledListItem
-        disableGutters
         secondaryAction={control}
         secondaryActionSpace={controlSpace}
       >
         {(label != null || description != null) && (
-          <StyledListItemText
+          <ParameterItemText
             primary={label}
             secondary={description}
             fontSize={labelFontSize}
           />
         )}
       </StyledListItem>
-      {children}
+      {children != null && <Children>{children}</Children>}
     </Root>
   )
 )

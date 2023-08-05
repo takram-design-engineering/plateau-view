@@ -3,7 +3,7 @@ import chroma from 'chroma-js'
 import { scaleLinear } from 'd3'
 import { useId, useMemo, type FC } from 'react'
 
-import { type ColorScheme } from '@takram/plateau-color-schemes'
+import { type ColorMap } from '@takram/plateau-color-maps'
 
 const height = 5
 const tickSize = 2
@@ -32,15 +32,15 @@ const Tick = styled('div')({
   opacity: 0.5
 })
 
-export interface ColorSchemeGradientProps {
-  colorScheme: ColorScheme<'sequential' | 'diverging'>
+export interface ColorMapGradientProps {
+  colorMap: ColorMap<'sequential' | 'diverging'>
   min?: number
   max?: number
   colorCount?: number
 }
 
-export const ColorSchemeGradient: FC<ColorSchemeGradientProps> = ({
-  colorScheme,
+export const ColorMapGradient: FC<ColorMapGradientProps> = ({
+  colorMap,
   min,
   max,
   colorCount = 24
@@ -54,11 +54,11 @@ export const ColorSchemeGradient: FC<ColorSchemeGradientProps> = ({
           <stop
             key={index}
             offset={`${value * 100}%`}
-            stopColor={chroma.gl(...colorScheme.linear(value)).hex()}
+            stopColor={chroma.gl(...colorMap.linear(value)).hex()}
           />
         )
       }),
-    [colorScheme, colorCount]
+    [colorMap, colorCount]
   )
 
   const theme = useTheme()
@@ -73,7 +73,7 @@ export const ColorSchemeGradient: FC<ColorSchemeGradientProps> = ({
             .ticks(4)
             .map((value, index) => {
               const normal = (value - min) / (max - min)
-              const color = chroma.gl(...colorScheme.linear(normal)).hex()
+              const color = chroma.gl(...colorMap.linear(normal)).hex()
               return (
                 <Tick
                   key={index}
@@ -86,7 +86,7 @@ export const ColorSchemeGradient: FC<ColorSchemeGradientProps> = ({
             })}
         </Ticks>
       ),
-    [colorScheme, min, max, theme]
+    [colorMap, min, max, theme]
   )
 
   return (

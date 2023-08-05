@@ -12,7 +12,7 @@ import {
   bindTrigger,
   usePopupState
 } from 'material-ui-popup-state/hooks'
-import { useCallback, useId, useState, type FC } from 'react'
+import { useCallback, useId, useRef, useState, type FC } from 'react'
 import { ChromePicker, type ColorChangeHandler } from 'react-color'
 
 import { type QualitativeColor } from '@takram/plateau-datasets'
@@ -27,9 +27,15 @@ const StyledIconButton = styled(IconButton)(({ theme }) => ({
 
 export interface ColorSetListItemProps {
   colorAtom: PrimitiveAtom<QualitativeColor>
+  continuous?: boolean
+  onChange?: () => void
 }
 
-export const ColorSetListItem: FC<ColorSetListItemProps> = ({ colorAtom }) => {
+export const ColorSetListItem: FC<ColorSetListItemProps> = ({
+  colorAtom,
+  continuous = false,
+  onChange
+}) => {
   const id = useId()
   const popupState = usePopupState({
     variant: 'popover',
@@ -40,9 +46,22 @@ export const ColorSetListItem: FC<ColorSetListItemProps> = ({ colorAtom }) => {
   const [color, setColor] = useAtom(colorAtom)
   const [indeterminateColor, setIndeterminateColor] = useState(color.color)
 
-  const handleChange: ColorChangeHandler = useCallback(result => {
-    setIndeterminateColor(result.hex)
-  }, [])
+  const onChangeRef = useRef(onChange)
+  onChangeRef.current = onChange
+
+  const handleChange: ColorChangeHandler = useCallback(
+    result => {
+      setIndeterminateColor(result.hex)
+      if (continuous) {
+        setColor(color => ({
+          ...color,
+          color: result.hex
+        }))
+        onChangeRef.current?.()
+      }
+    },
+    [continuous, setColor]
+  )
 
   const handleChangeComplete: ColorChangeHandler = useCallback(
     result => {
@@ -50,6 +69,7 @@ export const ColorSetListItem: FC<ColorSetListItemProps> = ({ colorAtom }) => {
         ...color,
         color: result.hex
       }))
+      onChangeRef.current?.()
     },
     [setColor]
   )

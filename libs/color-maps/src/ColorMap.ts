@@ -3,9 +3,9 @@ import invariant from 'tiny-invariant'
 
 import { type ColorTuple, type LUT } from './types'
 
-export type ColorSchemeType = 'sequential' | 'diverging'
+export type ColorMapType = 'sequential' | 'diverging'
 
-export class ColorScheme<T extends ColorSchemeType = ColorSchemeType> {
+export class ColorMap<T extends ColorMapType = ColorMapType> {
   constructor(readonly type: T, readonly name: string, readonly lut: LUT) {
     invariant(lut.length > 1)
   }

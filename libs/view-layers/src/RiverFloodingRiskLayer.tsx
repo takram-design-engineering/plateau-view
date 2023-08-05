@@ -1,4 +1,4 @@
-import { useAtomValue, useSetAtom } from 'jotai'
+import { atom, useAtomValue, useSetAtom } from 'jotai'
 import { useEffect, type FC } from 'react'
 import { type SetOptional } from 'type-fest'
 
@@ -20,7 +20,6 @@ import { RIVER_FLOODING_RISK_LAYER } from './layerTypes'
 import { PlateauTilesetLayerContent } from './PlateauTilesetLayerContent'
 import { useDatasetDatum } from './useDatasetDatum'
 import { useDatasetLayerTitle } from './useDatasetLayerTitle'
-import { useEvaluateTileFeatureColor } from './useEvaluateTileFeatureColor'
 
 export interface RiverFloodingRiskLayerModelParams
   extends PlateauTilesetLayerModelParams {}
@@ -32,7 +31,8 @@ export function createRiverFloodingRiskLayer(
 ): SetOptional<RiverFloodingRiskLayerModel, 'id'> {
   return {
     ...createPlateauTilesetLayerBase(params),
-    type: RIVER_FLOODING_RISK_LAYER
+    type: RIVER_FLOODING_RISK_LAYER,
+    opacityAtom: atom(0.5)
   }
 }
 
@@ -49,7 +49,7 @@ export const RiverFloodingRiskLayer: FC<
   propertiesAtom,
   colorPropertyAtom,
   colorSchemeAtom,
-  colorRangeAtom
+  opacityAtom
 }) => {
   const query = useMunicipalityDatasetsQuery({
     variables: {
@@ -82,12 +82,6 @@ export const RiverFloodingRiskLayer: FC<
     }
   }, [scene])
 
-  const color = useEvaluateTileFeatureColor({
-    colorPropertyAtom,
-    colorSchemeAtom,
-    colorRangeAtom
-  })
-
   if (hidden || datum == null) {
     return null
   }
@@ -100,7 +94,9 @@ export const RiverFloodingRiskLayer: FC<
         featureIndexAtom={featureIndexAtom}
         hiddenFeaturesAtom={hiddenFeaturesAtom}
         propertiesAtom={propertiesAtom}
-        color={color}
+        colorPropertyAtom={colorPropertyAtom}
+        colorSchemeAtom={colorSchemeAtom}
+        opacityAtom={opacityAtom}
       />
     )
   }

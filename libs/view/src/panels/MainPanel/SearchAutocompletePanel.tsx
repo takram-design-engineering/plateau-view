@@ -182,7 +182,7 @@ export const SearchAutocompletePanel: FC<SearchAutocompletePanelProps> = ({
             />
           }
         >
-          <Divider light />
+          <Divider />
           {!focused ? (
             children
           ) : (

@@ -8,7 +8,7 @@ import {
 import NextImage from 'next/image'
 import { useCallback, useId, type FC } from 'react'
 
-import { colorSchemeTurbo } from '@takram/plateau-color-schemes'
+import { colorMapTurbo } from '@takram/plateau-color-maps'
 import { colorModeAtom } from '@takram/plateau-shared-states'
 import {
   AppIconButton,
@@ -133,7 +133,7 @@ const ElevationLegendButton: FC = () => {
         <QuantitativeColorLegend
           min={elevationRange[0]}
           max={elevationRange[1]}
-          colorScheme={colorSchemeTurbo}
+          colorMap={colorMapTurbo}
           unit='m'
           sx={{ width: 200 }}
         />

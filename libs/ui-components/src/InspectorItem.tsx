@@ -7,7 +7,7 @@ const Root = styled('div', {
   disablePadding?: boolean
 }>(({ theme, disablePadding = false }) => ({
   ...(!disablePadding && {
-    padding: `${theme.spacing(1)} ${theme.spacing(2)}`
+    padding: theme.spacing(1)
   })
 }))
 
