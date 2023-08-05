@@ -26,17 +26,18 @@ export type ViewLayerListItemProps<T extends LayerType = LayerType> =
   LayerProps<T>
 
 export const ViewLayerListItem: FC<ViewLayerListItemProps> = memo(
-  ({
-    id,
-    type,
-    selected,
-    titleAtom,
-    loadingAtom,
-    hiddenAtom,
-    boundingSphereAtom,
-    itemProps,
-    ...otherProps
-  }: ViewLayerListItemProps) => {
+  (props: ViewLayerListItemProps) => {
+    const {
+      id,
+      type,
+      selected,
+      titleAtom,
+      loadingAtom,
+      hiddenAtom,
+      boundingSphereAtom,
+      itemProps
+    } = props
+
     const title = useAtomValue(titleAtom)
     const loading = useAtomValue(loadingAtom)
 
@@ -66,52 +67,27 @@ export const ViewLayerListItem: FC<ViewLayerListItemProps> = memo(
       remove(id)
     }, [id, remove])
 
-    const propertiesAtom =
-      'propertiesAtom' in otherProps ? otherProps.propertiesAtom : undefined
-    const colorMapAtom =
-      'colorMapAtom' in otherProps ? otherProps.colorMapAtom : undefined
-    const colorPropertyAtom =
-      'colorPropertyAtom' in otherProps
-        ? otherProps.colorPropertyAtom
-        : undefined
+    const colorScheme = useAtomValue(props.colorSchemeAtom)
     const colorMap = useAtomValue(
       useMemo(
         () =>
-          atom(get => {
-            if (colorMapAtom == null) {
-              return null
-            }
-            const colorMap = get(colorMapAtom)
-            if (colorPropertyAtom != null) {
-              return get(colorPropertyAtom) != null ? colorMap : null
-            }
-            return colorMap
-          }),
-        [colorMapAtom, colorPropertyAtom]
+          atom(get =>
+            colorScheme?.type === 'quantitative'
+              ? get(colorScheme.colorMapAtom)
+              : null
+          ),
+        [colorScheme]
       )
     )
-
-    const colorSet = 'colorSet' in otherProps ? otherProps.colorSet : undefined
     const colorSetColors = useAtomValue(
       useMemo(
         () =>
-          atom(get => {
-            if (colorSet != null) {
-              return get(colorSet.colorsAtom)
-            }
-            if (propertiesAtom != null && colorPropertyAtom != null) {
-              const properties = get(propertiesAtom)
-              const colorProperty = get(colorPropertyAtom)
-              const property = properties?.find(
-                ({ name }) => name === colorProperty
-              )
-              return property?.type === 'qualitative'
-                ? get(property.colorSet.colorsAtom)
-                : undefined
-            }
-            return undefined
-          }),
-        [colorSet, propertiesAtom, colorPropertyAtom]
+          atom(get =>
+            colorScheme?.type === 'qualitative'
+              ? get(colorScheme.colorsAtom)
+              : null
+          ),
+        [colorScheme]
       )
     )
 
@@ -136,18 +112,7 @@ export const ViewLayerListItem: FC<ViewLayerListItemProps> = memo(
         loading={loading}
         hidden={hidden}
         accessory={
-          colorSetColors != null ? (
-            <IconButton
-              onMouseDown={stopPropagation}
-              onDoubleClick={stopPropagation}
-              onClick={handleColorSchemeClick}
-            >
-              <ColorSetIcon
-                colors={colorSetColors}
-                selected={colorSchemeSelected}
-              />
-            </IconButton>
-          ) : colorMap != null ? (
+          colorMap != null ? (
             <IconButton
               onMouseDown={stopPropagation}
               onDoubleClick={stopPropagation}
@@ -155,6 +120,17 @@ export const ViewLayerListItem: FC<ViewLayerListItemProps> = memo(
             >
               <ColorMapIcon
                 colorMap={colorMap}
+                selected={colorSchemeSelected}
+              />
+            </IconButton>
+          ) : colorSetColors != null ? (
+            <IconButton
+              onMouseDown={stopPropagation}
+              onDoubleClick={stopPropagation}
+              onClick={handleColorSchemeClick}
+            >
+              <ColorSetIcon
+                colors={colorSetColors}
                 selected={colorSchemeSelected}
               />
             </IconButton>

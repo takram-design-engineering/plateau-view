@@ -2,37 +2,46 @@ import { Color } from '@cesium/engine'
 import { atom, useAtomValue } from 'jotai'
 import { useMemo } from 'react'
 
-import { type ColorMap } from '@takram/plateau-color-maps'
-import {
-  type EvaluateTileFeatureColor,
-  type QualitativeColorSet
-} from '@takram/plateau-datasets'
+import { type EvaluateTileFeatureColor } from '@takram/plateau-datasets'
+
+import { type LayerColorScheme } from './types'
 
 export interface EvaluateTileFeatureColorParams {
   colorProperty?: string
-  colorMap: ColorMap
-  colorRange: number[]
-  colorSet?: QualitativeColorSet
+  colorScheme?: LayerColorScheme
 }
 
 export function useEvaluateTileFeatureColor({
   colorProperty,
-  colorMap,
-  colorRange,
-  colorSet
+  colorScheme
 }: EvaluateTileFeatureColorParams): EvaluateTileFeatureColor | undefined {
   const colorSetColors = useAtomValue(
     useMemo(
       () =>
         atom(get =>
-          colorSet != null
-            ? get(colorSet.colorsAtom).map(color => ({
+          colorScheme?.type === 'qualitative'
+            ? get(colorScheme.colorsAtom).map(color => ({
                 ...color,
                 color: Color.fromCssColorString(color.color)
               }))
             : undefined
         ),
-      [colorSet]
+      [colorScheme]
+    )
+  )
+
+  const colorMapParams = useAtomValue(
+    useMemo(
+      () =>
+        atom(get =>
+          colorScheme?.type === 'quantitative'
+            ? {
+                colorMap: get(colorScheme.colorMapAtom),
+                colorRange: get(colorScheme.colorRangeAtom)
+              }
+            : undefined
+        ),
+      [colorScheme]
     )
   )
 
@@ -47,22 +56,25 @@ export function useEvaluateTileFeatureColor({
         return color != null ? color.color.clone(result) : undefined
       }
     }
-    return (feature, result) => {
-      const property = feature.getProperty(colorProperty)
-      if (property == null) {
-        return undefined
-      }
-      const [minValue, maxValue] = colorRange
-      if (minValue === maxValue) {
+    if (colorMapParams != null) {
+      const { colorMap, colorRange } = colorMapParams
+      return (feature, result) => {
+        const property = feature.getProperty(colorProperty)
+        if (property == null) {
+          return undefined
+        }
+        const [minValue, maxValue] = colorRange
+        if (minValue === maxValue) {
+          return result
+        }
+        const color = colorMap.linear(
+          (property - minValue) / (maxValue - minValue)
+        )
+        result.red = color[0]
+        result.green = color[1]
+        result.blue = color[2]
         return result
       }
-      const color = colorMap.linear(
-        (property - minValue) / (maxValue - minValue)
-      )
-      result.red = color[0]
-      result.green = color[1]
-      result.blue = color[2]
-      return result
     }
-  }, [colorProperty, colorMap, colorRange, colorSetColors])
+  }, [colorProperty, colorSetColors, colorMapParams])
 }

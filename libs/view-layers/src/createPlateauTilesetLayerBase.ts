@@ -12,6 +12,7 @@ import {
   type DatasetLayerModel,
   type DatasetLayerModelParams
 } from './createDatasetLayerBase'
+import { type LayerColorScheme } from './types'
 
 export interface PlateauTilesetLayerModelParams
   extends DatasetLayerModelParams {
@@ -45,15 +46,38 @@ export type PlateauTilesetProperty = { name: string } & (
 export function createPlateauTilesetLayerBase(
   params: PlateauTilesetLayerModelParams
 ): Omit<SetOptional<PlateauTilesetLayerModel, 'id'>, 'type'> {
+  const propertiesAtom = atom<readonly PlateauTilesetProperty[] | null>(null)
+  const colorPropertyAtom = atom<string | null>(null)
+  const colorMapAtom = atom<ColorMap>(colorMapPlateau)
+  const colorRangeAtom = atom([0, 100])
+
+  const colorSchemeAtom = atom<LayerColorScheme | null>(get => {
+    const properties = get(propertiesAtom)
+    const colorProperty = get(colorPropertyAtom)
+    if (colorProperty == null) {
+      return null
+    }
+    const property = properties?.find(({ name }) => name === colorProperty)
+    return property?.type === 'qualitative'
+      ? property.colorSet
+      : {
+          type: 'quantitative',
+          name: colorProperty,
+          colorMapAtom,
+          colorRangeAtom
+        }
+  })
+
   return {
     ...createDatasetLayerBase(params),
     isPlateauTilesetLayer: true,
     featureIndexAtom: atom<TileFeatureIndex | null>(null),
     hiddenFeaturesAtom: atom<readonly string[] | null>(null),
-    propertiesAtom: atom<readonly PlateauTilesetProperty[] | null>(null),
-    colorPropertyAtom: atom<string | null>(null),
-    colorMapAtom: atom<ColorMap>(colorMapPlateau),
-    colorRangeAtom: atom([0, 100]),
+    propertiesAtom,
+    colorPropertyAtom,
+    colorMapAtom,
+    colorRangeAtom,
+    colorSchemeAtom,
     opacityAtom: atom(1)
   }
 }

@@ -101,8 +101,7 @@ export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
   hiddenFeaturesAtom,
   propertiesAtom,
   colorPropertyAtom,
-  colorMapAtom,
-  colorRangeAtom,
+  colorSchemeAtom,
   opacityAtom,
   showWireframeAtom
 }) => {
@@ -172,8 +171,7 @@ export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
         hiddenFeaturesAtom={hiddenFeaturesAtom}
         propertiesAtom={propertiesAtom}
         colorPropertyAtom={colorPropertyAtom}
-        colorMapAtom={colorMapAtom}
-        colorRangeAtom={colorRangeAtom}
+        colorSchemeAtom={colorSchemeAtom}
         opacityAtom={opacityAtom}
         showWireframe={showWireframe}
       />

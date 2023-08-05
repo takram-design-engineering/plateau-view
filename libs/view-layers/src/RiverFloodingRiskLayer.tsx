@@ -48,8 +48,7 @@ export const RiverFloodingRiskLayer: FC<
   hiddenFeaturesAtom,
   propertiesAtom,
   colorPropertyAtom,
-  colorMapAtom,
-  colorRangeAtom,
+  colorSchemeAtom,
   opacityAtom
 }) => {
   const query = useMunicipalityDatasetsQuery({
@@ -96,8 +95,7 @@ export const RiverFloodingRiskLayer: FC<
         hiddenFeaturesAtom={hiddenFeaturesAtom}
         propertiesAtom={propertiesAtom}
         colorPropertyAtom={colorPropertyAtom}
-        colorMapAtom={colorMapAtom}
-        colorRangeAtom={colorRangeAtom}
+        colorSchemeAtom={colorSchemeAtom}
         opacityAtom={opacityAtom}
       />
     )

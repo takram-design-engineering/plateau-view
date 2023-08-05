@@ -1,8 +1,7 @@
 import { type Cesium3DTileset } from '@cesium/engine'
-import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import {
   useEffect,
-  useMemo,
   useState,
   type ComponentType,
   type RefAttributes
@@ -43,8 +42,7 @@ export type PlateauTilesetLayerContentProps<
   | 'hiddenFeaturesAtom'
   | 'propertiesAtom'
   | 'colorPropertyAtom'
-  | 'colorMapAtom'
-  | 'colorRangeAtom'
+  | 'colorSchemeAtom'
   | 'opacityAtom'
 > &
   Props & {
@@ -62,8 +60,7 @@ export function PlateauTilesetLayerContent<
   hiddenFeaturesAtom,
   propertiesAtom,
   colorPropertyAtom,
-  colorMapAtom,
-  colorRangeAtom,
+  colorSchemeAtom,
   opacityAtom,
   ...props
 }: PlateauTilesetLayerContentProps<Props>): JSX.Element {
@@ -126,33 +123,10 @@ export function PlateauTilesetLayerContent<
   }, [tileset, setBoundingSphere, setProperties])
 
   const colorProperty = useAtomValue(colorPropertyAtom)
-  const colorMap = useAtomValue(colorMapAtom)
-  const colorRange = useAtomValue(colorRangeAtom)
-  const colorSet = useAtomValue(
-    useMemo(
-      () =>
-        atom(get => {
-          const properties = get(propertiesAtom)
-          const colorProperty = get(colorPropertyAtom)
-          if (colorProperty == null) {
-            return undefined
-          }
-          const property = properties?.find(
-            property => property.name === colorProperty
-          )
-          return property?.type === 'qualitative'
-            ? property.colorSet
-            : undefined
-        }),
-      [propertiesAtom, colorPropertyAtom]
-    )
-  )
-
+  const colorScheme = useAtomValue(colorSchemeAtom)
   const color = useEvaluateTileFeatureColor({
     colorProperty: colorProperty ?? undefined,
-    colorMap,
-    colorRange,
-    colorSet
+    colorScheme: colorScheme ?? undefined
   })
 
   const opacity = useAtomValue(opacityAtom)

@@ -25,7 +25,7 @@ import { useDatasetDatum } from './useDatasetDatum'
 import { useDatasetLayerTitle } from './useDatasetLayerTitle'
 
 export interface LandSlideRiskLayerModelParams
-  extends DatasetLayerModelParams {}
+  extends Omit<DatasetLayerModelParams, 'colorScheme'> {}
 
 export interface LandSlideRiskLayerModel extends DatasetLayerModel {
   colorSet: QualitativeColorSet
@@ -35,7 +35,10 @@ export function createLandSlideRiskLayer(
   params: LandSlideRiskLayerModelParams
 ): SetOptional<LandSlideRiskLayerModel, 'id'> {
   return {
-    ...createDatasetLayerBase(params),
+    ...createDatasetLayerBase({
+      ...params,
+      colorScheme: landSlideRiskColorSet
+    }),
     type: LAND_SLIDE_RISK_LAYER,
     colorSet: landSlideRiskColorSet
   }

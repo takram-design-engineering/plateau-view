@@ -24,7 +24,8 @@ import { MVTLayerContent } from './MVTLayerContent'
 import { useDatasetDatum } from './useDatasetDatum'
 import { useDatasetLayerTitle } from './useDatasetLayerTitle'
 
-export interface LandUseLayerModelParams extends DatasetLayerModelParams {}
+export interface LandUseLayerModelParams
+  extends Omit<DatasetLayerModelParams, 'colorScheme'> {}
 
 export interface LandUseLayerModel extends DatasetLayerModel {
   colorSet: QualitativeColorSet
@@ -34,7 +35,10 @@ export function createLandUseLayer(
   params: LandUseLayerModelParams
 ): SetOptional<LandUseLayerModel, 'id'> {
   return {
-    ...createDatasetLayerBase(params),
+    ...createDatasetLayerBase({
+      ...params,
+      colorScheme: landUseColorSet
+    }),
     type: LAND_USE_LAYER,
     colorSet: landUseColorSet
   }

@@ -12,6 +12,7 @@ export interface QualitativeColor {
 }
 
 export interface QualitativeColorSet {
+  type: 'qualitative'
   name: string
   colorsAtom: PrimitiveAtom<QualitativeColor[]>
   colorAtomsAtom: SplitAtom<QualitativeColor>
@@ -29,6 +30,7 @@ export function atomsWithQualitativeColorSet({
   const colorsAtom = atom([...colors])
   const colorAtomsAtom = splitAtom(colorsAtom)
   return {
+    type: 'qualitative',
     name,
     colorsAtom,
     colorAtomsAtom
