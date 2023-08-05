@@ -5,10 +5,14 @@ import invariant from 'tiny-invariant'
 
 import {
   ColorMapIcon,
+  ColorMapParameterItem,
   ColorSetIcon,
   ColorSetList,
   InspectorHeader,
-  QuantitativeColorLegend
+  InspectorItem,
+  ParameterList,
+  QuantitativeColorLegend,
+  SliderParameterItem
 } from '@takram/plateau-ui-components'
 import {
   colorSchemeSelectionAtom,
@@ -35,15 +39,23 @@ const QuantitativeContent: FC<{
         onClose={onClose}
       />
       <Divider />
-      <ListItem>
-        <ListItemText>
-          <QuantitativeColorLegend
-            colorMap={colorMap}
-            min={colorRange[0]}
-            max={colorRange[1]}
+      <QuantitativeColorLegend
+        colorMap={colorMap}
+        min={colorRange[0]}
+        max={colorRange[1]}
+        sx={{ margin: 2 }}
+      />
+      <Divider />
+      <InspectorItem>
+        <ParameterList>
+          <ColorMapParameterItem label='配色' atom={colorScheme.colorMapAtom} />
+          <SliderParameterItem
+            label='値範囲'
+            // @ts-expect-error Safe assertion
+            atom={colorScheme.colorRangeAtom}
           />
-        </ListItemText>
-      </ListItem>
+        </ParameterList>
+      </InspectorItem>
     </List>
   )
 }
