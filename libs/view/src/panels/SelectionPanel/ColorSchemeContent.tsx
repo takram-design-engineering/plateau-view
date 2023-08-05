@@ -1,18 +1,8 @@
-import {
-  Divider,
-  List,
-  ListItem,
-  ListItemText,
-  Stack,
-  Typography
-} from '@mui/material'
+import { Divider, List, ListItem, ListItemText } from '@mui/material'
 import { atom, useAtomValue, useSetAtom } from 'jotai'
 import { useCallback, useMemo, type FC } from 'react'
 import invariant from 'tiny-invariant'
 
-import { useCesium } from '@takram/plateau-cesium'
-import { type QualitativeColorSet } from '@takram/plateau-datasets'
-import { type LayerModel } from '@takram/plateau-layers'
 import {
   ColorMapIcon,
   ColorSetIcon,
@@ -20,142 +10,67 @@ import {
   InspectorHeader,
   QuantitativeColorLegend
 } from '@takram/plateau-ui-components'
-import { colorSchemeSelectionAtom } from '@takram/plateau-view-layers'
+import {
+  colorSchemeSelectionAtom,
+  type LayerColorScheme
+} from '@takram/plateau-view-layers'
 
 import {
   type COLOR_SCHEME_SELECTION,
   type SelectionGroup
 } from '../../states/selection'
 
-function hasQuantitativeAtoms(
-  values: readonly LayerModel[]
-): values is ReadonlyArray<
-  Extract<
-    LayerModel,
-    {
-      propertiesAtom: unknown
-      colorPropertyAtom: unknown
-      colorMapAtom: unknown
-      colorRangeAtom: unknown
-    }
-  >
-> {
-  return values.every(
-    value =>
-      'propertiesAtom' in value &&
-      'colorPropertyAtom' in value &&
-      'colorMapAtom' in value &&
-      'colorRangeAtom' in value
-  )
-}
-
-function hasQualitativeAtoms(
-  values: readonly LayerModel[]
-): values is ReadonlyArray<Extract<LayerModel, { colorSet: unknown }>> {
-  return values.every(value => 'colorSet' in value)
-}
-
-const QualitativeContent: FC<{
-  colorSet: QualitativeColorSet
-  continuous?: boolean
-}> = ({ colorSet, continuous }) => {
-  const colors = useAtomValue(
-    useMemo(() => atom(get => get(colorSet.colorsAtom)), [colorSet])
-  )
-
-  const setSelection = useSetAtom(colorSchemeSelectionAtom)
-  const handleClose = useCallback(() => {
-    setSelection([])
-  }, [setSelection])
-
-  const scene = useCesium(({ scene }) => scene, { indirect: true })
-  const handleChange = useCallback(() => {
-    scene?.requestRender()
-  }, [scene])
+const QuantitativeContent: FC<{
+  colorScheme: Extract<LayerColorScheme, { type: 'quantitative' }>
+  onClose?: () => void
+}> = ({ colorScheme, onClose }) => {
+  const colorMap = useAtomValue(colorScheme.colorMapAtom)
+  const colorRange = useAtomValue(colorScheme.colorRangeAtom)
 
   return (
     <List disablePadding>
       <InspectorHeader
-        title={colorSet.name}
-        icon={<ColorSetIcon colors={colors} />}
-        onClose={handleClose}
+        title={colorScheme.name}
+        icon={<ColorMapIcon colorMap={colorMap} />}
+        onClose={onClose}
       />
       <Divider />
       <ListItem>
-        <ColorSetList
-          colorsAtom={colorSet.colorAtomsAtom}
-          continuous={continuous}
-          onChange={handleChange}
-        />
+        <ListItemText>
+          <QuantitativeColorLegend
+            colorMap={colorMap}
+            min={colorRange[0]}
+            max={colorRange[1]}
+          />
+        </ListItemText>
       </ListItem>
     </List>
   )
 }
 
-const DefaultContent: FC<{
-  layer: Extract<
-    LayerModel,
-    {
-      propertiesAtom: unknown
-      colorPropertyAtom: unknown
-      colorMapAtom: unknown
-      colorRangeAtom: unknown
-    }
-  >
-}> = ({ layer }) => {
-  const title = useAtomValue(layer.titleAtom)
-  const colorProperty = useAtomValue(layer.colorPropertyAtom)
-  const colorMap = useAtomValue(layer.colorMapAtom)
-  const colorRange = useAtomValue(layer.colorRangeAtom)
-
-  const colorSet = useAtomValue(
-    useMemo(
-      () =>
-        atom(get => {
-          const properties = get(layer.propertiesAtom)
-          const colorProperty = get(layer.colorPropertyAtom)
-          const property = properties?.find(
-            ({ name }) => name === colorProperty
-          )
-          return property?.type === 'qualitative'
-            ? property.colorSet
-            : undefined
-        }),
-      [layer]
-    )
+const QualitativeContent: FC<{
+  colorScheme: Extract<LayerColorScheme, { type: 'qualitative' }>
+  continuous?: boolean
+  onClose?: () => void
+}> = ({ colorScheme, continuous = false, onClose }) => {
+  const colors = useAtomValue(
+    useMemo(() => atom(get => get(colorScheme.colorsAtom)), [colorScheme])
   )
 
-  const setSelection = useSetAtom(colorSchemeSelectionAtom)
-  const handleClose = useCallback(() => {
-    setSelection([])
-  }, [setSelection])
-
-  if (colorSet != null) {
-    return <QualitativeContent colorSet={colorSet} continuous />
-  }
   return (
     <List disablePadding>
       <InspectorHeader
-        title={{
-          primary: '色分け',
-          secondary: typeof title === 'string' ? title : title?.primary
-        }}
-        icon={<ColorMapIcon colorMap={colorMap} />}
-        onClose={handleClose}
+        title={colorScheme.name}
+        icon={<ColorSetIcon colors={colors} />}
+        onClose={onClose}
       />
       <Divider />
       <ListItem>
         <ListItemText>
-          <Stack spacing={1}>
-            <Typography variant='body2'>
-              {colorProperty?.replaceAll('_', ' ')}
-            </Typography>
-            <QuantitativeColorLegend
-              colorMap={colorMap}
-              min={colorRange[0]}
-              max={colorRange[1]}
-            />
-          </Stack>
+          <ColorSetList
+            colorsAtom={colorScheme.colorAtomsAtom}
+            continuous={continuous}
+          />
         </ListItemText>
       </ListItem>
     </List>
@@ -170,12 +85,31 @@ export interface ColorSchemeContentProps {
 
 export const ColorSchemeContent: FC<ColorSchemeContentProps> = ({ values }) => {
   invariant(values.length > 0)
+
   // TODO: Support multiple layers
-  if (hasQualitativeAtoms(values)) {
-    return <QualitativeContent colorSet={values[0].colorSet} />
-  }
-  if (hasQuantitativeAtoms(values)) {
-    return <DefaultContent layer={values[0]} />
+  const layer = values[0]
+
+  const setSelection = useSetAtom(colorSchemeSelectionAtom)
+  const handleClose = useCallback(() => {
+    setSelection([])
+  }, [setSelection])
+
+  const colorScheme = useAtomValue(layer.colorSchemeAtom)
+  switch (colorScheme?.type) {
+    case 'quantitative':
+      return (
+        <QuantitativeContent colorScheme={colorScheme} onClose={handleClose} />
+      )
+    case 'qualitative':
+      return (
+        <QualitativeContent
+          colorScheme={colorScheme}
+          continuous={
+            'isPlateauTilesetLayer' in layer && layer.isPlateauTilesetLayer
+          }
+          onClose={handleClose}
+        />
+      )
   }
   return null
 }

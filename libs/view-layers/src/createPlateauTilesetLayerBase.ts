@@ -62,7 +62,7 @@ export function createPlateauTilesetLayerBase(
       ? property.colorSet
       : {
           type: 'quantitative',
-          name: colorProperty,
+          name: colorProperty.replaceAll('_', ' '),
           colorMapAtom,
           colorRangeAtom
         }
