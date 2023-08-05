@@ -1,12 +1,12 @@
 import { useEffect, type FC, type ReactNode } from 'react'
 import { suspend } from 'suspend-react'
 
-import { useCesium } from '@takram/plateau-cesium'
-
 import {
   waitUntilTilesLoaded,
   type WaitUntilTilesLoadedOptions
-} from './waitUntilTilesLoaded'
+} from '@takram/plateau-cesium-helpers'
+
+import { useCesium } from './useCesium'
 
 export interface SuspendUntilTilesLoadedProps
   extends WaitUntilTilesLoadedOptions {

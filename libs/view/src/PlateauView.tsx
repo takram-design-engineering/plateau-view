@@ -2,8 +2,11 @@ import { Cartesian3, HeadingPitchRoll } from '@cesium/engine'
 import { useSetAtom } from 'jotai'
 import { Suspense, useCallback, useEffect, type FC } from 'react'
 
-import { CurrentTime, ViewLocator } from '@takram/plateau-cesium'
-import { SuspendUntilTilesLoaded } from '@takram/plateau-cesium-helpers'
+import {
+  CurrentTime,
+  SuspendUntilTilesLoaded,
+  ViewLocator
+} from '@takram/plateau-cesium'
 import { LayersRenderer, useAddLayer } from '@takram/plateau-layers'
 import { AppFrame } from '@takram/plateau-ui-components'
 import {

@@ -10,13 +10,16 @@ export interface LayerModelBase {
   type: LayerType
 }
 
-export type LayerModel<T extends LayerType = LayerType> = {
-  [K in LayerType]: K extends T
-    ? LayerModelOverrides[K] extends LayerModelBase
-      ? LayerModelOverrides[K]
-      : never
-    : never
-}[LayerType]
+export type LayerModel<T extends LayerType = LayerType> =
+  LayerType extends never
+    ? LayerModelBase
+    : {
+        [K in LayerType]: K extends T
+          ? LayerModelOverrides[K] extends LayerModelBase
+            ? LayerModelOverrides[K]
+            : never
+          : never
+      }[LayerType]
 
 export type LayerPredicate<T extends LayerType = LayerType> = (
   layer: LayerModel<T>,

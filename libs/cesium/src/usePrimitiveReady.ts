@@ -1,8 +1,9 @@
+import { type Primitive } from '@cesium/engine'
 import { useEffect, useState } from 'react'
 
-import { useCesium } from '@takram/plateau-cesium'
+import { useCesium } from './useCesium'
 
-export function useReady<T extends { ready: boolean }>(target: T): boolean {
+export function usePrimitiveReady(target: Primitive): boolean {
   const scene = useCesium(({ scene }) => scene)
   const [ready, setReady] = useState(false)
   useEffect(() => {

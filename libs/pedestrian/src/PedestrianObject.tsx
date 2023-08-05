@@ -12,8 +12,11 @@ import { useTheme } from '@mui/material'
 import { AnimatePresence } from 'framer-motion'
 import { useEffect, useMemo, useRef, type FC, type MouseEvent } from 'react'
 
-import { useCesium, usePreRender } from '@takram/plateau-cesium'
-import { ScreenSpaceElement } from '@takram/plateau-cesium-helpers'
+import {
+  ScreenSpaceElement,
+  useCesium,
+  usePreRender
+} from '@takram/plateau-cesium'
 
 import balloonImage from './assets/balloon.png'
 import iconImage from './assets/icon.png'

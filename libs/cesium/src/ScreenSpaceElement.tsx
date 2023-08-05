@@ -10,8 +10,10 @@ import { motion, useMotionValue } from 'framer-motion'
 import { forwardRef, useRef, type ComponentPropsWithRef } from 'react'
 import { mergeRefs } from 'react-merge-refs'
 
-import { useCesium, usePreRender } from '@takram/plateau-cesium'
 import { useConstant } from '@takram/plateau-react-helpers'
+
+import { useCesium } from './useCesium'
+import { usePreRender } from './useSceneEvent'
 
 const Root = styled(motion.div)({
   position: 'absolute',

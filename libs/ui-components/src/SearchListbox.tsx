@@ -10,7 +10,12 @@ import {
   type FC,
   type HTMLAttributes
 } from 'react'
-import { VariableSizeList, type ListChildComponentProps } from 'react-window'
+import {
+  VariableSizeList,
+  type ListChildComponentProps,
+  type ReactElementType,
+  type VariableSizeListProps
+} from 'react-window'
 import invariant from 'tiny-invariant'
 
 const OuterElementContext = createContext({})
@@ -112,11 +117,11 @@ export const SearchListbox = forwardRef<HTMLDivElement, SearchListboxProps>(
             itemSize={getItemSize}
             width='auto'
             height={height}
-            outerElementType={OuterElement}
-            innerElementType={InnerElement}
+            outerElementType={OuterElement as ReactElementType}
+            innerElementType={InnerElement as ReactElementType}
             overscanCount={Math.ceil(itemCount / itemSize)}
           >
-            {Row}
+            {Row as VariableSizeListProps['children']}
           </VariableSizeList>
         </OuterElementContext.Provider>
       </Root>
