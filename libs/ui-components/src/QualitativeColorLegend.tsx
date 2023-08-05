@@ -1,8 +1,7 @@
 import { Stack, styled, Tooltip } from '@mui/material'
-import { useAtomValue } from 'jotai'
 import { type ComponentPropsWithoutRef, type FC } from 'react'
 
-import { type QualitativeColorSet } from '@takram/plateau-datasets'
+import { type QualitativeColor } from '@takram/plateau-datasets'
 
 import { ColorIcon } from './ColorIcon'
 
@@ -16,14 +15,13 @@ const Cell = styled('div')(({ theme }) => ({
 
 export interface QualitativeColorLegendProps
   extends ComponentPropsWithoutRef<typeof Root> {
-  colorSet: QualitativeColorSet
+  colors: readonly QualitativeColor[]
 }
 
 export const QualitativeColorLegend: FC<QualitativeColorLegendProps> = ({
-  colorSet,
+  colors,
   ...props
 }) => {
-  const colors = useAtomValue(colorSet.colorsAtom)
   return (
     <Root {...props}>
       <Stack direction='row' margin={-0.5} useFlexGap flexWrap='wrap'>
