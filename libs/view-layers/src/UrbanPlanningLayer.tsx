@@ -38,6 +38,7 @@ export function createUrbanPlanningLayer(
 export const UrbanPlanningLayer: FC<
   LayerProps<typeof URBAN_PLANNING_LAYER>
 > = ({
+  handleRef,
   titleAtom,
   hiddenAtom,
   boundingSphereAtom,
@@ -84,6 +85,7 @@ export const UrbanPlanningLayer: FC<
         url={datum.url}
         styles={styles}
         boundingSphereAtom={boundingSphereAtom}
+        handleRef={handleRef}
       />
     )
   }

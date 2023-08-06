@@ -1,11 +1,13 @@
 import { BoundingSphere } from '@cesium/engine'
 import { useAtomValue, useSetAtom } from 'jotai'
-import { useEffect, useMemo, type FC } from 'react'
+import { useEffect, useMemo, useRef, type FC } from 'react'
 
+import { type ImageryLayerHandle } from '@takram/plateau-cesium'
 import {
   JapanSeaLevelEllipsoid,
   VectorImageryLayer
 } from '@takram/plateau-datasets'
+import { type LayerModelHandleRef } from '@takram/plateau-layers'
 
 import { type DatasetLayerModel } from './createDatasetLayerBase'
 import { pixelRatioAtom } from './states'
@@ -22,12 +24,14 @@ export interface MVTLayerContentProps
   extends Pick<DatasetLayerModel, 'boundingSphereAtom'> {
   url: string
   styles: readonly MVTLayerContentStyle[]
+  handleRef: LayerModelHandleRef
 }
 
 export const MVTLayerContent: FC<MVTLayerContentProps> = ({
   url,
   styles,
-  boundingSphereAtom
+  boundingSphereAtom,
+  handleRef
 }) => {
   const metadata = useMVTMetadata(url)
   const style = useMemo(() => {
@@ -59,11 +63,21 @@ export const MVTLayerContent: FC<MVTLayerContentProps> = ({
 
   const pixelRatio = useAtomValue(pixelRatioAtom)
 
+  const ref = useRef<ImageryLayerHandle>(null)
+  useEffect(() => {
+    handleRef.current = {
+      bringToFront: () => {
+        ref.current?.bringToFront()
+      }
+    }
+  }, [handleRef])
+
   if (metadata == null) {
     return null
   }
   return (
     <VectorImageryLayer
+      ref={ref}
       url={url}
       style={style}
       pixelRatio={pixelRatio}

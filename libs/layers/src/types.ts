@@ -5,9 +5,18 @@ export interface LayerModelOverrides {}
 
 export type LayerType = keyof LayerModelOverrides
 
+export interface LayerModelHandle {
+  bringToFront: () => void
+}
+
+export interface LayerModelHandleRef {
+  current?: LayerModelHandle
+}
+
 export interface LayerModelBase {
   id: string
   type: LayerType
+  handleRef: LayerModelHandleRef
 }
 
 export type LayerModel<T extends LayerType = LayerType> =

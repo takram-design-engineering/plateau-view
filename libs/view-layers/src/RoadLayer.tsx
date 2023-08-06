@@ -34,6 +34,7 @@ export function createRoadLayer(
 }
 
 export const RoadLayer: FC<LayerProps<typeof ROAD_LAYER>> = ({
+  handleRef,
   titleAtom,
   hiddenAtom,
   boundingSphereAtom,
@@ -80,6 +81,7 @@ export const RoadLayer: FC<LayerProps<typeof ROAD_LAYER>> = ({
         url={datum.url}
         styles={styles}
         boundingSphereAtom={boundingSphereAtom}
+        handleRef={handleRef}
       />
     )
   }

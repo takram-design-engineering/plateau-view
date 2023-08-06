@@ -2,6 +2,7 @@ import { atom } from 'jotai'
 import { atomWithReset, splitAtom } from 'jotai/utils'
 import { isEqual, pick } from 'lodash'
 import { nanoid } from 'nanoid'
+import invariant from 'tiny-invariant'
 import { type SetOptional } from 'type-fest'
 
 import { atomsWithSelection } from '@takram/plateau-shared-states'
@@ -40,6 +41,12 @@ export const addLayerAtom = atom(
     set(layerAtomsAtom, {
       type: 'insert',
       value: { ...layer, id }
+    })
+    const layers = get(layersAtom)
+    const layerIndex = layers.findIndex(layer => layer.id === id)
+    invariant(layerIndex !== -1)
+    layers.slice(layerIndex).forEach(layer => {
+      layer.handleRef.current?.bringToFront()
     })
     return () => {
       const layerAtom = get(layerAtomsAtom).find(
@@ -134,6 +141,12 @@ export const moveLayerAtom = atom(
         activeIndex > overIndex
           ? layerAtoms[overIndex]
           : layerAtoms[overIndex + 1]
+    })
+
+    const layers = get(layersAtom)
+    const layerIndex = Math.min(activeIndex, overIndex)
+    layers.slice(layerIndex).forEach(layer => {
+      layer.handleRef.current?.bringToFront()
     })
   }
 )

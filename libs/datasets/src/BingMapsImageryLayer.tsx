@@ -1,9 +1,10 @@
 import { BingMapsImageryProvider, BingMapsStyle } from '@cesium/engine'
-import { type FC } from 'react'
+import { forwardRef } from 'react'
 
 import {
   ImageryLayer,
   useSuspendInstance,
+  type ImageryLayerHandle,
   type ImageryLayerProps
 } from '@takram/plateau-cesium'
 
@@ -12,10 +13,10 @@ export interface BingMapsImageryLayerProps
   appKey: string
 }
 
-export const BingMapsImageryLayer: FC<BingMapsImageryLayerProps> = ({
-  appKey,
-  ...props
-}) => {
+export const BingMapsImageryLayer = forwardRef<
+  ImageryLayerHandle,
+  BingMapsImageryLayerProps
+>(({ appKey, ...props }, ref) => {
   const imageryProvider = useSuspendInstance({
     owner: BingMapsImageryLayer,
     keys: [appKey],
@@ -28,6 +29,7 @@ export const BingMapsImageryLayer: FC<BingMapsImageryLayerProps> = ({
 
   return (
     <ImageryLayer
+      ref={ref}
       imageryProvider={imageryProvider}
       contrast={0.6}
       brightness={1.5}
@@ -35,4 +37,4 @@ export const BingMapsImageryLayer: FC<BingMapsImageryLayerProps> = ({
       {...props}
     />
   )
-}
+})

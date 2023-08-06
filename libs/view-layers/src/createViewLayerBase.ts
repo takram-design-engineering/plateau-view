@@ -21,6 +21,7 @@ export function createViewLayerBase(
 ): Omit<SetOptional<ViewLayerModel, 'id'>, 'type'> {
   return {
     id: params.id,
+    handleRef: {},
     isViewLayer: true,
     titleAtom: atom<LayerTitle | null>(params.title ?? null),
     loadingAtom: atom(false),

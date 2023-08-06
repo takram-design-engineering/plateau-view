@@ -4,9 +4,13 @@ import {
   TextureMinificationFilter,
   UrlTemplateImageryProvider
 } from '@cesium/engine'
-import { type FC } from 'react'
+import { forwardRef } from 'react'
 
-import { ImageryLayer, type ImageryLayerProps } from '@takram/plateau-cesium'
+import {
+  ImageryLayer,
+  type ImageryLayerHandle,
+  type ImageryLayerProps
+} from '@takram/plateau-cesium'
 import { useConstant } from '@takram/plateau-react-helpers'
 
 export interface TerrainElevationImageryLayerProps
@@ -14,9 +18,10 @@ export interface TerrainElevationImageryLayerProps
   baseUrl: string
 }
 
-export const TerrainElevationImageryLayer: FC<
+export const TerrainElevationImageryLayer = forwardRef<
+  ImageryLayerHandle,
   TerrainElevationImageryLayerProps
-> = ({ baseUrl, ...props }) => {
+>(({ baseUrl, ...props }, ref) => {
   const imageryProvider = useConstant(() => {
     const imageryProvider = new UrlTemplateImageryProvider({
       url: `${baseUrl}/terrain/{z}/{x}/{y}.webp`,
@@ -29,10 +34,11 @@ export const TerrainElevationImageryLayer: FC<
 
   return (
     <ImageryLayer
+      ref={ref}
       imageryProvider={imageryProvider}
       magnificationFilter={TextureMagnificationFilter.LINEAR}
       minificationFilter={TextureMinificationFilter.NEAREST}
       {...props}
     />
   )
-}
+})

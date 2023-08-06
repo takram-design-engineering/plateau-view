@@ -47,6 +47,7 @@ export function createLandSlideRiskLayer(
 export const LandSlideRiskLayer: FC<
   LayerProps<typeof LAND_SLIDE_RISK_LAYER>
 > = ({
+  handleRef,
   titleAtom,
   hiddenAtom,
   boundingSphereAtom,
@@ -110,6 +111,7 @@ export const LandSlideRiskLayer: FC<
         url={datum.url}
         styles={styles}
         boundingSphereAtom={boundingSphereAtom}
+        handleRef={handleRef}
       />
     )
   }

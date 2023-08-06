@@ -45,6 +45,7 @@ export function createLandUseLayer(
 }
 
 export const LandUseLayer: FC<LayerProps<typeof LAND_USE_LAYER>> = ({
+  handleRef,
   titleAtom,
   hiddenAtom,
   boundingSphereAtom,
@@ -108,6 +109,7 @@ export const LandUseLayer: FC<LayerProps<typeof LAND_USE_LAYER>> = ({
         url={datum.url}
         styles={styles}
         boundingSphereAtom={boundingSphereAtom}
+        handleRef={handleRef}
       />
     )
   }
