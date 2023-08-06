@@ -14,7 +14,7 @@ import {
 } from 'react'
 import invariant from 'tiny-invariant'
 
-import { type Area } from '@takram/plateau-geocoder'
+import type { Area } from '@takram/plateau-geocoder'
 import {
   PlateauDatasetType,
   useMunicipalityDatasetsQuery
@@ -23,7 +23,7 @@ import { isNotNullish } from '@takram/plateau-type-helpers'
 import {
   AppBreadcrumbsItem,
   ContextBar,
-  OverlayPopover
+  OverlayPopper
 } from '@takram/plateau-ui-components'
 
 import { BuildingDatasetButtonSelect } from './LocationContextBar/BuildingDatasetButtonSelect'
@@ -127,7 +127,7 @@ export const LocationBreadcrumbItem: FC<LocationBreadcrumbItemProps> = ({
         {area.name}
       </AppBreadcrumbsItem>
       {hasDatasets && (
-        <OverlayPopover {...popoverProps} inset={1.5} onClose={handleClose}>
+        <OverlayPopper {...popoverProps} inset={1.5} onClose={handleClose}>
           <ContextBar
             expanded={expanded}
             onCollapse={handleCollapse}
@@ -166,7 +166,7 @@ export const LocationBreadcrumbItem: FC<LocationBreadcrumbItemProps> = ({
               )
             })}
           </ContextBar>
-        </OverlayPopover>
+        </OverlayPopper>
       )}
     </>
   )

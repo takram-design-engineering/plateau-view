@@ -8,7 +8,7 @@ import { useId, type FC } from 'react'
 import {
   AppIconButton,
   ClockIcon,
-  OverlayPopover
+  OverlayPopper
 } from '@takram/plateau-ui-components'
 
 import { DateControlPanel } from './DateControlPanel'
@@ -31,9 +31,9 @@ export const DateControlButton: FC = () => {
       >
         <ClockIcon />
       </AppIconButton>
-      <OverlayPopover {...popoverProps} inset={1.5}>
+      <OverlayPopper {...popoverProps} inset={1.5}>
         <DateControlPanel />
-      </OverlayPopover>
+      </OverlayPopper>
     </>
   )
 }

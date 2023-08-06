@@ -14,7 +14,7 @@ import {
   AppIconButton,
   FloatingPanel,
   MapIcon,
-  OverlayPopover,
+  OverlayPopper,
   ParameterList,
   QuantitativeColorLegend,
   SelectItem,
@@ -230,7 +230,7 @@ export const EnvironmentSelect: FC = () => {
         <MapIcon />
       </AppIconButton>
       {selectedItem === 'elevation' && <ElevationLegendButton />}
-      <OverlayPopover {...popoverProps} inset={1.5}>
+      <OverlayPopper {...popoverProps} inset={1.5}>
         <FloatingPanel>
           <Item
             item='light-map'
@@ -253,7 +253,7 @@ export const EnvironmentSelect: FC = () => {
             onClick={handleElevation}
           />
         </FloatingPanel>
-      </OverlayPopover>
+      </OverlayPopper>
     </>
   )
 }

@@ -6,7 +6,7 @@ import {
   type PopperProps
 } from '@mui/material'
 import { omit } from 'lodash'
-import { useCallback, useState, type FC } from 'react'
+import { useCallback, useState, type FC, type ReactNode } from 'react'
 
 import { isNotFalse } from '@takram/plateau-type-helpers'
 
@@ -70,15 +70,15 @@ const Arrow = styled('div')(({ theme }) => {
   }
 })
 
-export interface OverlayPopoverProps extends PopperProps {
+export interface OverlayPopperProps extends PopperProps {
   arrow?: boolean
   pinned?: boolean
   inset?: number
   onClose?: () => void
-  children: JSX.Element
+  children?: ReactNode
 }
 
-export const OverlayPopover: FC<OverlayPopoverProps> = ({
+export const OverlayPopper: FC<OverlayPopperProps> = ({
   arrow = true,
   pinned = false,
   inset = 1,

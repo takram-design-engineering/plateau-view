@@ -7,7 +7,7 @@ import { useId, type FC } from 'react'
 
 import {
   AppIconButton,
-  OverlayPopover,
+  OverlayPopper,
   SettingsIcon
 } from '@takram/plateau-ui-components'
 
@@ -31,9 +31,9 @@ export const SettingsButton: FC = () => {
       >
         <SettingsIcon />
       </AppIconButton>
-      <OverlayPopover {...popoverProps} inset={1.5}>
+      <OverlayPopper {...popoverProps} inset={1.5}>
         <SettingsPanel />
-      </OverlayPopover>
+      </OverlayPopper>
     </>
   )
 }
