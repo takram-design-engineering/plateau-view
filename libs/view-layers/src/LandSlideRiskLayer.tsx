@@ -1,6 +1,5 @@
 import { atom, useAtomValue, useSetAtom } from 'jotai'
 import { useEffect, useMemo, type FC } from 'react'
-import { type SetOptional } from 'type-fest'
 
 import { useCesium } from '@takram/plateau-cesium'
 import {
@@ -15,30 +14,40 @@ import {
 import { type LayerProps } from '@takram/plateau-layers'
 
 import {
-  createDatasetLayerBase,
+  createDatasetLayerModel,
   type DatasetLayerModel,
   type DatasetLayerModelParams
-} from './createDatasetLayerBase'
+} from './createDatasetLayerModel'
+import {
+  createMVTLayerState,
+  type MVTLayerState,
+  type MVTLayerStateParams
+} from './createMVTLayerState'
 import { LAND_SLIDE_RISK_LAYER } from './layerTypes'
 import { MVTLayerContent } from './MVTLayerContent'
+import { type ConfigurableLayerModel } from './types'
 import { useDatasetDatum } from './useDatasetDatum'
 import { useDatasetLayerTitle } from './useDatasetLayerTitle'
 
 export interface LandSlideRiskLayerModelParams
-  extends Omit<DatasetLayerModelParams, 'colorScheme'> {}
+  extends Omit<DatasetLayerModelParams, 'colorScheme'>,
+    MVTLayerStateParams {}
 
-export interface LandSlideRiskLayerModel extends DatasetLayerModel {
+export interface LandSlideRiskLayerModel
+  extends DatasetLayerModel,
+    MVTLayerState {
   colorSet: QualitativeColorSet
 }
 
 export function createLandSlideRiskLayer(
   params: LandSlideRiskLayerModelParams
-): SetOptional<LandSlideRiskLayerModel, 'id'> {
+): ConfigurableLayerModel<LandSlideRiskLayerModel> {
   return {
-    ...createDatasetLayerBase({
+    ...createDatasetLayerModel({
       ...params,
       colorScheme: landSlideRiskColorSet
     }),
+    ...createMVTLayerState(params),
     type: LAND_SLIDE_RISK_LAYER,
     colorSet: landSlideRiskColorSet
   }

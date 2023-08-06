@@ -3,12 +3,12 @@ import { fromPairs, uniq, without } from 'lodash'
 
 import { compose } from '@takram/plateau-cesium-helpers'
 import { featureSelectionAtom } from '@takram/plateau-datasets'
-import { layersAtom } from '@takram/plateau-layers'
+import { layersAtom, type LayerModel } from '@takram/plateau-layers'
 import { pedestrianSelectionAtom } from '@takram/plateau-pedestrian'
 import { atomsWithSelection } from '@takram/plateau-shared-states'
 import { isNotNullish } from '@takram/plateau-type-helpers'
 
-import { type PlateauTilesetLayerModel } from './createPlateauTilesetLayerBase'
+import { type PlateauTilesetLayerState } from './createPlateauTilesetLayerState'
 import { PEDESTRIAN_LAYER } from './layerTypes'
 import { type PedestrianLayerModel } from './PedestrianLayer'
 
@@ -16,7 +16,7 @@ export const pixelRatioAtom = atom(1)
 
 export const tilesetLayersAtom = atom(get =>
   get(layersAtom).filter(
-    (layer): layer is PlateauTilesetLayerModel =>
+    (layer): layer is Extract<LayerModel, PlateauTilesetLayerState> =>
       'isPlateauTilesetLayer' in layer
   )
 )

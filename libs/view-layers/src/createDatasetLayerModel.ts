@@ -1,12 +1,12 @@
 import { atom, type PrimitiveAtom } from 'jotai'
-import { type SetOptional } from 'type-fest'
 
 import { type LayerModelBase } from '@takram/plateau-layers'
 
 import {
-  createViewLayerBase,
+  createViewLayerModel,
   type ViewLayerModelParams
-} from './createViewLayerBase'
+} from './createViewLayerModel'
+import { type ConfigurableLayerModelBase } from './types'
 
 export interface DatasetLayerModelParams extends ViewLayerModelParams {
   municipalityCode: string
@@ -21,11 +21,11 @@ export interface DatasetLayerModel extends LayerModelBase {
   datumIdAtom: PrimitiveAtom<string | null>
 }
 
-export function createDatasetLayerBase(
+export function createDatasetLayerModel(
   params: DatasetLayerModelParams
-): Omit<SetOptional<DatasetLayerModel, 'id'>, 'type'> {
+): ConfigurableLayerModelBase<DatasetLayerModel> {
   return {
-    ...createViewLayerBase(params),
+    ...createViewLayerModel(params),
     isDatasetLayer: true,
     municipalityCode: params.municipalityCode,
     datasetId: params.datasetId,

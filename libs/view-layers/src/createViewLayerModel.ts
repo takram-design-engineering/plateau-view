@@ -1,10 +1,13 @@
 import { type BoundingSphere } from '@cesium/engine'
 import { atom } from 'jotai'
-import { type SetOptional } from 'type-fest'
 
 import { type LayerModelBase } from '@takram/plateau-layers'
 
-import { type LayerColorScheme, type LayerTitle } from './types'
+import {
+  type ConfigurableLayerModelBase,
+  type LayerColorScheme,
+  type LayerTitle
+} from './types'
 
 export interface ViewLayerModelParams {
   id?: string
@@ -16,9 +19,9 @@ export interface ViewLayerModel extends LayerModelBase {
   isViewLayer: true
 }
 
-export function createViewLayerBase(
+export function createViewLayerModel(
   params: ViewLayerModelParams
-): Omit<SetOptional<ViewLayerModel, 'id'>, 'type'> {
+): ConfigurableLayerModelBase<ViewLayerModel> {
   return {
     id: params.id,
     handleRef: {},

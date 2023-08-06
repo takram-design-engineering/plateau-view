@@ -1,10 +1,12 @@
 import { type BoundingSphere } from '@cesium/engine'
 import { type Atom, type PrimitiveAtom } from 'jotai'
+import { type SetOptional } from 'type-fest'
 
 import {
   type QualitativeColorSet,
   type QuantitativeColorMap
 } from '@takram/plateau-datasets'
+import { type LayerModelBase } from '@takram/plateau-layers'
 import { type LayerListItemProps } from '@takram/plateau-ui-components'
 
 import { type BridgeLayerModel } from './BridgeLayer'
@@ -39,6 +41,16 @@ import { type PedestrianLayerModel } from './PedestrianLayer'
 import { type RiverFloodingRiskLayerModel } from './RiverFloodingRiskLayer'
 import { type RoadLayerModel } from './RoadLayer'
 import { type UrbanPlanningLayerModel } from './UrbanPlanningLayer'
+
+export type ConfigurableLayerModel<T extends LayerModelBase> = SetOptional<
+  T,
+  'id'
+>
+
+export type ConfigurableLayerModelBase<T extends LayerModelBase> = Omit<
+  ConfigurableLayerModel<T>,
+  'type'
+>
 
 export type LayerTitle = LayerListItemProps['title']
 

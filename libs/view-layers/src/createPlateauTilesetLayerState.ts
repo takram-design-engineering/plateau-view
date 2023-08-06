@@ -1,5 +1,4 @@
 import { atom, type PrimitiveAtom } from 'jotai'
-import { type SetOptional } from 'type-fest'
 
 import { colorMapPlateau, type ColorMap } from '@takram/plateau-color-maps'
 import {
@@ -7,19 +6,14 @@ import {
   type TileFeatureIndex
 } from '@takram/plateau-datasets'
 
-import {
-  createDatasetLayerBase,
-  type DatasetLayerModel,
-  type DatasetLayerModelParams
-} from './createDatasetLayerBase'
+import { type ViewLayerModel } from './createViewLayerModel'
 import { type LayerColorScheme } from './types'
 
-export interface PlateauTilesetLayerModelParams
-  extends DatasetLayerModelParams {
+export interface PlateauTilesetLayerStateParams {
   hiddenFeatures?: readonly string[]
 }
 
-export interface PlateauTilesetLayerModel extends DatasetLayerModel {
+export interface PlateauTilesetLayerState {
   isPlateauTilesetLayer: true
   featureIndexAtom: PrimitiveAtom<TileFeatureIndex | null>
   hiddenFeaturesAtom: PrimitiveAtom<readonly string[] | null>
@@ -27,6 +21,7 @@ export interface PlateauTilesetLayerModel extends DatasetLayerModel {
   colorPropertyAtom: PrimitiveAtom<string | null>
   colorMapAtom: PrimitiveAtom<ColorMap>
   colorRangeAtom: PrimitiveAtom<number[]>
+  colorSchemeAtom: ViewLayerModel['colorSchemeAtom']
   opacityAtom: PrimitiveAtom<number>
 }
 
@@ -43,9 +38,9 @@ export type PlateauTilesetProperty = { name: string } & (
     }
 )
 
-export function createPlateauTilesetLayerBase(
-  params: PlateauTilesetLayerModelParams
-): Omit<SetOptional<PlateauTilesetLayerModel, 'id'>, 'type'> {
+export function createPlateauTilesetLayerState(
+  params: PlateauTilesetLayerStateParams
+): PlateauTilesetLayerState {
   const propertiesAtom = atom<readonly PlateauTilesetProperty[] | null>(null)
   const colorPropertyAtom = atom<string | null>(null)
   const colorMapAtom = atom<ColorMap>(colorMapPlateau)
@@ -69,10 +64,11 @@ export function createPlateauTilesetLayerBase(
   })
 
   return {
-    ...createDatasetLayerBase(params),
     isPlateauTilesetLayer: true,
     featureIndexAtom: atom<TileFeatureIndex | null>(null),
-    hiddenFeaturesAtom: atom<readonly string[] | null>(null),
+    hiddenFeaturesAtom: atom<readonly string[] | null>(
+      params.hiddenFeatures ?? null
+    ),
     propertiesAtom,
     colorPropertyAtom,
     colorMapAtom,

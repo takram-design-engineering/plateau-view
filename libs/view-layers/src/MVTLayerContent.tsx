@@ -9,7 +9,7 @@ import {
 } from '@takram/plateau-datasets'
 import { type LayerModelHandleRef } from '@takram/plateau-layers'
 
-import { type DatasetLayerModel } from './createDatasetLayerBase'
+import { type DatasetLayerModel } from './createDatasetLayerModel'
 import { pixelRatioAtom } from './states'
 import { useMVTMetadata } from './useMVTMetadata'
 

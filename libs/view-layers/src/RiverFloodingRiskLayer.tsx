@@ -1,6 +1,5 @@
 import { atom, useAtomValue, useSetAtom } from 'jotai'
 import { useEffect, type FC } from 'react'
-import { type SetOptional } from 'type-fest'
 
 import { useCesium } from '@takram/plateau-cesium'
 import { PlateauWaterSurfaceTileset } from '@takram/plateau-datasets'
@@ -12,25 +11,35 @@ import {
 import { type LayerProps } from '@takram/plateau-layers'
 
 import {
-  createPlateauTilesetLayerBase,
-  type PlateauTilesetLayerModel,
-  type PlateauTilesetLayerModelParams
-} from './createPlateauTilesetLayerBase'
+  createDatasetLayerModel,
+  type DatasetLayerModel,
+  type DatasetLayerModelParams
+} from './createDatasetLayerModel'
+import {
+  createPlateauTilesetLayerState,
+  type PlateauTilesetLayerState,
+  type PlateauTilesetLayerStateParams
+} from './createPlateauTilesetLayerState'
 import { RIVER_FLOODING_RISK_LAYER } from './layerTypes'
 import { PlateauTilesetLayerContent } from './PlateauTilesetLayerContent'
+import { type ConfigurableLayerModel } from './types'
 import { useDatasetDatum } from './useDatasetDatum'
 import { useDatasetLayerTitle } from './useDatasetLayerTitle'
 
 export interface RiverFloodingRiskLayerModelParams
-  extends PlateauTilesetLayerModelParams {}
+  extends DatasetLayerModelParams,
+    PlateauTilesetLayerStateParams {}
 
-export interface RiverFloodingRiskLayerModel extends PlateauTilesetLayerModel {}
+export interface RiverFloodingRiskLayerModel
+  extends DatasetLayerModel,
+    PlateauTilesetLayerState {}
 
 export function createRiverFloodingRiskLayer(
   params: RiverFloodingRiskLayerModelParams
-): SetOptional<RiverFloodingRiskLayerModel, 'id'> {
+): ConfigurableLayerModel<RiverFloodingRiskLayerModel> {
   return {
-    ...createPlateauTilesetLayerBase(params),
+    ...createDatasetLayerModel(params),
+    ...createPlateauTilesetLayerState(params),
     type: RIVER_FLOODING_RISK_LAYER,
     opacityAtom: atom(0.5)
   }
