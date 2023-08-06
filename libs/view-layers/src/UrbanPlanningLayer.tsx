@@ -52,7 +52,8 @@ export const UrbanPlanningLayer: FC<
   hiddenAtom,
   boundingSphereAtom,
   municipalityCode,
-  datumIdAtom
+  datumIdAtom,
+  opacityAtom
 }) => {
   const query = useMunicipalityDatasetsQuery({
     variables: {
@@ -91,10 +92,11 @@ export const UrbanPlanningLayer: FC<
   if (datum.format === PlateauDatasetFormat.Mvt) {
     return (
       <MVTLayerContent
+        handleRef={handleRef}
         url={datum.url}
         styles={styles}
         boundingSphereAtom={boundingSphereAtom}
-        handleRef={handleRef}
+        opacityAtom={opacityAtom}
       />
     )
   }

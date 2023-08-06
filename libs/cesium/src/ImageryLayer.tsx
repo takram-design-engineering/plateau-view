@@ -51,6 +51,9 @@ export const ImageryLayer = withEphemerality(
         }
       })
 
+      const scene = useCesium(({ scene }) => scene)
+      scene.requestRender()
+
       Object.assign(imageryLayer, options)
 
       // TODO: Re-assign handle when ref changes.

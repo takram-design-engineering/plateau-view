@@ -62,6 +62,7 @@ export const LandSlideRiskLayer: FC<
   boundingSphereAtom,
   municipalityCode,
   datumIdAtom,
+  opacityAtom,
   colorSet
 }) => {
   const query = useMunicipalityDatasetsQuery({
@@ -117,10 +118,11 @@ export const LandSlideRiskLayer: FC<
   if (datum.format === PlateauDatasetFormat.Mvt) {
     return (
       <MVTLayerContent
+        handleRef={handleRef}
         url={datum.url}
         styles={styles}
         boundingSphereAtom={boundingSphereAtom}
-        handleRef={handleRef}
+        opacityAtom={opacityAtom}
       />
     )
   }

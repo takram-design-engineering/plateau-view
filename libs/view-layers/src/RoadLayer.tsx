@@ -47,7 +47,8 @@ export const RoadLayer: FC<LayerProps<typeof ROAD_LAYER>> = ({
   hiddenAtom,
   boundingSphereAtom,
   municipalityCode,
-  datumIdAtom
+  datumIdAtom,
+  opacityAtom
 }) => {
   const query = useMunicipalityDatasetsQuery({
     variables: {
@@ -86,10 +87,11 @@ export const RoadLayer: FC<LayerProps<typeof ROAD_LAYER>> = ({
   if (datum.format === PlateauDatasetFormat.Mvt) {
     return (
       <MVTLayerContent
+        handleRef={handleRef}
         url={datum.url}
         styles={styles}
         boundingSphereAtom={boundingSphereAtom}
-        handleRef={handleRef}
+        opacityAtom={opacityAtom}
       />
     )
   }

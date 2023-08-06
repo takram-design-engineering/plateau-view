@@ -10,6 +10,7 @@ import {
 import { type LayerModelHandleRef } from '@takram/plateau-layers'
 
 import { type DatasetLayerModel } from './createDatasetLayerModel'
+import { type MVTLayerState } from './createMVTLayerState'
 import { pixelRatioAtom } from './states'
 import { useMVTMetadata } from './useMVTMetadata'
 
@@ -21,17 +22,19 @@ export interface MVTLayerContentStyle {
 }
 
 export interface MVTLayerContentProps
-  extends Pick<DatasetLayerModel, 'boundingSphereAtom'> {
+  extends Pick<DatasetLayerModel, 'boundingSphereAtom'>,
+    Pick<MVTLayerState, 'opacityAtom'> {
+  handleRef: LayerModelHandleRef
   url: string
   styles: readonly MVTLayerContentStyle[]
-  handleRef: LayerModelHandleRef
 }
 
 export const MVTLayerContent: FC<MVTLayerContentProps> = ({
+  handleRef,
   url,
   styles,
   boundingSphereAtom,
-  handleRef
+  opacityAtom
 }) => {
   const metadata = useMVTMetadata(url)
   const style = useMemo(() => {
@@ -62,6 +65,7 @@ export const MVTLayerContent: FC<MVTLayerContentProps> = ({
   }, [metadata, setBoundingSphere])
 
   const pixelRatio = useAtomValue(pixelRatioAtom)
+  const opacity = useAtomValue(opacityAtom)
 
   const ref = useRef<ImageryLayerHandle>(null)
   useEffect(() => {
@@ -83,6 +87,7 @@ export const MVTLayerContent: FC<MVTLayerContentProps> = ({
       pixelRatio={pixelRatio}
       rectangle={metadata.rectangle}
       maximumDataZoom={metadata.maximumZoom}
+      alpha={opacity}
     />
   )
 }

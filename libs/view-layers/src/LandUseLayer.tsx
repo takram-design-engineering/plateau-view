@@ -58,6 +58,7 @@ export const LandUseLayer: FC<LayerProps<typeof LAND_USE_LAYER>> = ({
   boundingSphereAtom,
   municipalityCode,
   datumIdAtom,
+  opacityAtom,
   colorSet
 }) => {
   const query = useMunicipalityDatasetsQuery({
@@ -113,10 +114,11 @@ export const LandUseLayer: FC<LayerProps<typeof LAND_USE_LAYER>> = ({
   if (datum.format === PlateauDatasetFormat.Mvt) {
     return (
       <MVTLayerContent
+        handleRef={handleRef}
         url={datum.url}
         styles={styles}
         boundingSphereAtom={boundingSphereAtom}
-        handleRef={handleRef}
+        opacityAtom={opacityAtom}
       />
     )
   }
