@@ -48,19 +48,9 @@ export interface SearchOptionsParams {
   skip?: boolean
 }
 
-export interface SearchOptions {
-  datasets: readonly DatasetSearchOption[]
-  buildings: readonly BuildingSearchOption[]
-  addresses: readonly AddressSearchOption[]
-  select: (option: SearchOption) => void
-}
-
-export function useSearchOptions({
+function useDatasetSearchOptions({
   skip = false
-}: SearchOptionsParams = {}): SearchOptions {
-  const layers = useAtomValue(layersAtom)
-  const findLayer = useFindLayer()
-
+}: SearchOptionsParams = {}): readonly DatasetSearchOption[] {
   const areas = useAtomValue(areasAtom)
   const query = useDatasetsQuery({
     variables:
@@ -84,7 +74,10 @@ export function useSearchOptions({
     skip: skip || areas == null
   })
 
-  const datasets = useMemo(() => {
+  const layers = useAtomValue(layersAtom)
+  const findLayer = useFindLayer()
+
+  return useMemo(() => {
     if (skip) {
       return []
     }
@@ -111,7 +104,12 @@ export function useSearchOptions({
         })) ?? []
     )
   }, [skip, query, layers, findLayer])
+}
 
+function useBuildingSearchOption({
+  skip = false
+}: SearchOptionsParams = {}): readonly BuildingSearchOption[] {
+  const layers = useAtomValue(layersAtom)
   const featureIndices = useAtomValue(
     useMemo(
       () =>
@@ -141,7 +139,7 @@ export function useSearchOptions({
     }
   }, [featureIndices])
 
-  const buildings = useMemo(
+  return useMemo(
     () => {
       if (skip) {
         return []
@@ -163,6 +161,18 @@ export function useSearchOptions({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [skip, featureIndices, featureIndicesKey]
   )
+}
+
+export interface SearchOptions {
+  datasets: readonly DatasetSearchOption[]
+  buildings: readonly BuildingSearchOption[]
+  addresses: readonly AddressSearchOption[]
+  select: (option: SearchOption) => void
+}
+
+export function useSearchOptions(options?: SearchOptionsParams): SearchOptions {
+  const datasets = useDatasetSearchOptions(options)
+  const buildings = useBuildingSearchOption(options)
 
   const scene = useCesium(({ scene }) => scene, { indirect: true })
   const addLayer = useSetAtom(addLayerAtom)
