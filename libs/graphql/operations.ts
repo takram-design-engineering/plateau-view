@@ -183,6 +183,7 @@ export type QueryDatasetsArgs = {
 }
 
 export type QueryMunicipalitiesArgs = {
+  datasetType?: InputMaybe<PlateauDatasetType>
   prefectureCode?: InputMaybe<Scalars['String']['input']>
 }
 
@@ -192,6 +193,10 @@ export type QueryMunicipalityArgs = {
 
 export type QueryPrefectureArgs = {
   code: Scalars['String']['input']
+}
+
+export type QueryPrefecturesArgs = {
+  datasetType?: InputMaybe<PlateauDatasetType>
 }
 
 export type PlateauPrefectureFragment = {
@@ -290,7 +295,9 @@ export type PlateauDatasetFragment =
   | PlateauDataset_PlateauBuildingDataset_Fragment
   | PlateauDataset_PlateauDefaultDataset_Fragment
 
-export type PrefecturesQueryVariables = Exact<{ [key: string]: never }>
+export type PrefecturesQueryVariables = Exact<{
+  datasetType?: InputMaybe<PlateauDatasetType>
+}>
 
 export type PrefecturesQuery = {
   __typename?: 'Query'
@@ -304,6 +311,7 @@ export type PrefecturesQuery = {
 
 export type PrefectureMunicipalitiesQueryVariables = Exact<{
   prefectureCode: Scalars['String']['input']
+  datasetType?: InputMaybe<PlateauDatasetType>
 }>
 
 export type PrefectureMunicipalitiesQuery = {
@@ -560,8 +568,8 @@ export const PlateauDatasetFragmentDoc = gql`
   ${PlateauDatasetDatumFragmentDoc}
 `
 export const PrefecturesDocument = gql`
-  query prefectures {
-    prefectures {
+  query prefectures($datasetType: PlateauDatasetType) {
+    prefectures(datasetType: $datasetType) {
       ...PlateauPrefecture
     }
   }
@@ -580,6 +588,7 @@ export const PrefecturesDocument = gql`
  * @example
  * const { data, loading, error } = usePrefecturesQuery({
  *   variables: {
+ *      datasetType: // value for 'datasetType'
  *   },
  * });
  */
@@ -616,8 +625,11 @@ export type PrefecturesQueryResult = Apollo.QueryResult<
   PrefecturesQueryVariables
 >
 export const PrefectureMunicipalitiesDocument = gql`
-  query prefectureMunicipalities($prefectureCode: String!) {
-    municipalities(prefectureCode: $prefectureCode) {
+  query prefectureMunicipalities(
+    $prefectureCode: String!
+    $datasetType: PlateauDatasetType
+  ) {
+    municipalities(prefectureCode: $prefectureCode, datasetType: $datasetType) {
       ...PlateauMunicipality
     }
   }
@@ -637,6 +649,7 @@ export const PrefectureMunicipalitiesDocument = gql`
  * const { data, loading, error } = usePrefectureMunicipalitiesQuery({
  *   variables: {
  *      prefectureCode: // value for 'prefectureCode'
+ *      datasetType: // value for 'datasetType'
  *   },
  * });
  */

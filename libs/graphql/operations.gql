@@ -1,11 +1,14 @@
-query prefectures {
-  prefectures {
+query prefectures($datasetType: PlateauDatasetType) {
+  prefectures(datasetType: $datasetType) {
     ...PlateauPrefecture
   }
 }
 
-query prefectureMunicipalities($prefectureCode: String!) {
-  municipalities(prefectureCode: $prefectureCode) {
+query prefectureMunicipalities(
+  $prefectureCode: String!
+  $datasetType: PlateauDatasetType
+) {
+  municipalities(prefectureCode: $prefectureCode, datasetType: $datasetType) {
     ...PlateauMunicipality
   }
 }

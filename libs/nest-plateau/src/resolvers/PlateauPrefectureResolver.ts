@@ -1,29 +1,26 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { Args, Query, Resolver } from '@nestjs/graphql'
-import { uniq } from 'lodash'
-import invariant from 'tiny-invariant'
 
+import {
+  PlateauDatasetTypeEnum,
+  type PlateauDatasetType
+} from '../dto/PlateauDatasetType'
 import { PlateauPrefecture } from '../dto/PlateauPrefecture'
-import { PlateauMunicipalityService } from '../PlateauMunicipalityService'
+import { PlateauPrefectureService } from '../PlateauPrefectureService'
 
 @Injectable()
 @Resolver()
 export class PlateauPrefectureResolver {
-  constructor(
-    private readonly municipalityService: PlateauMunicipalityService
-  ) {}
+  constructor(private readonly prefectureService: PlateauPrefectureService) {}
 
   @Query(() => [PlateauPrefecture])
-  async prefectures(): Promise<PlateauPrefecture[]> {
-    const municipalities = await this.municipalityService.findAll()
-    const prefectureCodes = uniq(
-      municipalities.map(municipality => {
-        const prefecture = municipality.parents[municipality.parents.length - 1]
-        invariant(prefecture.type === 'prefecture')
-        return prefecture.code
-      })
-    )
-    return prefectureCodes.sort().map(code => PlateauPrefecture.values[code])
+  async prefectures(
+    @Args('datasetType', { type: () => PlateauDatasetTypeEnum, nullable: true })
+    datasetType?: PlateauDatasetType | null
+  ): Promise<PlateauPrefecture[]> {
+    return await this.prefectureService.findAll({
+      datasetType: datasetType ?? undefined
+    })
   }
 
   @Query(() => PlateauPrefecture, { nullable: true })
@@ -31,6 +28,6 @@ export class PlateauPrefectureResolver {
     if (!/^\d{2}$/.test(code)) {
       throw new BadRequestException('Illegal prefecture code')
     }
-    return PlateauPrefecture.values[code]
+    return this.prefectureService.findOne({ code })
   }
 }
