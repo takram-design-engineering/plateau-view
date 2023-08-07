@@ -18,6 +18,7 @@ import { Scrollable } from './Scrollable'
 const Root = styled(List)({
   position: 'relative',
   padding: 0,
+  height: '100%',
   maxHeight: 'calc(100% - 50px)'
 }) as unknown as typeof List // For generics
 

@@ -1,4 +1,3 @@
-import { styled } from '@mui/material'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { useCallback, useState, type FC } from 'react'
 
@@ -7,14 +6,13 @@ import {
   layerAtomsAtom,
   LayerList
 } from '@takram/plateau-layers'
-import { LayerList as LayerListComponent } from '@takram/plateau-ui-components'
+import {
+  AutoHeight,
+  LayerList as LayerListComponent
+} from '@takram/plateau-ui-components'
 import { ViewLayerListItem } from '@takram/plateau-view-layers'
 
 import { SearchAutocompletePanel } from './MainPanel/SearchAutocompletePanel'
-
-const StyledLayerList = styled(LayerListComponent)(({ theme }) => ({
-  maxHeight: `calc(100% - ${theme.spacing(6)})`
-}))
 
 export const MainPanel: FC = () => {
   const layerAtoms = useAtomValue(layerAtomsAtom)
@@ -32,16 +30,18 @@ export const MainPanel: FC = () => {
   }, [clearLayerSelection])
 
   return (
-    <SearchAutocompletePanel>
-      <StyledLayerList
-        footer={`${layerAtoms.length}項目`}
-        open={layersOpen}
-        onOpen={handleLayersOpen}
-        onClose={handleLayersClose}
-        onMouseDown={handleLayersMouseDown}
-      >
-        <LayerList itemComponent={ViewLayerListItem} unmountWhenEmpty />
-      </StyledLayerList>
-    </SearchAutocompletePanel>
+    <AutoHeight>
+      <SearchAutocompletePanel>
+        <LayerListComponent
+          footer={`${layerAtoms.length}項目`}
+          open={layersOpen}
+          onOpen={handleLayersOpen}
+          onClose={handleLayersClose}
+          onMouseDown={handleLayersMouseDown}
+        >
+          <LayerList itemComponent={ViewLayerListItem} unmountWhenEmpty />
+        </LayerListComponent>
+      </SearchAutocompletePanel>
+    </AutoHeight>
   )
 }

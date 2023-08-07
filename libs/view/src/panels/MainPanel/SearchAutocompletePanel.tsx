@@ -4,7 +4,8 @@ import {
   Divider,
   ListItemSecondaryAction,
   ListSubheader,
-  MenuList
+  MenuList,
+  styled
 } from '@mui/material'
 import { useAtomValue } from 'jotai'
 import {
@@ -27,6 +28,7 @@ import {
   DatasetIcon,
   EntityTitleButton,
   FloatingPanel,
+  Scrollable,
   SearchAutocomplete,
   Shortcut,
   testShortcut,
@@ -36,6 +38,10 @@ import {
 } from '@takram/plateau-ui-components'
 
 import { useSearchOptions } from './useSearchOptions'
+
+const StyledScrollable = styled(Scrollable)(({ theme }) => ({
+  maxHeight: `calc(100% - ${theme.spacing(6)} - 1px)`
+}))
 
 const OptionItem: FC<{
   iconComponent: EntityTitleButtonProps['iconComponent']
@@ -186,71 +192,73 @@ export const SearchAutocompletePanel: FC<SearchAutocompletePanelProps> = ({
           {!focused ? (
             children
           ) : (
-            <MenuList component='div' dense>
-              {searchOptions.datasets.length > 0 && [
-                <ListSubheader component='div' key='datasets'>
-                  周辺のデータセット
-                  <ListItemSecondaryAction>
-                    <FilterButton
-                      filter='dataset'
-                      onClick={handleClickFilter}
-                    />
-                  </ListItemSecondaryAction>
-                </ListSubheader>,
-                ...searchOptions.datasets
-                  .slice(0, 4)
-                  .map((option, index) => (
-                    <OptionItem
-                      key={`datasets:${index}`}
-                      iconComponent={DatasetIcon}
-                      option={option}
-                      onClick={handleClickOption}
-                    />
-                  ))
-              ]}
-              {searchOptions.buildings.length > 0 && [
-                <ListSubheader key='buildings'>
-                  周辺の建築物
-                  <ListItemSecondaryAction>
-                    <FilterButton
-                      filter='building'
-                      onClick={handleClickFilter}
-                    />
-                  </ListItemSecondaryAction>
-                </ListSubheader>,
-                ...searchOptions.buildings
-                  .slice(0, 4)
-                  .map((option, index) => (
-                    <OptionItem
-                      key={`buildings:${index}`}
-                      iconComponent={BuildingIcon}
-                      option={option}
-                      onClick={handleClickOption}
-                    />
-                  ))
-              ]}
-              {searchOptions.addresses.length > 0 && [
-                <ListSubheader key='addresses'>
-                  周辺の住所
-                  <ListItemSecondaryAction>
-                    <FilterButton
-                      filter='address'
-                      onClick={handleClickFilter}
-                    />
-                  </ListItemSecondaryAction>
-                </ListSubheader>,
-                ...searchOptions.addresses
-                  .slice(0, 4)
-                  .map((option, index) => (
-                    <OptionItem
-                      key={`addresses:${index}`}
-                      iconComponent={AddressIcon}
-                      option={option}
-                      onClick={handleClickOption}
-                    />
-                  ))
-              ]}
-            </MenuList>
+            <StyledScrollable>
+              <MenuList component='div' dense>
+                {searchOptions.datasets.length > 0 && [
+                  <ListSubheader component='div' key='datasets'>
+                    周辺のデータセット
+                    <ListItemSecondaryAction>
+                      <FilterButton
+                        filter='dataset'
+                        onClick={handleClickFilter}
+                      />
+                    </ListItemSecondaryAction>
+                  </ListSubheader>,
+                  ...searchOptions.datasets
+                    .slice(0, 4)
+                    .map((option, index) => (
+                      <OptionItem
+                        key={`datasets:${index}`}
+                        iconComponent={DatasetIcon}
+                        option={option}
+                        onClick={handleClickOption}
+                      />
+                    ))
+                ]}
+                {searchOptions.buildings.length > 0 && [
+                  <ListSubheader key='buildings'>
+                    周辺の建築物
+                    <ListItemSecondaryAction>
+                      <FilterButton
+                        filter='building'
+                        onClick={handleClickFilter}
+                      />
+                    </ListItemSecondaryAction>
+                  </ListSubheader>,
+                  ...searchOptions.buildings
+                    .slice(0, 4)
+                    .map((option, index) => (
+                      <OptionItem
+                        key={`buildings:${index}`}
+                        iconComponent={BuildingIcon}
+                        option={option}
+                        onClick={handleClickOption}
+                      />
+                    ))
+                ]}
+                {searchOptions.addresses.length > 0 && [
+                  <ListSubheader key='addresses'>
+                    周辺の住所
+                    <ListItemSecondaryAction>
+                      <FilterButton
+                        filter='address'
+                        onClick={handleClickFilter}
+                      />
+                    </ListItemSecondaryAction>
+                  </ListSubheader>,
+                  ...searchOptions.addresses
+                    .slice(0, 4)
+                    .map((option, index) => (
+                      <OptionItem
+                        key={`addresses:${index}`}
+                        iconComponent={AddressIcon}
+                        option={option}
+                        onClick={handleClickOption}
+                      />
+                    ))
+                ]}
+              </MenuList>
+            </StyledScrollable>
           )}
         </SearchAutocomplete>
       </FloatingPanel>
