@@ -17,9 +17,9 @@ import {
   ROAD_LAYER
 } from '@takram/plateau-view-layers'
 
-import { datasetTypeLayers } from '../../constants/datasetTypeLayers'
-import { datasetTypeNames } from '../../constants/datasetTypeNames'
-import { showDataFormatsAtom } from '../../states/app'
+import { datasetTypeLayers } from '../constants/datasetTypeLayers'
+import { datasetTypeNames } from '../constants/datasetTypeNames'
+import { showDataFormatsAtom } from '../states/app'
 
 export interface DefaultDatasetButtonProps {
   dataset: PlateauDatasetFragment

@@ -22,7 +22,7 @@ import {
 import {
   type COLOR_SCHEME_SELECTION,
   type SelectionGroup
-} from '../../states/selection'
+} from '../states/selection'
 
 const QuantitativeContent: FC<{
   colorScheme: Extract<LayerColorScheme, { type: 'quantitative' }>

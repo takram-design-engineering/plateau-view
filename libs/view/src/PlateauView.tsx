@@ -16,8 +16,6 @@ import {
   PEDESTRIAN_LAYER
 } from '@takram/plateau-view-layers'
 
-import { AppHeader } from './containers/AppHeader'
-import { AppOverlay } from './containers/AppOverlay'
 import { Areas } from './containers/Areas'
 import { Canvas } from './containers/Canvas'
 import { Environments } from './containers/Environments'
@@ -31,6 +29,8 @@ import { SelectionBoundingSphere } from './containers/SelectionBoundingSphere'
 import { SelectionCoordinator } from './containers/SelectionCoordinator'
 import { Terrains } from './containers/Terrains'
 import { ToolMachineEvents } from './containers/ToolMachineEvents'
+import { AppHeader } from './overlay/AppHeader'
+import { AppOverlay } from './overlay/AppOverlay'
 import { readyAtom } from './states/app'
 
 const initialDestination = Cartesian3.fromDegrees(139.755, 35.675, 1000)

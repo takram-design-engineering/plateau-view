@@ -11,7 +11,7 @@ import {
 import {
   type SCREEN_SPACE_SELECTION,
   type SelectionGroup
-} from '../../states/selection'
+} from '../states/selection'
 
 export interface TileFeaturePropertiesSectionProps {
   values: (SelectionGroup & {

@@ -3,14 +3,14 @@ import { type FC } from 'react'
 
 import { AppBar, Space } from '@takram/plateau-ui-components'
 
-import { CameraButtons } from '../panels/CameraButtons'
-import { DateControlButton } from '../panels/DateControlButton'
-import { EnvironmentSelect } from '../panels/EnvironmentSelect'
-import { LocationBreadcrumbs } from '../panels/LocationBreadcrumbs'
-import { MainMenuButton } from '../panels/MainMenuButton'
-import { SettingsButton } from '../panels/SettingsButton'
-import { ToolButtons } from '../panels/ToolButtons'
 import { hideAppOverlayAtom } from '../states/app'
+import { CameraButtons } from './CameraButtons'
+import { DateControlButton } from './DateControlButton'
+import { EnvironmentSelect } from './EnvironmentSelect'
+import { LocationBreadcrumbs } from './LocationBreadcrumbs'
+import { MainMenuButton } from './MainMenuButton'
+import { SettingsButton } from './SettingsButton'
+import { ToolButtons } from './ToolButtons'
 
 export const AppHeader: FC = () => {
   const hidden = useAtomValue(hideAppOverlayAtom)

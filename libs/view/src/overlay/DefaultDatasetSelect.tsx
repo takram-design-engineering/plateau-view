@@ -29,9 +29,9 @@ import {
   type DatasetLayerModel
 } from '@takram/plateau-view-layers'
 
-import { datasetTypeLayers } from '../../constants/datasetTypeLayers'
-import { datasetTypeNames } from '../../constants/datasetTypeNames'
-import { showDataFormatsAtom } from '../../states/app'
+import { datasetTypeLayers } from '../constants/datasetTypeLayers'
+import { datasetTypeNames } from '../constants/datasetTypeNames'
+import { showDataFormatsAtom } from '../states/app'
 
 interface Params {
   datasetId: string

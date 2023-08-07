@@ -25,8 +25,8 @@ import { isNotNullish } from '@takram/plateau-type-helpers'
 import { type SearchOption } from '@takram/plateau-ui-components'
 import { BUILDING_LAYER, createViewLayer } from '@takram/plateau-view-layers'
 
-import { datasetTypeLayers } from '../../constants/datasetTypeLayers'
-import { areasAtom } from '../../states/address'
+import { datasetTypeLayers } from '../constants/datasetTypeLayers'
+import { areasAtom } from '../states/address'
 
 export interface DatasetSearchOption extends SearchOption {
   type: 'dataset'

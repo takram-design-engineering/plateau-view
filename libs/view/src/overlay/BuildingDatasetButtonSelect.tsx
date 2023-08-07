@@ -24,8 +24,8 @@ import {
 import { ContextButtonSelect, SelectItem } from '@takram/plateau-ui-components'
 import { BUILDING_LAYER, createViewLayer } from '@takram/plateau-view-layers'
 
-import { datasetTypeNames } from '../../constants/datasetTypeNames'
-import { showDataFormatsAtom } from '../../states/app'
+import { datasetTypeNames } from '../constants/datasetTypeNames'
+import { showDataFormatsAtom } from '../states/app'
 
 interface Params {
   version: string | null

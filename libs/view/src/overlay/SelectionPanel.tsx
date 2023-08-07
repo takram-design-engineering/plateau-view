@@ -7,6 +7,10 @@ import { PEDESTRIAN_OBJECT } from '@takram/plateau-pedestrian'
 import { Inspector } from '@takram/plateau-ui-components'
 import { PEDESTRIAN_LAYER } from '@takram/plateau-view-layers'
 
+import { ColorSchemeContent } from '../selection/ColorSchemeContent'
+import { LayerContent } from '../selection/LayerContent'
+import { PedestrianLayerContent } from '../selection/PedestrianLayerContent'
+import { TileFeatureContent } from '../selection/TileFeatureContent'
 import { inspectorWidthAtom, pedestrianInspectorWidthAtom } from '../states/app'
 import {
   COLOR_SCHEME_SELECTION,
@@ -14,10 +18,6 @@ import {
   SCREEN_SPACE_SELECTION,
   selectionGroupsAtom
 } from '../states/selection'
-import { ColorSchemeContent } from './SelectionPanel/ColorSchemeContent'
-import { LayerContent } from './SelectionPanel/LayerContent'
-import { PedestrianLayerContent } from './SelectionPanel/PedestrianLayerContent'
-import { TileFeatureContent } from './SelectionPanel/TileFeatureContent'
 
 export const SelectionPanel: FC = () => {
   let content = null

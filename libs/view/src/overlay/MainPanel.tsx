@@ -12,7 +12,7 @@ import {
 } from '@takram/plateau-ui-components'
 import { ViewLayerListItem } from '@takram/plateau-view-layers'
 
-import { SearchAutocompletePanel } from './MainPanel/SearchAutocompletePanel'
+import { SearchAutocompletePanel } from './SearchAutocompletePanel'
 
 export const MainPanel: FC = () => {
   const layerAtoms = useAtomValue(layerAtomsAtom)

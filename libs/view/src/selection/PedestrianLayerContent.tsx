@@ -36,7 +36,7 @@ import {
   type LAYER_SELECTION,
   type SCREEN_SPACE_SELECTION,
   type SelectionGroup
-} from '../../states/selection'
+} from '../states/selection'
 
 const StreetViewContainer = styled('div')(({ theme }) => ({
   position: 'relative',

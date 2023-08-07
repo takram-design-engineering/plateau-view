@@ -27,9 +27,9 @@ import {
 } from '@takram/plateau-ui-components'
 
 import { datasetTypeOrder } from '../constants/datasetTypeOrder'
-import { BuildingDatasetButtonSelect } from './LocationContextBar/BuildingDatasetButtonSelect'
-import { DefaultDatasetButton } from './LocationContextBar/DefaultDatasetButton'
-import { DefaultDatasetSelect } from './LocationContextBar/DefaultDatasetSelect'
+import { BuildingDatasetButtonSelect } from './BuildingDatasetButtonSelect'
+import { DefaultDatasetButton } from './DefaultDatasetButton'
+import { DefaultDatasetSelect } from './DefaultDatasetSelect'
 
 export interface LocationBreadcrumbItemProps {
   area: Area

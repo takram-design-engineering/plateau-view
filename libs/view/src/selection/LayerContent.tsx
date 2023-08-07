@@ -27,10 +27,7 @@ import {
 } from '@takram/plateau-ui-components'
 import { layerTypeIcons, layerTypeNames } from '@takram/plateau-view-layers'
 
-import {
-  type LAYER_SELECTION,
-  type SelectionGroup
-} from '../../states/selection'
+import { type LAYER_SELECTION, type SelectionGroup } from '../states/selection'
 import { LayerColorSection } from './LayerColorSection'
 import { LayerHiddenFeaturesSection } from './LayerHiddenFeaturesSection'
 import { LayerOpacitySection } from './LayerOpacitySection'
