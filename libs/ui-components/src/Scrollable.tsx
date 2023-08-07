@@ -24,13 +24,17 @@ export interface ScrollableProps
 }
 
 export const Scrollable = forwardRef<HTMLDivElement, ScrollableProps>(
-  ({ options, events, defer, ...props }, forwardedRef) => {
+  ({ options, events, defer, children, ...props }, forwardedRef) => {
     const ref = useRef<HTMLDivElement>(null)
     const [initialize] = useOverlayScrollbars({ options, events, defer })
     useEffect(() => {
       invariant(ref.current != null)
       initialize(ref.current)
     }, [initialize])
-    return <Root ref={mergeRefs([ref, forwardedRef])} {...props} />
+    return (
+      <Root ref={mergeRefs([ref, forwardedRef])} {...props}>
+        <div>{children}</div>
+      </Root>
+    )
   }
 )

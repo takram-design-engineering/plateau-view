@@ -127,8 +127,8 @@ type PlateauPrefecture implements PlateauArea {
 
 type Query {
   datasets(excludeTypes: [PlateauDatasetType!], includeTypes: [PlateauDatasetType!], municipalityCodes: [String!], searchTokens: [String!]): [PlateauDataset!]!
-  municipalities(prefectureCode: String): [PlateauMunicipality!]!
+  municipalities(datasetType: PlateauDatasetType, prefectureCode: String): [PlateauMunicipality!]!
   municipality(code: String!): PlateauMunicipality
   prefecture(code: String!): PlateauPrefecture
-  prefectures: [PlateauPrefecture!]!
+  prefectures(datasetType: PlateauDatasetType): [PlateauPrefecture!]!
 }

@@ -1,4 +1,4 @@
-import { ImageryProviderBase } from './ImageryProviderBase'
+import { ImageryProviderBase } from '@takram/plateau-cesium-helpers'
 
 export class DefaultImageryProvider extends ImageryProviderBase {
   readonly ready = false

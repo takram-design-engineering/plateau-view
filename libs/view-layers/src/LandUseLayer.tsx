@@ -1,6 +1,5 @@
 import { atom, useAtomValue, useSetAtom } from 'jotai'
 import { useEffect, useMemo, type FC } from 'react'
-import { type SetOptional } from 'type-fest'
 
 import { useCesium } from '@takram/plateau-cesium'
 import {
@@ -15,41 +14,51 @@ import {
 import { type LayerProps } from '@takram/plateau-layers'
 
 import {
-  createDatasetLayerBase,
+  createDatasetLayerModel,
   type DatasetLayerModel,
   type DatasetLayerModelParams
-} from './createDatasetLayerBase'
+} from './createDatasetLayerModel'
+import {
+  createMVTLayerState,
+  type MVTLayerState,
+  type MVTLayerStateParams
+} from './createMVTLayerState'
 import { LAND_USE_LAYER } from './layerTypes'
 import { MVTLayerContent } from './MVTLayerContent'
+import { type ConfigurableLayerModel } from './types'
 import { useDatasetDatum } from './useDatasetDatum'
 import { useDatasetLayerTitle } from './useDatasetLayerTitle'
 
 export interface LandUseLayerModelParams
-  extends Omit<DatasetLayerModelParams, 'colorScheme'> {}
+  extends Omit<DatasetLayerModelParams, 'colorScheme'>,
+    MVTLayerStateParams {}
 
-export interface LandUseLayerModel extends DatasetLayerModel {
+export interface LandUseLayerModel extends DatasetLayerModel, MVTLayerState {
   colorSet: QualitativeColorSet
 }
 
 export function createLandUseLayer(
   params: LandUseLayerModelParams
-): SetOptional<LandUseLayerModel, 'id'> {
+): ConfigurableLayerModel<LandUseLayerModel> {
   return {
-    ...createDatasetLayerBase({
+    ...createDatasetLayerModel({
       ...params,
       colorScheme: landUseColorSet
     }),
+    ...createMVTLayerState(params),
     type: LAND_USE_LAYER,
     colorSet: landUseColorSet
   }
 }
 
 export const LandUseLayer: FC<LayerProps<typeof LAND_USE_LAYER>> = ({
+  handleRef,
   titleAtom,
   hiddenAtom,
   boundingSphereAtom,
   municipalityCode,
   datumIdAtom,
+  opacityAtom,
   colorSet
 }) => {
   const query = useMunicipalityDatasetsQuery({
@@ -105,9 +114,11 @@ export const LandUseLayer: FC<LayerProps<typeof LAND_USE_LAYER>> = ({
   if (datum.format === PlateauDatasetFormat.Mvt) {
     return (
       <MVTLayerContent
+        handleRef={handleRef}
         url={datum.url}
         styles={styles}
         boundingSphereAtom={boundingSphereAtom}
+        opacityAtom={opacityAtom}
       />
     )
   }

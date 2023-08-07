@@ -1,4 +1,4 @@
-import { List } from '@mui/material'
+import { List, type ListProps } from '@mui/material'
 import { useAtomValue } from 'jotai'
 import { type FC } from 'react'
 
@@ -6,14 +6,21 @@ import { type QualitativeColorSet } from '@takram/plateau-datasets'
 
 import { ColorSetListItem } from './ColorSetListItem'
 
-export const ColorSetList: FC<{
+export interface ColorSetListProps extends ListProps {
   colorsAtom: QualitativeColorSet['colorAtomsAtom']
   continuous?: boolean
   onChange?: () => void
-}> = ({ colorsAtom, continuous = false, onChange }) => {
+}
+
+export const ColorSetList: FC<ColorSetListProps> = ({
+  colorsAtom,
+  continuous = false,
+  onChange,
+  ...props
+}) => {
   const colorsAtoms = useAtomValue(colorsAtom)
   return (
-    <List disablePadding>
+    <List disablePadding {...props}>
       {colorsAtoms.map(colorAtom => (
         <ColorSetListItem
           key={`${colorAtom}`}

@@ -17,8 +17,12 @@ import { animate, useMotionValue, usePresence } from 'framer-motion'
 import { useEffect, useMemo, type FC } from 'react'
 import invariant from 'tiny-invariant'
 
-import { useCesium, useInstance, usePreRender } from '@takram/plateau-cesium'
-import { useReady } from '@takram/plateau-cesium-helpers'
+import {
+  useCesium,
+  useInstance,
+  usePreRender,
+  usePrimitiveReady
+} from '@takram/plateau-cesium'
 
 import { computeCartographicToCartesian } from './computeCartographicToCartesian'
 import { createQuaternionFromHeadingPitch } from './createQuaternionFromHeadingPitch'
@@ -113,7 +117,7 @@ export const StreetViewFrustum: FC<StreetViewFrustumProps> = ({
   }, [scene])
 
   const motionVisibility = useMotionValue(0)
-  const ready = useReady(primitive)
+  const ready = usePrimitiveReady(primitive)
   const [present, safeToRemove] = usePresence()
   useEffect(() => {
     if (!ready) {

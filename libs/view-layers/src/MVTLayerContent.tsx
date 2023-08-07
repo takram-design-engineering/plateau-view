@@ -1,13 +1,16 @@
 import { BoundingSphere } from '@cesium/engine'
 import { useAtomValue, useSetAtom } from 'jotai'
-import { useEffect, useMemo, type FC } from 'react'
+import { useEffect, useMemo, useRef, type FC } from 'react'
 
+import { type ImageryLayerHandle } from '@takram/plateau-cesium'
 import {
   JapanSeaLevelEllipsoid,
   VectorImageryLayer
 } from '@takram/plateau-datasets'
+import { type LayerModelHandleRef } from '@takram/plateau-layers'
 
-import { type DatasetLayerModel } from './createDatasetLayerBase'
+import { type DatasetLayerModel } from './createDatasetLayerModel'
+import { type MVTLayerState } from './createMVTLayerState'
 import { pixelRatioAtom } from './states'
 import { useMVTMetadata } from './useMVTMetadata'
 
@@ -19,15 +22,19 @@ export interface MVTLayerContentStyle {
 }
 
 export interface MVTLayerContentProps
-  extends Pick<DatasetLayerModel, 'boundingSphereAtom'> {
+  extends Pick<DatasetLayerModel, 'boundingSphereAtom'>,
+    Pick<MVTLayerState, 'opacityAtom'> {
+  handleRef: LayerModelHandleRef
   url: string
   styles: readonly MVTLayerContentStyle[]
 }
 
 export const MVTLayerContent: FC<MVTLayerContentProps> = ({
+  handleRef,
   url,
   styles,
-  boundingSphereAtom
+  boundingSphereAtom,
+  opacityAtom
 }) => {
   const metadata = useMVTMetadata(url)
   const style = useMemo(() => {
@@ -58,17 +65,29 @@ export const MVTLayerContent: FC<MVTLayerContentProps> = ({
   }, [metadata, setBoundingSphere])
 
   const pixelRatio = useAtomValue(pixelRatioAtom)
+  const opacity = useAtomValue(opacityAtom)
+
+  const ref = useRef<ImageryLayerHandle>(null)
+  useEffect(() => {
+    handleRef.current = {
+      bringToFront: () => {
+        ref.current?.bringToFront()
+      }
+    }
+  }, [handleRef])
 
   if (metadata == null) {
     return null
   }
   return (
     <VectorImageryLayer
+      ref={ref}
       url={url}
       style={style}
       pixelRatio={pixelRatio}
       rectangle={metadata.rectangle}
       maximumDataZoom={metadata.maximumZoom}
+      alpha={opacity}
     />
   )
 }

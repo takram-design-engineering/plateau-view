@@ -12,9 +12,10 @@ import {
   type PlateauTilesetProps,
   type QualitativeColorSet
 } from '@takram/plateau-datasets'
+import { type LayerModelBase } from '@takram/plateau-layers'
 import { isNotNullish } from '@takram/plateau-type-helpers'
 
-import { type PlateauTilesetLayerModel } from './createPlateauTilesetLayerBase'
+import { type PlateauTilesetLayerState } from './createPlateauTilesetLayerState'
 import { useEvaluateTileFeatureColor } from './useEvaluateTileFeatureColor'
 
 interface QualitativeProperty {
@@ -35,16 +36,16 @@ const qualitativeProperties: QualitativeProperty[] = [
 
 export type PlateauTilesetLayerContentProps<
   Props extends PlateauTilesetProps & RefAttributes<Cesium3DTileset>
-> = Pick<
-  PlateauTilesetLayerModel,
-  | 'boundingSphereAtom'
-  | 'featureIndexAtom'
-  | 'hiddenFeaturesAtom'
-  | 'propertiesAtom'
-  | 'colorPropertyAtom'
-  | 'colorSchemeAtom'
-  | 'opacityAtom'
-> &
+> = Pick<LayerModelBase, 'boundingSphereAtom'> &
+  Pick<
+    PlateauTilesetLayerState,
+    | 'featureIndexAtom'
+    | 'hiddenFeaturesAtom'
+    | 'propertiesAtom'
+    | 'colorPropertyAtom'
+    | 'colorSchemeAtom'
+    | 'opacityAtom'
+  > &
   Props & {
     url: string
     component: ComponentType<Props>

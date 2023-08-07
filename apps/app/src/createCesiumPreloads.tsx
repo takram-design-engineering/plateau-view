@@ -1,10 +1,11 @@
 import { readdir } from 'fs/promises'
 import { createRequire } from 'node:module'
 import path from 'path'
-import { Storage } from '@google-cloud/storage'
+import { Storage, type File, type FileMetadata } from '@google-cloud/storage'
 import { parseISO } from 'date-fns'
 import { minimatch } from 'minimatch'
 import invariant from 'tiny-invariant'
+import { type SetRequired } from 'type-fest'
 
 import { isNotFalse } from '@takram/plateau-type-helpers'
 
@@ -55,6 +56,12 @@ export async function createCesiumPreloads(): Promise<JSX.Element[]> {
       prefix: `${url.pathname.slice(1)}/Worker`
     })
     workerFiles = files
+      .filter(
+        (
+          file
+        ): file is File & { metadata: SetRequired<FileMetadata, 'updated'> } =>
+          file?.metadata.updated != null
+      )
       .sort(
         ({ metadata: a }, { metadata: b }) =>
           +parseISO(b.updated) - +parseISO(a.updated)

@@ -109,7 +109,7 @@ const Page: NextPage = () => {
       >
         <Map
           ref={mapRef}
-          mapLib={maplibre}
+          mapLib={maplibre as any}
           mapStyle={mapStyle as MapProps['mapStyle']}
           minZoom={4}
           maxZoom={24}

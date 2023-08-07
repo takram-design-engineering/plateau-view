@@ -1,13 +1,14 @@
 import { Cartesian3, Color } from '@cesium/engine'
 import { useAtomValue } from 'jotai'
-import { type FC } from 'react'
+import { useEffect, useState, type FC } from 'react'
 import invariant from 'tiny-invariant'
 
 import {
   Environment,
   StringMatcher,
   useCesium,
-  type EnvironmentProps
+  type EnvironmentProps,
+  type ImageryLayerHandle
 } from '@takram/plateau-cesium'
 import {
   TerrainElevationImageryLayer,
@@ -93,6 +94,12 @@ export const ElevationEnvironment: FC<EnvironmentProps> = props => {
   scene.requestRender()
 
   const enableTerrainLighting = useAtomValue(enableTerrainLightingAtom)
+
+  const [layer, setLayer] = useState<ImageryLayerHandle | null>(null)
+  useEffect(() => {
+    layer?.sendToBack()
+  }, [layer])
+
   return (
     <>
       <Environment
@@ -110,6 +117,7 @@ export const ElevationEnvironment: FC<EnvironmentProps> = props => {
         {...props}
       />
       <TerrainElevationImageryLayer
+        ref={setLayer}
         baseUrl={process.env.NEXT_PUBLIC_API_BASE_URL}
         colorToAlpha={Color.WHITE}
         colorToAlphaThreshold={1}

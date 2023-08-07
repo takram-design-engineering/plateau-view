@@ -20,9 +20,12 @@ import { type QualitativeColor } from '@takram/plateau-datasets'
 import { ColorIcon } from './ColorIcon'
 
 const StyledIconButton = styled(IconButton)(({ theme }) => ({
-  marginTop: theme.spacing(-1),
-  marginBottom: theme.spacing(-1),
-  marginLeft: theme.spacing(-1)
+  // Increase specificity
+  '&&': {
+    marginTop: theme.spacing(-1),
+    marginBottom: theme.spacing(-1),
+    marginLeft: theme.spacing(-1)
+  }
 }))
 
 export interface ColorSetListItemProps {

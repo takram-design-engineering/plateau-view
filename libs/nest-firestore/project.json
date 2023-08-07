@@ -12,7 +12,8 @@
         "tsConfig": "libs/nest-firestore/tsconfig.lib.json",
         "packageJson": "libs/nest-firestore/package.json",
         "main": "libs/nest-firestore/src/index.ts",
-        "assets": ["libs/nest-firestore/*.md"]
+        "assets": ["libs/nest-firestore/*.md"],
+        "updateBuildableProjectDepsInPackageJson": true
       }
     },
     "publish": {

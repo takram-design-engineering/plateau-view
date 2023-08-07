@@ -1,0 +1,48 @@
+import { PlateauDatasetType } from '@takram/plateau-graphql'
+import {
+  BorderIcon,
+  BridgeIcon,
+  BuildingIcon,
+  CityFurnitureIcon,
+  EmergencyRouteIcon,
+  GenericCityObjectIcon,
+  HighTideRiskIcon,
+  InlandFloodingRiskIcon,
+  LandmarkIcon,
+  LandSlideRiskIcon,
+  LandUseIcon,
+  ParkIcon,
+  RailwayIcon,
+  RiverFloodingRiskIcon,
+  RoadIcon,
+  ShelterIcon,
+  StationIcon,
+  TsunamiRiskIcon,
+  UrbanPlanningIcon,
+  UseCaseIcon,
+  VegetationIcon
+} from '@takram/plateau-ui-components'
+
+export const datasetTypeIcons = {
+  [PlateauDatasetType.Border]: BorderIcon,
+  [PlateauDatasetType.Bridge]: BridgeIcon,
+  [PlateauDatasetType.Building]: BuildingIcon,
+  [PlateauDatasetType.EmergencyRoute]: EmergencyRouteIcon,
+  [PlateauDatasetType.UrbanPlanning]: UrbanPlanningIcon,
+  [PlateauDatasetType.RiverFloodingRisk]: RiverFloodingRiskIcon,
+  [PlateauDatasetType.CityFurniture]: CityFurnitureIcon,
+  [PlateauDatasetType.GenericCityObject]: GenericCityObjectIcon,
+  [PlateauDatasetType.HighTideRisk]: HighTideRiskIcon,
+  [PlateauDatasetType.InlandFloodingRisk]: InlandFloodingRiskIcon,
+  [PlateauDatasetType.Landmark]: LandmarkIcon,
+  [PlateauDatasetType.LandSlideRisk]: LandSlideRiskIcon,
+  [PlateauDatasetType.LandUse]: LandUseIcon,
+  [PlateauDatasetType.Park]: ParkIcon,
+  [PlateauDatasetType.Railway]: RailwayIcon,
+  [PlateauDatasetType.Road]: RoadIcon,
+  [PlateauDatasetType.Shelter]: ShelterIcon,
+  [PlateauDatasetType.Station]: StationIcon,
+  [PlateauDatasetType.TsunamiRisk]: TsunamiRiskIcon,
+  [PlateauDatasetType.UseCase]: UseCaseIcon,
+  [PlateauDatasetType.Vegetation]: VegetationIcon
+} as const

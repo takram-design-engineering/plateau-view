@@ -1,4 +1,4 @@
-import { styled, useTheme } from '@mui/material'
+import { ListSubheader, styled, useTheme } from '@mui/material'
 import { sum } from 'lodash'
 import {
   Children,
@@ -10,7 +10,12 @@ import {
   type FC,
   type HTMLAttributes
 } from 'react'
-import { VariableSizeList, type ListChildComponentProps } from 'react-window'
+import {
+  VariableSizeList,
+  type ListChildComponentProps,
+  type ReactElementType,
+  type VariableSizeListProps
+} from 'react-window'
 import invariant from 'tiny-invariant'
 
 const OuterElementContext = createContext({})
@@ -72,8 +77,11 @@ export const SearchListbox = forwardRef<HTMLDivElement, SearchListboxProps>(
     const listPadding = parseFloat(theme.spacing(1))
 
     const getChildSize = useCallback(
-      (child: (typeof itemData)[number]) => itemSize,
-      [itemSize]
+      (child: (typeof itemData)[number]) => {
+        const type = typeof child === 'object' && 'type' in child && child.type
+        return type === ListSubheader ? parseFloat(theme.spacing(6)) : itemSize
+      },
+      [theme, itemSize]
     )
 
     const getItemSize = useCallback(
@@ -112,11 +120,11 @@ export const SearchListbox = forwardRef<HTMLDivElement, SearchListboxProps>(
             itemSize={getItemSize}
             width='auto'
             height={height}
-            outerElementType={OuterElement}
-            innerElementType={InnerElement}
+            outerElementType={OuterElement as ReactElementType}
+            innerElementType={InnerElement as ReactElementType}
             overscanCount={Math.ceil(itemCount / itemSize)}
           >
-            {Row}
+            {Row as VariableSizeListProps['children']}
           </VariableSizeList>
         </OuterElementContext.Provider>
       </Root>

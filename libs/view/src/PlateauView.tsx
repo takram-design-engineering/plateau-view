@@ -2,10 +2,12 @@ import { Cartesian3, HeadingPitchRoll } from '@cesium/engine'
 import { useSetAtom } from 'jotai'
 import { Suspense, useCallback, useEffect, type FC } from 'react'
 
-import { CurrentTime, ViewLocator } from '@takram/plateau-cesium'
-import { SuspendUntilTilesLoaded } from '@takram/plateau-cesium-helpers'
+import {
+  CurrentTime,
+  SuspendUntilTilesLoaded,
+  ViewLocator
+} from '@takram/plateau-cesium'
 import { LayersRenderer, useAddLayer } from '@takram/plateau-layers'
-import { isNotFalse } from '@takram/plateau-type-helpers'
 import { AppFrame } from '@takram/plateau-ui-components'
 import {
   BUILDING_LAYER,
@@ -14,8 +16,6 @@ import {
   PEDESTRIAN_LAYER
 } from '@takram/plateau-view-layers'
 
-import { AppHeader } from './containers/AppHeader'
-import { AppOverlay } from './containers/AppOverlay'
 import { Areas } from './containers/Areas'
 import { Canvas } from './containers/Canvas'
 import { Environments } from './containers/Environments'
@@ -29,6 +29,8 @@ import { SelectionBoundingSphere } from './containers/SelectionBoundingSphere'
 import { SelectionCoordinator } from './containers/SelectionCoordinator'
 import { Terrains } from './containers/Terrains'
 import { ToolMachineEvents } from './containers/ToolMachineEvents'
+import { AppHeader } from './overlay/AppHeader'
+import { AppOverlay } from './overlay/AppOverlay'
 import { readyAtom } from './states/app'
 
 const initialDestination = Cartesian3.fromDegrees(139.755, 35.675, 1000)
@@ -58,17 +60,16 @@ const InitialLayers: FC = () => {
           textured: false
         })
       ),
-      process.env.NODE_ENV !== 'production' &&
-        addLayer(
-          createViewLayer({
-            type: PEDESTRIAN_LAYER,
-            location: {
-              longitude: 139.769,
-              latitude: 35.68
-            }
-          })
-        )
-    ].filter(isNotFalse)
+      addLayer(
+        createViewLayer({
+          type: PEDESTRIAN_LAYER,
+          location: {
+            longitude: 139.769,
+            latitude: 35.68
+          }
+        })
+      )
+    ]
     return () => {
       remove.forEach(remove => {
         remove()

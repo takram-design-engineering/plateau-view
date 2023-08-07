@@ -1,4 +1,5 @@
 import { Loader } from '@googlemaps/js-api-loader'
+import { atom, useSetAtom } from 'jotai'
 import { suspend } from 'suspend-react'
 
 export interface StreetView {
@@ -6,6 +7,9 @@ export interface StreetView {
   panorama: google.maps.StreetViewPanorama
   service: google.maps.StreetViewService
 }
+
+const streetViewPrimitiveAtom = atom<StreetView | null>(null)
+export const streetViewAtom = atom(get => get(streetViewPrimitiveAtom))
 
 export function useStreetView(
   apiKey: string,
@@ -18,6 +22,8 @@ export function useStreetView(
     motionTrackingControl: false
   }
 ): StreetView {
+  const setStreetView = useSetAtom(streetViewPrimitiveAtom)
+
   return suspend(async () => {
     const loader = new Loader({
       apiKey,
@@ -28,10 +34,12 @@ export function useStreetView(
     container.style.width = '100%'
     container.style.height = '100%'
 
-    return {
+    const streetView = {
       container,
       panorama: new library.StreetViewPanorama(container, options),
       service: new library.StreetViewService()
     }
+    setStreetView(streetView)
+    return streetView
   }, [apiKey])
 }

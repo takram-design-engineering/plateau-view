@@ -12,7 +12,8 @@
         "tsConfig": "libs/nest-terrain-tile/tsconfig.lib.json",
         "packageJson": "libs/nest-terrain-tile/package.json",
         "main": "libs/nest-terrain-tile/src/index.ts",
-        "assets": ["libs/nest-terrain-tile/*.md"]
+        "assets": ["libs/nest-terrain-tile/*.md"],
+        "updateBuildableProjectDepsInPackageJson": true
       }
     },
     "publish": {

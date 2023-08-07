@@ -28,7 +28,7 @@ export const PedestrianTool: FC = () => {
       })
       addLayer(layer)
       setLayerSelection([id])
-      send({ type: 'SELECT' })
+      send({ type: 'HAND' })
     },
     [addLayer, setLayerSelection, send]
   )

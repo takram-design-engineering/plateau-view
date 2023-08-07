@@ -9,7 +9,6 @@ import {
 } from 'jotai'
 import { useCallback, useEffect, useMemo, type FC } from 'react'
 import invariant from 'tiny-invariant'
-import { type SetOptional } from 'type-fest'
 
 import { useCesium } from '@takram/plateau-cesium'
 import { match } from '@takram/plateau-cesium-helpers'
@@ -24,11 +23,12 @@ import {
 import { screenSpaceSelectionAtom } from '@takram/plateau-screen-space-selection'
 
 import {
-  createViewLayerBase,
+  createViewLayerModel,
   type ViewLayerModel,
   type ViewLayerModelParams
-} from './createViewLayerBase'
+} from './createViewLayerModel'
 import { PEDESTRIAN_LAYER } from './layerTypes'
+import { type ConfigurableLayerModel } from './types'
 
 let nextLayerIndex = 1
 
@@ -43,13 +43,13 @@ export interface PedestrianLayerModel extends ViewLayerModel {
   locationAtom: PrimitiveAtom<Location>
   headingPitchAtom: PrimitiveAtom<HeadingPitch | null>
   zoomAtom: PrimitiveAtom<number | null>
-  synchronizeStreetViewAtom: PrimitiveAtom<boolean>
+  synchronizedAtom: PrimitiveAtom<boolean>
   addressAtom: PrimitiveAtom<string | null>
 }
 
 export function createPedestrianLayer(
   params: PedestrianLayerModelParams
-): SetOptional<PedestrianLayerModel, 'id'> {
+): ConfigurableLayerModel<PedestrianLayerModel> {
   const locationPrimitiveAtom = atom<Location>({
     longitude: params.location.longitude,
     latitude: params.location.latitude,
@@ -88,7 +88,7 @@ export function createPedestrianLayer(
   )
 
   return {
-    ...createViewLayerBase({
+    ...createViewLayerModel({
       ...params,
       // TODO: Avoid side-effect
       title: `歩行者視点${nextLayerIndex++}`
@@ -98,7 +98,7 @@ export function createPedestrianLayer(
     locationAtom,
     headingPitchAtom,
     zoomAtom: atom<number | null>(params.zoomAtom ?? null),
-    synchronizeStreetViewAtom: atom(false),
+    synchronizedAtom: atom(false),
     addressAtom: atom<string | null>(null)
   }
 }
@@ -115,14 +115,14 @@ export const PedestrianLayer: FC<LayerProps<typeof PEDESTRIAN_LAYER>> = ({
   locationAtom,
   headingPitchAtom,
   zoomAtom,
-  synchronizeStreetViewAtom,
+  synchronizedAtom,
   addressAtom
 }) => {
   const [pano, setPano] = useAtom(panoAtom)
   const [location, setLocation] = useAtom(locationAtom)
   const headingPitch = useAtomValue(headingPitchAtom)
   const zoom = useAtomValue(zoomAtom)
-  const synchronizeStreetView = useAtomValue(synchronizeStreetViewAtom)
+  const synchronized = useAtomValue(synchronizedAtom)
 
   const selection = useAtomValue(screenSpaceSelectionAtom)
   const objectSelected = useMemo(
@@ -196,7 +196,7 @@ export const PedestrianLayer: FC<LayerProps<typeof PEDESTRIAN_LAYER>> = ({
       location={location}
       headingPitch={headingPitch ?? undefined}
       zoom={zoom ?? undefined}
-      hideFrustum={pano == null || synchronizeStreetView}
+      hideFrustum={pano == null || synchronized}
       onChange={handleChange}
     />
   )

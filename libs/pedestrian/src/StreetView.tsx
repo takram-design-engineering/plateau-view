@@ -1,4 +1,5 @@
 import { styled } from '@mui/material'
+import { atom, useSetAtom } from 'jotai'
 import {
   forwardRef,
   useEffect,
@@ -16,12 +17,21 @@ import { usePanoramaLocationChange } from './usePanoramaLocationChange'
 import { usePanoramaZoomChange } from './usePanoramaZoomChange'
 import { useStreetView } from './useStreetView'
 
+const streetViewVisiblePrimitiveAtom = atom(false)
+export const streetViewVisibleAtom = atom(get =>
+  get(streetViewVisiblePrimitiveAtom)
+)
+
 const Root = styled('div', {
   shouldForwardProp: prop => prop !== 'hidden'
 })<{ hidden?: boolean }>(({ hidden = false }) => ({
   ...(hidden && {
     visibility: 'hidden'
-  })
+  }),
+  // Hide focus ring
+  '& .widget-scene::after': {
+    display: 'none'
+  }
 }))
 
 export interface StreetViewProps
@@ -63,6 +73,7 @@ export const StreetView = forwardRef<HTMLDivElement, StreetViewProps>(
     forwardedRef
   ) => {
     const { container, panorama, service } = useStreetView(apiKey)
+    const setStreetViewVisible = useSetAtom(streetViewVisiblePrimitiveAtom)
 
     const ref = useRef<HTMLDivElement>(null)
     useLayoutEffect(() => {
@@ -72,11 +83,17 @@ export const StreetView = forwardRef<HTMLDivElement, StreetViewProps>(
       // TODO: Prevent street view container from being appended to multiple
       // elements at the same time.
       element.appendChild(container)
+      setStreetViewVisible(true)
       return () => {
         invariant(container != null)
         element.removeChild(container)
+        setStreetViewVisible(false)
       }
-    }, [container])
+    }, [container, setStreetViewVisible])
+
+    useEffect(() => {
+      panorama.focus()
+    }, [panorama])
 
     // Street View's Panorama is reused across different pedestrian layers, and
     // fires events for the previous layer before the current layer sets the
