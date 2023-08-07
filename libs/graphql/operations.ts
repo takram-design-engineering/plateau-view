@@ -290,6 +290,54 @@ export type PlateauDatasetFragment =
   | PlateauDataset_PlateauBuildingDataset_Fragment
   | PlateauDataset_PlateauDefaultDataset_Fragment
 
+export type PrefecturesQueryVariables = Exact<{ [key: string]: never }>
+
+export type PrefecturesQuery = {
+  __typename?: 'Query'
+  prefectures: Array<{
+    __typename?: 'PlateauPrefecture'
+    id: string
+    code: string
+    name: string
+  }>
+}
+
+export type PrefectureMunicipalitiesQueryVariables = Exact<{
+  prefectureCode: Scalars['String']['input']
+}>
+
+export type PrefectureMunicipalitiesQuery = {
+  __typename?: 'Query'
+  municipalities: Array<{
+    __typename?: 'PlateauMunicipality'
+    id: string
+    code: string
+    name: string
+    parents: Array<
+      | {
+          __typename?: 'PlateauMunicipality'
+          id: string
+          type: PlateauAreaType
+          code: string
+          name: string
+        }
+      | {
+          __typename?: 'PlateauPrefecture'
+          id: string
+          type: PlateauAreaType
+          code: string
+          name: string
+        }
+    >
+    prefecture: {
+      __typename?: 'PlateauPrefecture'
+      id: string
+      code: string
+      name: string
+    }
+  }>
+}
+
 export type MunicipalityDatasetsQueryVariables = Exact<{
   municipalityCode: Scalars['String']['input']
   includeTypes?: InputMaybe<Array<PlateauDatasetType> | PlateauDatasetType>
@@ -511,6 +559,121 @@ export const PlateauDatasetFragmentDoc = gql`
   }
   ${PlateauDatasetDatumFragmentDoc}
 `
+export const PrefecturesDocument = gql`
+  query prefectures {
+    prefectures {
+      ...PlateauPrefecture
+    }
+  }
+  ${PlateauPrefectureFragmentDoc}
+`
+
+/**
+ * __usePrefecturesQuery__
+ *
+ * To run a query within a React component, call `usePrefecturesQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePrefecturesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePrefecturesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function usePrefecturesQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    PrefecturesQuery,
+    PrefecturesQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<PrefecturesQuery, PrefecturesQueryVariables>(
+    PrefecturesDocument,
+    options
+  )
+}
+export function usePrefecturesLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    PrefecturesQuery,
+    PrefecturesQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<PrefecturesQuery, PrefecturesQueryVariables>(
+    PrefecturesDocument,
+    options
+  )
+}
+export type PrefecturesQueryHookResult = ReturnType<typeof usePrefecturesQuery>
+export type PrefecturesLazyQueryHookResult = ReturnType<
+  typeof usePrefecturesLazyQuery
+>
+export type PrefecturesQueryResult = Apollo.QueryResult<
+  PrefecturesQuery,
+  PrefecturesQueryVariables
+>
+export const PrefectureMunicipalitiesDocument = gql`
+  query prefectureMunicipalities($prefectureCode: String!) {
+    municipalities(prefectureCode: $prefectureCode) {
+      ...PlateauMunicipality
+    }
+  }
+  ${PlateauMunicipalityFragmentDoc}
+`
+
+/**
+ * __usePrefectureMunicipalitiesQuery__
+ *
+ * To run a query within a React component, call `usePrefectureMunicipalitiesQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePrefectureMunicipalitiesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePrefectureMunicipalitiesQuery({
+ *   variables: {
+ *      prefectureCode: // value for 'prefectureCode'
+ *   },
+ * });
+ */
+export function usePrefectureMunicipalitiesQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    PrefectureMunicipalitiesQuery,
+    PrefectureMunicipalitiesQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<
+    PrefectureMunicipalitiesQuery,
+    PrefectureMunicipalitiesQueryVariables
+  >(PrefectureMunicipalitiesDocument, options)
+}
+export function usePrefectureMunicipalitiesLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    PrefectureMunicipalitiesQuery,
+    PrefectureMunicipalitiesQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<
+    PrefectureMunicipalitiesQuery,
+    PrefectureMunicipalitiesQueryVariables
+  >(PrefectureMunicipalitiesDocument, options)
+}
+export type PrefectureMunicipalitiesQueryHookResult = ReturnType<
+  typeof usePrefectureMunicipalitiesQuery
+>
+export type PrefectureMunicipalitiesLazyQueryHookResult = ReturnType<
+  typeof usePrefectureMunicipalitiesLazyQuery
+>
+export type PrefectureMunicipalitiesQueryResult = Apollo.QueryResult<
+  PrefectureMunicipalitiesQuery,
+  PrefectureMunicipalitiesQueryVariables
+>
 export const MunicipalityDatasetsDocument = gql`
   query municipalityDatasets(
     $municipalityCode: String!

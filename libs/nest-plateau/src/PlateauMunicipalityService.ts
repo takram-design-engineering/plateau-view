@@ -18,6 +18,7 @@ export class PlateauMunicipalityService {
     let query: Query<PlateauMunicipality> = this.collection
     if (params.prefectureCode != null) {
       query = query
+        .orderBy('code')
         .where('code', '>=', params.prefectureCode)
         .where('code', '<=', `${params.prefectureCode}\uf8ff`)
     }

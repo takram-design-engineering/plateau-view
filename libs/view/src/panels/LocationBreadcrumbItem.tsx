@@ -26,31 +26,10 @@ import {
   OverlayPopper
 } from '@takram/plateau-ui-components'
 
+import { datasetTypeOrder } from '../constants/datasetTypeOrder'
 import { BuildingDatasetButtonSelect } from './LocationContextBar/BuildingDatasetButtonSelect'
 import { DefaultDatasetButton } from './LocationContextBar/DefaultDatasetButton'
 import { DefaultDatasetSelect } from './LocationContextBar/DefaultDatasetSelect'
-
-const datasetTypeOrder = [
-  PlateauDatasetType.Building,
-  PlateauDatasetType.Bridge,
-  PlateauDatasetType.Border,
-  PlateauDatasetType.Landmark,
-  PlateauDatasetType.Station,
-  PlateauDatasetType.Road,
-  PlateauDatasetType.Railway,
-  PlateauDatasetType.Park,
-  PlateauDatasetType.LandUse,
-  PlateauDatasetType.RiverFloodingRisk,
-  PlateauDatasetType.InlandFloodingRisk,
-  PlateauDatasetType.HighTideRisk,
-  PlateauDatasetType.LandSlideRisk,
-  PlateauDatasetType.TsunamiRisk,
-  PlateauDatasetType.Shelter,
-  PlateauDatasetType.EmergencyRoute,
-  PlateauDatasetType.UrbanPlanning,
-  PlateauDatasetType.CityFurniture,
-  PlateauDatasetType.Vegetation
-]
 
 export interface LocationBreadcrumbItemProps {
   area: Area

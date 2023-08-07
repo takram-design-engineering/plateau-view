@@ -1,3 +1,15 @@
+query prefectures {
+  prefectures {
+    ...PlateauPrefecture
+  }
+}
+
+query prefectureMunicipalities($prefectureCode: String!) {
+  municipalities(prefectureCode: $prefectureCode) {
+    ...PlateauMunicipality
+  }
+}
+
 query municipalityDatasets(
   $municipalityCode: String!
   $includeTypes: [PlateauDatasetType!]
