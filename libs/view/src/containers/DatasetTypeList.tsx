@@ -1,22 +1,21 @@
 import { styled } from '@mui/material'
 import { useAtom } from 'jotai'
 import { atomWithReset } from 'jotai/utils'
-import { groupBy } from 'lodash'
-import { useCallback, useMemo, type FC, type ReactNode } from 'react'
-import invariant from 'tiny-invariant'
+import { useCallback, type FC, type ReactNode } from 'react'
 
 import {
-  PlateauDatasetType,
   useMunicipalityDatasetsQuery,
   usePrefectureMunicipalitiesQuery,
   usePrefecturesQuery,
   type PlateauDatasetFragment,
+  type PlateauDatasetType,
   type PlateauMunicipalityFragment,
   type PlateauPrefectureFragment
 } from '@takram/plateau-graphql'
 import { DatasetTreeItem, DatasetTreeView } from '@takram/plateau-ui-components'
 
 import { datasetTypeIcons } from '../constants/datasetTypeIcons'
+import { datasetTypeNames } from '../constants/datasetTypeNames'
 import { datasetTypeOrder } from '../constants/datasetTypeOrder'
 
 const expandedAtom = atomWithReset<string[]>([])
@@ -35,70 +34,36 @@ function joinPath(values: string[]): ReactNode {
 }
 
 const DatasetItem: FC<{
+  datasetType: PlateauDatasetType
   dataset: PlateauDatasetFragment
-  parents?: string[]
-  grouped?: boolean
-}> = ({ dataset, parents = [], grouped = false }) => {
+  parents: string[]
+  showName?: boolean
+}> = ({ datasetType, dataset, parents, showName = false }) => {
   const Icon = datasetTypeIcons[dataset.type]
   return (
     <DatasetTreeItem
-      nodeId={dataset.id}
-      label={joinPath([...parents, grouped ? dataset.name : dataset.typeName])}
+      nodeId={`${datasetType}:${dataset.id}`}
+      label={showName ? dataset.name : joinPath(parents)}
       icon={<Icon />}
     />
   )
 }
 
-const DatasetGroup: FC<{
-  groupId: string
-  datasets: PlateauDatasetFragment[]
-}> = ({ groupId, datasets }) => {
-  invariant(datasets.length > 0)
-  if (datasets.length > 1) {
-    return (
-      <DatasetTreeItem nodeId={groupId} label={datasets[0].typeName}>
-        {datasets.map(dataset => (
-          <DatasetItem key={dataset.id} dataset={dataset} grouped />
-        ))}
-      </DatasetTreeItem>
-    )
-  }
-  return <DatasetItem dataset={datasets[0]} />
-}
-
 const MunicipalityItem: FC<{
+  datasetType: PlateauDatasetType
   municipality: PlateauMunicipalityFragment
   parents?: string[]
-}> = ({ municipality, parents = [] }) => {
+}> = ({ datasetType, municipality, parents = [] }) => {
   const query = useMunicipalityDatasetsQuery({
     variables: {
       municipalityCode: municipality.code,
-      excludeTypes: [
-        PlateauDatasetType.UseCase,
-        PlateauDatasetType.GenericCityObject
-      ]
+      includeTypes: [datasetType]
     }
   })
-  const groups = useMemo(
-    () =>
-      query.data?.municipality?.datasets != null
-        ? Object.entries(groupBy(query.data.municipality.datasets, 'type'))
-            .map(([, value]) => value)
-            .sort(
-              (a, b) =>
-                datasetTypeOrder.indexOf(a[0].type) -
-                datasetTypeOrder.indexOf(b[0].type)
-            )
-            .map(value => ({
-              groupId: value.map(({ id }) => id).join(':'),
-              datasets: value
-            }))
-        : undefined,
-    [query.data?.municipality?.datasets]
-  )
   if (query.data?.municipality?.datasets.length === 1) {
     return (
       <DatasetItem
+        datasetType={datasetType}
         dataset={query.data.municipality.datasets[0]}
         parents={[...parents, municipality.name]}
       />
@@ -106,28 +71,37 @@ const MunicipalityItem: FC<{
   }
   return (
     <DatasetTreeItem
-      nodeId={municipality.code}
+      nodeId={`${datasetType}:${municipality.code}`}
       label={joinPath([...parents, municipality.name])}
       disabled={query.loading}
     >
-      {groups?.map(({ groupId, datasets }) => (
-        <DatasetGroup key={groupId} groupId={groupId} datasets={datasets} />
+      {query.data?.municipality?.datasets?.map(dataset => (
+        <DatasetItem
+          key={dataset.id}
+          datasetType={datasetType}
+          dataset={dataset}
+          parents={[...parents, municipality.name]}
+          showName
+        />
       ))}
     </DatasetTreeItem>
   )
 }
 
 const PrefectureItem: FC<{
+  datasetType: PlateauDatasetType
   prefecture: PlateauPrefectureFragment
-}> = ({ prefecture }) => {
+}> = ({ prefecture, datasetType }) => {
   const query = usePrefectureMunicipalitiesQuery({
     variables: {
-      prefectureCode: prefecture.code
+      prefectureCode: prefecture.code,
+      datasetType
     }
   })
   if (query.data?.municipalities.length === 1) {
     return (
       <MunicipalityItem
+        datasetType={datasetType}
         municipality={query.data.municipalities[0]}
         parents={[prefecture.name]}
       />
@@ -135,19 +109,47 @@ const PrefectureItem: FC<{
   }
   return (
     <DatasetTreeItem
-      nodeId={prefecture.code}
+      nodeId={`${datasetType}:${prefecture.code}`}
       label={prefecture.name}
       disabled={query.loading}
     >
       {query.data?.municipalities.map(municipality => (
-        <MunicipalityItem key={municipality.code} municipality={municipality} />
+        <MunicipalityItem
+          key={municipality.code}
+          datasetType={datasetType}
+          municipality={municipality}
+        />
       ))}
     </DatasetTreeItem>
   )
 }
 
-export const DatasetAreaList: FC = () => {
-  const query = usePrefecturesQuery()
+const DatasetTypeItem: FC<{ datasetType: PlateauDatasetType }> = ({
+  datasetType
+}) => {
+  const query = usePrefecturesQuery({
+    variables: {
+      datasetType
+    }
+  })
+  return (
+    <DatasetTreeItem
+      nodeId={datasetType}
+      label={datasetTypeNames[datasetType]}
+      disabled={query.loading}
+    >
+      {query.data?.prefectures.map(prefecture => (
+        <PrefectureItem
+          key={prefecture.code}
+          datasetType={datasetType}
+          prefecture={prefecture}
+        />
+      ))}
+    </DatasetTreeItem>
+  )
+}
+
+export const DatasetTypeList: FC = () => {
   const [expanded, setExpanded] = useAtom(expandedAtom)
   const handleNodeToggle = useCallback(
     (event: unknown, nodeIds: string[]) => {
@@ -157,8 +159,8 @@ export const DatasetAreaList: FC = () => {
   )
   return (
     <DatasetTreeView expanded={expanded} onNodeToggle={handleNodeToggle}>
-      {query.data?.prefectures.map(prefecture => (
-        <PrefectureItem key={prefecture.code} prefecture={prefecture} />
+      {datasetTypeOrder.map(datasetType => (
+        <DatasetTypeItem key={datasetType} datasetType={datasetType} />
       ))}
     </DatasetTreeView>
   )

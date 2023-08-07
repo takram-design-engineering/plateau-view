@@ -11,7 +11,6 @@ import { isNotNullish } from '@takram/plateau-type-helpers'
 import { PlateauCatalog } from './dto/PlateauCatalog'
 import { type PlateauDatasetType } from './dto/PlateauDatasetType'
 import { PlateauMunicipality } from './dto/PlateauMunicipality'
-import { PlateauCatalogService } from './PlateauCatalogService'
 
 @Injectable()
 export class PlateauMunicipalityService {
