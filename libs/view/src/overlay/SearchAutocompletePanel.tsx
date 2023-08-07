@@ -1,4 +1,11 @@
-import { ClickAwayListener, Divider, styled } from '@mui/material'
+import {
+  ClickAwayListener,
+  Divider,
+  styled,
+  Tab,
+  tabClasses,
+  Tabs
+} from '@mui/material'
 import { useAtomValue } from 'jotai'
 import {
   useCallback,
@@ -25,10 +32,23 @@ import {
 } from '@takram/plateau-ui-components'
 
 import { useSearchOptions } from '../hooks/useSearchOptions'
+import { DatasetAreaList } from './DatasetAreaList'
+import { DatasetTypeList } from './DatasetTypeList'
 import { SearchList } from './SearchList'
 
 const StyledScrollable = styled(Scrollable)(({ theme }) => ({
   maxHeight: `calc(100% - ${theme.spacing(6)} - 1px)`
+}))
+
+const StyledTabs = styled(Tabs)(({ theme }) => ({
+  position: 'sticky',
+  top: 0,
+  minHeight: theme.spacing(5),
+  backgroundColor: theme.palette.background.default,
+  zIndex: 1,
+  [`& .${tabClasses.root}`]: {
+    minHeight: theme.spacing(5)
+  }
 }))
 
 export interface SearchAutocompletePanelProps {
@@ -118,6 +138,11 @@ export const SearchAutocompletePanel: FC<SearchAutocompletePanelProps> = ({
     setFocused(false)
   }, [])
 
+  const [tab, setTab] = useState(0)
+  const handleTabChange = useCallback((event: unknown, value: number) => {
+    setTab(value)
+  }, [])
+
   const { maxMainHeightAtom } = useContext(AppOverlayLayoutContext)
   const maxMainHeight = useAtomValue(maxMainHeightAtom)
 
@@ -147,13 +172,22 @@ export const SearchAutocompletePanel: FC<SearchAutocompletePanelProps> = ({
             children
           ) : (
             <StyledScrollable>
-              <SearchList
-                datasets={searchOptions.datasets}
-                buildings={searchOptions.buildings}
-                addresses={searchOptions.addresses}
-                onOptionSelect={handleOptionSelect}
-                onFiltersChange={handleFiltersChange}
-              />
+              <StyledTabs value={tab} onChange={handleTabChange}>
+                <Tab label='検索' />
+                <Tab label='都道府県' />
+                <Tab label='カテゴリー' />
+              </StyledTabs>
+              {tab === 0 && (
+                <SearchList
+                  datasets={searchOptions.datasets}
+                  buildings={searchOptions.buildings}
+                  addresses={searchOptions.addresses}
+                  onOptionSelect={handleOptionSelect}
+                  onFiltersChange={handleFiltersChange}
+                />
+              )}
+              {tab === 1 && <DatasetAreaList />}
+              {tab === 2 && <DatasetTypeList />}
             </StyledScrollable>
           )}
         </SearchAutocomplete>

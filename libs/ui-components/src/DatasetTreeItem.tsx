@@ -19,7 +19,7 @@ export const DatasetTreeItem = styled(TreeItem, {
     width: 24,
     height: 24,
     marginRight: theme.spacing(1),
-    marginLeft: theme.spacing(1),
+    marginLeft: theme.spacing(0.5),
     color: theme.palette.action.active,
     '& svg': {
       // Reset icon size.
