@@ -157,17 +157,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/client@npm:^3.7.17":
-  version: 3.7.17
-  resolution: "@apollo/client@npm:3.7.17"
+"@apollo/client@npm:^3.8.0":
+  version: 3.8.0
+  resolution: "@apollo/client@npm:3.8.0"
   dependencies:
     "@graphql-typed-document-node/core": ^3.1.1
-    "@wry/context": ^0.7.0
-    "@wry/equality": ^0.5.0
-    "@wry/trie": ^0.4.0
+    "@wry/context": ^0.7.3
+    "@wry/equality": ^0.5.6
+    "@wry/trie": ^0.4.3
     graphql-tag: ^2.12.6
     hoist-non-react-statics: ^3.3.2
-    optimism: ^0.16.2
+    optimism: ^0.17.5
     prop-types: ^15.7.2
     response-iterator: ^0.2.6
     symbol-observable: ^4.0.0
@@ -189,7 +189,7 @@ __metadata:
       optional: true
     subscriptions-transport-ws:
       optional: true
-  checksum: d25e955f3c409885185405ca5876cb74538becafa202257a27483c07d7faa9ce83b34d4cab4b7fd9ad217f80d768e651881292c406dbbca221c91013917890d7
+  checksum: bf1fb4fa82ece6c7c274c0d6b196854fb19c0634b48692deed40fea491b25b385883101521860365b6af609bd0e84e32b1d82955a43e50ae920e971c7707d556
   languageName: node
   linkType: hard
 
@@ -4521,9 +4521,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@google-cloud/storage@npm:^7.0.0":
-  version: 7.0.0
-  resolution: "@google-cloud/storage@npm:7.0.0"
+"@google-cloud/storage@npm:^7.0.1":
+  version: 7.0.1
+  resolution: "@google-cloud/storage@npm:7.0.1"
   dependencies:
     "@google-cloud/paginator": ^3.0.7
     "@google-cloud/projectify": ^3.0.0
@@ -4542,7 +4542,7 @@ __metadata:
     retry-request: ^6.0.0
     teeny-request: ^9.0.0
     uuid: ^8.0.0
-  checksum: 357064cecec8a5ffa73ec8941918fb73854da6b39808cd6354af3db808702ce3f468d312aaf5ceb6265b91e782baa26d56c8cad137ece2230de2980b65c0c353
+  checksum: 3bcc5e0ac780bc55948670c635cc14df54ac32ebe00afc082d01a21900fdba9dcecc9b184e6499bb0a154a0ddbb1457b4555d98a63dc9b4c43b4f58ce558986e
   languageName: node
   linkType: hard
 
@@ -4555,15 +4555,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-codegen/cli@npm:^4.0.1":
-  version: 4.0.1
-  resolution: "@graphql-codegen/cli@npm:4.0.1"
+"@graphql-codegen/cli@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "@graphql-codegen/cli@npm:5.0.0"
   dependencies:
     "@babel/generator": ^7.18.13
     "@babel/template": ^7.18.10
     "@babel/types": ^7.18.13
     "@graphql-codegen/core": ^4.0.0
-    "@graphql-codegen/plugin-helpers": ^5.0.0
+    "@graphql-codegen/plugin-helpers": ^5.0.1
     "@graphql-tools/apollo-engine-loader": ^8.0.0
     "@graphql-tools/code-file-loader": ^8.0.0
     "@graphql-tools/git-loader": ^8.0.0
@@ -4574,7 +4574,6 @@ __metadata:
     "@graphql-tools/prisma-loader": ^8.0.0
     "@graphql-tools/url-loader": ^8.0.0
     "@graphql-tools/utils": ^10.0.0
-    "@parcel/watcher": ^2.1.0
     "@whatwg-node/fetch": ^0.8.0
     chalk: ^4.1.0
     cosmiconfig: ^8.1.3
@@ -4592,16 +4591,20 @@ __metadata:
     string-env-interpolation: ^1.0.1
     ts-log: ^2.2.3
     tslib: ^2.4.0
-    yaml: ^1.10.0
+    yaml: ^2.3.1
     yargs: ^17.0.0
   peerDependencies:
+    "@parcel/watcher": ^2.1.0
     graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
+  peerDependenciesMeta:
+    "@parcel/watcher":
+      optional: true
   bin:
     gql-gen: cjs/bin.js
     graphql-code-generator: cjs/bin.js
     graphql-codegen: cjs/bin.js
     graphql-codegen-esm: esm/bin.js
-  checksum: 0fd1a3250d42b0dbc8f9fbc00c1add806c400eef366c34bc316f883d438499c53147712d15f7c7e64a358bb456c8c342d7012e05b4a9f1a8b2c2d7c6de1dedb8
+  checksum: 55c3cafb08ee33667a896aa1c56e27ff2b6eae123d6116ff299be308038a543fb7d58c4179f34a3dff64079065d549dc05bfd95208c8c3024cecdd6307c0353b
   languageName: node
   linkType: hard
 
@@ -4660,6 +4663,22 @@ __metadata:
   peerDependencies:
     graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
   checksum: 9e113bcb840584eff2bbd04379f28eadef72994a06d57b31a00ec691226169dbe2c4df96b9f77cc259d95aa52647bee1c0c0c2ec47538d32fa23ad16eb203f9c
+  languageName: node
+  linkType: hard
+
+"@graphql-codegen/plugin-helpers@npm:^5.0.1":
+  version: 5.0.1
+  resolution: "@graphql-codegen/plugin-helpers@npm:5.0.1"
+  dependencies:
+    "@graphql-tools/utils": ^10.0.0
+    change-case-all: 1.0.15
+    common-tags: 1.8.2
+    import-from: 4.0.0
+    lodash: ~4.17.0
+    tslib: ~2.5.0
+  peerDependencies:
+    graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
+  checksum: 97faa8f87f41292bb5263097b1613733faf07fd0ff375ac89438aa0f2cd91e163d088b63dcafcdb6d66beaba8f7d13005bb980793e71979e9ad61fdfd206a730
   languageName: node
   linkType: hard
 
@@ -6555,12 +6574,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@next/bundle-analyzer@npm:^13.4.12":
-  version: 13.4.12
-  resolution: "@next/bundle-analyzer@npm:13.4.12"
+"@next/bundle-analyzer@npm:^13.4.13":
+  version: 13.4.13
+  resolution: "@next/bundle-analyzer@npm:13.4.13"
   dependencies:
     webpack-bundle-analyzer: 4.7.0
-  checksum: 4fdd226df19e830537f460d019af9d17e2e2c70b516100f1ab31d86de21b7753630f7ccc7d37d44dd6abdc4823ed4a502e10747140d5de7a40e9e7832cf5fcc0
+  checksum: 2e6f32410fbb98c497a6b52dbd201e35f35c3fc2cbbe935e04559f8dfc9011ccc6bf08608e40a115ac06562a0d14212b347b527729db228ff6db9daa3b238d71
   languageName: node
   linkType: hard
 
@@ -7467,19 +7486,6 @@ __metadata:
     node-gyp: latest
     node-gyp-build: ^4.3.0
   checksum: 890bdc69a52942791b276caa2cd65ef816576d6b5ada91aa28cf302b35d567c801dafe167f2525dcb313f5b420986ea11bd56228dd7ddde1116944d8f924a0a1
-  languageName: node
-  linkType: hard
-
-"@parcel/watcher@npm:^2.1.0":
-  version: 2.1.0
-  resolution: "@parcel/watcher@npm:2.1.0"
-  dependencies:
-    is-glob: ^4.0.3
-    micromatch: ^4.0.5
-    node-addon-api: ^3.2.1
-    node-gyp: latest
-    node-gyp-build: ^4.3.0
-  checksum: 17f512ad6d5dbb40053ceea7091f8af754afc63786b8f050b225b89a8ba24900468aad8bc4edb25c0349b4c0c8d061f50aa19242c0af52cbc30e6ebf50c7bf4c
   languageName: node
   linkType: hard
 
@@ -10101,7 +10107,7 @@ __metadata:
   dependencies:
     "@ant-design/colors": ^7.0.0
     "@ant-design/icons": ^5.2.5
-    "@apollo/client": ^3.7.17
+    "@apollo/client": ^3.8.0
     "@apollo/server": ^4.9.1
     "@babel/core": 7.12.13
     "@babel/preset-react": ^7.14.5
@@ -10116,9 +10122,9 @@ __metadata:
     "@emotion/server": ^11.11.0
     "@emotion/styled": 11.11.0
     "@google-cloud/firestore": ^6.7.0
-    "@google-cloud/storage": ^7.0.0
+    "@google-cloud/storage": ^7.0.1
     "@googlemaps/js-api-loader": ^1.16.2
-    "@graphql-codegen/cli": ^4.0.1
+    "@graphql-codegen/cli": ^5.0.0
     "@graphql-codegen/fragment-matcher": ^5.0.0
     "@graphql-codegen/typescript": ^4.0.1
     "@graphql-codegen/typescript-operations": ^4.0.1
@@ -10138,7 +10144,7 @@ __metadata:
     "@nestjs/schematics": 10.0.1
     "@nestjs/serve-static": ^3.0.1
     "@nestjs/testing": 10.1.3
-    "@next/bundle-analyzer": ^13.4.12
+    "@next/bundle-analyzer": ^13.4.13
     "@nx/cypress": 16.6.0
     "@nx/esbuild": 16.6.0
     "@nx/eslint-plugin": 16.6.0
@@ -10228,7 +10234,7 @@ __metadata:
     eslint-plugin-react: ^7.32.2
     eslint-plugin-react-hooks: ^4.6.0
     eslint-plugin-storybook: 0.6.12
-    framer-motion: ^10.15.0
+    framer-motion: ^10.15.1
     geojson: ^0.5.0
     glob: ^10.3.3
     graphql: ^16.7.1
@@ -10236,14 +10242,14 @@ __metadata:
     jest: ^29.4.1
     jest-environment-jsdom: ^29.4.1
     jest-environment-node: ^29.4.1
-    jotai: ^2.2.3
+    jotai: ^2.3.0
     jotai-xstate: ^0.3.0
     jsdom: 22.1.0
     jtd: ^0.1.1
     lodash: ^4.17.21
     lru-cache: ^9.1.2
     mapbox-gl: ^2.15.0
-    maplibre-gl: ^3.2.1
+    maplibre-gl: ^3.2.2
     mapshaper: ^0.6.41
     material-ui-popup-state: ^5.0.9
     minimatch: ^9.0.3
@@ -13708,25 +13714,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wry/equality@npm:^0.5.0":
-  version: 0.5.5
-  resolution: "@wry/equality@npm:0.5.5"
+"@wry/context@npm:^0.7.3":
+  version: 0.7.3
+  resolution: "@wry/context@npm:0.7.3"
   dependencies:
     tslib: ^2.3.0
-  checksum: 56eec8d29bfa0e8814af7633c5bcaaae9be35a390ba6e4b9e20a15f7b856e83af8db2bc490e49dee26527e802999f6d2b1140a7a14ef103a73da76fded3086f6
+  checksum: 91c1e9eee9046c48ff857d60dcbb59f22246ce0f9bb2d9b190e0555227e7ba3f86024032cc057f3f5141d3bee93fc6b2a15ce2c79fa512569d3432eb8e1af02b
   languageName: node
   linkType: hard
 
-"@wry/trie@npm:^0.3.0":
-  version: 0.3.2
-  resolution: "@wry/trie@npm:0.3.2"
+"@wry/equality@npm:^0.5.6":
+  version: 0.5.6
+  resolution: "@wry/equality@npm:0.5.6"
   dependencies:
     tslib: ^2.3.0
-  checksum: 151d06b519e1ff1c3acf6ee6846161b1d7d50bbecd4c48e5cd1b05f9e37c30602aff02e88f20105f6e6c54ae4123f9c4eb7715044d7fd927d4ba4ec3e755cd36
+  checksum: 9addf8891bdff5e23eecff03641846e7a56c1de3c9362c25e69c0b2ee3303e74b22e9a0376920283cd9d3bdd1bada12df54be5eaa29c2d801d33d94992672e14
   languageName: node
   linkType: hard
 
-"@wry/trie@npm:^0.4.0":
+"@wry/trie@npm:^0.4.3":
   version: 0.4.3
   resolution: "@wry/trie@npm:0.4.3"
   dependencies:
@@ -19932,9 +19938,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"framer-motion@npm:^10.15.0":
-  version: 10.15.0
-  resolution: "framer-motion@npm:10.15.0"
+"framer-motion@npm:^10.15.1":
+  version: 10.15.1
+  resolution: "framer-motion@npm:10.15.1"
   dependencies:
     "@emotion/is-prop-valid": ^0.8.2
     tslib: ^2.4.0
@@ -19949,7 +19955,7 @@ __metadata:
       optional: true
     react-dom:
       optional: true
-  checksum: 29f9d4368d7ed8f14e4f4a1979d2071b5745a1575bcf96120f3a4c2ac400a7bec8755139f9439ab19e0fc1225568af1270a88443e75d91bfbe71e21681ce5a88
+  checksum: b8b08561d13452be63e44f12541ff1e2c620f016522bbfb65b80b4cca27e83a85e032aebbcc38c57667ffac90ec0f63a25e73c83730e50b8ca85b85134776be0
   languageName: node
   linkType: hard
 
@@ -22908,9 +22914,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jotai@npm:^2.2.3":
-  version: 2.2.3
-  resolution: "jotai@npm:2.2.3"
+"jotai@npm:^2.3.0":
+  version: 2.3.0
+  resolution: "jotai@npm:2.3.0"
   peerDependencies:
     "@types/react": ">=17.0.0"
     react: ">=17.0.0"
@@ -22919,7 +22925,7 @@ __metadata:
       optional: true
     react:
       optional: true
-  checksum: 41f6c65bd115c92679047aaff47dfe99f8ec27cb4517144bf82b0fdd10b3b6a8b12c5101a80d9147c4660f5c2207aef13df138c8dc24e739f89cb15062ff2bdd
+  checksum: 21df579532a61e9b745584a17252560ca7267af363e4d9ea3283a1f1290aded33b33d96c5748b09f3e7c23fceae02055a8093647d841b57eb87e566995b89e4a
   languageName: node
   linkType: hard
 
@@ -24111,9 +24117,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"maplibre-gl@npm:^3.2.1":
-  version: 3.2.1
-  resolution: "maplibre-gl@npm:3.2.1"
+"maplibre-gl@npm:^3.2.2":
+  version: 3.2.2
+  resolution: "maplibre-gl@npm:3.2.2"
   dependencies:
     "@mapbox/geojson-rewind": ^0.5.2
     "@mapbox/jsonlint-lines-primitives": ^2.0.2
@@ -24140,7 +24146,7 @@ __metadata:
     supercluster: ^8.0.1
     tinyqueue: ^2.0.3
     vt-pbf: ^3.1.3
-  checksum: 70bcf5b1d6e8acec797c9a35ac0e48753ce424d744b98d9878736c3f132bcbc9f776da3e8f53178e7b94590a488a78566bfe78a4c41d3a782698fc267587416d
+  checksum: acf86479684721554432b78386a6312ded3124ac20965969c3098ac895c692550ccc04aee1a52df8bde4dee9f38c37a72ef0753834418cb800c0a7a3f5c3a337
   languageName: node
   linkType: hard
 
@@ -26139,13 +26145,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"optimism@npm:^0.16.2":
-  version: 0.16.2
-  resolution: "optimism@npm:0.16.2"
+"optimism@npm:^0.17.5":
+  version: 0.17.5
+  resolution: "optimism@npm:0.17.5"
   dependencies:
     "@wry/context": ^0.7.0
-    "@wry/trie": ^0.3.0
-  checksum: a98ed9a0b8ee2b031010222099b60860d52860bf8182889f2695a7cf2185f21aca59020f78e2b47c0ae7697843caa576798d792967314ff59f6aa7c5d9de7f3a
+    "@wry/trie": ^0.4.3
+    tslib: ^2.3.0
+  checksum: 5990217d989e9857dc523a64cb6e5a9205eae68c7acac78f7dde8fbe50045d0f11ca8068cdbb51b1eae15510d96ad593a99cf98c6f86c41d1b6f90e54956ff11
   languageName: node
   linkType: hard
 
@@ -33579,6 +33586,13 @@ __metadata:
   version: 1.10.2
   resolution: "yaml@npm:1.10.2"
   checksum: ce4ada136e8a78a0b08dc10b4b900936912d15de59905b2bf415b4d33c63df1d555d23acb2a41b23cf9fb5da41c256441afca3d6509de7247daa062fd2c5ea5f
+  languageName: node
+  linkType: hard
+
+"yaml@npm:^2.3.1":
+  version: 2.3.1
+  resolution: "yaml@npm:2.3.1"
+  checksum: 2c7bc9a7cd4c9f40d3b0b0a98e370781b68b8b7c4515720869aced2b00d92f5da1762b4ffa947f9e795d6cd6b19f410bd4d15fdd38aca7bd96df59bd9486fb54
   languageName: node
   linkType: hard
 

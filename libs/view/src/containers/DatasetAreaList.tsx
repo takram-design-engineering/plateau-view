@@ -108,7 +108,7 @@ const MunicipalityItem: FC<{
     <DatasetTreeItem
       nodeId={municipality.code}
       label={joinPath([...parents, municipality.name])}
-      disabled={query.loading}
+      loading={query.loading}
     >
       {groups?.map(({ groupId, datasets }) => (
         <DatasetGroup key={groupId} groupId={groupId} datasets={datasets} />
@@ -137,7 +137,7 @@ const PrefectureItem: FC<{
     <DatasetTreeItem
       nodeId={prefecture.code}
       label={prefecture.name}
-      disabled={query.loading}
+      loading={query.loading}
     >
       {query.data?.municipalities.map(municipality => (
         <MunicipalityItem key={municipality.code} municipality={municipality} />

@@ -73,7 +73,7 @@ const MunicipalityItem: FC<{
     <DatasetTreeItem
       nodeId={`${datasetType}:${municipality.code}`}
       label={joinPath([...parents, municipality.name])}
-      disabled={query.loading}
+      loading={query.loading}
     >
       {query.data?.municipality?.datasets?.map(dataset => (
         <DatasetItem
@@ -111,7 +111,7 @@ const PrefectureItem: FC<{
     <DatasetTreeItem
       nodeId={`${datasetType}:${prefecture.code}`}
       label={prefecture.name}
-      disabled={query.loading}
+      loading={query.loading}
     >
       {query.data?.municipalities.map(municipality => (
         <MunicipalityItem
@@ -136,7 +136,7 @@ const DatasetTypeItem: FC<{ datasetType: PlateauDatasetType }> = ({
     <DatasetTreeItem
       nodeId={datasetType}
       label={datasetTypeNames[datasetType]}
-      disabled={query.loading}
+      loading={query.loading}
     >
       {query.data?.prefectures.map(prefecture => (
         <PrefectureItem

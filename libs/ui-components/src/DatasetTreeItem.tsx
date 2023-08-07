@@ -1,8 +1,12 @@
-import { TreeItem, treeItemClasses, type TreeItemProps } from '@mui/lab'
+import { TreeItem, treeItemClasses } from '@mui/lab'
 import { styled } from '@mui/material'
-import { type FC } from 'react'
+import { type ComponentPropsWithRef } from 'react'
 
-const StyledTreeItem = styled(TreeItem)(({ theme }) => ({
+export const DatasetTreeItem = styled(TreeItem, {
+  shouldForwardProp: prop => prop !== 'loading'
+})<{
+  loading?: boolean
+}>(({ theme, loading = false }) => ({
   [`& .${treeItemClasses.content}`]: {
     minHeight: `calc(${theme.spacing(3)} + 12px)`,
     paddingTop: 6,
@@ -24,12 +28,11 @@ const StyledTreeItem = styled(TreeItem)(({ theme }) => ({
     }
   },
   [`& .${treeItemClasses.label}`]: {
-    padding: 0
+    padding: 0,
+    ...(loading && {
+      color: theme.palette.text.disabled
+    })
   }
 }))
 
-export type DatasetTreeItemProps = TreeItemProps
-
-export const DatasetTreeItem: FC<DatasetTreeItemProps> = props => {
-  return <StyledTreeItem {...props} />
-}
+export type DatasetTreeItemProps = ComponentPropsWithRef<typeof DatasetTreeItem>
