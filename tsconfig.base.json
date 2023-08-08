@@ -40,6 +40,7 @@
       ],
       "@takram/plateau-pedestrian": ["libs/pedestrian/src/index.ts"],
       "@takram/plateau-react-helpers": ["libs/react-helpers/src/index.ts"],
+      "@takram/plateau-regional-mesh": ["libs/regional-mesh/src/index.ts"],
       "@takram/plateau-screen-space-selection": [
         "libs/screen-space-selection/src/index.ts"
       ],
