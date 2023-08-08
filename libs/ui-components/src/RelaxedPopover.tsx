@@ -24,6 +24,16 @@ export const RelaxedPopover: FC<RelaxedPopoverProps> = ({
   // Relaxed behavior to close popover by clicking outside.
   const handleClickAway = useCallback(
     (event: MouseEvent | TouchEvent) => {
+      // WORKAROUND: Prevent popover from closing by clicking a select inside
+      // popover.
+      // https://github.com/mui/material-ui/issues/12034#issuecomment-1002108477
+      if (
+        event.target != null &&
+        'localName' in event.target &&
+        event.target.localName === 'body'
+      ) {
+        return
+      }
       onClose?.(event, 'backdropClick')
     },
     [onClose]

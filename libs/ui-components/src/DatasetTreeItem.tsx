@@ -7,15 +7,15 @@ export const DatasetTreeItem = styled(TreeItem, {
 })<{
   loading?: boolean
 }>(({ theme, loading = false }) => ({
+  [`& .${treeItemClasses.group}`]: {
+    marginLeft: theme.spacing(4)
+  },
   [`& .${treeItemClasses.content}`]: {
     minHeight: `calc(${theme.spacing(3)} + 12px)`,
     paddingTop: 6,
     paddingBottom: 6
   },
-  [`& .${treeItemClasses.group}`]: {
-    marginLeft: theme.spacing(4)
-  },
-  [`& .${treeItemClasses.iconContainer}`]: {
+  [`&  .${treeItemClasses.content} .${treeItemClasses.iconContainer}`]: {
     width: 24,
     height: 24,
     marginRight: theme.spacing(1),
@@ -27,7 +27,7 @@ export const DatasetTreeItem = styled(TreeItem, {
       height: 24
     }
   },
-  [`& .${treeItemClasses.label}`]: {
+  [`&  .${treeItemClasses.content} .${treeItemClasses.label}`]: {
     padding: 0,
     ...(loading && {
       color: theme.palette.text.disabled

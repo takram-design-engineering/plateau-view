@@ -12,7 +12,7 @@ export const MuiListSubheader: Components<Theme>['MuiListSubheader'] = {
       display: 'flex',
       flexDirection: 'row',
       alignItems: 'center',
-      minHeight: theme.spacing(6),
+      minHeight: theme.spacing(5),
       [`& .${listItemSecondaryActionClasses.root}`]: {
         right: theme.spacing(1)
       }

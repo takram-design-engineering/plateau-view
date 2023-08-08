@@ -1,4 +1,4 @@
-import { ListSubheader, styled, useTheme } from '@mui/material'
+import { styled, useTheme } from '@mui/material'
 import { sum } from 'lodash'
 import {
   Children,
@@ -77,11 +77,8 @@ export const SearchListbox = forwardRef<HTMLDivElement, SearchListboxProps>(
     const listPadding = parseFloat(theme.spacing(1))
 
     const getChildSize = useCallback(
-      (child: (typeof itemData)[number]) => {
-        const type = typeof child === 'object' && 'type' in child && child.type
-        return type === ListSubheader ? parseFloat(theme.spacing(6)) : itemSize
-      },
-      [theme, itemSize]
+      (child: (typeof itemData)[number]) => itemSize,
+      [itemSize]
     )
 
     const getItemSize = useCallback(
