@@ -10,6 +10,7 @@ import { useAtomValue } from 'jotai'
 import {
   useCallback,
   useContext,
+  useDeferredValue,
   useMemo,
   useRef,
   useState,
@@ -139,6 +140,7 @@ export const SearchAutocompletePanel: FC<SearchAutocompletePanelProps> = ({
   }, [])
 
   const [tab, setTab] = useState(0)
+  const deferredTab = useDeferredValue(tab)
   const handleTabChange = useCallback((event: unknown, value: number) => {
     setTab(value)
   }, [])
@@ -172,7 +174,7 @@ export const SearchAutocompletePanel: FC<SearchAutocompletePanelProps> = ({
             children
           ) : (
             <StyledScrollable>
-              <StyledTabs value={tab} onChange={handleTabChange}>
+              <StyledTabs value={deferredTab} onChange={handleTabChange}>
                 <Tab label='検索' />
                 <Tab label='都道府県' />
                 <Tab label='カテゴリー' />
