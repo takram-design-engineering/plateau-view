@@ -1,5 +1,19 @@
-export type MeshPoint = [number, number]
-export type MeshBounds = [number, number, number, number] // west, south, east, north
+export type MeshType =
+  | 'primary'
+  | 'secondary'
+  | 'tertiary'
+  | 'half'
+  | 'quarter'
+  | 'eighth'
 
-export type ConvertPointToCode = (point: Readonly<MeshPoint>) => number
-export type ConvertCodeToPoint = (code: number) => MeshPoint
+export interface MeshPoint {
+  longitude: number
+  latitude: number
+}
+
+export interface MeshBounds {
+  north: number
+  west: number
+  south: number
+  east: number
+}
