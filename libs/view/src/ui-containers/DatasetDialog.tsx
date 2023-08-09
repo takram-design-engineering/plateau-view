@@ -25,7 +25,7 @@ import {
   PrefixedAddSmallIcon,
   PrefixedCheckSmallIcon
 } from '@takram/plateau-ui-components'
-import { createViewLayer } from '@takram/plateau-view-layers'
+import { BUILDING_LAYER, createViewLayer } from '@takram/plateau-view-layers'
 
 import { datasetTypeIcons } from '../constants/datasetTypeIcons'
 import { datasetTypeLayers } from '../constants/datasetTypeLayers'
@@ -54,10 +54,12 @@ const StyledButton = styled(Button, {
 }))
 
 export interface DatasetDialogProps extends Omit<DialogProps, 'children'> {
+  municipalityCode: string
   dataset: PlateauDatasetFragment
 }
 
 export const DatasetDialog: FC<DatasetDialogProps> = ({
+  municipalityCode,
   dataset,
   ...props
 }) => {
@@ -67,6 +69,7 @@ export const DatasetDialog: FC<DatasetDialogProps> = ({
     }
   })
 
+  // TODO: Separate into hook
   const layer = useAtomValue(
     useMemo(
       () =>
@@ -75,10 +78,14 @@ export const DatasetDialog: FC<DatasetDialogProps> = ({
             if ('isDatasetLayer' in layer) {
               return layer.datasetId === dataset.id
             }
+            // TODO: Why the type of layer isn't reduced to BuildingLayerModel?
+            if (layer.type === BUILDING_LAYER && 'municipalityCode' in layer) {
+              return layer.municipalityCode === municipalityCode
+            }
             return false
           })
         ),
-      [dataset]
+      [municipalityCode, dataset]
     )
   )
 
