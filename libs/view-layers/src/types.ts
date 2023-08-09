@@ -11,6 +11,7 @@ import { type LayerListItemProps } from '@takram/plateau-ui-components'
 
 import { type BridgeLayerModel } from './BridgeLayer'
 import { type BuildingLayerModel } from './BuildingLayer'
+import { type HeatmapLayerModel } from './HeatmapLayer'
 import { type LandSlideRiskLayerModel } from './LandSlideRiskLayer'
 import { type LandUseLayerModel } from './LandUseLayer'
 import {
@@ -20,6 +21,7 @@ import {
   type CITY_FURNITURE_LAYER,
   type EMERGENCY_ROUTE_LAYER,
   type GENERIC_CITY_OBJECT_LAYER,
+  type HEATMAP_LAYER,
   type HIGH_TIDE_RISK_LAYER,
   type INLAND_FLOODING_RISK_LAYER,
   type LAND_SLIDE_RISK_LAYER,
@@ -67,6 +69,7 @@ declare module '@takram/plateau-layers' {
 
   interface LayerModelOverrides {
     [PEDESTRIAN_LAYER]: PedestrianLayerModel
+    [HEATMAP_LAYER]: HeatmapLayerModel
     // Dataset layers
     [BORDER_LAYER]: never // BorderLayerModel
     [BRIDGE_LAYER]: BridgeLayerModel

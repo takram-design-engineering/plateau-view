@@ -1,4 +1,5 @@
 export const PEDESTRIAN_LAYER = 'PEDESTRIAN_LAYER'
+export const HEATMAP_LAYER = 'HEATMAP_LAYER'
 // Dataset layers
 export const BORDER_LAYER = 'BORDER_LAYER'
 export const BRIDGE_LAYER = 'BRIDGE_LAYER'

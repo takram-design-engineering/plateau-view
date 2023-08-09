@@ -28,14 +28,14 @@ export class HeatmapMeshMaterial extends Material {
     width,
     height,
     minValue = 0,
-    maxValue = 1,
+    maxValue = 100,
     rectangle,
     cropRectangle,
     colorMap = colorMapViridis,
     opacity = 1,
     contourSpacing = 10,
-    contourThickness = 2,
-    contourAlpha = 0.3,
+    contourThickness = 1,
+    contourAlpha = 0.2,
     logarithmic = false
   }: HeatmapMeshMaterialOptions) {
     const imageScale = new Cartesian2(1, 1)

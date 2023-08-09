@@ -1,4 +1,4 @@
-import { csvParseRows } from 'd3'
+import { csvParseRows, quantile } from 'd3'
 import invariant from 'tiny-invariant'
 
 import { inferMeshType, type MeshType } from '@takram/plateau-regional-mesh'
@@ -15,6 +15,16 @@ export interface ParseCSVResult {
   values: Float32Array
   minValue: number
   maxValue: number
+  outlierThreshold: number
+}
+
+function computeOutlierThreshold(values: number[]): number {
+  return (
+    quantile(
+      values.map(value => Math.abs(value)),
+      0.98
+    ) ?? 0
+  )
 }
 
 export function parseCSV(
@@ -60,6 +70,7 @@ export function parseCSV(
     codes: new Float64Array(codes),
     values: new Float32Array(values),
     minValue,
-    maxValue
+    maxValue,
+    outlierThreshold: computeOutlierThreshold(values)
   }
 }
