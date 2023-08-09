@@ -4,7 +4,13 @@ This repository hosts a prototype of PLATEAU VIEW 3.0, a part of [the 2023 PLATE
 
 The prototype under development is available at [plateau.takram.com](https://plateau.takram.com). However, please be aware that it is still in development and is not intended to be a complete service.
 
-![image](https://github.com/takram-design-engineering/plateau-view/assets/8651513/95489cd2-ee1d-45d1-8953-32a7acb2fb72)
+![Heatmap](https://github.com/takram-design-engineering/plateau-view/assets/8651513/95489cd2-ee1d-45d1-8953-32a7acb2fb72)
+
+![Flood Risk](https://github.com/takram-design-engineering/plateau-view/assets/8651513/f464a043-0eaa-4fc0-9538-8ffb7df318be)
+
+![Elevation](https://github.com/takram-design-engineering/plateau-view/assets/8651513/dfb7674d-4692-4347-85a3-085a123d8b01)
+
+![Pedestrian](https://github.com/takram-design-engineering/plateau-view/assets/8651513/d7aa2524-8db4-4476-be3b-31a42d1a195d)
 
 ## Background and Goal
 
