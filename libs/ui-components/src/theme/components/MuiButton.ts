@@ -20,6 +20,12 @@ export const MuiButton: Components<Theme>['MuiButton'] = {
     sizeSmall: ({ theme }) => ({
       ...theme.typography.body2
     }),
+    containedInherit: ({ theme }) => ({
+      backgroundColor:
+        theme.palette.mode === 'light'
+          ? theme.palette.grey[200]
+          : theme.palette.grey[900]
+    }),
     outlinedInherit: ({ theme }) => ({
       borderColor:
         theme.palette.mode === 'light'

@@ -126,6 +126,7 @@ type PlateauPrefecture implements PlateauArea {
 }
 
 type Query {
+  dataset(datasetId: String!): PlateauDataset
   datasets(excludeTypes: [PlateauDatasetType!], includeTypes: [PlateauDatasetType!], municipalityCodes: [String!], searchTokens: [String!]): [PlateauDataset!]!
   municipalities(datasetType: PlateauDatasetType, prefectureCode: String): [PlateauMunicipality!]!
   municipality(code: String!): PlateauMunicipality

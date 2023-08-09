@@ -42,3 +42,9 @@ query datasets(
     }
   }
 }
+
+query datasetDetail($datasetId: String!) {
+  dataset(datasetId: $datasetId) {
+    ...PlateauDatasetDetail
+  }
+}

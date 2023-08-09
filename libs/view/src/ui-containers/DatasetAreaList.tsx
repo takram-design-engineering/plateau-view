@@ -1,8 +1,7 @@
-import { styled } from '@mui/material'
 import { useAtom } from 'jotai'
 import { atomWithReset } from 'jotai/utils'
 import { groupBy } from 'lodash'
-import { useCallback, useMemo, type FC, type ReactNode } from 'react'
+import { useCallback, useMemo, type FC } from 'react'
 import invariant from 'tiny-invariant'
 
 import {
@@ -16,54 +15,38 @@ import {
 } from '@takram/plateau-graphql'
 import { DatasetTreeItem, DatasetTreeView } from '@takram/plateau-ui-components'
 
-import { datasetTypeIcons } from '../constants/datasetTypeIcons'
 import { datasetTypeOrder } from '../constants/datasetTypeOrder'
+import { DatasetListItem, joinPath } from './DatasetListItem'
 
 const expandedAtom = atomWithReset<string[]>([])
 
-const Delimiter = styled('span')(({ theme }) => ({
-  margin: `0 0.5em`,
-  color: theme.palette.text.disabled
-}))
-
-function joinPath(values: string[]): ReactNode {
-  return (values as ReactNode[]).reduce((prev, curr, index) => [
-    prev,
-    <Delimiter key={index}>/</Delimiter>,
-    curr
-  ])
-}
-
-const DatasetItem: FC<{
-  dataset: PlateauDatasetFragment
-  parents?: string[]
-  grouped?: boolean
-}> = ({ dataset, parents = [], grouped = false }) => {
-  const Icon = datasetTypeIcons[dataset.type]
-  return (
-    <DatasetTreeItem
-      nodeId={dataset.id}
-      label={joinPath([...parents, grouped ? dataset.name : dataset.typeName])}
-      icon={<Icon />}
-    />
-  )
-}
-
 const DatasetGroup: FC<{
   groupId: string
+  municipalityCode: string
   datasets: PlateauDatasetFragment[]
-}> = ({ groupId, datasets }) => {
+}> = ({ groupId, municipalityCode, datasets }) => {
   invariant(datasets.length > 0)
   if (datasets.length > 1) {
     return (
       <DatasetTreeItem nodeId={groupId} label={datasets[0].typeName}>
         {datasets.map(dataset => (
-          <DatasetItem key={dataset.id} dataset={dataset} grouped />
+          <DatasetListItem
+            key={dataset.id}
+            municipalityCode={municipalityCode}
+            dataset={dataset}
+            label={dataset.name}
+          />
         ))}
       </DatasetTreeItem>
     )
   }
-  return <DatasetItem dataset={datasets[0]} />
+  return (
+    <DatasetListItem
+      municipalityCode={municipalityCode}
+      dataset={datasets[0]}
+      label={datasets[0].typeName}
+    />
+  )
 }
 
 const MunicipalityItem: FC<{
@@ -97,10 +80,12 @@ const MunicipalityItem: FC<{
     [query.data?.municipality?.datasets]
   )
   if (query.data?.municipality?.datasets.length === 1) {
+    const dataset = query.data.municipality.datasets[0]
     return (
-      <DatasetItem
-        dataset={query.data.municipality.datasets[0]}
-        parents={[...parents, municipality.name]}
+      <DatasetListItem
+        municipalityCode={query.data.municipality.code}
+        dataset={dataset}
+        label={joinPath([...parents, municipality.name, dataset.typeName])}
       />
     )
   }
@@ -110,9 +95,17 @@ const MunicipalityItem: FC<{
       label={joinPath([...parents, municipality.name])}
       loading={query.loading}
     >
-      {groups?.map(({ groupId, datasets }) => (
-        <DatasetGroup key={groupId} groupId={groupId} datasets={datasets} />
-      ))}
+      {groups?.map(({ groupId, datasets }) => {
+        invariant(query.data?.municipality?.code != null)
+        return (
+          <DatasetGroup
+            key={groupId}
+            groupId={groupId}
+            municipalityCode={query.data.municipality.code}
+            datasets={datasets}
+          />
+        )
+      })}
     </DatasetTreeItem>
   )
 }

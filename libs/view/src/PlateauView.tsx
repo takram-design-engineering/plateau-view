@@ -29,9 +29,9 @@ import { SelectionBoundingSphere } from './containers/SelectionBoundingSphere'
 import { SelectionCoordinator } from './containers/SelectionCoordinator'
 import { Terrains } from './containers/Terrains'
 import { ToolMachineEvents } from './containers/ToolMachineEvents'
-import { AppHeader } from './overlay/AppHeader'
-import { AppOverlay } from './overlay/AppOverlay'
 import { readyAtom } from './states/app'
+import { AppHeader } from './ui-containers/AppHeader'
+import { AppOverlay } from './ui-containers/AppOverlay'
 
 const initialDestination = Cartesian3.fromDegrees(139.755, 35.675, 1000)
 const initialOrientation = new HeadingPitchRoll(Math.PI * 0.4, -Math.PI * 0.2)
@@ -49,7 +49,8 @@ const InitialLayers: FC = () => {
           version: '2020',
           lod: 2,
           textured: false
-        })
+        }),
+        { autoSelect: false }
       ),
       addLayer(
         createViewLayer({
@@ -58,7 +59,8 @@ const InitialLayers: FC = () => {
           version: '2020',
           lod: 2,
           textured: false
-        })
+        }),
+        { autoSelect: false }
       ),
       addLayer(
         createViewLayer({
@@ -67,7 +69,8 @@ const InitialLayers: FC = () => {
             longitude: 139.769,
             latitude: 35.68
           }
-        })
+        }),
+        { autoSelect: false }
       )
     ]
     return () => {

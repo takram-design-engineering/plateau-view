@@ -1,8 +1,12 @@
-import { TreeItem, treeItemClasses } from '@mui/lab'
-import { styled } from '@mui/material'
-import { type ComponentPropsWithRef } from 'react'
+import { TreeItem, treeItemClasses, type TreeItemProps } from '@mui/lab'
+import { Stack, styled } from '@mui/material'
+import { useState, type FC, type ReactNode } from 'react'
 
-export const DatasetTreeItem = styled(TreeItem, {
+import { useForkEventHandler } from '@takram/plateau-react-helpers'
+
+import { PrefixedCheckIcon } from './icons'
+
+const StyledTreeItem = styled(TreeItem, {
   shouldForwardProp: prop => prop !== 'loading'
 })<{
   loading?: boolean
@@ -35,4 +39,61 @@ export const DatasetTreeItem = styled(TreeItem, {
   }
 }))
 
-export type DatasetTreeItemProps = ComponentPropsWithRef<typeof DatasetTreeItem>
+const Label = styled('div')(({ theme }) => ({
+  overflow: 'hidden',
+  whiteSpace: 'nowrap',
+  textOverflow: 'ellipsis'
+}))
+
+const SecondaryAction = styled('div')(({ theme }) => ({
+  height: 0,
+  marginRight: theme.spacing(1),
+  marginLeft: theme.spacing(0.5),
+  '& > *': {
+    transform: 'translateY(-50%)'
+  }
+}))
+
+export interface DatasetTreeItemProps extends TreeItemProps {
+  loading?: boolean
+  selected?: boolean
+  secondaryAction?: ReactNode
+}
+
+export const DatasetTreeItem: FC<DatasetTreeItemProps> = ({
+  label,
+  icon,
+  selected = false,
+  secondaryAction,
+  onMouseEnter,
+  onMouseLeave,
+  ...props
+}) => {
+  const [hovered, setHovered] = useState(false)
+  const handleMouseEnter = useForkEventHandler(onMouseEnter, () => {
+    setHovered(true)
+  })
+  const handleMouseLeave = useForkEventHandler(onMouseLeave, () => {
+    setHovered(false)
+  })
+  return (
+    <StyledTreeItem
+      {...props}
+      label={
+        <Stack
+          direction='row'
+          alignItems='center'
+          justifyContent='space-between'
+        >
+          <Label>{label}</Label>
+          {hovered && secondaryAction != null && (
+            <SecondaryAction>{secondaryAction}</SecondaryAction>
+          )}
+        </Stack>
+      }
+      icon={selected ? <PrefixedCheckIcon color='primary' /> : icon}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    />
+  )
+}

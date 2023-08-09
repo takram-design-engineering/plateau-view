@@ -94,7 +94,14 @@ export class PlateauCatalogService {
     })
   }
 
-  // TODO: Pagination
+  async findOne(params: {
+    datasetId: string
+  }): Promise<PlateauDataset | undefined> {
+    const doc = await this.catalogCollection.doc(params.datasetId).get()
+    const data = doc.data()
+    return data != null ? this.createDataset(data) : undefined
+  }
+
   async findAll(
     params: {
       municipalityCode?: string

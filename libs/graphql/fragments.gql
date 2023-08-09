@@ -33,10 +33,18 @@ fragment PlateauDatasetDatum on PlateauDatasetDatum {
 
 fragment PlateauDataset on PlateauDataset {
   id
+  name
   type
   typeName
-  name
   data {
     ...PlateauDatasetDatum
+  }
+}
+
+fragment PlateauDatasetDetail on PlateauDataset {
+  ...PlateauDataset
+  description
+  municipality {
+    ...PlateauMunicipality
   }
 }
