@@ -7,6 +7,7 @@ export interface ParseCSVOptions {
   codeColumn: number
   valueColumn: number
   skipHeader?: number
+  fallbackValue?: number
 }
 
 export interface ParseCSVResult {
@@ -19,7 +20,12 @@ export interface ParseCSVResult {
 
 export function parseCSV(
   data: string,
-  { codeColumn, valueColumn, skipHeader = 1 }: ParseCSVOptions
+  {
+    codeColumn,
+    valueColumn,
+    skipHeader = 1,
+    fallbackValue = 0
+  }: ParseCSVOptions
 ): ParseCSVResult {
   let meshType: MeshType | undefined
   const codes: number[] = []
@@ -40,7 +46,7 @@ export function parseCSV(
     }
     let value = +row[valueColumn]
     if (isNaN(value)) {
-      value = 0
+      value = fallbackValue
     }
     values.push(value)
     if (value < minValue) {
