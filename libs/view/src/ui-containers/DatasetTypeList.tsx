@@ -1,53 +1,22 @@
-import { styled } from '@mui/material'
 import { useAtom } from 'jotai'
 import { atomWithReset } from 'jotai/utils'
-import { useCallback, type FC, type ReactNode } from 'react'
+import { useCallback, type FC } from 'react'
 
 import {
   useMunicipalityDatasetsQuery,
   usePrefectureMunicipalitiesQuery,
   usePrefecturesQuery,
-  type PlateauDatasetFragment,
   type PlateauDatasetType,
   type PlateauMunicipalityFragment,
   type PlateauPrefectureFragment
 } from '@takram/plateau-graphql'
 import { DatasetTreeItem, DatasetTreeView } from '@takram/plateau-ui-components'
 
-import { datasetTypeIcons } from '../constants/datasetTypeIcons'
 import { datasetTypeNames } from '../constants/datasetTypeNames'
 import { datasetTypeOrder } from '../constants/datasetTypeOrder'
+import { DatasetListItem, joinPath } from './DatasetListItem'
 
 const expandedAtom = atomWithReset<string[]>([])
-
-const Delimiter = styled('span')(({ theme }) => ({
-  margin: `0 0.5em`,
-  color: theme.palette.text.disabled
-}))
-
-function joinPath(values: string[]): ReactNode {
-  return (values as ReactNode[]).reduce((prev, curr, index) => [
-    prev,
-    <Delimiter key={index}>/</Delimiter>,
-    curr
-  ])
-}
-
-const DatasetItem: FC<{
-  datasetType: PlateauDatasetType
-  dataset: PlateauDatasetFragment
-  parents: string[]
-  showName?: boolean
-}> = ({ datasetType, dataset, parents, showName = false }) => {
-  const Icon = datasetTypeIcons[dataset.type]
-  return (
-    <DatasetTreeItem
-      nodeId={`${datasetType}:${dataset.id}`}
-      label={showName ? dataset.name : joinPath(parents)}
-      icon={<Icon />}
-    />
-  )
-}
 
 const MunicipalityItem: FC<{
   datasetType: PlateauDatasetType
@@ -62,10 +31,10 @@ const MunicipalityItem: FC<{
   })
   if (query.data?.municipality?.datasets.length === 1) {
     return (
-      <DatasetItem
-        datasetType={datasetType}
+      <DatasetListItem
+        municipalityCode={municipality.code}
         dataset={query.data.municipality.datasets[0]}
-        parents={[...parents, municipality.name]}
+        label={joinPath([...parents, municipality.name])}
       />
     )
   }
@@ -76,12 +45,11 @@ const MunicipalityItem: FC<{
       loading={query.loading}
     >
       {query.data?.municipality?.datasets?.map(dataset => (
-        <DatasetItem
+        <DatasetListItem
           key={dataset.id}
-          datasetType={datasetType}
+          municipalityCode={municipality.code}
           dataset={dataset}
-          parents={[...parents, municipality.name]}
-          showName
+          label={dataset.name}
         />
       ))}
     </DatasetTreeItem>

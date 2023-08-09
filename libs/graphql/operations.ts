@@ -168,11 +168,16 @@ export type PlateauPrefecture = PlateauArea & {
 
 export type Query = {
   __typename?: 'Query'
+  dataset?: Maybe<PlateauDataset>
   datasets: Array<PlateauDataset>
   municipalities: Array<PlateauMunicipality>
   municipality?: Maybe<PlateauMunicipality>
   prefecture?: Maybe<PlateauPrefecture>
   prefectures: Array<PlateauPrefecture>
+}
+
+export type QueryDatasetArgs = {
+  datasetId: Scalars['String']['input']
 }
 
 export type QueryDatasetsArgs = {
@@ -261,9 +266,9 @@ export type PlateauDatasetDatumFragment =
 type PlateauDataset_PlateauBuildingDataset_Fragment = {
   __typename?: 'PlateauBuildingDataset'
   id: string
+  name: string
   type: PlateauDatasetType
   typeName: string
-  name: string
   data: Array<{
     __typename?: 'PlateauBuildingDatasetDatum'
     version: string
@@ -279,9 +284,9 @@ type PlateauDataset_PlateauBuildingDataset_Fragment = {
 type PlateauDataset_PlateauDefaultDataset_Fragment = {
   __typename?: 'PlateauDefaultDataset'
   id: string
+  name: string
   type: PlateauDatasetType
   typeName: string
-  name: string
   data: Array<{
     __typename?: 'PlateauDefaultDatasetDatum'
     id: string
@@ -294,6 +299,101 @@ type PlateauDataset_PlateauDefaultDataset_Fragment = {
 export type PlateauDatasetFragment =
   | PlateauDataset_PlateauBuildingDataset_Fragment
   | PlateauDataset_PlateauDefaultDataset_Fragment
+
+type PlateauDatasetDetail_PlateauBuildingDataset_Fragment = {
+  __typename?: 'PlateauBuildingDataset'
+  description?: string | null
+  id: string
+  name: string
+  type: PlateauDatasetType
+  typeName: string
+  municipality?: {
+    __typename?: 'PlateauMunicipality'
+    id: string
+    code: string
+    name: string
+    parents: Array<
+      | {
+          __typename?: 'PlateauMunicipality'
+          id: string
+          type: PlateauAreaType
+          code: string
+          name: string
+        }
+      | {
+          __typename?: 'PlateauPrefecture'
+          id: string
+          type: PlateauAreaType
+          code: string
+          name: string
+        }
+    >
+    prefecture: {
+      __typename?: 'PlateauPrefecture'
+      id: string
+      code: string
+      name: string
+    }
+  } | null
+  data: Array<{
+    __typename?: 'PlateauBuildingDatasetDatum'
+    version: string
+    lod: number
+    textured: boolean
+    id: string
+    format: PlateauDatasetFormat
+    url: string
+    name: string
+  }>
+}
+
+type PlateauDatasetDetail_PlateauDefaultDataset_Fragment = {
+  __typename?: 'PlateauDefaultDataset'
+  description?: string | null
+  id: string
+  name: string
+  type: PlateauDatasetType
+  typeName: string
+  municipality?: {
+    __typename?: 'PlateauMunicipality'
+    id: string
+    code: string
+    name: string
+    parents: Array<
+      | {
+          __typename?: 'PlateauMunicipality'
+          id: string
+          type: PlateauAreaType
+          code: string
+          name: string
+        }
+      | {
+          __typename?: 'PlateauPrefecture'
+          id: string
+          type: PlateauAreaType
+          code: string
+          name: string
+        }
+    >
+    prefecture: {
+      __typename?: 'PlateauPrefecture'
+      id: string
+      code: string
+      name: string
+    }
+  } | null
+  data: Array<{
+    __typename?: 'PlateauDefaultDatasetDatum'
+    id: string
+    format: PlateauDatasetFormat
+    url: string
+    name: string
+  }>
+}
+
+export type PlateauDatasetDetailFragment =
+  | PlateauDatasetDetail_PlateauBuildingDataset_Fragment
+  | PlateauDatasetDetail_PlateauDefaultDataset_Fragment
 
 export type PrefecturesQueryVariables = Exact<{
   datasetType?: InputMaybe<PlateauDatasetType>
@@ -363,9 +463,9 @@ export type MunicipalityDatasetsQuery = {
       | {
           __typename?: 'PlateauBuildingDataset'
           id: string
+          name: string
           type: PlateauDatasetType
           typeName: string
-          name: string
           data: Array<{
             __typename?: 'PlateauBuildingDatasetDatum'
             version: string
@@ -380,9 +480,9 @@ export type MunicipalityDatasetsQuery = {
       | {
           __typename?: 'PlateauDefaultDataset'
           id: string
+          name: string
           type: PlateauDatasetType
           typeName: string
-          name: string
           data: Array<{
             __typename?: 'PlateauDefaultDatasetDatum'
             id: string
@@ -431,9 +531,9 @@ export type DatasetsQuery = {
     | {
         __typename?: 'PlateauBuildingDataset'
         id: string
+        name: string
         type: PlateauDatasetType
         typeName: string
-        name: string
         municipality?: {
           __typename?: 'PlateauMunicipality'
           id: string
@@ -476,9 +576,9 @@ export type DatasetsQuery = {
     | {
         __typename?: 'PlateauDefaultDataset'
         id: string
+        name: string
         type: PlateauDatasetType
         typeName: string
-        name: string
         municipality?: {
           __typename?: 'PlateauMunicipality'
           id: string
@@ -518,6 +618,130 @@ export type DatasetsQuery = {
   >
 }
 
+export type DatasetDetailQueryVariables = Exact<{
+  datasetId: Scalars['String']['input']
+}>
+
+export type DatasetDetailQuery = {
+  __typename?: 'Query'
+  dataset?:
+    | {
+        __typename?: 'PlateauBuildingDataset'
+        description?: string | null
+        id: string
+        name: string
+        type: PlateauDatasetType
+        typeName: string
+        municipality?: {
+          __typename?: 'PlateauMunicipality'
+          id: string
+          code: string
+          name: string
+          parents: Array<
+            | {
+                __typename?: 'PlateauMunicipality'
+                id: string
+                type: PlateauAreaType
+                code: string
+                name: string
+              }
+            | {
+                __typename?: 'PlateauPrefecture'
+                id: string
+                type: PlateauAreaType
+                code: string
+                name: string
+              }
+          >
+          prefecture: {
+            __typename?: 'PlateauPrefecture'
+            id: string
+            code: string
+            name: string
+          }
+        } | null
+        data: Array<{
+          __typename?: 'PlateauBuildingDatasetDatum'
+          version: string
+          lod: number
+          textured: boolean
+          id: string
+          format: PlateauDatasetFormat
+          url: string
+          name: string
+        }>
+      }
+    | {
+        __typename?: 'PlateauDefaultDataset'
+        description?: string | null
+        id: string
+        name: string
+        type: PlateauDatasetType
+        typeName: string
+        municipality?: {
+          __typename?: 'PlateauMunicipality'
+          id: string
+          code: string
+          name: string
+          parents: Array<
+            | {
+                __typename?: 'PlateauMunicipality'
+                id: string
+                type: PlateauAreaType
+                code: string
+                name: string
+              }
+            | {
+                __typename?: 'PlateauPrefecture'
+                id: string
+                type: PlateauAreaType
+                code: string
+                name: string
+              }
+          >
+          prefecture: {
+            __typename?: 'PlateauPrefecture'
+            id: string
+            code: string
+            name: string
+          }
+        } | null
+        data: Array<{
+          __typename?: 'PlateauDefaultDatasetDatum'
+          id: string
+          format: PlateauDatasetFormat
+          url: string
+          name: string
+        }>
+      }
+    | null
+}
+
+export const PlateauDatasetDatumFragmentDoc = gql`
+  fragment PlateauDatasetDatum on PlateauDatasetDatum {
+    id
+    format
+    url
+    name
+    ... on PlateauBuildingDatasetDatum {
+      version
+      lod
+      textured
+    }
+  }
+`
+export const PlateauDatasetFragmentDoc = gql`
+  fragment PlateauDataset on PlateauDataset {
+    id
+    name
+    type
+    typeName
+    data {
+      ...PlateauDatasetDatum
+    }
+  }
+  ${PlateauDatasetDatumFragmentDoc}
+`
 export const PlateauPrefectureFragmentDoc = gql`
   fragment PlateauPrefecture on PlateauPrefecture {
     id
@@ -542,30 +766,16 @@ export const PlateauMunicipalityFragmentDoc = gql`
   }
   ${PlateauPrefectureFragmentDoc}
 `
-export const PlateauDatasetDatumFragmentDoc = gql`
-  fragment PlateauDatasetDatum on PlateauDatasetDatum {
-    id
-    format
-    url
-    name
-    ... on PlateauBuildingDatasetDatum {
-      version
-      lod
-      textured
+export const PlateauDatasetDetailFragmentDoc = gql`
+  fragment PlateauDatasetDetail on PlateauDataset {
+    ...PlateauDataset
+    description
+    municipality {
+      ...PlateauMunicipality
     }
   }
-`
-export const PlateauDatasetFragmentDoc = gql`
-  fragment PlateauDataset on PlateauDataset {
-    id
-    type
-    typeName
-    name
-    data {
-      ...PlateauDatasetDatum
-    }
-  }
-  ${PlateauDatasetDatumFragmentDoc}
+  ${PlateauDatasetFragmentDoc}
+  ${PlateauMunicipalityFragmentDoc}
 `
 export const PrefecturesDocument = gql`
   query prefectures($datasetType: PlateauDatasetType) {
@@ -823,4 +1033,63 @@ export type DatasetsLazyQueryHookResult = ReturnType<
 export type DatasetsQueryResult = Apollo.QueryResult<
   DatasetsQuery,
   DatasetsQueryVariables
+>
+export const DatasetDetailDocument = gql`
+  query datasetDetail($datasetId: String!) {
+    dataset(datasetId: $datasetId) {
+      ...PlateauDatasetDetail
+    }
+  }
+  ${PlateauDatasetDetailFragmentDoc}
+`
+
+/**
+ * __useDatasetDetailQuery__
+ *
+ * To run a query within a React component, call `useDatasetDetailQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDatasetDetailQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useDatasetDetailQuery({
+ *   variables: {
+ *      datasetId: // value for 'datasetId'
+ *   },
+ * });
+ */
+export function useDatasetDetailQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    DatasetDetailQuery,
+    DatasetDetailQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<DatasetDetailQuery, DatasetDetailQueryVariables>(
+    DatasetDetailDocument,
+    options
+  )
+}
+export function useDatasetDetailLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    DatasetDetailQuery,
+    DatasetDetailQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<DatasetDetailQuery, DatasetDetailQueryVariables>(
+    DatasetDetailDocument,
+    options
+  )
+}
+export type DatasetDetailQueryHookResult = ReturnType<
+  typeof useDatasetDetailQuery
+>
+export type DatasetDetailLazyQueryHookResult = ReturnType<
+  typeof useDatasetDetailLazyQuery
+>
+export type DatasetDetailQueryResult = Apollo.QueryResult<
+  DatasetDetailQuery,
+  DatasetDetailQueryVariables
 >
