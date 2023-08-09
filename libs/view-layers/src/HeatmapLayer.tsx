@@ -31,12 +31,12 @@ import { HEATMAP_LAYER } from './layerTypes'
 import { type ConfigurableLayerModel, type LayerColorScheme } from './types'
 
 export interface HeatmapLayerModelParams extends ViewLayerModelParams {
-  dataUrl: string
+  urls: string[]
   opacity?: number
 }
 
 export interface HeatmapLayerModel extends ViewLayerModel {
-  dataUrl: string
+  urls: string[]
   opacityAtom: PrimitiveAtom<number>
   valueRangeAtom: PrimitiveAtom<number[]>
   contourSpacingAtom: PrimitiveAtom<number>
@@ -60,7 +60,7 @@ export function createHeatmapLayer(
       title: '統計データ'
     }),
     type: HEATMAP_LAYER,
-    dataUrl: params.dataUrl,
+    urls: params.urls,
     opacityAtom: atom(params.opacity ?? 0.8),
     valueRangeAtom: atom([0, 100]),
     contourSpacingAtom: atom(10),
@@ -72,7 +72,7 @@ export const HeatmapLayer: FC<LayerProps<typeof HEATMAP_LAYER>> = ({
   hiddenAtom,
   boundingSphereAtom,
   colorSchemeAtom,
-  dataUrl,
+  urls,
   opacityAtom,
   valueRangeAtom,
   contourSpacingAtom
@@ -100,13 +100,20 @@ export const HeatmapLayer: FC<LayerProps<typeof HEATMAP_LAYER>> = ({
   const [data, setData] = useState<ParseCSVResult>()
   useEffect(() => {
     ;(async () => {
-      const response = await axios(dataUrl, {
-        baseURL: process.env.NEXT_PUBLIC_DATA_BASE_URL,
-        responseType: 'arraybuffer'
-      })
+      const responses = await Promise.all(
+        urls.map(
+          async url =>
+            await axios(url, {
+              baseURL: process.env.NEXT_PUBLIC_DATA_BASE_URL,
+              responseType: 'arraybuffer'
+            })
+        )
+      )
       const data = parseCSV(
         // TODO: Auto-detect encoding
-        new TextDecoder('shift-jis').decode(response.data),
+        responses.map(response =>
+          new TextDecoder('shift-jis').decode(response.data)
+        ),
         {
           codeColumn: 0,
           valueColumn: 4,
@@ -120,7 +127,7 @@ export const HeatmapLayer: FC<LayerProps<typeof HEATMAP_LAYER>> = ({
     })().catch(error => {
       console.error(error)
     })
-  }, [dataUrl, setValueRange, setContourSpacing, setColorRange])
+  }, [urls, setValueRange, setContourSpacing, setColorRange])
 
   const [meshImageData, setMeshImageData] = useState<MeshImageData>()
   useEffect(() => {

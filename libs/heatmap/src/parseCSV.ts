@@ -21,14 +21,14 @@ export interface ParseCSVResult {
 function computeOutlierThreshold(values: number[]): number {
   return (
     quantile(
-      values.map(value => Math.abs(value)),
-      0.98
+      values.filter(value => value > 0).map(value => Math.abs(value)),
+      0.999
     ) ?? 0
   )
 }
 
 export function parseCSV(
-  data: string,
+  data: string | string[],
   { codeColumn, valueColumn, skipHeader = 1 }: ParseCSVOptions
 ): ParseCSVResult {
   let meshType: MeshType | undefined
@@ -36,29 +36,31 @@ export function parseCSV(
   const values: number[] = []
   let minValue = Infinity
   let maxValue = -Infinity
-  csvParseRows(data, (row, index): undefined => {
-    if (index <= skipHeader) {
-      return
-    }
-    const code = +row[codeColumn]
-    if (isNaN(code)) {
-      return
-    }
-    codes.push(code)
-    if (meshType == null) {
-      meshType = inferMeshType(row[codeColumn])
-    }
-    const value = +row[valueColumn]
-    if (isNaN(value)) {
-      return
-    }
-    values.push(value)
-    if (value < minValue) {
-      minValue = value
-    }
-    if (value > maxValue) {
-      maxValue = value
-    }
+  ;(Array.isArray(data) ? data : [data]).forEach(data => {
+    csvParseRows(data, (row, index): undefined => {
+      if (index <= skipHeader) {
+        return
+      }
+      const code = +row[codeColumn]
+      if (isNaN(code)) {
+        return
+      }
+      codes.push(code)
+      if (meshType == null) {
+        meshType = inferMeshType(row[codeColumn])
+      }
+      const value = +row[valueColumn]
+      if (isNaN(value)) {
+        return
+      }
+      values.push(value)
+      if (value < minValue) {
+        minValue = value
+      }
+      if (value > maxValue) {
+        maxValue = value
+      }
+    })
   })
   if (meshType == null) {
     throw new Error(`Could not infer mesh type: ${data}`)
