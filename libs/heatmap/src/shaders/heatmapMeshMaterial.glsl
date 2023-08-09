@@ -59,7 +59,11 @@ czm_material czm_getMaterial(czm_materialInput materialInput) {
     contourSpacing,
     contourThickness
   );
-  color = mix(color, vec3(1.0), contour * contourAlpha);
+  color = mix(
+    color,
+    vec3(step(dot(color, vec3(0.299, 0.587, 0.114)), 0.5)),
+    contour * contourAlpha
+  );
 
   czm_material material = czm_getDefaultMaterial(materialInput);
   material.diffuse = color;
