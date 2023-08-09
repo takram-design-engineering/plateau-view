@@ -1,4 +1,4 @@
-uniform sampler2D image;
+uniform sampler2D colorMap;
 uniform float minHeight;
 uniform float maxHeight;
 uniform bool logarithmic;
@@ -28,12 +28,12 @@ czm_material czm_getMaterial(czm_materialInput materialInput) {
     maxHeight
   );
   float value = czm_branchFreeTernary(logarithmic, pseudoLog(height), height);
-  float scaledHeight = clamp(
+  float normalizedHeight = clamp(
     (value - minHeight) / (maxHeight - minHeight),
     0.0,
     1.0
   );
-  vec4 mappedColor = texture(image, vec2(scaledHeight, 0.5));
+  vec4 mappedColor = texture(colorMap, vec2(normalizedHeight, 0.5));
   mappedColor = czm_gammaCorrect(mappedColor);
   material.diffuse = mappedColor.rgb;
   material.alpha = mappedColor.a;

@@ -52,13 +52,18 @@ function useDatasetSearchOptions({
   skip = false
 }: SearchOptionsParams = {}): readonly DatasetSearchOption[] {
   const areas = useAtomValue(areasAtom)
+  const municipalityCodes = useMemo(
+    () =>
+      areas
+        ?.filter(area => area.type === 'municipality')
+        .map(area => area.code) ?? [],
+    [areas]
+  )
   const query = useDatasetsQuery({
     variables:
-      areas != null
+      municipalityCodes.length > 0
         ? {
-            municipalityCodes: areas
-              .filter(area => area.type === 'municipality')
-              .map(area => area.code),
+            municipalityCodes,
             includeTypes: [
               // TODO: Update supported dataset types.
               PlateauDatasetType.Bridge,
@@ -71,7 +76,7 @@ function useDatasetSearchOptions({
             ]
           }
         : undefined,
-    skip: skip || areas == null
+    skip: skip || municipalityCodes.length === 0
   })
 
   const layers = useAtomValue(layersAtom)

@@ -2,6 +2,7 @@ import { type LayerComponents } from '@takram/plateau-layers'
 
 import { BridgeLayer } from './BridgeLayer'
 import { BuildingLayer } from './BuildingLayer'
+import { HeatmapLayer } from './HeatmapLayer'
 import { LandSlideRiskLayer } from './LandSlideRiskLayer'
 import { LandUseLayer } from './LandUseLayer'
 import {
@@ -11,6 +12,7 @@ import {
   CITY_FURNITURE_LAYER,
   EMERGENCY_ROUTE_LAYER,
   GENERIC_CITY_OBJECT_LAYER,
+  HEATMAP_LAYER,
   HIGH_TIDE_RISK_LAYER,
   INLAND_FLOODING_RISK_LAYER,
   LAND_SLIDE_RISK_LAYER,
@@ -35,6 +37,7 @@ import { UrbanPlanningLayer } from './UrbanPlanningLayer'
 
 export const layerComponents: LayerComponents = {
   [PEDESTRIAN_LAYER]: PedestrianLayer,
+  [HEATMAP_LAYER]: HeatmapLayer,
   // Dataset layers
   [BORDER_LAYER]: undefined,
   [BRIDGE_LAYER]: BridgeLayer,

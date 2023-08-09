@@ -70,12 +70,12 @@ export const ElevationEnvironment: FC<EnvironmentProps> = props => {
           pseudoLog(height),
           height
         );
-        float scaledHeight = clamp(
+        float normalizedHeight = clamp(
           (value - minHeight) / (maxHeight - minHeight),
           0.0,
           1.0
         );
-        vec4 mappedColor = texture(image_0, vec2(scaledHeight, 0.5));
+        vec4 mappedColor = texture(colorMap_0, vec2(normalizedHeight, 0.5));
         color = mappedColor.rgb;
       }`
     )

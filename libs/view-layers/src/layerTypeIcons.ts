@@ -34,6 +34,7 @@ import {
   CITY_FURNITURE_LAYER,
   EMERGENCY_ROUTE_LAYER,
   GENERIC_CITY_OBJECT_LAYER,
+  HEATMAP_LAYER,
   HIGH_TIDE_RISK_LAYER,
   INLAND_FLOODING_RISK_LAYER,
   LAND_SLIDE_RISK_LAYER,
@@ -54,6 +55,7 @@ import {
 
 export const layerTypeIcons: Record<LayerType, ComponentType<SvgIconProps>> = {
   [PEDESTRIAN_LAYER]: PedestrianIcon,
+  [HEATMAP_LAYER]: UseCaseIcon,
   // Dataset layers
   [BORDER_LAYER]: BorderIcon,
   [BRIDGE_LAYER]: BridgeIcon,

@@ -4,7 +4,7 @@ This repository hosts a prototype of PLATEAU VIEW 3.0, a part of [the 2023 PLATE
 
 The prototype under development is available at [plateau.takram.com](https://plateau.takram.com). However, please be aware that it is still in development and is not intended to be a complete service.
 
-![image](https://github.com/takram-design-engineering/plateau-view/assets/8651513/43b6270d-cedc-4fea-86c4-d53cfe959af5)
+![image](https://github.com/takram-design-engineering/plateau-view/assets/8651513/95489cd2-ee1d-45d1-8953-32a7acb2fb72)
 
 ## Background and Goal
 
@@ -42,6 +42,7 @@ This repository consists of the following apps and libraries. The README for eac
 | [datasets](libs/datasets)                             | Classes and components that represent PLATEAU and other datasets                                      |
 | [geocoder](libs/geocoder)                             | Simple geocoding functions                                                                            |
 | [graphql](libs/graphql)                               | Generated GraphQL types and hooks                                                                     |
+| [heatmap](libs/heatmap)                               | Visualizes regional mesh heatmap                                                                      |
 | [layers](libs/layers)                                 | Abstract structure of layers                                                                          |
 | [nest-cesium](libs/nest-cesium)                       | Module for using Cesium in NestJS                                                                     |
 | [nest-firestore](libs/nest-firestore)                 | Module for using Google Firestore in NestJS                                                           |
@@ -51,6 +52,7 @@ This repository consists of the following apps and libraries. The README for eac
 | [nest-vector-tile](libs/nest-vector-tile)             | NestJS module for rendering vector map tiles                                                          |
 | [pedestrian](libs/pedestrian)                         | Integration with Google Street View and WASD navigation                                               |
 | [react-helpers](libs/react-helpers)                   | Helper functions and hooks for React                                                                  |
+| [regional-mesh](libs/regional-mesh)                   | Converters for Japanese regional mesh                                                                 |
 | [screen-space-selection](libs/screen-space-selection) | Screen-space selection for Cesium                                                                     |
 | [shared-states](libs/shared-states)                   | Collection of states shared across libraries                                                          |
 | [sketch](libs/sketch)                                 | Work in progress                                                                                      |

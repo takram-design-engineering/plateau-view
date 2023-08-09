@@ -11,7 +11,7 @@ export class VertexTerrainElevationMaterial extends Material {
       fabric: {
         type: 'VertexTerrainElevation',
         uniforms: {
-          image: colorMapTurbo.createImage(),
+          colorMap: colorMapTurbo.createImage(),
           minHeight: 0,
           maxHeight: 1000,
           logarithmic: false,

@@ -29,6 +29,7 @@ import { layerTypeIcons, layerTypeNames } from '@takram/plateau-view-layers'
 
 import { type LAYER_SELECTION, type SelectionGroup } from '../states/selection'
 import { LayerColorSection } from './LayerColorSection'
+import { LayerHeatmapSection } from './LayerHeatmapSection'
 import { LayerHiddenFeaturesSection } from './LayerHiddenFeaturesSection'
 import { LayerOpacitySection } from './LayerOpacitySection'
 import { LayerShowWireframeSection } from './LayerShowWireframeSection'
@@ -139,6 +140,7 @@ export function LayerContent<T extends LayerType>({
       />
       <LayerHiddenFeaturesSection layers={values} />
       <LayerColorSection layers={values} />
+      <LayerHeatmapSection layers={values} />
       <Divider />
       <InspectorItem>
         <LayerOpacitySection layers={values} />

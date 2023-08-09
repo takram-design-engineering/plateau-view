@@ -228,7 +228,7 @@ export async function main(): Promise<void> {
     // Get the data at:
     // https://www.e-stat.go.jp/gis/statmap-search?page=1&type=2&aggregateUnitForBoundary=A&toukeiCode=00200521&toukeiYear=2020&serveyId=B002005212020&prefCode=01&coordsys=1&format=shape&datum=2000
     const source = path.resolve(
-      `./data/estat/A002005212015DDSWC${prefectureCode}-JGD2011/h27ka${prefectureCode}`
+      `./data/estat/B002005212020/A002005212015DDSWC${prefectureCode}-JGD2011/h27ka${prefectureCode}`
     )
     const input = await readShapefile(`${source}.shp`, `${source}.dbf`, {
       encoding: 'sjis'

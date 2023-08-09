@@ -8,6 +8,10 @@ import {
   type BuildingLayerModelParams
 } from './BuildingLayer'
 import {
+  createHeatmapLayer,
+  type HeatmapLayerModelParams
+} from './HeatmapLayer'
+import {
   createLandSlideRiskLayer,
   type LandSlideRiskLayerModelParams
 } from './LandSlideRiskLayer'
@@ -22,6 +26,7 @@ import {
   CITY_FURNITURE_LAYER,
   EMERGENCY_ROUTE_LAYER,
   GENERIC_CITY_OBJECT_LAYER,
+  HEATMAP_LAYER,
   HIGH_TIDE_RISK_LAYER,
   INLAND_FLOODING_RISK_LAYER,
   LAND_SLIDE_RISK_LAYER,
@@ -56,6 +61,7 @@ import {
 // prettier-ignore
 type ViewLayerModelParams<T extends LayerType> =
   T extends typeof PEDESTRIAN_LAYER ? PedestrianLayerModelParams :
+  T extends typeof HEATMAP_LAYER ? HeatmapLayerModelParams :
   // Dataset layers
   T extends typeof BORDER_LAYER ? never : // BorderLayerModelParams
   T extends typeof BRIDGE_LAYER ? BridgeLayerModelParams :
@@ -91,6 +97,7 @@ export function createViewLayer<T extends LayerType>(
   // prettier-ignore
   switch (params.type) {
     case PEDESTRIAN_LAYER: return createPedestrianLayer(params as PedestrianLayerModelParams)
+    case HEATMAP_LAYER: return createHeatmapLayer(params as HeatmapLayerModelParams)
     // Dataset layers
     case BORDER_LAYER: return undefined // createBorderLayer(params)
     case BRIDGE_LAYER: return createBridgeLayer(params as BridgeLayerModelParams)
