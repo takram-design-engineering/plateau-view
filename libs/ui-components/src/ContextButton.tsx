@@ -1,7 +1,7 @@
-import AddOutlined from '@mui/icons-material/AddOutlined'
-import CheckOutlined from '@mui/icons-material/CheckOutlined'
 import { Button, buttonClasses, styled, type ButtonProps } from '@mui/material'
 import { forwardRef } from 'react'
+
+import { PrefixedAddSmallIcon, PrefixedCheckSmallIcon } from './icons'
 
 const StyledButton = styled(Button)(({ theme }) => ({
   flexGrow: 0,
@@ -29,9 +29,9 @@ export const ContextButton = forwardRef<HTMLButtonElement, ContextButtonProps>(
       {...props}
       startIcon={
         selected ? (
-          <CheckOutlined color='primary' fontSize='small' />
+          <PrefixedCheckSmallIcon color='primary' fontSize='small' />
         ) : (
-          <AddOutlined color='action' fontSize='small' />
+          <PrefixedAddSmallIcon color='action' fontSize='small' />
         )
       }
     >
