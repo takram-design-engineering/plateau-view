@@ -42,6 +42,7 @@ This repository consists of the following apps and libraries. The README for eac
 | [datasets](libs/datasets)                             | Classes and components that represent PLATEAU and other datasets                                      |
 | [geocoder](libs/geocoder)                             | Simple geocoding functions                                                                            |
 | [graphql](libs/graphql)                               | Generated GraphQL types and hooks                                                                     |
+| [heatmap](libs/heatmap)                               | Visualizes regional mesh heatmap                                                                      |
 | [layers](libs/layers)                                 | Abstract structure of layers                                                                          |
 | [nest-cesium](libs/nest-cesium)                       | Module for using Cesium in NestJS                                                                     |
 | [nest-firestore](libs/nest-firestore)                 | Module for using Google Firestore in NestJS                                                           |

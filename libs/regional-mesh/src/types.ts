@@ -11,6 +11,11 @@ export interface MeshPoint {
   latitude: number
 }
 
+export interface MeshSize {
+  longitude: number
+  latitude: number
+}
+
 export interface MeshBounds {
   north: number
   west: number
