@@ -49,7 +49,8 @@ const InitialLayers: FC = () => {
           version: '2020',
           lod: 2,
           textured: false
-        })
+        }),
+        { autoSelect: false }
       ),
       addLayer(
         createViewLayer({
@@ -58,7 +59,8 @@ const InitialLayers: FC = () => {
           version: '2020',
           lod: 2,
           textured: false
-        })
+        }),
+        { autoSelect: false }
       ),
       addLayer(
         createViewLayer({
@@ -67,7 +69,8 @@ const InitialLayers: FC = () => {
             longitude: 139.769,
             latitude: 35.68
           }
-        })
+        }),
+        { autoSelect: false }
       )
     ]
     return () => {

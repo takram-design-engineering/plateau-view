@@ -12,6 +12,7 @@ import { atom, useAtomValue, useSetAtom } from 'jotai'
 import { useCallback, useMemo, type FC } from 'react'
 
 import {
+  PlateauDatasetType,
   useDatasetDetailQuery,
   type PlateauDatasetFragment
 } from '@takram/plateau-graphql'
@@ -74,16 +75,19 @@ export const DatasetDialog: FC<DatasetDialogProps> = ({
     useMemo(
       () =>
         atom(get =>
-          get(layersAtom).find(layer => {
-            if ('isDatasetLayer' in layer) {
-              return layer.datasetId === dataset.id
-            }
-            // TODO: Why the type of layer isn't reduced to BuildingLayerModel?
-            if (layer.type === BUILDING_LAYER && 'municipalityCode' in layer) {
-              return layer.municipalityCode === municipalityCode
-            }
-            return false
-          })
+          dataset.type === PlateauDatasetType.Building
+            ? get(layersAtom).find(
+                layer =>
+                  // TODO: Why the type of layer isn't reduced to
+                  // BuildingLayerModel?
+                  layer.type === BUILDING_LAYER &&
+                  'municipalityCode' in layer &&
+                  layer.municipalityCode === municipalityCode
+              )
+            : get(layersAtom).find(
+                layer =>
+                  'isDatasetLayer' in layer && layer.datasetId === dataset.id
+              )
         ),
       [municipalityCode, dataset]
     )

@@ -3,7 +3,7 @@ import { useAtomValue, useSetAtom } from 'jotai'
 import { nanoid } from 'nanoid'
 import { useCallback, type FC } from 'react'
 
-import { layerSelectionAtom, useAddLayer } from '@takram/plateau-layers'
+import { useAddLayer } from '@takram/plateau-layers'
 import { PedestrianTool as PedestrianToolComponent } from '@takram/plateau-pedestrian'
 import { createViewLayer, PEDESTRIAN_LAYER } from '@takram/plateau-view-layers'
 
@@ -14,7 +14,6 @@ export const PedestrianTool: FC = () => {
   const tool = useAtomValue(toolAtom)
 
   const addLayer = useAddLayer()
-  const setLayerSelection = useSetAtom(layerSelectionAtom)
   const handleClick = useCallback(
     (location: Cartographic) => {
       const id = nanoid()
@@ -27,10 +26,9 @@ export const PedestrianTool: FC = () => {
         }
       })
       addLayer(layer)
-      setLayerSelection([id])
       send({ type: 'HAND' })
     },
-    [addLayer, setLayerSelection, send]
+    [addLayer, send]
   )
 
   if (tool !== 'pedestrian') {
