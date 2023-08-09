@@ -85,6 +85,12 @@ export const HeatmapMesh = forwardRef<HeatmapMeshHandle, HeatmapMeshProps>(
     }, [meshImageData, geometry, groundPrimitives, material])
 
     useEffect(() => {
+      material.uniforms.image = meshImageData.image
+    }, [meshImageData.image, material])
+
+    Object.assign(material.uniforms, pick(meshImageData, ['width', 'height']))
+
+    useEffect(() => {
       material.uniforms.colorMap =
         colorMap != null
           ? colorMap.createImage()
