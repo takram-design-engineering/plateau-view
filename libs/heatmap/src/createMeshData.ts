@@ -54,14 +54,15 @@ export function createMeshData({
   const data = new Uint8ClampedArray(width * height * 4)
   for (let i = 0; i < data.length; i += 4) {
     data[i + 2] = 0x80
-    data[i + 3] = 0xff
+    // Denotes N/A. Because Canvas API doesn't allow us to turn off
+    // premultiplied alpha, alpha components must not be zero. This will alter
+    // the colors but not much.
+    data[i + 3] = 0x80
   }
   values.forEach((value, index) => {
     const x = Math.round((xs[index] - x1) / longitude)
     const y = height - Math.round((ys[index] - y1) / latitude) - 1
     const i = (y * width + x) * 4
-    // TODO: Make use of 32 bit. Due to premultiplied alpha which cannot be
-    // turned off using Canvas API, alpha component affect other components.
     const scaledValue = Math.round(value * scale)
     if (scaledValue > MAX_VALUE || scaledValue < MIN_VALUE) {
       throw new Error(

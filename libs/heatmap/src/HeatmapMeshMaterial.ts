@@ -4,7 +4,7 @@ import { colorMapViridis, type ColorMap } from '@takram/plateau-color-maps'
 
 import heatmapMeshMaterial from './shaders/heatmapMeshMaterial.glsl?raw'
 import makeContour from './shaders/makeContour.glsl?raw'
-import unpackIntBicubic from './shaders/unpackIntBicubic.glsl?raw'
+import sampleBicubic from './shaders/sampleBicubic.glsl?raw'
 
 export interface HeatmapMeshMaterialOptions {
   image: string | HTMLCanvasElement
@@ -15,7 +15,7 @@ export interface HeatmapMeshMaterialOptions {
   rectangle?: Rectangle
   cropRectangle?: Rectangle
   colorMap?: ColorMap
-  alpha?: number
+  opacity?: number
   contourSpacing?: number
   contourThickness?: number
   contourAlpha?: number
@@ -32,7 +32,7 @@ export class HeatmapMeshMaterial extends Material {
     rectangle,
     cropRectangle,
     colorMap = colorMapViridis,
-    alpha = 1,
+    opacity = 1,
     contourSpacing = 10,
     contourThickness = 2,
     contourAlpha = 0.3,
@@ -58,13 +58,13 @@ export class HeatmapMeshMaterial extends Material {
           height,
           minValue,
           maxValue,
-          alpha,
+          opacity,
           contourSpacing,
           contourThickness,
           contourAlpha,
           logarithmic
         },
-        source: [unpackIntBicubic, makeContour, heatmapMeshMaterial].join('\n')
+        source: [sampleBicubic, makeContour, heatmapMeshMaterial].join('\n')
       }
     })
   }

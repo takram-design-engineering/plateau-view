@@ -4,7 +4,7 @@ uniform vec2 imageScale;
 uniform vec2 imageOffset;
 uniform float width;
 uniform float height;
-uniform float alpha;
+uniform float opacity;
 uniform float contourSpacing;
 uniform float contourThickness;
 uniform float contourAlpha;
@@ -23,12 +23,14 @@ float pseudoLog(float value) {
 czm_material czm_getMaterial(czm_materialInput materialInput) {
   vec2 texSize = vec2(width, height);
   vec2 texelSize = 1.0 / texSize;
-  float value = unpackIntBicubic(
+  vec2 pair = sampleBicubic(
     image,
     materialInput.st * imageScale + imageOffset,
     texSize,
     texelSize
   );
+  float value = pair.x;
+  float alpha = pair.y;
 
   float scaledMinValue = czm_branchFreeTernary(
     logarithmic,
@@ -67,6 +69,6 @@ czm_material czm_getMaterial(czm_materialInput materialInput) {
 
   czm_material material = czm_getDefaultMaterial(materialInput);
   material.diffuse = color;
-  material.alpha = alpha;
+  material.alpha = opacity * alpha;
   return material;
 }

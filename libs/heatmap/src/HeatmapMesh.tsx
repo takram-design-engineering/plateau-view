@@ -102,7 +102,7 @@ export const HeatmapMesh = forwardRef<HeatmapMeshHandle, HeatmapMeshProps>(
       pick(props, [
         'minValue',
         'maxValue',
-        'alpha',
+        'opacity',
         'contourSpacing',
         'contourThickness',
         'contourAlpha',
