@@ -43,4 +43,11 @@ export class PlateauDatasetResolver {
       searchTokens
     })
   }
+
+  @Query(() => PlateauDataset, { nullable: true })
+  async dataset(
+    @Args('datasetId') datasetId: string
+  ): Promise<PlateauDataset | undefined> {
+    return await this.catalogService.findOne({ datasetId })
+  }
 }
