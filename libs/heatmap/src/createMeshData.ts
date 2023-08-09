@@ -57,17 +57,19 @@ export function createMeshData({
     data[i + 3] = 0xff
   }
   values.forEach((value, index) => {
-    const dx = xs[index]
-    const dy = ys[index]
-    const x = Math.round((dx - x1) / longitude)
-    const y = height - Math.round((dy - y1) / latitude) - 1
+    const x = Math.round((xs[index] - x1) / longitude)
+    const y = height - Math.round((ys[index] - y1) / latitude) - 1
     const i = (y * width + x) * 4
     // TODO: Make use of 32 bit. Due to premultiplied alpha which cannot be
     // turned off using Canvas API, alpha component affect other components.
-    const scaledValue = Math.round(value / scale)
-    invariant(scaledValue <= MAX_VALUE && scaledValue >= MIN_VALUE)
+    const scaledValue = Math.round(value * scale)
+    if (scaledValue > MAX_VALUE || scaledValue < MIN_VALUE) {
+      throw new Error(
+        `Value must be within MIN_VALUE and MAX_VALUE: value = ${value}, scale = ${scale}`
+      )
+    }
     const v = scaledValue + 0x800000
-    data[i + 0] = v & 0xff
+    data[i] = v & 0xff
     data[i + 1] = (v >>> 8) & 0xff
     data[i + 2] = (v >>> 16) & 0xff
     data[i + 3] = 0xff
