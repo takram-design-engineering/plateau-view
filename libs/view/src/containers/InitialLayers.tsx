@@ -54,7 +54,7 @@ export const InitialLayers: FC = () => {
           ],
           parserOptions: {
             codeColumn: 0,
-            valueColumn: 5,
+            valueColumn: 4,
             skipHeader: 2
           }
         }),

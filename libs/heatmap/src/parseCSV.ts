@@ -45,7 +45,6 @@ export function parseCSV(
       if (isNaN(code)) {
         return
       }
-      codes.push(code)
       if (meshType == null) {
         meshType = inferMeshType(row[codeColumn])
       }
@@ -53,6 +52,7 @@ export function parseCSV(
       if (isNaN(value)) {
         return
       }
+      codes.push(code)
       values.push(value)
       if (value < minValue) {
         minValue = value
