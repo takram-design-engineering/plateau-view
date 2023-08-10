@@ -25,6 +25,8 @@ czm_material czm_getMaterial(czm_materialInput materialInput) {
   vec2 texelSize = 1.0 / texSize;
   vec2 pair = sampleBicubic(
     image,
+    // TODO: Derive geographic coordinates from UV and unproject them to find
+    // non-linear sampling coordinates.
     materialInput.st * imageScale + imageOffset,
     texSize,
     texelSize

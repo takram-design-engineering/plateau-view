@@ -38,17 +38,15 @@ export function createMeshData({
   let x2 = -Infinity
   let y2 = -Infinity
   codes.forEach((code, index) => {
-    const { west, south } = convertCodeToBounds(`${code}`, meshType)
-    xs[index] = west
-    ys[index] = south
-    if (west < x1) x1 = west
-    if (west > x2) x2 = west
-    if (south < y1) y1 = south
-    if (south > y2) y2 = south
+    const bounds = convertCodeToBounds(`${code}`, meshType)
+    xs[index] = bounds.west
+    ys[index] = bounds.south
+    if (bounds.west < x1) x1 = bounds.west
+    if (bounds.east > x2) x2 = bounds.east
+    if (bounds.south < y1) y1 = bounds.south
+    if (bounds.north > y2) y2 = bounds.north
   })
   const { longitude, latitude } = getMeshSize(meshType)
-  x2 += longitude
-  y2 += latitude
   const width = Math.round((x2 - x1) / longitude)
   const height = Math.round((y2 - y1) / latitude)
   const data = new Uint8ClampedArray(width * height * 4)

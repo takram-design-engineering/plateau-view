@@ -1,4 +1,4 @@
-import { polygon as makePolygon } from '@turf/turf'
+import { bboxPolygon } from '@turf/turf'
 import axios from 'axios'
 import {
   atom,
@@ -143,14 +143,11 @@ export const HeatmapLayer: FC<LayerProps<typeof HEATMAP_LAYER>> = ({
   const geometry = useMemo(
     () =>
       meshImageData != null
-        ? makePolygon([
-            [
-              [meshImageData.bounds.east, meshImageData.bounds.south],
-              [meshImageData.bounds.west, meshImageData.bounds.south],
-              [meshImageData.bounds.west, meshImageData.bounds.north],
-              [meshImageData.bounds.east, meshImageData.bounds.north],
-              [meshImageData.bounds.east, meshImageData.bounds.south]
-            ]
+        ? bboxPolygon([
+            meshImageData.bounds.east,
+            meshImageData.bounds.south,
+            meshImageData.bounds.west,
+            meshImageData.bounds.north
           ]).geometry
         : undefined,
     [meshImageData]

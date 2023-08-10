@@ -1,4 +1,5 @@
 import {
+  ArcType,
   ClassificationType,
   EllipsoidSurfaceAppearance,
   GeometryInstance,
@@ -58,6 +59,7 @@ export const HeatmapMesh = forwardRef<HeatmapMeshHandle, HeatmapMeshProps>(
           const instance = new GeometryInstance({
             geometry: new PolygonGeometry({
               polygonHierarchy,
+              arcType: ArcType.RHUMB,
               vertexFormat: EllipsoidSurfaceAppearance.VERTEX_FORMAT
             })
           })
