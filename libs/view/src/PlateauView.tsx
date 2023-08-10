@@ -1,25 +1,20 @@
 import { Cartesian3, HeadingPitchRoll } from '@cesium/engine'
 import { useSetAtom } from 'jotai'
-import { Suspense, useCallback, useEffect, type FC } from 'react'
+import { Suspense, useCallback, type FC } from 'react'
 
 import {
   CurrentTime,
   SuspendUntilTilesLoaded,
   ViewLocator
 } from '@takram/plateau-cesium'
-import { LayersRenderer, useAddLayer } from '@takram/plateau-layers'
+import { LayersRenderer } from '@takram/plateau-layers'
 import { AppFrame } from '@takram/plateau-ui-components'
-import {
-  BUILDING_LAYER,
-  createViewLayer,
-  HEATMAP_LAYER,
-  layerComponents,
-  PEDESTRIAN_LAYER
-} from '@takram/plateau-view-layers'
+import { layerComponents } from '@takram/plateau-view-layers'
 
 import { Areas } from './containers/Areas'
 import { Canvas } from './containers/Canvas'
 import { Environments } from './containers/Environments'
+import { InitialLayers } from './containers/InitialLayers'
 import { KeyBindings } from './containers/KeyBindings'
 import { Notifications } from './containers/Notifications'
 import { PedestrianTool } from './containers/PedestrianTool'
@@ -36,65 +31,6 @@ import { AppOverlay } from './ui-containers/AppOverlay'
 
 const initialDestination = Cartesian3.fromDegrees(139.755, 35.675, 1000)
 const initialOrientation = new HeadingPitchRoll(Math.PI * 0.4, -Math.PI * 0.2)
-
-// TODO: Just for temporary.
-const InitialLayers: FC = () => {
-  const addLayer = useAddLayer()
-
-  useEffect(() => {
-    const remove = [
-      addLayer(
-        createViewLayer({
-          type: BUILDING_LAYER,
-          municipalityCode: '13101',
-          version: '2020',
-          lod: 2,
-          textured: false
-        }),
-        { autoSelect: false }
-      ),
-      addLayer(
-        createViewLayer({
-          type: BUILDING_LAYER,
-          municipalityCode: '13102',
-          version: '2020',
-          lod: 2,
-          textured: false
-        }),
-        { autoSelect: false }
-      ),
-      addLayer(
-        createViewLayer({
-          type: PEDESTRIAN_LAYER,
-          location: {
-            longitude: 139.769,
-            latitude: 35.68
-          }
-        }),
-        { autoSelect: false }
-      ),
-      addLayer(
-        createViewLayer({
-          type: HEATMAP_LAYER,
-          urls: [
-            `${process.env.NEXT_PUBLIC_DATA_BASE_URL}/estat/T001102/tblT001102Q5339.txt`,
-            `${process.env.NEXT_PUBLIC_DATA_BASE_URL}/estat/T001102/tblT001102Q5439.txt`,
-            `${process.env.NEXT_PUBLIC_DATA_BASE_URL}/estat/T001102/tblT001102Q5340.txt`,
-            `${process.env.NEXT_PUBLIC_DATA_BASE_URL}/estat/T001102/tblT001102Q5440.txt`
-          ]
-        }),
-        { autoSelect: false }
-      )
-    ]
-    return () => {
-      remove.forEach(remove => {
-        remove()
-      })
-    }
-  }, [addLayer])
-
-  return null
-}
 
 export interface PlateauViewProps {}
 

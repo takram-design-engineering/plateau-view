@@ -18,6 +18,7 @@ import {
   HeatmapMesh,
   parseCSV,
   type MeshImageData,
+  type ParseCSVOptions,
   type ParseCSVResult
 } from '@takram/plateau-heatmap'
 import { type LayerProps } from '@takram/plateau-layers'
@@ -32,11 +33,13 @@ import { type ConfigurableLayerModel, type LayerColorScheme } from './types'
 
 export interface HeatmapLayerModelParams extends ViewLayerModelParams {
   urls: string[]
+  parserOptions: ParseCSVOptions
   opacity?: number
 }
 
 export interface HeatmapLayerModel extends ViewLayerModel {
   urls: string[]
+  parserOptions: ParseCSVOptions
   opacityAtom: PrimitiveAtom<number>
   valueRangeAtom: PrimitiveAtom<number[]>
   contourSpacingAtom: PrimitiveAtom<number>
@@ -61,6 +64,7 @@ export function createHeatmapLayer(
     }),
     type: HEATMAP_LAYER,
     urls: params.urls,
+    parserOptions: params.parserOptions,
     opacityAtom: atom(params.opacity ?? 0.8),
     valueRangeAtom: atom([0, 100]),
     contourSpacingAtom: atom(10),
@@ -73,6 +77,7 @@ export const HeatmapLayer: FC<LayerProps<typeof HEATMAP_LAYER>> = ({
   boundingSphereAtom,
   colorSchemeAtom,
   urls,
+  parserOptions,
   opacityAtom,
   valueRangeAtom,
   contourSpacingAtom
@@ -114,11 +119,7 @@ export const HeatmapLayer: FC<LayerProps<typeof HEATMAP_LAYER>> = ({
         responses.map(response =>
           new TextDecoder('shift-jis').decode(response.data)
         ),
-        {
-          codeColumn: 0,
-          valueColumn: 4,
-          skipHeader: 2
-        }
+        parserOptions
       )
       setData(data)
       setValueRange([0, data.maxValue])
@@ -127,7 +128,7 @@ export const HeatmapLayer: FC<LayerProps<typeof HEATMAP_LAYER>> = ({
     })().catch(error => {
       console.error(error)
     })
-  }, [urls, setValueRange, setContourSpacing, setColorRange])
+  }, [urls, parserOptions, setValueRange, setContourSpacing, setColorRange])
 
   const [meshImageData, setMeshImageData] = useState<MeshImageData>()
   useEffect(() => {
