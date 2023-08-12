@@ -1,7 +1,7 @@
-import { Divider, Stack, Typography } from '@mui/material'
+import { Button, Divider, Stack, styled, Typography } from '@mui/material'
 import { atom, useAtomValue, useSetAtom, type Getter } from 'jotai'
 import { intersection, isEqual, min, uniqWith } from 'lodash'
-import { useMemo, type FC } from 'react'
+import { useCallback, useMemo, type FC } from 'react'
 import invariant from 'tiny-invariant'
 
 import { type LayerModel } from '@takram/plateau-layers'
@@ -16,7 +16,21 @@ import {
   SelectParameterItem,
   SliderParameterItem
 } from '@takram/plateau-ui-components'
-import { type PlateauTilesetProperty } from '@takram/plateau-view-layers'
+import {
+  colorSchemeSelectionAtom,
+  type PlateauTilesetProperty
+} from '@takram/plateau-view-layers'
+
+const StyledButton = styled(Button)(({ theme }) => ({
+  ...theme.typography.body2,
+  display: 'block',
+  width: `calc(100% + ${theme.spacing(2)})`,
+  margin: 0,
+  padding: `0 ${theme.spacing(1)}`,
+  marginLeft: theme.spacing(-1),
+  marginRight: theme.spacing(-1),
+  textAlign: 'left'
+}))
 
 const Legend: FC<{
   layers: readonly LayerModel[]
@@ -72,23 +86,32 @@ const Legend: FC<{
       [layers]
     )
   )
+
+  const setSelection = useSetAtom(colorSchemeSelectionAtom)
+  const handleClick = useCallback(() => {
+    // Assume that every layer as the same color scheme.
+    setSelection([layers[0].id])
+  }, [layers, setSelection])
+
   if (colorScheme == null) {
     return null
   }
   return (
-    <Stack spacing={1} marginY={1}>
-      <Typography variant='body2'>{colorScheme.name}</Typography>
-      {colorScheme.type === 'quantitative' && (
-        <QuantitativeColorLegend
-          colorMap={colorScheme.colorMap}
-          min={colorScheme.colorRange[0]}
-          max={colorScheme.colorRange[1]}
-        />
-      )}
-      {colorScheme.type === 'qualitative' && (
-        <QualitativeColorLegend colors={colorScheme.colors} />
-      )}
-    </Stack>
+    <StyledButton variant='text' onClick={handleClick}>
+      <Stack spacing={1} width='100%' marginY={1}>
+        <Typography variant='body2'>{colorScheme.name}</Typography>
+        {colorScheme.type === 'quantitative' && (
+          <QuantitativeColorLegend
+            colorMap={colorScheme.colorMap}
+            min={colorScheme.colorRange[0]}
+            max={colorScheme.colorRange[1]}
+          />
+        )}
+        {colorScheme.type === 'qualitative' && (
+          <QualitativeColorLegend colors={colorScheme.colors} />
+        )}
+      </Stack>
+    </StyledButton>
   )
 }
 
