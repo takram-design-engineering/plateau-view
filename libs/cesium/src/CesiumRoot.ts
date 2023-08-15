@@ -5,8 +5,7 @@ import {
   DataSourceDisplay,
   EventHelper,
   type Clock,
-  type EntityCollection,
-  type ImageryLayer
+  type EntityCollection
 } from '@cesium/engine'
 
 export type CesiumRootOptions = Exclude<
@@ -24,12 +23,8 @@ export class CesiumRoot extends CesiumWidget {
   private readonly billboardCollection: BillboardCollection
   private readonly eventHelper = new EventHelper()
 
-  constructor(
-    container: Element,
-    options: CesiumRootOptions = {},
-    baseLayer?: ImageryLayer | false
-  ) {
-    super(container, options, baseLayer)
+  constructor(container: Element, options: CesiumRootOptions = {}) {
+    super(container, options)
     this.billboardCollection = new BillboardCollection({
       scene: this.scene
     })

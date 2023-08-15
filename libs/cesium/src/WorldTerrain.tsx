@@ -1,4 +1,4 @@
-import { createWorldTerrain } from '@cesium/engine'
+import { createWorldTerrainAsync } from '@cesium/engine'
 import { useEffect, type FC } from 'react'
 
 import { useCesium } from './useCesium'
@@ -12,13 +12,25 @@ export const WorldTerrain: FC<WorldTerrainProps> = ({
   requestVertexNormals,
   requestWaterMask
 }) => {
-  const cesium = useCesium()
+  const scene = useCesium(({ scene }) => scene)
   useEffect(() => {
-    cesium.terrainProvider = createWorldTerrain({
-      requestVertexNormals,
-      requestWaterMask
+    let canceled = false
+    ;(async () => {
+      const terrainProvider = await createWorldTerrainAsync({
+        requestVertexNormals,
+        requestWaterMask
+      })
+      if (canceled) {
+        return
+      }
+      scene.terrainProvider = terrainProvider
+    })().catch(error => {
+      console.error(error)
     })
-  }, [requestVertexNormals, requestWaterMask, cesium])
+    return () => {
+      canceled = true
+    }
+  }, [requestVertexNormals, requestWaterMask, scene])
 
   return null
 }

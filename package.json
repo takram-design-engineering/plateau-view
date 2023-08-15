@@ -20,7 +20,7 @@
     "@ant-design/icons": "^5.2.5",
     "@apollo/client": "^3.8.1",
     "@apollo/server": "^4.9.1",
-    "@cesium/engine": "^2.4.1",
+    "@cesium/engine": "^3.0.2",
     "@dnd-kit/core": "^6.0.8",
     "@dnd-kit/modifiers": "^6.0.1",
     "@dnd-kit/sortable": "^7.0.2",
