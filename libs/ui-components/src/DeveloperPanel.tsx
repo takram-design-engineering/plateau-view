@@ -4,14 +4,12 @@ import { forwardRef, type ComponentPropsWithRef, type ReactNode } from 'react'
 
 const Root = styled('div')(({ theme }) => ({
   ...theme.typography.body2,
-  padding: theme.spacing(2),
   color: theme.palette.text.primary
 }))
 
 const ResetButton = styled(Button)(({ theme }) => ({
   minWidth: 0,
-  marginRight: theme.spacing(-1.25),
-  marginLeft: theme.spacing(-1),
+  marginRight: theme.spacing(-1),
   paddingRight: theme.spacing(1),
   paddingLeft: theme.spacing(1),
   [`& .${buttonClasses.endIcon}`]: {
@@ -34,6 +32,7 @@ export const DeveloperPanel = forwardRef<HTMLDivElement, DeveloperPanelProps>(
           spacing={2}
           alignItems='center'
           justifyContent='space-between'
+          marginX={1}
           marginBottom={1}
         >
           <Typography variant='subtitle1'>{title}</Typography>

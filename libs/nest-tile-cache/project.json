@@ -12,7 +12,8 @@
         "tsConfig": "libs/nest-tile-cache/tsconfig.lib.json",
         "packageJson": "libs/nest-tile-cache/package.json",
         "main": "libs/nest-tile-cache/src/index.ts",
-        "assets": ["libs/nest-tile-cache/*.md"]
+        "assets": ["libs/nest-tile-cache/*.md"],
+        "updateBuildableProjectDepsInPackageJson": true
       }
     },
     "publish": {

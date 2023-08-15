@@ -16,7 +16,7 @@ const StyledSwitch = styled(Switch, {
   indeterminate?: boolean
 }>(({ theme, size = 'small', indeterminate = false }) => {
   return {
-    marginRight: theme.spacing(-1),
+    marginRight: 0,
     ...(indeterminate && {
       [`& .${switchClasses.switchBase}`]: {
         transform: `translateX(${size === 'small' ? 6 : 7}px)`
@@ -95,6 +95,7 @@ export const SwitchParameterItem = forwardRef<
             onChange={handleChange}
           />
         }
+        controlSpace='button'
       />
     )
   }

@@ -112,14 +112,17 @@ export const PerformancePanel: FC = () => {
       <Stack spacing={1}>
         <ParameterList>
           <ParameterItem
+            labelFontSize='small'
             label='Frame Rate'
             control={<Value ref={frameRateRef} />}
           />
           <ParameterItem
+            labelFontSize='small'
             label='Number of Draw Calls'
             control={<Value ref={drawCountRef} />}
           />
           <ParameterItem
+            labelFontSize='small'
             label='Number of Vertices'
             control={<Value ref={vertexCountRef} />}
           />
@@ -127,14 +130,17 @@ export const PerformancePanel: FC = () => {
         <Divider />
         <ParameterList>
           <SwitchParameterItem
+            labelFontSize='small'
             label='Show Globe Wireframe'
             atom={showGlobeWireframeAtom}
           />
           <SwitchParameterItem
+            labelFontSize='small'
             label='Show Tileset Wireframe'
             atom={showTilesetWireframeAtom}
           />
           <SwitchParameterItem
+            labelFontSize='small'
             label='Show Tileset Bounding Volume'
             atom={showTilesetBoundingVolumeAtom}
           />

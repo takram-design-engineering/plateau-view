@@ -12,7 +12,8 @@
         "tsConfig": "libs/nest-vector-tile/tsconfig.lib.json",
         "packageJson": "libs/nest-vector-tile/package.json",
         "main": "libs/nest-vector-tile/src/index.ts",
-        "assets": ["libs/nest-vector-tile/*.md"]
+        "assets": ["libs/nest-vector-tile/*.md"],
+        "updateBuildableProjectDepsInPackageJson": true
       }
     },
     "publish": {

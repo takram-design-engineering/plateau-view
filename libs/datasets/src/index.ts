@@ -1,4 +1,7 @@
+export * from './atomsWithQualitativeColorSet'
+export * from './atomsWithQuantitativeColorMap'
 export * from './BingMapsImageryLayer'
+export * from './colorSets'
 export * from './computePlateauBoundingSphere'
 export * from './GooglePhotorealisticTileset'
 export * from './JapanSeaLevelEllipsoid'

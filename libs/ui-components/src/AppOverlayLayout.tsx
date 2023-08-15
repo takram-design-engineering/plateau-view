@@ -16,7 +16,9 @@ import { DarkThemeOverride } from './DarkThemeOverride'
 
 import 'overlayscrollbars/overlayscrollbars.css'
 
-const Root = styled('div')<{
+const Root = styled('div', {
+  shouldForwardProp: prop => prop !== 'hidden'
+})<{
   hidden?: boolean
 }>(({ hidden = false }) => ({
   display: 'grid',

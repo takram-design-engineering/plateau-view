@@ -40,6 +40,12 @@ export const enableKeyboardCameraControlAtom = atomWithReset(false)
 
 export const inspectorWidthAtom = atomWithStorageValidation({
   key: 'inspectorWidth',
-  initialValue: 360,
+  initialValue: 320,
+  validate: isNumber
+})
+
+export const pedestrianInspectorWidthAtom = atomWithStorageValidation({
+  key: 'pedestrianInspectorWidth',
+  initialValue: 540,
   validate: isNumber
 })

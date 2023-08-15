@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/// <reference types="../../types.d.ts" />
 
 declare module '*.svg' {
   const content: any

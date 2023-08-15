@@ -1,4 +1,1 @@
-declare module '@cesium/engine/Source/Renderer/DrawCommand' {
-  const DrawCommand: () => void
-  export default DrawCommand
-}
+/// <reference types="../../types.d.ts" />

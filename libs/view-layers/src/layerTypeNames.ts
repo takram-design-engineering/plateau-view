@@ -7,6 +7,7 @@ import {
   CITY_FURNITURE_LAYER,
   EMERGENCY_ROUTE_LAYER,
   GENERIC_CITY_OBJECT_LAYER,
+  HEATMAP_LAYER,
   HIGH_TIDE_RISK_LAYER,
   INLAND_FLOODING_RISK_LAYER,
   LAND_SLIDE_RISK_LAYER,
@@ -27,6 +28,7 @@ import {
 
 export const layerTypeNames: Record<LayerType, string> = {
   [PEDESTRIAN_LAYER]: '歩行者視点',
+  [HEATMAP_LAYER]: '統計データ',
   // Dataset layers
   [BORDER_LAYER]: '行政界',
   [BRIDGE_LAYER]: '橋梁',

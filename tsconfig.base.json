@@ -22,11 +22,12 @@
       "@takram/plateau-cesium-vector-imagery": [
         "libs/cesium-vector-imagery/src/index.ts"
       ],
-      "@takram/plateau-color-schemes": ["libs/color-schemes/src/index.ts"],
+      "@takram/plateau-color-maps": ["libs/color-maps/src/index.ts"],
       "@takram/plateau-data-sources": ["libs/data-sources/src/index.ts"],
       "@takram/plateau-datasets": ["libs/datasets/src/index.ts"],
       "@takram/plateau-geocoder": ["libs/geocoder/src/index.ts"],
       "@takram/plateau-graphql": ["libs/graphql/index.ts"],
+      "@takram/plateau-heatmap": ["libs/heatmap/src/index.ts"],
       "@takram/plateau-layers": ["libs/layers/src/index.ts"],
       "@takram/plateau-nest-cesium": ["libs/nest-cesium/src/index.ts"],
       "@takram/plateau-nest-firestore": ["libs/nest-firestore/src/index.ts"],
@@ -40,6 +41,7 @@
       ],
       "@takram/plateau-pedestrian": ["libs/pedestrian/src/index.ts"],
       "@takram/plateau-react-helpers": ["libs/react-helpers/src/index.ts"],
+      "@takram/plateau-regional-mesh": ["libs/regional-mesh/src/index.ts"],
       "@takram/plateau-screen-space-selection": [
         "libs/screen-space-selection/src/index.ts"
       ],

@@ -39,12 +39,14 @@ export interface PedestrianProps {
   id?: string
   selected?: boolean
   location: Location
-  streetViewLocation?: Location
-  streetViewHeadingPitch?: HeadingPitch
-  streetViewZoom?: number
+  headingPitch?: HeadingPitch
+  zoom?: number
   hideFrustum?: boolean
   onChange?: (location: Location) => void
 }
+
+const cartesianScratch = new Cartesian3()
+const cartographicScratch = new Cartographic()
 
 export const Pedestrian: FC<PedestrianProps> = withEphemerality(
   () => useCesium(({ scene }) => scene),
@@ -53,9 +55,8 @@ export const Pedestrian: FC<PedestrianProps> = withEphemerality(
     id,
     selected = false,
     location,
-    streetViewLocation,
-    streetViewHeadingPitch,
-    streetViewZoom,
+    headingPitch,
+    zoom,
     hideFrustum = false,
     onChange
   }) => {
@@ -88,27 +89,35 @@ export const Pedestrian: FC<PedestrianProps> = withEphemerality(
       },
       computeBoundingSphere: (value, result = new BoundingSphere()) => {
         computeCartographicToCartesian(scene, location, result.center)
-        result.radius = 50 // Arbitrary size
+        result.radius = 200 // Arbitrary size
         return result
       }
     })
 
+    const [dragKey, setDragKey] = useState(0)
     const [levitated, setLevitated] = useState(false)
     const handleDragStart = useCallback((event: DragStartEvent) => {
       setLevitated(true)
     }, [])
     const handleDragEnd = useCallback(
       (event: DragEndEvent) => {
-        const referenceLocation = streetViewLocation ?? location
+        const referenceLocation = location
         const offset = event.active.data.current
         invariant(offset instanceof Cartesian3)
         const position = Cartesian3.fromDegrees(
           referenceLocation.longitude,
           referenceLocation.latitude,
-          referenceLocation.height
+          referenceLocation.height,
+          scene.globe.ellipsoid,
+          cartesianScratch
         )
         Cartesian3.add(position, offset, position)
-        const cartographic = Cartographic.fromCartesian(position)
+        const cartographic = Cartographic.fromCartesian(
+          position,
+          scene.globe.ellipsoid,
+          cartographicScratch
+        )
+        setDragKey(Math.random())
         setLevitated(false)
         onChange?.({
           longitude: CesiumMath.toDegrees(cartographic.longitude),
@@ -116,7 +125,7 @@ export const Pedestrian: FC<PedestrianProps> = withEphemerality(
           height: referenceLocation.height
         })
       },
-      [location, streetViewLocation, onChange]
+      [location, onChange, scene]
     )
 
     return (
@@ -126,9 +135,9 @@ export const Pedestrian: FC<PedestrianProps> = withEphemerality(
         onDragEnd={handleDragEnd}
       >
         <PedestrianObject
+          key={dragKey}
           id={objectId}
           location={location}
-          streetViewLocation={streetViewLocation}
           selected={selected || highlighted}
           levitated={levitated}
         />
@@ -136,13 +145,12 @@ export const Pedestrian: FC<PedestrianProps> = withEphemerality(
           {selected &&
             !levitated &&
             !hideFrustum &&
-            streetViewLocation != null &&
-            streetViewHeadingPitch != null && (
+            headingPitch != null &&
+            zoom != null && (
               <StreetViewFrustum
                 location={location}
-                streetViewLocation={streetViewLocation}
-                headingPitch={streetViewHeadingPitch}
-                zoom={streetViewZoom}
+                headingPitch={headingPitch}
+                zoom={zoom}
               />
             )}
         </AnimatePresence>

@@ -15,6 +15,7 @@ import {
 } from './moduleDefinitions'
 import { PlateauCatalogService } from './PlateauCatalogService'
 import { PlateauMunicipalityService } from './PlateauMunicipalityService'
+import { PlateauPrefectureService } from './PlateauPrefectureService'
 import {
   PlateauStorageService,
   type PlateauStorageFiles
@@ -62,6 +63,7 @@ import { PlateauPrefectureResolver } from './resolvers/PlateauPrefectureResolver
     },
     PlateauCatalogService,
     PlateauStorageService,
+    PlateauPrefectureService,
     PlateauMunicipalityService,
     PlateauAreaFieldResolver,
     PlateauDatasetFieldResolver,

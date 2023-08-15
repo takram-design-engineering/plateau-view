@@ -59,6 +59,7 @@ export const AppPanel: FC = () => {
       <Stack spacing={1}>
         <ParameterList>
           <SelectParameterItem
+            labelFontSize='small'
             label='Environment Type'
             atom={environmentTypeAtom}
             items={[
@@ -69,6 +70,7 @@ export const AppPanel: FC = () => {
             ]}
           />
           <SelectParameterItem
+            labelFontSize='small'
             label='Terrain Type'
             atom={terrainTypeAtom}
             items={[
@@ -78,6 +80,7 @@ export const AppPanel: FC = () => {
             ]}
           />
           <SelectParameterItem
+            labelFontSize='small'
             label='Color Mode'
             atom={colorModeAtom}
             disabled={environmentType === 'satellite'}
@@ -87,10 +90,12 @@ export const AppPanel: FC = () => {
             ]}
           />
           <SwitchParameterItem
+            labelFontSize='small'
             label='Terrain Lighting'
             atom={enableTerrainLightingAtom}
           />
           <SliderParameterItem
+            labelFontSize='small'
             label='Terrain Elevation Height'
             min={-10}
             max={4000}
@@ -102,22 +107,27 @@ export const AppPanel: FC = () => {
             disabled={environmentType !== 'elevation'}
           />
           <SwitchParameterItem
+            labelFontSize='small'
             label='Logarithmic Terrain Elevation'
             atom={logarithmicTerrainElevationAtom}
           />
           <SwitchParameterItem
+            labelFontSize='small'
             label='Tileset Texture'
             atom={showTilesetTextureAtom}
           />
           <SwitchParameterItem
+            labelFontSize='small'
             label='Debug Spherical Harmonics'
             atom={debugSphericalHarmonicsAtom}
           />
           <SwitchParameterItem
+            labelFontSize='small'
             label='Debug Shadow Map Depth'
             atom={showShadowMapDepthAtom}
           />
           <SwitchParameterItem
+            labelFontSize='small'
             label='Debug Shadow Map Cascades'
             atom={showShadowMapCascadeColorsAtom}
           />
@@ -125,10 +135,12 @@ export const AppPanel: FC = () => {
         <Divider />
         <ParameterList>
           <SwitchParameterItem
+            labelFontSize='small'
             label='Show Data Formats'
             atom={showDataFormatsAtom}
           />
           <SwitchParameterItem
+            labelFontSize='small'
             label='Show Area Entities'
             atom={showAreaEntitiesAtom}
           />
@@ -136,10 +148,12 @@ export const AppPanel: FC = () => {
         <Divider />
         <ParameterList>
           <ValueParameterItem
+            labelFontSize='small'
             label='Selection Count'
             value={selection.length.toLocaleString()}
           />
           <SwitchParameterItem
+            labelFontSize='small'
             label='Selection Bounding Sphere'
             atom={showSelectionBoundingSphereAtom}
           />

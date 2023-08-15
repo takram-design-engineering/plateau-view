@@ -25,6 +25,7 @@ import { MuiTab } from './components/MuiTab'
 import { MuiTextField } from './components/MuiTextField'
 import { MuiToggleButton } from './components/MuiToggleButton'
 import { MuiTooltip } from './components/MuiTooltip'
+import { MuiDivider } from './components/MuiDivider'
 
 // TODO: Transition to MUI Joy when it's released.
 
@@ -124,6 +125,7 @@ export const themeOptions: ThemeOptions = {
   components: {
     MuiButton,
     MuiChip,
+    MuiDivider,
     MuiFilledInput,
     MuiFormControlLabel,
     MuiIconButton,

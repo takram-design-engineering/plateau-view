@@ -17,14 +17,16 @@ import { type MotionPosition } from './useMotionPosition'
 
 export interface LevitationCircleProps {
   motionPosition: MotionPosition
-  offset: Cartesian3
+  offset?: Cartesian3
+  radius?: number
 }
 
 const positionScratch = new Cartesian3()
 
 export const LevitationCircle: FC<LevitationCircleProps> = ({
   motionPosition,
-  offset
+  offset = Cartesian3.ZERO,
+  radius = 100
 }) => {
   const scene = useCesium(({ scene }) => scene)
 
@@ -43,17 +45,22 @@ export const LevitationCircle: FC<LevitationCircleProps> = ({
   }, [motionLevitation, present, safeToRemove])
 
   useEffect(() => {
-    return motionLevitation.on('change', () => {
+    return motionLevitation.on('renderRequest', () => {
       scene.requestRender()
     })
   }, [scene, motionLevitation])
 
-  const positionPropertyCallback = (): Cartesian3 => {
+  const positionPropertyCallback = (): Cartesian3 | undefined => {
     const position = Cartesian3.fromElements(
       ...motionPosition.get(),
       positionScratch
     )
-    return Cartesian3.add(position, offset, position)
+    const result = Cartesian3.add(position, offset, position)
+    if (result.equals(Cartesian3.ZERO)) {
+      // Entity requires non-zero magnitude position.
+      return undefined
+    }
+    return result
   }
   const positionPropertyCallbackRef = useRef(positionPropertyCallback)
   positionPropertyCallbackRef.current = positionPropertyCallback
@@ -69,10 +76,10 @@ export const LevitationCircle: FC<LevitationCircleProps> = ({
   const semiAxisProperty = useMemo(
     () =>
       new CallbackProperty(
-        () => Math.max(0.1, motionLevitation.get() * 25),
+        () => Math.max(0.1, motionLevitation.get() * radius),
         false
       ),
-    [motionLevitation]
+    [radius, motionLevitation]
   )
 
   const theme = useTheme()
@@ -86,7 +93,7 @@ export const LevitationCircle: FC<LevitationCircleProps> = ({
         material: new ColorMaterialProperty(
           Color.fromCssColorString(theme.palette.primary.main).withAlpha(0.2)
         ),
-        classificationType: ClassificationType.TERRAIN
+        classificationType: ClassificationType.BOTH
       }
     }),
     [theme, positionProperty, semiAxisProperty]

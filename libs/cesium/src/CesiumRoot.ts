@@ -45,7 +45,7 @@ export class CesiumRoot extends CesiumWidget {
     return this.billboardCollection
   }
 
-  destroy(): void {
+  override destroy(): void {
     if (!this.isDestroyed()) {
       this.scene.primitives.remove(this.billboardCollection)
       this.eventHelper.removeAll()

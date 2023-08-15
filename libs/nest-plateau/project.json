@@ -12,7 +12,8 @@
         "tsConfig": "libs/nest-plateau/tsconfig.lib.json",
         "packageJson": "libs/nest-plateau/package.json",
         "main": "libs/nest-plateau/src/index.ts",
-        "assets": ["libs/nest-plateau/*.md"]
+        "assets": ["libs/nest-plateau/*.md"],
+        "updateBuildableProjectDepsInPackageJson": true
       }
     },
     "publish": {

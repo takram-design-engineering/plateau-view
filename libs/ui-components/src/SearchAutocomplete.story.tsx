@@ -66,7 +66,7 @@ const Component: FC = () => {
           onFocus={handleFocus}
         >
           <Box>
-            <Divider light />
+            <Divider />
             {!focused ? (
               <LayerList>
                 <LayerListItem iconComponent={LayerIcon} title='レイヤー 1' />

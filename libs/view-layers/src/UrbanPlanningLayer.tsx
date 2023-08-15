@@ -1,7 +1,6 @@
 import { schemeCategory10 } from 'd3'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { useEffect, type FC } from 'react'
-import { type SetOptional } from 'type-fest'
 
 import { useCesium } from '@takram/plateau-cesium'
 import {
@@ -12,25 +11,35 @@ import {
 import { type LayerProps } from '@takram/plateau-layers'
 
 import {
-  createDatasetLayerBase,
+  createDatasetLayerModel,
   type DatasetLayerModel,
   type DatasetLayerModelParams
-} from './createDatasetLayerBase'
+} from './createDatasetLayerModel'
+import {
+  createMVTLayerState,
+  type MVTLayerState,
+  type MVTLayerStateParams
+} from './createMVTLayerState'
 import { URBAN_PLANNING_LAYER } from './layerTypes'
 import { MVTLayerContent } from './MVTLayerContent'
+import { type ConfigurableLayerModel } from './types'
 import { useDatasetDatum } from './useDatasetDatum'
 import { useDatasetLayerTitle } from './useDatasetLayerTitle'
 
 export interface UrbanPlanningLayerModelParams
-  extends DatasetLayerModelParams {}
+  extends DatasetLayerModelParams,
+    MVTLayerStateParams {}
 
-export interface UrbanPlanningLayerModel extends DatasetLayerModel {}
+export interface UrbanPlanningLayerModel
+  extends DatasetLayerModel,
+    MVTLayerState {}
 
 export function createUrbanPlanningLayer(
   params: UrbanPlanningLayerModelParams
-): SetOptional<UrbanPlanningLayerModel, 'id'> {
+): ConfigurableLayerModel<UrbanPlanningLayerModel> {
   return {
-    ...createDatasetLayerBase(params),
+    ...createDatasetLayerModel(params),
+    ...createMVTLayerState(params),
     type: URBAN_PLANNING_LAYER
   }
 }
@@ -38,11 +47,13 @@ export function createUrbanPlanningLayer(
 export const UrbanPlanningLayer: FC<
   LayerProps<typeof URBAN_PLANNING_LAYER>
 > = ({
+  handleRef,
   titleAtom,
   hiddenAtom,
   boundingSphereAtom,
   municipalityCode,
-  datumIdAtom
+  datumIdAtom,
+  opacityAtom
 }) => {
   const query = useMunicipalityDatasetsQuery({
     variables: {
@@ -81,9 +92,11 @@ export const UrbanPlanningLayer: FC<
   if (datum.format === PlateauDatasetFormat.Mvt) {
     return (
       <MVTLayerContent
+        handleRef={handleRef}
         url={datum.url}
         styles={styles}
         boundingSphereAtom={boundingSphereAtom}
+        opacityAtom={opacityAtom}
       />
     )
   }

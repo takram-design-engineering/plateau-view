@@ -86,14 +86,17 @@ export const GraphicsPanel: FC = () => {
       <Stack spacing={1}>
         <ParameterList>
           <SwitchParameterItem
+            labelFontSize='small'
             label='Native Resolution'
             atom={nativeResolutionEnabledAtom}
           />
           <SwitchParameterItem
+            labelFontSize='small'
             label='Explicit Rendering'
             atom={explicitRenderingEnabledAtom}
           />
           <SelectParameterItem
+            labelFontSize='small'
             label='Antialias'
             atom={antialiasTypeAtom}
             items={[
@@ -107,8 +110,13 @@ export const GraphicsPanel: FC = () => {
         </ParameterList>
         <Divider />
         <ParameterList>
-          <SwitchParameterItem label='Shadow Map' atom={shadowMapEnabledAtom} />
+          <SwitchParameterItem
+            labelFontSize='small'
+            label='Shadow Map'
+            atom={shadowMapEnabledAtom}
+          />
           <SelectParameterItem
+            labelFontSize='small'
             label='Resolution'
             disabled={!shadowMapEnabled}
             atom={shadowMapSizeAtom}
@@ -119,6 +127,7 @@ export const GraphicsPanel: FC = () => {
             ]}
           />
           <SwitchParameterItem
+            labelFontSize='small'
             label='Soft Shadows'
             disabled={!shadowMapEnabled}
             atom={shadowMapSoftShadowsAtom}
@@ -127,10 +136,12 @@ export const GraphicsPanel: FC = () => {
         <Divider />
         <ParameterList>
           <SwitchParameterItem
+            labelFontSize='small'
             label='Ambient Occlusion'
             atom={ambientOcclusionEnabledAtom}
           />
           <SliderParameterItem
+            labelFontSize='small'
             label='Intensity'
             disabled={!ambientOcclusionEnabled}
             min={0}
@@ -138,6 +149,7 @@ export const GraphicsPanel: FC = () => {
             atom={ambientOcclusionIntensityAtom}
           />
           <SliderParameterItem
+            labelFontSize='small'
             label='Max Radius'
             step={1}
             min={1}
@@ -146,6 +158,7 @@ export const GraphicsPanel: FC = () => {
             atom={ambientOcclusionMaxRadiusAtom}
           />
           <SliderParameterItem
+            labelFontSize='small'
             label='Bias'
             min={0}
             max={1}
@@ -153,21 +166,25 @@ export const GraphicsPanel: FC = () => {
             atom={ambientOcclusionBiasAtom}
           />
           <SwitchParameterItem
+            labelFontSize='small'
             label='Reduce Resolution'
             disabled={!ambientOcclusionEnabled || !nativeResolutionEnabled}
             atom={ambientOcclusionReduceScaleAtom}
           />
           <SwitchParameterItem
+            labelFontSize='small'
             label='Accurate Normal Reconstruction'
             disabled={!ambientOcclusionEnabled}
             atom={ambientOcclusionAccurateNormalReconstructionAtom}
           />
           <SwitchParameterItem
+            labelFontSize='small'
             label='Denoise'
             disabled={!ambientOcclusionEnabled}
             atom={ambientOcclusionDenoiseAtom}
           />
           <SelectParameterItem
+            labelFontSize='small'
             label='Output Type'
             displayEmpty
             disabled={!ambientOcclusionEnabled}
@@ -186,6 +203,7 @@ export const GraphicsPanel: FC = () => {
             ]}
           />
           <SliderParameterItem
+            labelFontSize='small'
             label='Number of Sample Directions'
             disabled={!ambientOcclusionEnabled}
             step={1}
@@ -194,6 +212,7 @@ export const GraphicsPanel: FC = () => {
             atom={ambientOcclusionDirectionsAtom}
           />
           <SliderParameterItem
+            labelFontSize='small'
             label='Number of Sample Steps'
             step={1}
             min={1}
@@ -202,6 +221,7 @@ export const GraphicsPanel: FC = () => {
             atom={ambientOcclusionStepsAtom}
           />
           <SliderParameterItem
+            labelFontSize='small'
             label='Shade Black Point'
             min={0}
             max={1}
@@ -209,6 +229,7 @@ export const GraphicsPanel: FC = () => {
             atom={ambientOcclusionBlackPointAtom}
           />
           <SliderParameterItem
+            labelFontSize='small'
             label='Shade White Point'
             min={0}
             max={1}
@@ -216,6 +237,7 @@ export const GraphicsPanel: FC = () => {
             atom={ambientOcclusionWhitePointAtom}
           />
           <SliderParameterItem
+            labelFontSize='small'
             label='Shade Gamma'
             min={1}
             max={3}
