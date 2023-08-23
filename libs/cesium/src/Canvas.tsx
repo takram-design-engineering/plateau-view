@@ -18,6 +18,7 @@ import {
 } from '@takram/plateau-react-helpers'
 
 import { CesiumRoot, type CesiumRootOptions } from './CesiumRoot'
+import { DefaultImageryProvider } from './DefaultImageryProvider'
 import { requestRenderInNextFrame } from './requestRenderInNextFrame'
 import { cesiumAtom } from './states'
 
@@ -116,22 +117,29 @@ export const Canvas = forwardRef<HTMLDivElement, CanvasProps>(
     useIsomorphicLayoutEffect(
       () => {
         invariant(containerRef.current != null)
-        const cesium = new CesiumRoot(containerRef.current, {
-          baseLayer: false,
-          skyBox: false,
-          showRenderLoopErrors: false,
-          ...constructorOptions?.(),
-          ...pick(props, [
-            ...optionKeys,
-            ...Object.keys(mutableOptions),
-            ...Object.keys(mutableSceneOptions),
-            ...Object.keys(mutableClockOptions)
-          ]),
+        const cesium = new CesiumRoot(
+          containerRef.current,
+          {
+            showRenderLoopErrors: false,
+            skyBox: false,
+            ...constructorOptions?.(),
+            ...pick(props, [
+              ...optionKeys,
+              ...Object.keys(mutableOptions),
+              ...Object.keys(mutableSceneOptions),
+              ...Object.keys(mutableClockOptions)
+            ]),
 
-          // TODO: Reroute credits
-          creditContainer: document.createElement('div'),
-          creditViewport: document.createElement('div')
-        })
+            // This option is deprecated, but Cesium tries to access their
+            // endpoint without this, which slows down the first view.
+            imageryProvider: new DefaultImageryProvider(),
+
+            // TODO: Reroute credits
+            creditContainer: document.createElement('div'),
+            creditViewport: document.createElement('div')
+          },
+          false
+        )
 
         // Remove the default imagery layer, which sometimes persists even when
         // false is passed to `baseLayer` above.

@@ -3665,11 +3665,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cesium/engine@npm:^3.0.2":
-  version: 3.0.2
-  resolution: "@cesium/engine@npm:3.0.2"
+"@cesium/engine@npm:^2.4.1":
+  version: 2.4.1
+  resolution: "@cesium/engine@npm:2.4.1"
   dependencies:
-    "@tweenjs/tween.js": ^21.0.0
+    "@tweenjs/tween.js": ^18.6.4
     "@zip.js/zip.js": 2.4.x
     autolinker: ^4.0.0
     bitmap-sdf: ^1.0.3
@@ -3678,7 +3678,7 @@ __metadata:
     grapheme-splitter: ^1.0.4
     jsep: ^1.3.8
     kdbush: ^4.0.1
-    ktx-parse: ^0.6.0
+    ktx-parse: ^0.5.0
     lerc: ^2.0.0
     mersenne-twister: ^1.1.0
     meshoptimizer: ^0.19.0
@@ -3687,7 +3687,7 @@ __metadata:
     rbush: ^3.0.1
     topojson-client: ^3.1.0
     urijs: ^1.19.7
-  checksum: 780325cc3a46cfc031c632dc8a4fd7f47d13152e9b07c4f1351af6409e0f1c5bd12917e1e0e4b12e459a3c5b2686b32e42ec47f7040ac68f41f8bb6d8879cd17
+  checksum: 930e81b995a87e9225de54b1f9aaaf636baff4f195b722906d813f15cb46d9ded17ed1eb06bc6c04735e8a210aa3dbdf94da569aa247e42874315357e03e9f23
   languageName: node
   linkType: hard
 
@@ -10121,7 +10121,7 @@ __metadata:
     "@babel/core": 7.12.13
     "@babel/preset-react": ^7.14.5
     "@babel/preset-typescript": 7.12.13
-    "@cesium/engine": ^3.0.2
+    "@cesium/engine": ^2.4.1
     "@dnd-kit/core": ^6.0.8
     "@dnd-kit/modifiers": ^6.0.1
     "@dnd-kit/sortable": ^7.0.2
@@ -11764,10 +11764,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tweenjs/tween.js@npm:^21.0.0":
-  version: 21.0.0
-  resolution: "@tweenjs/tween.js@npm:21.0.0"
-  checksum: 3c2498e9916a599a54d9f8e2bd2dfe0ceb249e3453d29c7b4287310f0fbe12f37d82e986263b411a672d50544dafdda7827b1707a7250023a6440351a741dddc
+"@tweenjs/tween.js@npm:^18.6.4":
+  version: 18.6.4
+  resolution: "@tweenjs/tween.js@npm:18.6.4"
+  checksum: 47208db3f6c32cde80284a852d0fca016284f90c4798eb4ebb2ebfc2e379504007bf0c031c2c33044df8a0878fd1942ebc4e0b7f5b8bcccf812b532ea1ee73eb
   languageName: node
   linkType: hard
 
@@ -23848,10 +23848,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ktx-parse@npm:^0.6.0":
-  version: 0.6.0
-  resolution: "ktx-parse@npm:0.6.0"
-  checksum: 62265fefa5815ee55b2f30da5e908dd33422e8646ffd7794e27da32b8e4c5917856293de0a5de5fae81742da9f3b238b7b8739346875c98c2a8ee27a6e1a7cc8
+"ktx-parse@npm:^0.5.0":
+  version: 0.5.0
+  resolution: "ktx-parse@npm:0.5.0"
+  checksum: 4382af5583390f3b88be6d20d910c7a7ba146e6280c0598a7d7610a05eddf331a330a79138ff12916a3888cc47a9ff024e6f19ac4916a30face9f616276cccdd
   languageName: node
   linkType: hard
 
