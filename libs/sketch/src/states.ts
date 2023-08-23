@@ -1,11 +1,5 @@
-import { type PolygonHierarchy } from '@cesium/engine'
-import { type Feature, type MultiPolygon, type Polygon } from 'geojson'
-import { atom } from 'jotai'
-import { splitAtom } from 'jotai/utils'
-import { type SetRequired } from 'type-fest'
+import { atomWithMachine } from 'jotai-xstate'
 
-export type GeometryFeature = SetRequired<Feature<Polygon | MultiPolygon>, 'id'>
+import { createSketchMachine } from './sketchMachine'
 
-export const featuresAtom = atom<GeometryFeature[]>([])
-export const featureAtomsAtom = splitAtom(featuresAtom)
-export const polygonHierarchyAtom = atom<PolygonHierarchy | null>(null)
+export const sketchMachineAtom = atomWithMachine(get => createSketchMachine())

@@ -1,7 +1,5 @@
 import { createMachine, type StateFrom } from 'xstate'
 
-export interface Context {}
-
 export type EventObject =
   | { type: 'SELECT' }
   | { type: 'HAND' }

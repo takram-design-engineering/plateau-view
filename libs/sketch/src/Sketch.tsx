@@ -1,51 +1,61 @@
-import { ClassificationType, Color } from '@cesium/engine'
-import { useTheme } from '@mui/material'
-import { useAtomValue } from 'jotai'
-import { useContext, type FC } from 'react'
+import { Color, HeightReference, ShadowMode } from '@cesium/engine'
+import { type Feature, type MultiPolygon, type Polygon } from 'geojson'
+import { useAtomValue, type PrimitiveAtom } from 'jotai'
+import { useMemo, type FC } from 'react'
 
-import { Entity } from '@takram/plateau-cesium'
+import { Entity, type EntityProps } from '@takram/plateau-cesium'
+import { convertPolygonToHierarchyArray } from '@takram/plateau-cesium-helpers'
+import { type SplitAtom } from '@takram/plateau-type-helpers'
 
-import { PolygonEntity } from './PolygonEntity'
-import { PolylineEntity } from './PolylineEntity'
-import { SketchContext } from './SketchProvider'
-import { SketchToolbar } from './SketchToolbar'
-import { Union } from './Union'
-import { useDrawingTool } from './useDrawingTool'
-import { useHandTool } from './useHandTool'
-import { useSendStateMachineEvents } from './useSendStateMachineEvents'
+import { type SketchFeature } from './types'
 
-export const Sketch: FC = () => {
-  useSendStateMachineEvents()
-  useHandTool()
-  const { polygonHierarchyProperty } = useDrawingTool()
+type DrawableFeature = Feature<
+  Polygon | MultiPolygon,
+  { extrudedHeight: number }
+>
 
-  const { featuresAtom } = useContext(SketchContext)
+function isDrawableFeature(feature: Feature): feature is DrawableFeature {
+  return (
+    (feature.geometry.type === 'Polygon' ||
+      feature.geometry.type === 'MultiPolygon') &&
+    typeof feature.properties?.extrudedHeight === 'number'
+  )
+}
+
+const SketchObject: FC<{
+  feature: DrawableFeature
+}> = ({ feature }) => {
+  const entityOptions = useMemo(
+    (): EntityProps => ({
+      polygon: {
+        hierarchy: convertPolygonToHierarchyArray(feature.geometry)[0],
+        extrudedHeight: feature.properties.extrudedHeight,
+        extrudedHeightReference: HeightReference.RELATIVE_TO_GROUND,
+        fill: true,
+        material: Color.WHITE,
+        // TODO: Make this configurable and connect to the global state.
+        shadows: ShadowMode.ENABLED
+      }
+    }),
+    [feature]
+  )
+  return <Entity {...entityOptions} />
+}
+
+export interface SketchProps {
+  featuresAtom: PrimitiveAtom<SketchFeature[]>
+  featureAtomsAtom: SplitAtom<SketchFeature>
+}
+
+export const Sketch: FC<SketchProps> = ({ featuresAtom, featureAtomsAtom }) => {
   const features = useAtomValue(featuresAtom)
-
-  const theme = useTheme()
   return (
     <>
-      <SketchToolbar />
-      <Union
-        of={PolygonEntity}
-        features={features}
-        color={theme.palette.primary.main}
-      />
-      <Union
-        of={PolylineEntity}
-        features={features}
-        color={theme.palette.primary.main}
-        alpha={1}
-      />
-      {polygonHierarchyProperty != null && (
-        <Entity
-          polygon={{
-            hierarchy: polygonHierarchyProperty,
-            fill: true,
-            material: Color.fromCssColorString('#808080').withAlpha(0.5),
-            classificationType: ClassificationType.TERRAIN
-          }}
-        />
+      {features.map(
+        (feature, index) =>
+          isDrawableFeature(feature) && (
+            <SketchObject key={index} feature={feature} />
+          )
       )}
     </>
   )

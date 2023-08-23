@@ -1,7 +1,10 @@
-import { useAtomValue } from 'jotai'
+import { atom, useAtomValue, type PrimitiveAtom } from 'jotai'
+import { splitAtom } from 'jotai/utils'
 import { type FC } from 'react'
 
 import { type LayerProps } from '@takram/plateau-layers'
+import { Sketch, type SketchFeature } from '@takram/plateau-sketch'
+import { type SplitAtom } from '@takram/plateau-type-helpers'
 
 import {
   createViewLayerModel,
@@ -11,19 +14,27 @@ import {
 import { SKETCH_LAYER } from './layerTypes'
 import { type ConfigurableLayerModel } from './types'
 
-export interface SketchLayerModelParams extends ViewLayerModelParams {}
+export interface SketchLayerModelParams extends ViewLayerModelParams {
+  features?: readonly SketchFeature[]
+}
 
-export interface SketchLayerModel extends ViewLayerModel {}
+export interface SketchLayerModel extends ViewLayerModel {
+  featuresAtom: PrimitiveAtom<SketchFeature[]>
+  featureAtomsAtom: SplitAtom<SketchFeature>
+}
 
 export function createSketchLayer(
   params: SketchLayerModelParams
 ): ConfigurableLayerModel<SketchLayerModel> {
+  const featuresAtom = atom<SketchFeature[]>([...(params.features ?? [])])
   return {
     ...createViewLayerModel({
       ...params,
       title: '作図'
     }),
-    type: SKETCH_LAYER
+    type: SKETCH_LAYER,
+    featuresAtom,
+    featureAtomsAtom: splitAtom(featuresAtom)
   }
 }
 
@@ -32,11 +43,15 @@ export const SketchLayer: FC<LayerProps<typeof SKETCH_LAYER>> = ({
   selected,
   titleAtom,
   hiddenAtom,
-  boundingSphereAtom
+  boundingSphereAtom,
+  featuresAtom,
+  featureAtomsAtom
 }) => {
   const hidden = useAtomValue(hiddenAtom)
   if (hidden) {
     return null
   }
-  return null
+  return (
+    <Sketch featuresAtom={featuresAtom} featureAtomsAtom={featureAtomsAtom} />
+  )
 }

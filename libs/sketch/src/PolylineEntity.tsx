@@ -8,7 +8,7 @@ import { useEffect, useMemo, type FC } from 'react'
 import { Entity, useCesium, type EntityProps } from '@takram/plateau-cesium'
 import {
   compose,
-  convertPolygonToPositionsArray
+  convertGeometryToPositionsArray
 } from '@takram/plateau-cesium-helpers'
 
 import { type GeometryFeature } from './types'
@@ -25,7 +25,7 @@ export const PolylineEntity: FC<PolylineEntityProps> = ({
   alpha = 0.5
 }) => {
   const positionsArray = useMemo(
-    () => convertPolygonToPositionsArray(feature.geometry),
+    () => convertGeometryToPositionsArray(feature.geometry),
     [feature]
   )
 
