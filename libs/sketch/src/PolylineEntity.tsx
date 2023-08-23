@@ -3,7 +3,6 @@ import {
   Color,
   ColorMaterialProperty
 } from '@cesium/engine'
-import { type Feature, type MultiPolygon, type Polygon } from 'geojson'
 import { useEffect, useMemo, type FC } from 'react'
 
 import { Entity, useCesium, type EntityProps } from '@takram/plateau-cesium'
@@ -12,15 +11,17 @@ import {
   convertPolygonToPositionsArray
 } from '@takram/plateau-cesium-helpers'
 
+import { type GeometryFeature } from './types'
+
 export interface PolylineEntityProps {
-  feature: Feature<Polygon | MultiPolygon>
-  color?: string
+  feature: GeometryFeature
+  color?: Color
   alpha?: number
 }
 
 export const PolylineEntity: FC<PolylineEntityProps> = ({
   feature,
-  color = '#808080',
+  color = Color.GRAY,
   alpha = 0.5
 }) => {
   const positionsArray = useMemo(
@@ -29,9 +30,8 @@ export const PolylineEntity: FC<PolylineEntityProps> = ({
   )
 
   const scene = useCesium(({ scene }) => scene)
-  useEffect(() => {
-    scene.requestRender()
-  })
+  scene.requestRender()
+
   useEffect(() => {
     return () => {
       scene.requestRender()
@@ -39,9 +39,7 @@ export const PolylineEntity: FC<PolylineEntityProps> = ({
   }, [scene])
 
   const polylines = useMemo(() => {
-    const material = new ColorMaterialProperty(
-      Color.fromCssColorString(color).withAlpha(alpha)
-    )
+    const material = new ColorMaterialProperty(color.withAlpha(alpha))
     return positionsArray.map(
       (positions, index): EntityProps => ({
         ...(feature.id != null && {
