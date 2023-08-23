@@ -23,6 +23,7 @@ import { ScreenSpaceCamera } from './containers/ScreenSpaceCamera'
 import { ScreenSpaceSelection } from './containers/ScreenSpaceSelection'
 import { SelectionBoundingSphere } from './containers/SelectionBoundingSphere'
 import { SelectionCoordinator } from './containers/SelectionCoordinator'
+import { SketchTool } from './containers/SketchTool'
 import { Terrains } from './containers/Terrains'
 import { ToolMachineEvents } from './containers/ToolMachineEvents'
 import { readyAtom } from './states/app'
@@ -68,6 +69,7 @@ export const PlateauView: FC<PlateauViewProps> = () => {
         <ReverseGeocoding />
         <ToolMachineEvents />
         <PedestrianTool />
+        <SketchTool />
         <SelectionCoordinator />
         <SelectionBoundingSphere />
       </Canvas>

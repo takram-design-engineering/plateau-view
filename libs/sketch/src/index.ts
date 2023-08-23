@@ -1,1 +1,1 @@
-export * from './Sketch'
+export * from './SketchTool'
