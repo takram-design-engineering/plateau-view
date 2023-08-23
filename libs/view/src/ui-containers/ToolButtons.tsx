@@ -46,7 +46,7 @@ export const ToolButtons: FC = () => {
       <AppToggleButton value='pedestrian' title='歩行者視点' shortcutKey='P'>
         <PedestrianIcon fontSize='medium' />
       </AppToggleButton>
-      <AppToggleButton value='sketch' title='作図' shortcutKey='G' disabled>
+      <AppToggleButton value='sketch' title='作図' shortcutKey='G'>
         <SketchIcon fontSize='medium' />
       </AppToggleButton>
       <AppToggleButton
