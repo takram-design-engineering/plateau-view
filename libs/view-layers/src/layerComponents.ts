@@ -24,6 +24,7 @@ import {
   RIVER_FLOODING_RISK_LAYER,
   ROAD_LAYER,
   SHELTER_LAYER,
+  SKETCH_LAYER,
   STATION_LAYER,
   TSUNAMI_RISK_LAYER,
   URBAN_PLANNING_LAYER,
@@ -33,11 +34,14 @@ import {
 import { PedestrianLayer } from './PedestrianLayer'
 import { RiverFloodingRiskLayer } from './RiverFloodingRiskLayer'
 import { RoadLayer } from './RoadLayer'
+import { SketchLayer } from './SketchLayer'
 import { UrbanPlanningLayer } from './UrbanPlanningLayer'
 
 export const layerComponents: LayerComponents = {
-  [PEDESTRIAN_LAYER]: PedestrianLayer,
   [HEATMAP_LAYER]: HeatmapLayer,
+  [PEDESTRIAN_LAYER]: PedestrianLayer,
+  [SKETCH_LAYER]: SketchLayer,
+
   // Dataset layers
   [BORDER_LAYER]: undefined,
   [BRIDGE_LAYER]: BridgeLayer,
