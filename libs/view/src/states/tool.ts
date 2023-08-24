@@ -1,6 +1,8 @@
 import { atom } from 'jotai'
 import { atomWithMachine } from 'jotai-xstate'
 
+import { type GeometryType } from '@takram/plateau-sketch'
+
 import { createToolMachine, type ToolMachineState } from './toolMachine'
 
 export type Tool = 'hand' | 'select' | 'sketch' | 'story' | 'pedestrian'
@@ -31,3 +33,5 @@ export const toolAtom = atom<Tool | null>(get => {
     ? 'pedestrian'
     : null
 })
+
+export const sketchTypeAtom = atom<GeometryType>('circle')

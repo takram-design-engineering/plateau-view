@@ -15,7 +15,7 @@ import {
 } from '@takram/plateau-sketch'
 import { createViewLayer, SKETCH_LAYER } from '@takram/plateau-view-layers'
 
-import { toolAtom } from '../states/tool'
+import { sketchTypeAtom, toolAtom } from '../states/tool'
 
 const selectedSketchLayerAtom = atom<LayerModel<typeof SKETCH_LAYER> | null>(
   get => {
@@ -64,7 +64,9 @@ const Wrapped: FC = () => {
     },
     [layer, addFeature, addLayer]
   )
-  return <SketchToolComponent onCreate={handleCreate} />
+
+  const sketchType = useAtomValue(sketchTypeAtom)
+  return <SketchToolComponent type={sketchType} onCreate={handleCreate} />
 }
 
 export const SketchTool: FC = () => {

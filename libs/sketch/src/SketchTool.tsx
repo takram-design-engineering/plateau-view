@@ -32,9 +32,10 @@ import { createGeometry } from './createGeometry'
 import { getExtrudedHeight } from './getExtrudedHeight'
 import { pickGround } from './pickGround'
 import { sketchMachineAtom } from './states'
-import { type SketchFeature } from './types'
+import { type GeometryType, type SketchFeature } from './types'
 
 export interface SketchToolProps {
+  type?: GeometryType
   disableShadow?: boolean
   onCreate?: (feature: SketchFeature) => void
 }
@@ -42,6 +43,7 @@ export interface SketchToolProps {
 const positionScratch = new Cartesian3()
 
 export const SketchTool: FC<SketchToolProps> = ({
+  type = 'circle',
   disableShadow = false,
   onCreate
 }) => {
@@ -73,7 +75,14 @@ export const SketchTool: FC<SketchToolProps> = ({
     if (position == null) {
       return
     }
-    send({ type: 'RECTANGLE', position })
+    send({
+      type: {
+        circle: 'CIRCLE' as const,
+        rectangle: 'RECTANGLE' as const,
+        polygon: 'POLYGON' as const
+      }[type],
+      position
+    })
     geometryRef.current = undefined
     positionsRef.current = undefined
     hierarchyRef.current = undefined
