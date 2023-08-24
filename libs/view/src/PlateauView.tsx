@@ -14,6 +14,7 @@ import { layerComponents } from '@takram/plateau-view-layers'
 import { Areas } from './containers/Areas'
 import { Canvas } from './containers/Canvas'
 import { Environments } from './containers/Environments'
+import { FileDrop } from './containers/FileDrop'
 import { InitialLayers } from './containers/InitialLayers'
 import { KeyBindings } from './containers/KeyBindings'
 import { Notifications } from './containers/Notifications'
@@ -75,6 +76,7 @@ export const PlateauView: FC<PlateauViewProps> = () => {
       </Canvas>
       <KeyBindings />
       <ScreenSpaceSelection />
+      <FileDrop />
       <AppOverlay />
       <Notifications />
       <InitialLayers />
