@@ -9,6 +9,7 @@ import {
 } from '@takram/plateau-cesium'
 import { LayersRenderer } from '@takram/plateau-layers'
 import { AppFrame } from '@takram/plateau-ui-components'
+import { VectorMapLabel } from '@takram/plateau-vector-map-label'
 import { layerComponents } from '@takram/plateau-view-layers'
 
 import { Areas } from './containers/Areas'
@@ -64,6 +65,7 @@ export const PlateauView: FC<PlateauViewProps> = () => {
             <LayersRenderer components={layerComponents} />
           </SuspendUntilTilesLoaded>
         </Suspense>
+        <VectorMapLabel />
         <Areas />
         <ReverseGeocoding />
         <ToolMachineEvents />
