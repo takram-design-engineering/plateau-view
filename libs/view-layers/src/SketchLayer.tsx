@@ -14,6 +14,8 @@ import {
 import { SKETCH_LAYER } from './layerTypes'
 import { type ConfigurableLayerModel } from './types'
 
+let nextLayerIndex = 1
+
 export interface SketchLayerModelParams extends ViewLayerModelParams {
   features?: readonly SketchFeature[]
 }
@@ -30,7 +32,8 @@ export function createSketchLayer(
   return {
     ...createViewLayerModel({
       ...params,
-      title: '作図'
+      // TODO: Avoid side-effect
+      title: `作図${nextLayerIndex++}`
     }),
     type: SKETCH_LAYER,
     featuresAtom,
