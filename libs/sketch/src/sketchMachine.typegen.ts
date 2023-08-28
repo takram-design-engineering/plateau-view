@@ -20,13 +20,14 @@
 "createCircle": "CIRCLE";
 "createPolygon": "POLYGON";
 "createRectangle": "RECTANGLE";
+"popPosition": "CANCEL";
 "updatePosition": "EXTRUDE" | "NEXT";
         };
         eventsCausingDelays: {
 
         };
         eventsCausingGuards: {
-
+          "canPopPosition": "CANCEL";
         };
         eventsCausingServices: {
 

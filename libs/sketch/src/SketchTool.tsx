@@ -12,7 +12,7 @@ import {
 import { useTheme } from '@mui/material'
 import { feature } from '@turf/turf'
 import { useAtom } from 'jotai'
-import { useMemo, useRef, type FC } from 'react'
+import { useCallback, useMemo, useRef, type FC } from 'react'
 import invariant from 'tiny-invariant'
 
 import {
@@ -64,6 +64,7 @@ export const SketchTool: FC<SketchToolProps> = ({
 }) => {
   const [state, send] = useAtom(sketchMachineAtom)
 
+  const pointerPositionRef = useRef<Cartesian2>()
   const positionsRef = useRef<Cartesian3[]>()
   const polylinePositionsProperty = useConstant(
     () => new CallbackProperty(() => positionsRef.current, false)
@@ -77,15 +78,49 @@ export const SketchTool: FC<SketchToolProps> = ({
     () => new CallbackProperty(() => extrudedHeightRef.current, false)
   )
 
-  const eventHandler = useScreenSpaceEventHandler()
   const scene = useCesium(({ scene }) => scene)
-  scene.requestRender()
+
+  const updateGeometryProperties = useCallback(
+    (position?: Cartesian3) => {
+      if (state.context.type == null || state.context.positions == null) {
+        positionsRef.current = undefined
+        hierarchyRef.current = undefined
+        return
+      }
+      const geometry = createGeometry(
+        state.context.type,
+        position != null
+          ? [...state.context.positions, position]
+          : state.context.positions,
+        scene.globe.ellipsoid
+      )
+      if (geometry == null) {
+        return
+      }
+      if (geometry.type === 'LineString') {
+        positionsRef.current = convertGeometryToPositionsArray(geometry)[0]
+        hierarchyRef.current = undefined
+      } else {
+        positionsRef.current = convertGeometryToPositionsArray(geometry)[0]
+        hierarchyRef.current = convertPolygonToHierarchyArray(geometry)[0]
+      }
+      scene.requestRender()
+    },
+    [state, scene]
+  )
 
   useWindowEvent('keydown', event => {
     if (event.key === 'Escape') {
       send({ type: 'CANCEL' })
+      const position =
+        pointerPositionRef.current != null
+          ? pickGround(scene, pointerPositionRef.current, positionScratch)
+          : undefined
+      updateGeometryProperties(position)
     }
   })
+
+  const eventHandler = useScreenSpaceEventHandler()
 
   useScreenSpaceEvent(eventHandler, ScreenSpaceEventType.LEFT_DOWN, event => {
     if (!state.matches('idle')) {
@@ -102,7 +137,7 @@ export const SketchTool: FC<SketchToolProps> = ({
         rectangle: 'RECTANGLE' as const,
         polygon: 'POLYGON' as const
       }[type],
-      windowPosition: event.position,
+      pointerPosition: event.position,
       position
     })
     positionsRef.current = undefined
@@ -111,6 +146,7 @@ export const SketchTool: FC<SketchToolProps> = ({
   })
 
   useScreenSpaceEvent(eventHandler, ScreenSpaceEventType.MOUSE_MOVE, event => {
+    pointerPositionRef.current = event.endPosition
     if (state.matches('drawing')) {
       invariant(state.context.type != null)
       invariant(state.context.positions != null)
@@ -118,22 +154,7 @@ export const SketchTool: FC<SketchToolProps> = ({
       if (position == null || hasDuplicate(position, state.context.positions)) {
         return
       }
-      const geometry = createGeometry(
-        state.context.type,
-        [...state.context.positions, position],
-        scene.globe.ellipsoid
-      )
-      if (geometry == null) {
-        return
-      }
-      if (geometry.type === 'LineString') {
-        positionsRef.current = convertGeometryToPositionsArray(geometry)[0]
-        hierarchyRef.current = undefined
-      } else {
-        positionsRef.current = undefined
-        hierarchyRef.current = convertPolygonToHierarchyArray(geometry)[0]
-      }
-      scene.requestRender()
+      updateGeometryProperties(position)
     } else if (state.matches('extruding')) {
       invariant(state.context.lastPosition != null)
       const extrudedHeight = getExtrudedHeight(
@@ -151,10 +172,10 @@ export const SketchTool: FC<SketchToolProps> = ({
   useScreenSpaceEvent(eventHandler, ScreenSpaceEventType.LEFT_UP, event => {
     if (
       state.context.positions?.length === 1 &&
-      state.context.lastWindowPosition != null &&
+      state.context.lastPointerPosition != null &&
       Cartesian2.equalsEpsilon(
         event.position,
-        state.context.lastWindowPosition,
+        state.context.lastPointerPosition,
         0,
         5 // Epsilon in pixels
       )
@@ -168,7 +189,7 @@ export const SketchTool: FC<SketchToolProps> = ({
       }
       send({
         type: 'NEXT',
-        windowPosition: event.position,
+        pointerPosition: event.position,
         position
       })
     } else if (state.matches('extruding')) {
@@ -208,7 +229,7 @@ export const SketchTool: FC<SketchToolProps> = ({
         }
         send({
           type: 'EXTRUDE',
-          windowPosition: event.position,
+          pointerPosition: event.position,
           position
         })
       }
