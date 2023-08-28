@@ -1,33 +1,24 @@
-import { type Cartesian3 } from '@cesium/engine'
+import { type Cartesian2, type Cartesian3 } from '@cesium/engine'
 import { createMachine, type StateFrom } from 'xstate'
 
 import { type GeometryType } from './types'
 
 export type EventObject =
-  | {
-      type: 'CIRCLE'
+  | ((
+      | { type: 'CIRCLE' }
+      | { type: 'RECTANGLE' }
+      | { type: 'POLYGON' }
+      | { type: 'NEXT' }
+      | { type: 'EXTRUDE' }
+    ) & {
+      windowPosition: Cartesian2
       position: Cartesian3
-    }
-  | {
-      type: 'RECTANGLE'
-      position: Cartesian3
-    }
-  | {
-      type: 'POLYGON'
-      position: Cartesian3
-    }
-  | {
-      type: 'NEXT'
-      position: Cartesian3
-    }
-  | {
-      type: 'EXTRUDE'
-      position: Cartesian3
-    }
+    })
   | { type: 'CREATE' }
   | { type: 'CANCEL' }
 
 interface Context {
+  lastWindowPosition?: Cartesian2
   lastPosition?: Cartesian3
   type?: GeometryType
   positions?: Cartesian3[]
@@ -145,18 +136,21 @@ export function createSketchMachine() {
     {
       actions: {
         createCircle: (context, event) => {
+          context.lastWindowPosition = event.windowPosition.clone()
           const position = event.position.clone()
           context.lastPosition = position
           context.type = 'circle'
           context.positions = [position]
         },
         createRectangle: (context, event) => {
+          context.lastWindowPosition = event.windowPosition.clone()
           const position = event.position.clone()
           context.lastPosition = position
           context.type = 'rectangle'
           context.positions = [position]
         },
         createPolygon: (context, event) => {
+          context.lastWindowPosition = event.windowPosition.clone()
           const position = event.position.clone()
           context.lastPosition = position
           context.type = 'polygon'
@@ -168,6 +162,7 @@ export function createSketchMachine() {
           delete context.positions
         },
         updatePosition: (context, event) => {
+          context.lastWindowPosition = event.windowPosition.clone()
           const position = event.position.clone()
           context.lastPosition = position
           context.positions?.push(position)

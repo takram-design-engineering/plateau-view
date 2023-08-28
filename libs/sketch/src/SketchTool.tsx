@@ -1,5 +1,6 @@
 import {
   CallbackProperty,
+  Cartesian2,
   Cartesian3,
   ClassificationType,
   Color,
@@ -38,6 +39,21 @@ export interface SketchToolProps {
   type?: GeometryType
   disableShadow?: boolean
   onCreate?: (feature: SketchFeature) => void
+}
+
+function hasDuplicate(
+  position: Cartesian3,
+  positions?: readonly Cartesian3[]
+): boolean {
+  return (
+    positions?.some(another =>
+      position.equalsEpsilon(
+        another,
+        0,
+        1e-7 // Epsilon in radians
+      )
+    ) === true
+  )
 }
 
 const positionScratch = new Cartesian3()
@@ -81,6 +97,7 @@ export const SketchTool: FC<SketchToolProps> = ({
         rectangle: 'RECTANGLE' as const,
         polygon: 'POLYGON' as const
       }[type],
+      windowPosition: event.position,
       position
     })
     geometryRef.current = undefined
@@ -94,10 +111,7 @@ export const SketchTool: FC<SketchToolProps> = ({
       invariant(state.context.type != null)
       invariant(state.context.positions != null)
       const position = pickGround(scene, event.endPosition, positionScratch)
-      if (position == null) {
-        return
-      }
-      if (position.equalsEpsilon(state.context.lastPosition)) {
+      if (position == null || hasDuplicate(position, state.context.positions)) {
         return
       }
       const geometry = createGeometry(
@@ -133,19 +147,32 @@ export const SketchTool: FC<SketchToolProps> = ({
   })
 
   useScreenSpaceEvent(eventHandler, ScreenSpaceEventType.LEFT_UP, event => {
+    if (
+      state.context.positions?.length === 1 &&
+      state.context.lastWindowPosition != null &&
+      Cartesian2.equalsEpsilon(
+        event.position,
+        state.context.lastWindowPosition,
+        0,
+        5 // Epsilon in pixels
+      )
+    ) {
+      return // Too close to the first position user clicked.
+    }
     if (state.matches('drawing')) {
       const position = pickGround(scene, event.position, positionScratch)
-      if (position == null) {
+      if (position == null || hasDuplicate(position, state.context.positions)) {
         return
       }
-      if (position.equalsEpsilon(state.context.lastPosition)) {
-        return
-      }
-      send({ type: 'NEXT', position })
+      send({
+        type: 'NEXT',
+        windowPosition: event.position,
+        position
+      })
     } else if (state.matches('extruding')) {
+      invariant(geometryRef.current != null)
       invariant(state.context.type != null)
       invariant(state.context.positions != null)
-      invariant(geometryRef.current != null)
       onCreate?.(
         feature(geometryRef.current, {
           type: state.context.type,
@@ -157,19 +184,24 @@ export const SketchTool: FC<SketchToolProps> = ({
     }
   })
 
+  // Manually finish drawing when the user double-clicks.
   useScreenSpaceEvent(
     eventHandler,
     ScreenSpaceEventType.LEFT_DOUBLE_CLICK,
     event => {
       if (state.matches('drawing.polygon')) {
         const position = pickGround(scene, event.position, positionScratch)
-        if (position == null) {
+        if (
+          position == null ||
+          hasDuplicate(position, state.context.positions)
+        ) {
           return
         }
-        if (position.equalsEpsilon(state.context.lastPosition)) {
-          return
-        }
-        send({ type: 'EXTRUDE', position })
+        send({
+          type: 'EXTRUDE',
+          windowPosition: event.position,
+          position
+        })
       }
     }
   )
