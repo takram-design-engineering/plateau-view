@@ -14,6 +14,7 @@ import {
 } from '@takram/plateau-cesium'
 import { useWindowEvent } from '@takram/plateau-react-helpers'
 
+import crossCursor from '../assets/cross_cursor.svg'
 import { toolAtom, toolMachineAtom } from '../states/tool'
 
 export const ToolMachineEvents: FC = () => {
@@ -97,6 +98,11 @@ export const ToolMachineEvents: FC = () => {
     state.matches('selectedTool.momentary.hand')
   ) {
     cursor = 'grab'
+  } else if (
+    state.matches('selectedTool.modal.sketch') ||
+    state.matches('activeTool.modal.sketch')
+  ) {
+    cursor = `url("${crossCursor.src}") 12 12, auto`
   } else {
     cursor = 'auto'
   }
