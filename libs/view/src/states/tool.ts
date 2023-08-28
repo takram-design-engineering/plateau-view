@@ -78,4 +78,4 @@ export const momentaryToolAtom = atom<Tool | null>(
   get => getMomentaryTool(get(toolMachineAtom)) ?? null
 )
 
-export const sketchTypeAtom = atom<SketchGeometryType>('circle')
+export const sketchTypeAtom = atom<SketchGeometryType>('rectangle')
