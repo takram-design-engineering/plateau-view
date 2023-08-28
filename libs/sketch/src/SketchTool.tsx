@@ -32,10 +32,10 @@ import { createGeometry } from './createGeometry'
 import { getExtrudedHeight } from './getExtrudedHeight'
 import { pickGround } from './pickGround'
 import { sketchMachineAtom } from './states'
-import { type GeometryType, type SketchFeature } from './types'
+import { type SketchFeature, type SketchGeometryType } from './types'
 
 export interface SketchToolProps {
-  type?: GeometryType
+  type?: SketchGeometryType
   disableShadow?: boolean
   onCreate?: (feature: SketchFeature) => void
 }

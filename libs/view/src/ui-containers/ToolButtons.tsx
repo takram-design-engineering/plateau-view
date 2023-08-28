@@ -2,7 +2,7 @@ import { Typography } from '@mui/material'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { useCallback, type FC } from 'react'
 
-import { type GeometryType } from '@takram/plateau-sketch'
+import { type SketchGeometryType } from '@takram/plateau-sketch'
 import {
   AppToggleButton,
   AppToggleButtonGroup,
@@ -45,7 +45,7 @@ export const ToolButtons: FC = () => {
 
   const [sketchType, setSketchType] = useAtom(sketchTypeAtom)
   const handleSketchTypeChange = useCallback(
-    (event: unknown, value: GeometryType | null) => {
+    (event: unknown, value: SketchGeometryType | null) => {
       if (value != null) {
         setSketchType(value)
       }

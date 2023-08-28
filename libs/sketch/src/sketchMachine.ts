@@ -2,7 +2,7 @@ import { type Cartesian2, type Cartesian3 } from '@cesium/engine'
 import invariant from 'tiny-invariant'
 import { createMachine, type StateFrom } from 'xstate'
 
-import { type GeometryType } from './types'
+import { type SketchGeometryType } from './types'
 
 export type EventObject =
   | ((
@@ -21,7 +21,7 @@ export type EventObject =
 interface Context {
   lastPointerPosition?: Cartesian2
   lastPosition?: Cartesian3
-  type?: GeometryType
+  type?: SketchGeometryType
   positions?: Cartesian3[]
 }
 

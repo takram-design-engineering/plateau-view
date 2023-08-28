@@ -7,7 +7,7 @@ import {
 import { ellipse, lineString, polygon } from '@turf/turf'
 import { type LineString, type MultiPolygon, type Polygon } from 'geojson'
 
-import { type GeometryType } from './types'
+import { type SketchGeometryType } from './types'
 
 const cartographicScratch = new Cartographic()
 const cartesianScratch1 = new Cartesian3()
@@ -148,7 +148,7 @@ function createPolygon(
 }
 
 export function createGeometry(
-  type: GeometryType,
+  type: SketchGeometryType,
   positions: readonly Cartesian3[],
   ellipsoid?: Ellipsoid
 ): LineString | Polygon | MultiPolygon | undefined {

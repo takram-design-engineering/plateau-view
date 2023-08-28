@@ -1,10 +1,10 @@
 import { type Feature, type MultiPolygon, type Polygon } from 'geojson'
 import { type SetRequired } from 'type-fest'
 
-export type GeometryType = 'circle' | 'rectangle' | 'polygon'
+export type SketchGeometryType = 'circle' | 'rectangle' | 'polygon'
 
 export interface SketchFeatureProperties {
-  type?: GeometryType
+  type?: SketchGeometryType
   positions?: Array<[number, number, number]>
   extrudedHeight?: number
 }

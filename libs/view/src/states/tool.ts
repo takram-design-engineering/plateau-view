@@ -1,7 +1,7 @@
 import { atom } from 'jotai'
 import { atomWithMachine } from 'jotai-xstate'
 
-import { type GeometryType } from '@takram/plateau-sketch'
+import { type SketchGeometryType } from '@takram/plateau-sketch'
 
 import { createToolMachine, type ToolMachineState } from './toolMachine'
 
@@ -34,4 +34,4 @@ export const toolAtom = atom<Tool | null>(get => {
     : null
 })
 
-export const sketchTypeAtom = atom<GeometryType>('circle')
+export const sketchTypeAtom = atom<SketchGeometryType>('circle')
