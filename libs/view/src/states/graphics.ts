@@ -4,10 +4,8 @@ import { atomWithReset, type RESET } from 'jotai/utils'
 import { fromPairs, isEqual } from 'lodash'
 
 import { AmbientOcclusionOutputType } from '@takram/plateau-cesium-hbao'
-import {
-  atomWithStorageValidation,
-  type AtomValue
-} from '@takram/plateau-shared-states'
+import { atomWithStorageValidation } from '@takram/plateau-shared-states'
+import { type AtomValue } from '@takram/plateau-type-helpers'
 
 export type AntialiasType = 'none' | 'fxaa' | 'msaa2x' | 'msaa4x' | 'msaa8x'
 

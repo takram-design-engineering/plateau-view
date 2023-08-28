@@ -6,6 +6,7 @@ import { type CSSProperties } from 'react'
 
 import { MuiButton } from './components/MuiButton'
 import { MuiChip } from './components/MuiChip'
+import { MuiDivider } from './components/MuiDivider'
 import { MuiFilledInput } from './components/MuiFilledInput'
 import { MuiFormControlLabel } from './components/MuiFormControlLabel'
 import { MuiIconButton } from './components/MuiIconButton'
@@ -25,7 +26,6 @@ import { MuiTab } from './components/MuiTab'
 import { MuiTextField } from './components/MuiTextField'
 import { MuiToggleButton } from './components/MuiToggleButton'
 import { MuiTooltip } from './components/MuiTooltip'
-import { MuiDivider } from './components/MuiDivider'
 
 // TODO: Transition to MUI Joy when it's released.
 

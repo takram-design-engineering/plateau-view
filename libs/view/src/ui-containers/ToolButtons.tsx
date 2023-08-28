@@ -1,20 +1,28 @@
-import { useAtomValue, useSetAtom } from 'jotai'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { useCallback, type FC } from 'react'
 
+import { isSketchGeometryType } from '@takram/plateau-sketch'
 import {
   AppToggleButton,
   AppToggleButtonGroup,
+  AppToggleButtonSelect,
   HandIcon,
   PedestrianIcon,
   PointerArrowIcon,
-  SketchIcon,
-  StoryIcon
+  SketchCircleIcon,
+  SketchPolygonIcon,
+  SketchRectangleIcon
 } from '@takram/plateau-ui-components'
 
-import { toolAtom, toolMachineAtom, type Tool } from '../states/tool'
+import {
+  sketchTypeAtom,
+  toolAtom,
+  toolMachineAtom,
+  type ToolType
+} from '../states/tool'
 import { type EventObject } from '../states/toolMachine'
 
-const eventTypes: Record<Tool, EventObject['type']> = {
+const eventTypes: Record<ToolType, EventObject['type']> = {
   hand: 'HAND',
   select: 'SELECT',
   sketch: 'SKETCH',
@@ -22,12 +30,18 @@ const eventTypes: Record<Tool, EventObject['type']> = {
   pedestrian: 'PEDESTRIAN'
 }
 
+const sketchItems = [
+  { value: 'rectangle', title: '円筒', icon: <SketchRectangleIcon /> },
+  { value: 'circle', title: '立方体', icon: <SketchCircleIcon /> },
+  { value: 'polygon', title: '自由形状', icon: <SketchPolygonIcon /> }
+]
+
 export const ToolButtons: FC = () => {
   const send = useSetAtom(toolMachineAtom)
   const tool = useAtomValue(toolAtom)
 
   const handleChange = useCallback(
-    (event: unknown, value: Tool | null) => {
+    (event: unknown, value: ToolType | null) => {
       if (value != null) {
         send({ type: eventTypes[value] })
       }
@@ -35,28 +49,36 @@ export const ToolButtons: FC = () => {
     [send]
   )
 
+  const [sketchType, setSketchType] = useAtom(sketchTypeAtom)
+  const handleSketchTypeChange = useCallback(
+    (event: unknown, value: string) => {
+      if (isSketchGeometryType(value)) {
+        send({ type: 'SKETCH' })
+        setSketchType(value)
+      }
+    },
+    [send, setSketchType]
+  )
+
   return (
-    <AppToggleButtonGroup value={tool} onChange={handleChange}>
+    <AppToggleButtonGroup value={tool?.type ?? null} onChange={handleChange}>
       <AppToggleButton value='hand' title='移動' shortcutKey='H'>
-        <HandIcon fontSize='medium' />
+        <HandIcon />
       </AppToggleButton>
       <AppToggleButton value='select' title='選択' shortcutKey='V'>
-        <PointerArrowIcon fontSize='medium' />
+        <PointerArrowIcon />
       </AppToggleButton>
       <AppToggleButton value='pedestrian' title='歩行者視点' shortcutKey='P'>
-        <PedestrianIcon fontSize='medium' />
+        <PedestrianIcon />
       </AppToggleButton>
-      <AppToggleButton value='sketch' title='作図' shortcutKey='G' disabled>
-        <SketchIcon fontSize='medium' />
-      </AppToggleButton>
-      <AppToggleButton
-        value='story'
-        title='ストーリー'
-        shortcutKey='T'
-        disabled
-      >
-        <StoryIcon fontSize='medium' />
-      </AppToggleButton>
+      <AppToggleButtonSelect
+        value='sketch'
+        title='作図'
+        shortcutKey='G'
+        items={sketchItems}
+        selectedValue={sketchType}
+        onValueChange={handleSketchTypeChange}
+      />
     </AppToggleButtonGroup>
   )
 }

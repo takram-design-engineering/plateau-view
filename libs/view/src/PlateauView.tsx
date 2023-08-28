@@ -14,6 +14,7 @@ import { layerComponents } from '@takram/plateau-view-layers'
 import { Areas } from './containers/Areas'
 import { Canvas } from './containers/Canvas'
 import { Environments } from './containers/Environments'
+import { FileDrop } from './containers/FileDrop'
 import { InitialLayers } from './containers/InitialLayers'
 import { KeyBindings } from './containers/KeyBindings'
 import { Notifications } from './containers/Notifications'
@@ -23,6 +24,7 @@ import { ScreenSpaceCamera } from './containers/ScreenSpaceCamera'
 import { ScreenSpaceSelection } from './containers/ScreenSpaceSelection'
 import { SelectionBoundingSphere } from './containers/SelectionBoundingSphere'
 import { SelectionCoordinator } from './containers/SelectionCoordinator'
+import { SketchTool } from './containers/SketchTool'
 import { Terrains } from './containers/Terrains'
 import { ToolMachineEvents } from './containers/ToolMachineEvents'
 import { readyAtom } from './states/app'
@@ -68,11 +70,13 @@ export const PlateauView: FC<PlateauViewProps> = () => {
         <ReverseGeocoding />
         <ToolMachineEvents />
         <PedestrianTool />
+        <SketchTool />
         <SelectionCoordinator />
         <SelectionBoundingSphere />
       </Canvas>
       <KeyBindings />
       <ScreenSpaceSelection />
+      <FileDrop />
       <AppOverlay />
       <Notifications />
       <InitialLayers />

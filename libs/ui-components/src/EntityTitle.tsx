@@ -64,11 +64,7 @@ export const EntityTitle = forwardRef<HTMLDivElement, EntityTitleProps>(
       <StyledListItem ref={ref} {...props} component='div'>
         {(icon != null || Icon != null) && (
           <EntityTitleIcon>
-            {icon != null ? (
-              icon
-            ) : Icon != null ? (
-              <Icon fontSize='medium' />
-            ) : null}
+            {icon != null ? icon : Icon != null ? <Icon /> : null}
           </EntityTitleIcon>
         )}
         <EntityTitleText

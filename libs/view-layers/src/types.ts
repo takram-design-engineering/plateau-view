@@ -33,6 +33,7 @@ import {
   type RIVER_FLOODING_RISK_LAYER,
   type ROAD_LAYER,
   type SHELTER_LAYER,
+  type SKETCH_LAYER,
   type STATION_LAYER,
   type TSUNAMI_RISK_LAYER,
   type URBAN_PLANNING_LAYER,
@@ -42,6 +43,7 @@ import {
 import { type PedestrianLayerModel } from './PedestrianLayer'
 import { type RiverFloodingRiskLayerModel } from './RiverFloodingRiskLayer'
 import { type RoadLayerModel } from './RoadLayer'
+import { type SketchLayerModel } from './SketchLayer'
 import { type UrbanPlanningLayerModel } from './UrbanPlanningLayer'
 
 export type ConfigurableLayerModel<T extends LayerModelBase> = SetOptional<
@@ -68,8 +70,10 @@ declare module '@takram/plateau-layers' {
   }
 
   interface LayerModelOverrides {
-    [PEDESTRIAN_LAYER]: PedestrianLayerModel
     [HEATMAP_LAYER]: HeatmapLayerModel
+    [PEDESTRIAN_LAYER]: PedestrianLayerModel
+    [SKETCH_LAYER]: SketchLayerModel
+
     // Dataset layers
     [BORDER_LAYER]: never // BorderLayerModel
     [BRIDGE_LAYER]: BridgeLayerModel
