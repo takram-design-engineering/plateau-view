@@ -18,11 +18,11 @@ import {
   sketchTypeAtom,
   toolAtom,
   toolMachineAtom,
-  type Tool
+  type ToolType
 } from '../states/tool'
 import { type EventObject } from '../states/toolMachine'
 
-const eventTypes: Record<Tool, EventObject['type']> = {
+const eventTypes: Record<ToolType, EventObject['type']> = {
   hand: 'HAND',
   select: 'SELECT',
   sketch: 'SKETCH',
@@ -35,7 +35,7 @@ export const ToolButtons: FC = () => {
   const tool = useAtomValue(toolAtom)
 
   const handleChange = useCallback(
-    (event: unknown, value: Tool | null) => {
+    (event: unknown, value: ToolType | null) => {
       if (value != null) {
         send({ type: eventTypes[value] })
       }
@@ -55,7 +55,7 @@ export const ToolButtons: FC = () => {
 
   return (
     <>
-      <AppToggleButtonGroup value={tool} onChange={handleChange}>
+      <AppToggleButtonGroup value={tool?.type ?? null} onChange={handleChange}>
         <AppToggleButton value='hand' title='移動' shortcutKey='H'>
           <HandIcon fontSize='medium' />
         </AppToggleButton>
@@ -77,7 +77,7 @@ export const ToolButtons: FC = () => {
           <StoryIcon fontSize='medium' />
         </AppToggleButton>
       </AppToggleButtonGroup>
-      {tool === 'sketch' && (
+      {tool?.type === 'sketch' && (
         <>
           <Space />
           <AppToggleButtonGroup

@@ -34,12 +34,6 @@ import { pickGround } from './pickGround'
 import { sketchMachineAtom } from './states'
 import { type SketchFeature, type SketchGeometryType } from './types'
 
-export interface SketchToolProps {
-  type?: SketchGeometryType
-  disableShadow?: boolean
-  onCreate?: (feature: SketchFeature) => void
-}
-
 function hasDuplicate(
   position: Cartesian3,
   positions?: readonly Cartesian3[]
@@ -55,10 +49,18 @@ function hasDuplicate(
   )
 }
 
+export interface SketchToolProps {
+  type?: SketchGeometryType
+  disableInteraction?: boolean
+  disableShadow?: boolean
+  onCreate?: (feature: SketchFeature) => void
+}
+
 const positionScratch = new Cartesian3()
 
 export const SketchTool: FC<SketchToolProps> = ({
   type = 'circle',
+  disableInteraction = false,
   disableShadow = false,
   onCreate
 }) => {
@@ -110,6 +112,9 @@ export const SketchTool: FC<SketchToolProps> = ({
   )
 
   useWindowEvent('keydown', event => {
+    if (disableInteraction) {
+      return
+    }
     if (event.key === 'Escape') {
       send({ type: 'CANCEL' })
       const position =
@@ -123,6 +128,9 @@ export const SketchTool: FC<SketchToolProps> = ({
   const eventHandler = useScreenSpaceEventHandler()
 
   useScreenSpaceEvent(eventHandler, ScreenSpaceEventType.LEFT_DOWN, event => {
+    if (disableInteraction) {
+      return
+    }
     if (!state.matches('idle')) {
       return
     }
@@ -146,6 +154,9 @@ export const SketchTool: FC<SketchToolProps> = ({
   })
 
   useScreenSpaceEvent(eventHandler, ScreenSpaceEventType.MOUSE_MOVE, event => {
+    if (disableInteraction) {
+      return
+    }
     pointerPositionRef.current = event.endPosition
     if (state.matches('drawing')) {
       invariant(state.context.type != null)
@@ -170,6 +181,9 @@ export const SketchTool: FC<SketchToolProps> = ({
   })
 
   useScreenSpaceEvent(eventHandler, ScreenSpaceEventType.LEFT_UP, event => {
+    if (disableInteraction) {
+      return
+    }
     if (
       state.context.positions?.length === 1 &&
       state.context.lastPointerPosition != null &&
@@ -219,6 +233,9 @@ export const SketchTool: FC<SketchToolProps> = ({
     eventHandler,
     ScreenSpaceEventType.LEFT_DOUBLE_CLICK,
     event => {
+      if (disableInteraction) {
+        return
+      }
       if (state.matches('drawing.polygon')) {
         const position = pickGround(scene, event.position, positionScratch)
         if (

@@ -31,7 +31,7 @@ export const PedestrianTool: FC = () => {
     [addLayer, send]
   )
 
-  if (tool !== 'pedestrian') {
+  if (tool?.type !== 'pedestrian') {
     return null
   }
   return <PedestrianToolComponent onCreate={handleCreate} />
