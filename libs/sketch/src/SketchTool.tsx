@@ -11,7 +11,6 @@ import {
 } from '@cesium/engine'
 import { useTheme } from '@mui/material'
 import { feature } from '@turf/turf'
-import { type MultiPolygon, type Polygon } from 'geojson'
 import { useAtom } from 'jotai'
 import { useMemo, useRef, type FC } from 'react'
 import invariant from 'tiny-invariant'
@@ -27,7 +26,7 @@ import {
   convertGeometryToPositionsArray,
   convertPolygonToHierarchyArray
 } from '@takram/plateau-cesium-helpers'
-import { useConstant } from '@takram/plateau-react-helpers'
+import { useConstant, useWindowEvent } from '@takram/plateau-react-helpers'
 
 import { createGeometry } from './createGeometry'
 import { getExtrudedHeight } from './getExtrudedHeight'
@@ -65,7 +64,6 @@ export const SketchTool: FC<SketchToolProps> = ({
 }) => {
   const [state, send] = useAtom(sketchMachineAtom)
 
-  const geometryRef = useRef<Polygon | MultiPolygon>()
   const positionsRef = useRef<Cartesian3[]>()
   const polylinePositionsProperty = useConstant(
     () => new CallbackProperty(() => positionsRef.current, false)
@@ -81,6 +79,13 @@ export const SketchTool: FC<SketchToolProps> = ({
 
   const eventHandler = useScreenSpaceEventHandler()
   const scene = useCesium(({ scene }) => scene)
+  scene.requestRender()
+
+  useWindowEvent('keydown', event => {
+    if (event.key === 'Escape') {
+      send({ type: 'CANCEL' })
+    }
+  })
 
   useScreenSpaceEvent(eventHandler, ScreenSpaceEventType.LEFT_DOWN, event => {
     if (!state.matches('idle')) {
@@ -100,7 +105,6 @@ export const SketchTool: FC<SketchToolProps> = ({
       windowPosition: event.position,
       position
     })
-    geometryRef.current = undefined
     positionsRef.current = undefined
     hierarchyRef.current = undefined
     extrudedHeightRef.current = 0
@@ -116,8 +120,7 @@ export const SketchTool: FC<SketchToolProps> = ({
       }
       const geometry = createGeometry(
         state.context.type,
-        state.context.positions,
-        position,
+        [...state.context.positions, position],
         scene.globe.ellipsoid
       )
       if (geometry == null) {
@@ -127,7 +130,6 @@ export const SketchTool: FC<SketchToolProps> = ({
         positionsRef.current = convertGeometryToPositionsArray(geometry)[0]
         hierarchyRef.current = undefined
       } else {
-        geometryRef.current = geometry
         positionsRef.current = undefined
         hierarchyRef.current = convertPolygonToHierarchyArray(geometry)[0]
       }
@@ -170,11 +172,18 @@ export const SketchTool: FC<SketchToolProps> = ({
         position
       })
     } else if (state.matches('extruding')) {
-      invariant(geometryRef.current != null)
       invariant(state.context.type != null)
       invariant(state.context.positions != null)
+      const geometry = createGeometry(
+        state.context.type,
+        state.context.positions,
+        scene.globe.ellipsoid
+      )
+      if (geometry == null || geometry.type === 'LineString') {
+        return
+      }
       onCreate?.(
-        feature(geometryRef.current, {
+        feature(geometry, {
           type: state.context.type,
           positions: state.context.positions.map(({ x, y, z }) => [x, y, z]),
           extrudedHeight: extrudedHeightRef.current
