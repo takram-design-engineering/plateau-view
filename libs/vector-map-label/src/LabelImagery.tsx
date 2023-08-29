@@ -18,6 +18,7 @@ import { isNotNullish } from '@takram/plateau-type-helpers'
 
 import { type LabelImageryProvider } from './LabelImageryProvider'
 import { type KeyedImagery } from './types'
+import { HeightReference } from '@cesium/engine'
 
 type LabelOptions = Partial<
   Pick<
@@ -169,6 +170,7 @@ export const LabelImagery: FC<LabelImageryProps> = memo(
             outlineWidth: 5,
             horizontalOrigin: HorizontalOrigin.CENTER,
             verticalOrigin: VerticalOrigin.BOTTOM,
+            heightReference: HeightReference.CLAMP_TO_GROUND,
             disableDepthTestDistance: Number.POSITIVE_INFINITY
           }
           return labelCollection.add(options)

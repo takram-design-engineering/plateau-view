@@ -206,8 +206,8 @@ export const VectorMapLabel: FC = () => {
         url='https://cyberjapandata.gsi.go.jp/xyz/optimal_bvmap-v1/{z}/{x}/{y}.pbf'
         minimumDataLevel={4}
         maximumLevel={17}
-        tileWidth={512}
-        tileHeight={512}
+        tileWidth={1024}
+        tileHeight={1024}
       />
       {imageryProvider != null && (
         <LabelImageryCollection
