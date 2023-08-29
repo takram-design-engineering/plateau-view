@@ -1,4 +1,9 @@
-import { type Globe, type ImageryProvider, type Scene } from '@cesium/engine'
+import {
+  type Globe,
+  type ImageryProvider,
+  type LabelCollection,
+  type Scene
+} from '@cesium/engine'
 import {
   atom,
   useAtomValue,
@@ -7,9 +12,20 @@ import {
   type SetStateAction
 } from 'jotai'
 import { uniqBy, xorBy } from 'lodash'
-import { Suspense, useCallback, useMemo, useState, type FC } from 'react'
+import {
+  Suspense,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+  type FC
+} from 'react'
 
-import { usePreRender, type ImageryLayerHandle } from '@takram/plateau-cesium'
+import {
+  useCesium,
+  usePreRender,
+  type ImageryLayerHandle
+} from '@takram/plateau-cesium'
 import { assertType } from '@takram/plateau-type-helpers'
 
 import { LabelImagery } from './LabelImagery'
@@ -148,6 +164,7 @@ export const VectorMapLabel: FC = () => {
       }
     )
   }, [])
+
   const setImageries = useSetAtom(imageriesAtom)
   usePreRender(scene => {
     if (imageryProvider == null) {
@@ -155,6 +172,20 @@ export const VectorMapLabel: FC = () => {
     }
     const imageries = getImageriesToRender(scene, imageryProvider)
     setImageries(imageries)
+  })
+
+  const labels = useCesium(({ labels }) => labels)
+  const labelsToUpdateRef = useRef(0)
+  usePreRender(scene => {
+    assertType<
+      LabelCollection & {
+        _labelsToUpdate: readonly unknown[]
+      }
+    >(labels)
+    if (labelsToUpdateRef.current !== labels._labelsToUpdate.length) {
+      scene.requestRender()
+      labelsToUpdateRef.current = labels._labelsToUpdate.length
+    }
   })
 
   return (

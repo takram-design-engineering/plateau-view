@@ -139,13 +139,21 @@ export const LabelImagery: FC<LabelImageryProps> = memo(
           return labelCollection.add(options)
         })
         .filter(isNotNullish)
-      scene.requestRender()
 
+      const removeLabels = (): void => {
+        if (!labelCollection.isDestroyed()) {
+          labels.forEach(label => {
+            labelCollection.remove(label)
+          })
+        }
+        if (!scene.isDestroyed()) {
+          scene.postRender.removeEventListener(removeLabels)
+        }
+      }
       return () => {
-        labels.forEach(label => {
-          labelCollection.remove(label)
-        })
-        scene.requestRender()
+        if (!scene.isDestroyed()) {
+          scene.postRender.addEventListener(removeLabels)
+        }
       }
     }, [imageryProvider, height, bounds, annotations, scene, labelCollection])
 
