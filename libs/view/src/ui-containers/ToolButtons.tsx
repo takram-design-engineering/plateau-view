@@ -31,8 +31,8 @@ const eventTypes: Record<ToolType, EventObject['type']> = {
 }
 
 const sketchItems = [
-  { value: 'rectangle', title: '円筒', icon: <SketchRectangleIcon /> },
-  { value: 'circle', title: '立方体', icon: <SketchCircleIcon /> },
+  { value: 'rectangle', title: '立方体', icon: <SketchRectangleIcon /> },
+  { value: 'circle', title: '円柱', icon: <SketchCircleIcon /> },
   { value: 'polygon', title: '自由形状', icon: <SketchPolygonIcon /> }
 ]
 
