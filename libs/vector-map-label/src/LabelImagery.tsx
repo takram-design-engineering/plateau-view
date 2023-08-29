@@ -1,12 +1,13 @@
 import {
   Cartesian3,
+  Cartographic,
   Color,
   HorizontalOrigin,
   LabelStyle,
+  Rectangle,
   VerticalOrigin,
   type Ellipsoid,
-  type Label,
-  type Rectangle
+  type Label
 } from '@cesium/engine'
 import { type Feature } from 'protomaps'
 import { memo, useEffect, useMemo, type FC } from 'react'
@@ -37,22 +38,7 @@ interface AnnotationFeature extends Feature {
 }
 
 const positionScratch = new Cartesian3()
-
-function testIntersection(
-  bounds: Rectangle,
-  x: number,
-  y: number,
-  descendantBounds: Rectangle
-): boolean {
-  const featureX = bounds.west + bounds.width * x
-  const featureY = bounds.south + bounds.height * (1 - y)
-  return (
-    descendantBounds.west <= featureX &&
-    descendantBounds.east >= featureX &&
-    descendantBounds.south <= featureY &&
-    descendantBounds.north >= featureY
-  )
-}
+const cartographicScratch = new Cartographic()
 
 function getPosition(
   feature: Feature,
@@ -68,21 +54,18 @@ function getPosition(
   if (x < 0 || x > 1 || y < 0 || y > 1) {
     return
   }
-  if (
-    descendantsBounds.some(descendantBounds =>
-      testIntersection(bounds, x, y, descendantBounds)
-    )
-  ) {
-    return
-  }
-
-  return Cartesian3.fromRadians(
+  const cartographic = Cartographic.fromRadians(
     bounds.west + bounds.width * x,
     bounds.south + bounds.height * (1 - y),
     height,
-    ellipsoid,
-    result
+    cartographicScratch
   )
+  if (
+    descendantsBounds.some(bounds => Rectangle.contains(bounds, cartographic))
+  ) {
+    return
+  }
+  return Cartographic.toCartesian(cartographic, ellipsoid, result)
 }
 
 export interface LabelImageryProps {
