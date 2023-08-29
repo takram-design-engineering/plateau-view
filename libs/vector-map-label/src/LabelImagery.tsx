@@ -1,9 +1,11 @@
 import {
   Cartesian3,
   Color,
+  HorizontalOrigin,
   LabelStyle,
   VerticalOrigin,
   type Ellipsoid,
+  type Label,
   type Rectangle
 } from '@cesium/engine'
 import { type Feature } from 'protomaps'
@@ -15,6 +17,15 @@ import { isNotNullish } from '@takram/plateau-type-helpers'
 
 import { type LabelImageryProvider } from './LabelImageryProvider'
 import { type KeyedImagery } from './types'
+
+type LabelOptions = Partial<
+  Pick<
+    Label,
+    {
+      [K in keyof Label]: Label[K] extends (...args: any[]) => any ? never : K
+    }[keyof Label]
+  >
+>
 
 interface AnnotationFeature extends Feature {
   props: {
@@ -97,7 +108,7 @@ export const LabelImagery: FC<LabelImageryProps> = memo(
     }, [tile])
 
     const scene = useCesium(({ scene }) => scene)
-    const entities = useCesium(({ entities }) => entities)
+    const labelCollection = useCesium(({ labels }) => labels)
 
     useEffect(() => {
       const labels = annotations
@@ -113,30 +124,30 @@ export const LabelImagery: FC<LabelImageryProps> = memo(
           if (position == null) {
             return undefined
           }
-          return entities.add({
+          const options: LabelOptions = {
             position,
-            label: {
-              text: feature.props.vt_text,
-              font: '10pt sans-serif',
-              style: LabelStyle.FILL_AND_OUTLINE,
-              fillColor: Color.BLACK,
-              outlineColor: Color.WHITE.withAlpha(0.8),
-              outlineWidth: 5,
-              verticalOrigin: VerticalOrigin.BOTTOM,
-              disableDepthTestDistance: Number.POSITIVE_INFINITY
-            }
-          })
+            text: feature.props.vt_text,
+            font: '10pt sans-serif',
+            style: LabelStyle.FILL_AND_OUTLINE,
+            fillColor: Color.BLACK,
+            outlineColor: Color.WHITE.withAlpha(0.8),
+            outlineWidth: 5,
+            horizontalOrigin: HorizontalOrigin.CENTER,
+            verticalOrigin: VerticalOrigin.BOTTOM,
+            disableDepthTestDistance: Number.POSITIVE_INFINITY
+          }
+          return labelCollection.add(options)
         })
         .filter(isNotNullish)
       scene.requestRender()
 
       return () => {
         labels.forEach(label => {
-          entities.remove(label)
+          labelCollection.remove(label)
         })
         scene.requestRender()
       }
-    }, [imageryProvider, height, bounds, annotations, scene, entities])
+    }, [imageryProvider, height, bounds, annotations, scene, labelCollection])
 
     return null
   }
