@@ -88,23 +88,12 @@ function getPosition(
 export interface LabelImageryProps {
   imageryProvider: LabelImageryProvider
   imagery: KeyedImagery
+  descendants: KeyedImagery[]
   height?: number
 }
 
 export const LabelImagery: FC<LabelImageryProps> = memo(
-  ({ imageryProvider, imagery, height = 50 }) => {
-    const coord =
-      imagery.level === 17
-        ? {
-            x: Math.floor(imagery.x / 2),
-            y: Math.floor(imagery.y / 2),
-            z: 16
-          }
-        : {
-            x: imagery.x,
-            y: imagery.y,
-            z: imagery.level
-          }
+  ({ imageryProvider, imagery, descendants, height = 50 }) => {
     const tile = suspend(
       async () =>
         await imageryProvider.tileCache.get({
@@ -127,14 +116,14 @@ export const LabelImagery: FC<LabelImageryProps> = memo(
 
     const descendantsBounds = useMemo(
       () =>
-        imagery.descendants.map(descendant =>
+        descendants.map(descendant =>
           imageryProvider.tilingScheme.tileXYToRectangle(
             descendant.x,
             descendant.y,
             descendant.level
           )
         ),
-      [imageryProvider, imagery]
+      [imageryProvider, descendants]
     )
 
     const annotations = useMemo(() => {

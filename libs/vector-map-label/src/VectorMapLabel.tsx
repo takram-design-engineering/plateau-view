@@ -26,7 +26,7 @@ import {
   usePreRender,
   type ImageryLayerHandle
 } from '@takram/plateau-cesium'
-import { assertType } from '@takram/plateau-type-helpers'
+import { assertType, isNotNullish } from '@takram/plateau-type-helpers'
 
 import { LabelImagery } from './LabelImagery'
 import { LabelImageryLayer } from './LabelImageryLayer'
@@ -105,7 +105,7 @@ function getImageriesToRender(
           }) ?? []
     ),
     'key'
-  ).sort((a, b) => a.key.localeCompare(b.key))
+  ).sort((a, b) => b.level - a.level)
 
   if (
     minLevel === maxLevel ||
@@ -115,24 +115,27 @@ function getImageriesToRender(
     return imageries
   }
 
-  const keys = new Set(imageries.map(({ key }) => key))
-  // set descendants
-  imageries.forEach(imagery => {
-    const ancestors = getAncestorKeys(imagery, minLevel)
-    ancestors
-      .filter(key => keys.has(key))
-      .forEach(key => {
-        const ancestor = imageries.find(imagery => imagery.key === key)
-        ancestor?.descendants.push(imagery)
-      })
-  })
-  // return imageries that are not covered completely by tiles one level below
-  return imageries.filter(imagery => {
-    return (
-      imagery.descendants?.filter(({ level }) => level === imagery.level + 1)
-        .length < 4
-    )
-  })
+  return imageries
+    .reduce((accumulator: KeyedImagery[], currentImagery: KeyedImagery) => {
+      // Setting descendants.
+      // Imageries are already sorted so that finer tiles come first.
+      // To find descendants of a tile, we look at the ancestors of every finer tile and
+      // check if the ancestor array includes the key of the target tile.
+      currentImagery.descendants = accumulator
+        .map(previousImagery => {
+          const ancestors = getAncestorKeys(previousImagery, minLevel)
+          return ancestors.includes(currentImagery.key) ? previousImagery : null
+        })
+        .filter(isNotNullish)
+      return [...accumulator, currentImagery]
+    }, [])
+    .filter(imagery => {
+      // Return imageries that are not covered completely by tiles one level below
+      return (
+        imagery.descendants?.filter(({ level }) => level === imagery.level + 1)
+          .length < 4
+      )
+    })
 }
 
 const LabelImageryCollection: FC<{
@@ -140,11 +143,16 @@ const LabelImageryCollection: FC<{
   imageriesAtom: Atom<KeyedImagery[]>
 }> = ({ imageryProvider, imageriesAtom }) => {
   const imageries = useAtomValue(imageriesAtom)
+
   return (
     <>
       {imageries.map(imagery => (
         <Suspense key={imagery.key}>
-          <LabelImagery imageryProvider={imageryProvider} imagery={imagery} />
+          <LabelImagery
+            imageryProvider={imageryProvider}
+            imagery={imagery}
+            descendants={imagery.descendants}
+          />
         </Suspense>
       ))}
     </>
