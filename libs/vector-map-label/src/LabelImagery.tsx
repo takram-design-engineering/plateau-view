@@ -77,27 +77,23 @@ export interface LabelImageryProps {
 
 export const LabelImagery: FC<LabelImageryProps> = memo(
   ({ imageryProvider, imagery, descendants, height = 50 }) => {
-    const coord =
-      imagery.level === 17
-        ? {
-            x: Math.floor(imagery.x / 2),
-            y: Math.floor(imagery.y / 2),
-            z: 16
-          }
-        : {
-            x: imagery.x,
-            y: imagery.y,
-            z: imagery.level
-          }
-    const tile = suspend(
-      async () =>
-        await imageryProvider.tileCache.get({
-          x: coord.x,
-          y: coord.y,
-          z: coord.z
-        }),
-      [LabelImagery, imagery.key]
-    )
+    const tile = suspend(async () => {
+      // Tiles at 16 level includes features for level 17.
+      // https://github.com/gsi-cyberjapan/optimal_bvmap
+      const coords =
+        imagery.level === 17
+          ? {
+              x: Math.floor(imagery.x / 2),
+              y: Math.floor(imagery.y / 2),
+              z: 16
+            }
+          : {
+              x: imagery.x,
+              y: imagery.y,
+              z: imagery.level
+            }
+      return await imageryProvider.tileCache.get(coords)
+    }, [LabelImagery, imagery.key])
 
     const bounds = useMemo(
       () =>
@@ -137,11 +133,14 @@ export const LabelImagery: FC<LabelImageryProps> = memo(
             typeof feature.props.vt_arrng === 'number') &&
           (feature.props.vt_arrngagl == null ||
             typeof feature.props.vt_arrngagl === 'number') &&
+          // `vt_flag17` property determines the visibility of features inside
+          // tiles at level 16.
+          // https://maps.gsi.go.jp/help/pdf/vector/optbv_attribute.pdf
           (imagery.level < 16 ||
-            (imagery.level === 16 && feature.props.vt_flag17 !== '2') ||
-            (imagery.level === 17 && feature.props.vr_flag17 !== '0'))
+            (imagery.level === 16 && feature.props.vt_flag17 !== 2) ||
+            (imagery.level === 17 && feature.props.vr_flag17 !== 0))
       )
-    }, [tile, imagery.level])
+    }, [tile, imagery])
 
     const scene = useCesium(({ scene }) => scene)
     const labelCollection = useCesium(({ labels }) => labels)
