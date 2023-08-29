@@ -94,6 +94,7 @@ function getImageriesToRender(
             }
             assertType<KeyedImagery>(imagery)
             imagery.key = makeKey(imagery)
+            imagery.descendants = []
             if (imagery.level < minLevel) {
               minLevel = imagery.level
             }
@@ -114,11 +115,23 @@ function getImageriesToRender(
     return imageries
   }
 
-  // Exclude imageries contained by another imagery.
   const keys = new Set(imageries.map(({ key }) => key))
-  return imageries.filter(imagery => {
+  // set descendants
+  imageries.forEach(imagery => {
     const ancestors = getAncestorKeys(imagery, minLevel)
-    return ancestors.every(key => !keys.has(key))
+    ancestors
+      .filter(key => keys.has(key))
+      .forEach(key => {
+        const ancestor = imageries.find(imagery => imagery.key === key)
+        ancestor?.descendants.push(imagery)
+      })
+  })
+  // return imageries that are not covered completely by tiles one level below
+  return imageries.filter(imagery => {
+    return (
+      imagery.descendants?.filter(({ level }) => level === imagery.level + 1)
+        .length < 4
+    )
   })
 }
 

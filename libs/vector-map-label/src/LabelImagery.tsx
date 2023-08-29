@@ -38,9 +38,26 @@ interface AnnotationFeature extends Feature {
 
 const positionScratch = new Cartesian3()
 
+function testIntersection(
+  bounds: Rectangle,
+  x: number,
+  y: number,
+  descendantBounds: Rectangle
+): boolean {
+  const featureX = bounds.west + bounds.width * x
+  const featureY = bounds.south + bounds.height * (1 - y)
+  return (
+    descendantBounds.west <= featureX &&
+    descendantBounds.east >= featureX &&
+    descendantBounds.south <= featureY &&
+    descendantBounds.north >= featureY
+  )
+}
+
 function getPosition(
   feature: Feature,
   bounds: Rectangle,
+  descendantsBounds: Rectangle[],
   tileSize: number,
   height?: number,
   ellipsoid?: Ellipsoid,
@@ -51,6 +68,14 @@ function getPosition(
   if (x < 0 || x > 1 || y < 0 || y > 1) {
     return
   }
+  if (
+    descendantsBounds.some(descendantBounds =>
+      testIntersection(bounds, x, y, descendantBounds)
+    )
+  ) {
+    return
+  }
+
   return Cartesian3.fromRadians(
     bounds.west + bounds.width * x,
     bounds.south + bounds.height * (1 - y),
@@ -88,6 +113,18 @@ export const LabelImagery: FC<LabelImageryProps> = memo(
       [imageryProvider, imagery]
     )
 
+    const descendantsBounds = useMemo(
+      () =>
+        imagery.descendants.map(descendant =>
+          imageryProvider.tilingScheme.tileXYToRectangle(
+            descendant.x,
+            descendant.y,
+            descendant.level
+          )
+        ),
+      [imageryProvider, imagery]
+    )
+
     const annotations = useMemo(() => {
       const features = tile.get('Anno')
       if (features == null) {
@@ -116,6 +153,7 @@ export const LabelImagery: FC<LabelImageryProps> = memo(
           const position = getPosition(
             feature,
             bounds,
+            descendantsBounds,
             imageryProvider.tileCache.tileSize,
             height,
             scene.globe.ellipsoid,
@@ -155,7 +193,15 @@ export const LabelImagery: FC<LabelImageryProps> = memo(
           scene.postRender.addEventListener(removeLabels)
         }
       }
-    }, [imageryProvider, height, bounds, annotations, scene, labelCollection])
+    }, [
+      imageryProvider,
+      height,
+      bounds,
+      descendantsBounds,
+      annotations,
+      scene,
+      labelCollection
+    ])
 
     return null
   }
