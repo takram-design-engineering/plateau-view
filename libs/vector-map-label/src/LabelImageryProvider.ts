@@ -40,13 +40,29 @@ export class LabelImageryProvider extends ImageryProviderBase {
     level: number,
     request?: Request | undefined
   ): Promise<ImageryTypes> | undefined {
-    const key = `${x}:${y}:${level}`
+    const coord =
+      level === 17
+        ? {
+            x: Math.floor(x / 2),
+            y: Math.floor(y / 2),
+            z: 16
+          }
+        : {
+            x,
+            y,
+            z: level
+          }
+
+    const key = `${coord.x}:${coord.y}:${coord.z}`
     return (async () => {
-      if (level < this.minimumDataLevel || this.discardedTileCoords.has(key)) {
+      if (
+        coord.z < this.minimumDataLevel ||
+        this.discardedTileCoords.has(key)
+      ) {
         return DiscardEmptyTileImagePolicy.EMPTY_IMAGE
       }
       // Populate tile cache in advance.
-      await this.tileCache.get({ x, y, z: level })
+      await this.tileCache.get(coord)
       return this.image
     })().catch(() => {
       this.discardedTileCoords.add(key)

@@ -93,12 +93,24 @@ export interface LabelImageryProps {
 
 export const LabelImagery: FC<LabelImageryProps> = memo(
   ({ imageryProvider, imagery, height = 50 }) => {
+    const coord =
+      imagery.level === 17
+        ? {
+            x: Math.floor(imagery.x / 2),
+            y: Math.floor(imagery.y / 2),
+            z: 16
+          }
+        : {
+            x: imagery.x,
+            y: imagery.y,
+            z: imagery.level
+          }
     const tile = suspend(
       async () =>
         await imageryProvider.tileCache.get({
-          x: imagery.x,
-          y: imagery.y,
-          z: imagery.level
+          x: coord.x,
+          y: coord.y,
+          z: coord.z
         }),
       [LabelImagery, imagery.key]
     )
@@ -140,9 +152,12 @@ export const LabelImagery: FC<LabelImageryProps> = memo(
           (feature.props.vt_arrng == null ||
             typeof feature.props.vt_arrng === 'number') &&
           (feature.props.vt_arrngagl == null ||
-            typeof feature.props.vt_arrngagl === 'number')
+            typeof feature.props.vt_arrngagl === 'number') &&
+          (imagery.level < 16 ||
+            (imagery.level === 16 && feature.props.vt_flag17 !== '2') ||
+            (imagery.level === 17 && feature.props.vr_flag17 !== '0'))
       )
-    }, [tile])
+    }, [tile, imagery.level])
 
     const scene = useCesium(({ scene }) => scene)
     const labelCollection = useCesium(({ labels }) => labels)
