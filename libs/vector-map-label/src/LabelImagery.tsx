@@ -71,12 +71,11 @@ function getPosition(
 export interface LabelImageryProps {
   imageryProvider: LabelImageryProvider
   imagery: KeyedImagery
-  descendants: KeyedImagery[]
   height?: number
 }
 
 export const LabelImagery: FC<LabelImageryProps> = memo(
-  ({ imageryProvider, imagery, descendants, height = 50 }) => {
+  ({ imageryProvider, imagery, height = 50 }) => {
     const tile = suspend(async () => {
       // Tiles at 16 level includes features for level 17.
       // https://github.com/gsi-cyberjapan/optimal_bvmap
@@ -107,14 +106,14 @@ export const LabelImagery: FC<LabelImageryProps> = memo(
 
     const descendantsBounds = useMemo(
       () =>
-        descendants.map(descendant =>
+        imagery.descendants.map(descendant =>
           imageryProvider.tilingScheme.tileXYToRectangle(
             descendant.x,
             descendant.y,
             descendant.level
           )
         ),
-      [imageryProvider, descendants]
+      [imageryProvider, imagery]
     )
 
     const annotations = useMemo(() => {
