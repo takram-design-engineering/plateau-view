@@ -94,6 +94,18 @@ export interface LabelImageryProps {
 
 export const LabelImagery: FC<LabelImageryProps> = memo(
   ({ imageryProvider, imagery, descendants, height = 50 }) => {
+    const coord =
+      imagery.level === 17
+        ? {
+            x: Math.floor(imagery.x / 2),
+            y: Math.floor(imagery.y / 2),
+            z: 16
+          }
+        : {
+            x: imagery.x,
+            y: imagery.y,
+            z: imagery.level
+          }
     const tile = suspend(
       async () =>
         await imageryProvider.tileCache.get({
