@@ -78,7 +78,7 @@ function isEqualKeys(
   a: readonly KeyedImagery[],
   b?: readonly KeyedImagery[]
 ): boolean {
-  return b != null && a.length !== b.length && xorBy(a, b, 'key').length > 0
+  return b != null && a.length === b.length && xorBy(a, b, 'key').length === 0
 }
 
 function getImageriesToRender(
@@ -163,7 +163,9 @@ function getImageriesToRender(
   })
 
   // Imageries that have 4 children will not be visible.
-  return imageries.filter(imagery => imagery.children.length < 4)
+  return imageries.filter(
+    imagery => imagery.children != null && imagery.children.length < 4
+  )
 }
 
 const LabelImageryCollection: FC<{

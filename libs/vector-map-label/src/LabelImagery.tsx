@@ -11,7 +11,7 @@ import {
   type Label
 } from '@cesium/engine'
 import { type Feature } from 'protomaps'
-import { memo, useEffect, useMemo, type FC } from 'react'
+import { memo, useEffect, useMemo, useState, type FC } from 'react'
 import { suspend } from 'suspend-react'
 
 import { useCesium } from '@takram/plateau-cesium'
@@ -44,7 +44,7 @@ const cartographicScratch = new Cartographic()
 function getPosition(
   feature: Feature,
   bounds: Rectangle,
-  descendantsBounds: Rectangle[],
+  descendantsBounds: Rectangle[] | undefined,
   tileSize: number,
   height?: number,
   ellipsoid?: Ellipsoid,
@@ -62,7 +62,9 @@ function getPosition(
     cartographicScratch
   )
   if (
-    descendantsBounds.some(bounds => Rectangle.contains(bounds, cartographic))
+    descendantsBounds?.some(bounds =>
+      Rectangle.contains(bounds, cartographic)
+    ) === true
   ) {
     return
   }
@@ -72,7 +74,7 @@ function getPosition(
 export interface LabelImageryProps {
   imageryProvider: LabelImageryProvider
   imagery: KeyedImagery
-  descendants: readonly Imagery[]
+  descendants?: readonly Imagery[]
   height?: number
 }
 
@@ -108,7 +110,7 @@ export const LabelImagery: FC<LabelImageryProps> = memo(
 
     const descendantsBounds = useMemo(
       () =>
-        descendants.map(descendant =>
+        descendants?.map(descendant =>
           imageryProvider.tilingScheme.tileXYToRectangle(
             descendant.x,
             descendant.y,
@@ -146,24 +148,12 @@ export const LabelImagery: FC<LabelImageryProps> = memo(
     const scene = useCesium(({ scene }) => scene)
     const labelCollection = useCesium(({ labels }) => labels)
 
+    const [labels, setLabels] = useState<Array<[AnnotationFeature, Label]>>()
     useEffect(() => {
       const labels = annotations
-        .map(feature => {
-          const position = getPosition(
-            feature,
-            bounds,
-            descendantsBounds,
-            imageryProvider.tileCache.tileSize,
-            height,
-            scene.globe.ellipsoid,
-            positionScratch
-          )
-          if (position == null) {
-            return undefined
-          }
+        .map((feature): [AnnotationFeature, Label] => {
           // TODO: Change color by the global color mode.
           const options: LabelOptions = {
-            position,
             text: feature.props.vt_text,
             font: '10pt sans-serif',
             style: LabelStyle.FILL_AND_OUTLINE,
@@ -175,34 +165,49 @@ export const LabelImagery: FC<LabelImageryProps> = memo(
             heightReference: HeightReference.CLAMP_TO_GROUND,
             disableDepthTestDistance: Number.POSITIVE_INFINITY
           }
-          return labelCollection.add(options)
+          return [feature, labelCollection.add(options)]
         })
         .filter(isNotNullish)
 
+      setLabels(labels)
+
       const removeLabels = (): void => {
         if (!labelCollection.isDestroyed()) {
-          labels.forEach(label => {
+          labels.forEach(([, label]) => {
             labelCollection.remove(label)
           })
         }
         if (!scene.isDestroyed()) {
           scene.postRender.removeEventListener(removeLabels)
         }
+        setLabels(undefined)
       }
       return () => {
         if (!scene.isDestroyed()) {
           scene.postRender.addEventListener(removeLabels)
         }
       }
-    }, [
-      imageryProvider,
-      height,
-      bounds,
-      descendantsBounds,
-      annotations,
-      scene,
-      labelCollection
-    ])
+    }, [annotations, scene, labelCollection])
+
+    useEffect(() => {
+      labels?.forEach(([feature, label]) => {
+        const position = getPosition(
+          feature,
+          bounds,
+          descendantsBounds,
+          imageryProvider.tileCache.tileSize,
+          height,
+          scene.globe.ellipsoid,
+          positionScratch
+        )
+        if (position != null) {
+          label.position = position
+          label.show = true
+        } else {
+          label.show = false
+        }
+      })
+    }, [imageryProvider, height, bounds, descendantsBounds, scene, labels])
 
     return null
   }

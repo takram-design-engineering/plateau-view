@@ -9,6 +9,6 @@ export interface Imagery {
 
 export interface KeyedImagery extends Imagery {
   key: string
-  children: KeyedImagery[]
-  descendants: KeyedImagery[]
+  children?: KeyedImagery[]
+  descendants?: KeyedImagery[]
 }
