@@ -29,7 +29,7 @@ interface Context {
 export function createSketchMachine() {
   return createMachine(
     {
-      /** @xstate-layout N4IgpgJg5mDOIC5SwNZgC4GMAWA6AlhADZgDEAwgJIBK5AMgKIDaADALqKgAOA9rPunw8AdpxAAPRAFoALAE4ATLgCMAdhYyFAVhYsAbCzkBmPTIA0IAJ6JVuI1tXKAHPYUutR5UaMBfHxdQMHAJiMmoGcgAVAEEAOQBxRlYOJBBefkERMUkEKQUZLVx8-TkZAzk5FgVqi2sEW3tHdzd7TxM-ALQsPEISUgAFAHk6AE14wdjksXSBIVFUnPsipz1qvVVVHS1Ko1qbOwdnV3c2vQ6QQO7cCAAnAEMAd3xhKAo48gY6KdSZzPnQRYKWymBx6PTKORg5T6PYIeyFLw6GQyIxOZQ6OSqc6XYK3R7PV7kd6fJjKFLcPizLILRBGFEqVSeDxOHTKNawqSqOS4TEsDamdZORwyLH+C5dXH3J4vUgMAAakWoAFUACLMdjTSl-bK0pQKIzGLRqTYsbZVWFglhFLTbFwyJzyJxA7ESvB46VQXCYfA3TAka74O4AWwwYBupFi8si3wpGTmOtyrNwqiF4O0+kMJnMVkQIqtpi8dNUMmNKLOYpxbqlBNwNzAmHQdxe-sgMAjUZjaS18ZpuXyhWKqgUcicLjkWicsKMQ9wVSNaNNClNJi0LqCVfxL1r9cbzbAuCeEHQ2HbCs7vx7AOk-aKMj5w9HBonFoM1ttdIdI+dFdd12rW94IhLCgERcAANzDdAwHEU9ow1H5u2pK84T1A17GNLZKgUKcZznZxoS0JcPD0Vcf3XXBoPQG4AFcIAJChwmiSJ1XJLs4yQiRpCMPlcDtSpVgdYtSlhFYjB5Uc2WqG1ilIzpyMomi6JlIlYg+L54NjKl-k4hA3CUPRR3HEUHCkrQXytbR33tR0FHLMVhB4CA4DEStNXY7Sck5ExeIqFZh3WVQDF2HNcmUdZcDzFNpz5SoS3LOSrl6MA3K0hMpAMpwfJHVZIX5FhgrqKQtD0XAjVMJ8SyHU1RQSyVNygFLtV7Iri2TOR0WcTZyhMWEvD1bRViMIEChZWTxXI90a29X0SEay8dKK2y2o6oViszPRYQUCFk0s4xbO2RRNDXK5Jq3aa-X3Ojg1DG45o4zyRUyrkVq69bszqbjbFMvQhocA1jGOuqPW3BsmygWaEPctLhzEwcHzHZ8Qq27khxtPaSIqfIFEBjdgbrUG9wo6Bksh1LmqXWwHGRYwURTAySKnHjvt+xkKl8MiTv-T18d3cH90PY87o869DF43RnGXPR2uNWF7Uy+RAvysEdHBJwcb-ercEA4COIve7pHRZMDFMJ18lKQxJyR7bUe2IaMcO7GOaBmttZA4RwMg6ChYTUwIohfLFBNM1sJCz6iksn7tFZgGndxmtsHwWB0B4G46k0prkLcTKvHyqrHH0NR3sQDxCnylEXCXFZiPVhTaIJb3ms8ZRSrCn6J22SzAthOmVCFDYnQNAzRT8IA */
+      /** @xstate-layout N4IgpgJg5mDOIC5SwNZgC4GMAWA6AlhADZgDEAwgJIBK5AMgKIDaADALqKgAOA9rPunw8AdpxAAPRAFoALAE4ATLgCMAdhYyFAVhYsAbCzkBmPTIA0IAJ6JVuI1tXKAHPYUutR5UaMBfHxdQMHAJiMmoGcgAVAEEAOQBxRlYOJBBefkERMUkEKQUZLVx8-TkZAzk5FgVqi2sEW3tHdzd7TxM-ALQsPEISUgAFAHk6AE14wdjksXSBIVFUnPsipz1qvVVVHS1Ko1qbOwdnV3c2vQ6QQO7cCAAnAEMAd3xhKAo48gY6KdSZzPnQRaOXCqGQFIxydQyFhGFiqXZWRD2GS4baeeRGVQQxRac6XYK3R7PV7kd6fJjKFLcPizLILREyIwqOHKDxOHTKNZ7XKY3AQ2GqUzrJyOGSqXFdfH3J4vUgMAAakWoAFUACLMdjTal-bKIpQKcH2NSbFjbKpcvQGIpabYuGROeROBRi-wXCV4AnSqC4TD4G6YEjXfB3AC2GDAN1IsXlkW+VIycx1uXZwOFeg5OnKJnMCIQopYuFMXiMopkRoZZxdePdUqJ3t9-rAgZDYYjJNiHy+Gp+WoTdO5Tnzcj0lQhCmHCiqWi5aiULCcLM8c4cJuq4qC1cJL1wNzAmHQdxeAcgMEj0djaR7tIB0i8yiK3m8ymUGjnjoUXIxd4q+oZQ6c9pNGQ1yuD1ax3PcDygI9oDINsO3PX5e2vftB2HQxVDHRRJy5FpgXBOQHFLYwjH-YDJU3L1wP3Q9GyeCB0GwU8FQQy9-gkaRH3vGFwVBYU7T0c1LW0G1i3tORHWdTp12uGstyoyCAzohi3nbMkuzjGk2JyPJVgLFx7SfHj528D8gW-YtwT0f8oS0IDKzdGSKNwXgiEsKARFwAA3cN0DAcQmJjdSL3jK92IQLw9QUZRKgFe0CgqJxTK-RRiwMIwnXQsi8D89AbgAVwgIkKHCaJInVSlgs0xMpBhWxbUqVZ7RBUouRWRlxPnaphOKHF7OknL8sKmU4LUirENCxYVlwUVxLKZQrItJ0uXUOQURMSpov1AdepdYQeAgOAxCrTUQq06RHScXk0NHcdsJzKR5tsPMNgu0xuKykISBOqq+ykKzLqcBLViHDY0q5KQtD0FF5t-WyZxNSTXWk0CXm+7VfsI4E5BZZxNkzAScwilRFAw7QMX0NkKykkDZK9H0-S+7tTuqrQxyxnHhUhwwTBw6LgWEgdjHUdReup8jPTrBnG0K5tfJuNGkLC2RVEuzEObx7nTA-WEimEvR0ocfDfD6mmnPkmiFYmjjnz0kjSy8UpjPhOootW8cQRI1lCI+lHKN3aioMbY8wEts7cmMFF1kMMoHAS4VtdsTaMLTEFnFWH3ae3f2FNowgGND6qCKxp1502SFosSnM7UuspRQtLR53tFYqaR02JZctzQvGsP7V16LYSs0FtnE3m3ZJ+KjTHWyM6cjv3OELyfL8gu+xh6aWBZAjnCHhKE+Jp03C2k0PDssWNwl7B8FgdAeBuOoNPR5CSMup8FBJ8SNFWVQuQ8QpdBZO0zhjCZRNsEAaBUiQr2QjVJ80MLT2DZNiBwBM6gqyhrjF6+o-zOj8EAA */
       id: 'sketch',
       initial: 'idle',
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
@@ -61,6 +61,10 @@ export function createSketchMachine() {
                     NEXT: {
                       target: '#sketch.extruding',
                       actions: ['updatePosition']
+                    },
+                    CANCEL: {
+                      target: '#sketch.idle',
+                      actions: ['clearDrawing']
                     }
                   }
                 }
@@ -74,6 +78,10 @@ export function createSketchMachine() {
                     NEXT: {
                       target: 'width',
                       actions: ['updatePosition']
+                    },
+                    CANCEL: {
+                      target: '#sketch.idle',
+                      actions: ['clearDrawing']
                     }
                   }
                 },
@@ -82,6 +90,10 @@ export function createSketchMachine() {
                     NEXT: {
                       target: '#sketch.extruding',
                       actions: ['updatePosition']
+                    },
+                    CANCEL: {
+                      target: 'edge',
+                      actions: ['popPosition']
                     }
                   }
                 }
