@@ -160,6 +160,7 @@ export const LabelImagery: FC<LabelImageryProps> = memo(
           if (position == null) {
             return undefined
           }
+          // TODO: Change color by the global color mode.
           const options: LabelOptions = {
             position,
             text: feature.props.vt_text,

@@ -15,6 +15,7 @@ import { uniqBy, xorBy } from 'lodash'
 import {
   Suspense,
   useCallback,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -198,6 +199,13 @@ export const VectorMapLabel: FC = () => {
       labelsToUpdateRef.current = labels._labelsToUpdate.length
     }
   })
+
+  const scene = useCesium(({ scene }) => scene)
+  useEffect(() => {
+    return () => {
+      scene.requestRender()
+    }
+  }, [scene])
 
   return (
     <>
