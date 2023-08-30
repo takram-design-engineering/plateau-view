@@ -12,3 +12,5 @@ export interface KeyedImagery extends Imagery {
   children?: KeyedImagery[]
   descendants?: KeyedImagery[]
 }
+
+export type ImageryCoords = Pick<Imagery, 'x' | 'y' | 'level'>

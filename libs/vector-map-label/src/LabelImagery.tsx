@@ -17,6 +17,7 @@ import { suspend } from 'suspend-react'
 import { useCesium } from '@takram/plateau-cesium'
 import { isNotNullish } from '@takram/plateau-type-helpers'
 
+import { getTileCoords } from './helpers'
 import { type LabelImageryProvider } from './LabelImageryProvider'
 import { type Imagery, type KeyedImagery } from './types'
 
@@ -80,23 +81,10 @@ export interface LabelImageryProps {
 
 export const LabelImagery: FC<LabelImageryProps> = memo(
   ({ imageryProvider, imagery, descendants, height = 50 }) => {
-    const tile = suspend(async () => {
-      // Tiles at 16 level includes features for level 17.
-      // https://github.com/gsi-cyberjapan/optimal_bvmap
-      const coords =
-        imagery.level === 17
-          ? {
-              x: Math.floor(imagery.x / 2),
-              y: Math.floor(imagery.y / 2),
-              z: 16
-            }
-          : {
-              x: imagery.x,
-              y: imagery.y,
-              z: imagery.level
-            }
-      return await imageryProvider.tileCache.get(coords)
-    }, [LabelImagery, imagery.key])
+    const tile = suspend(
+      async () => await imageryProvider.tileCache.get(getTileCoords(imagery)),
+      [LabelImagery, imagery.key]
+    )
 
     const bounds = useMemo(
       () =>
@@ -180,7 +168,6 @@ export const LabelImagery: FC<LabelImageryProps> = memo(
         if (!scene.isDestroyed()) {
           scene.postRender.removeEventListener(removeLabels)
         }
-        setLabels(undefined)
       }
       return () => {
         if (!scene.isDestroyed()) {
@@ -190,7 +177,10 @@ export const LabelImagery: FC<LabelImageryProps> = memo(
     }, [annotations, scene, labelCollection])
 
     useEffect(() => {
-      labels?.forEach(([feature, label]) => {
+      if (labels == null) {
+        return
+      }
+      labels.forEach(([feature, label]) => {
         const position = getPosition(
           feature,
           bounds,
@@ -207,6 +197,7 @@ export const LabelImagery: FC<LabelImageryProps> = memo(
           label.show = false
         }
       })
+      scene.requestRender()
     }, [imageryProvider, height, bounds, descendantsBounds, scene, labels])
 
     return null

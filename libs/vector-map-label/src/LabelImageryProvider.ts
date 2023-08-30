@@ -10,6 +10,8 @@ import {
   type ImageryProviderBaseOptions
 } from '@takram/plateau-cesium-helpers'
 
+import { getTileCoords, makeKey } from './helpers'
+
 export interface LabelImageryProviderOptions
   extends ImageryProviderBaseOptions {
   url: string
@@ -40,29 +42,13 @@ export class LabelImageryProvider extends ImageryProviderBase {
     level: number,
     request?: Request | undefined
   ): Promise<ImageryTypes> | undefined {
-    const coord =
-      level === 17
-        ? {
-            x: Math.floor(x / 2),
-            y: Math.floor(y / 2),
-            z: 16
-          }
-        : {
-            x,
-            y,
-            z: level
-          }
-
-    const key = `${coord.x}:${coord.y}:${coord.z}`
+    const key = makeKey({ x, y, level })
     return (async () => {
-      if (
-        coord.z < this.minimumDataLevel ||
-        this.discardedTileCoords.has(key)
-      ) {
+      if (level < this.minimumDataLevel || this.discardedTileCoords.has(key)) {
         return DiscardEmptyTileImagePolicy.EMPTY_IMAGE
       }
       // Populate tile cache in advance.
-      await this.tileCache.get(coord)
+      await this.tileCache.get(getTileCoords({ x, y, level }))
       return this.image
     })().catch(() => {
       this.discardedTileCoords.add(key)

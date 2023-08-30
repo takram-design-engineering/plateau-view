@@ -29,10 +29,11 @@ import {
 } from '@takram/plateau-cesium'
 import { assertType } from '@takram/plateau-type-helpers'
 
+import { makeKey } from './helpers'
 import { LabelImagery } from './LabelImagery'
 import { LabelImageryLayer } from './LabelImageryLayer'
 import { LabelImageryProvider } from './LabelImageryProvider'
-import { type Imagery, type KeyedImagery } from './types'
+import { type Imagery, type ImageryCoords, type KeyedImagery } from './types'
 
 interface TileImagery {
   readyImagery?: Imagery
@@ -50,13 +51,7 @@ interface QuadtreePrimitive {
   _tilesToRender: readonly QuadtreeTile[]
 }
 
-type Coords = Pick<Imagery, 'x' | 'y' | 'level'>
-
-function makeKey({ x, y, level }: Coords): string {
-  return `${level}:${x}:${y}`
-}
-
-function getAncestorKeys(coords: Coords, minLevel: number): string[] {
+function getAncestorKeys(coords: ImageryCoords, minLevel: number): string[] {
   if (coords.level === minLevel) {
     return []
   }
