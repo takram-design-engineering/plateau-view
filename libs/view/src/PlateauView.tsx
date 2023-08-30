@@ -27,6 +27,7 @@ import { SelectionCoordinator } from './containers/SelectionCoordinator'
 import { SketchTool } from './containers/SketchTool'
 import { Terrains } from './containers/Terrains'
 import { ToolMachineEvents } from './containers/ToolMachineEvents'
+import { MapLabel } from './containers/VectorMapLabel'
 import { readyAtom } from './states/app'
 import { AppHeader } from './ui-containers/AppHeader'
 import { AppOverlay } from './ui-containers/AppOverlay'
@@ -66,6 +67,7 @@ export const PlateauView: FC<PlateauViewProps> = () => {
             <LayersRenderer components={layerComponents} />
           </SuspendUntilTilesLoaded>
         </Suspense>
+        <MapLabel />
         <Areas />
         <ReverseGeocoding />
         <ToolMachineEvents />
