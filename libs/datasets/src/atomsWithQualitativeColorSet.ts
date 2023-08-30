@@ -1,9 +1,7 @@
 import { atom, type PrimitiveAtom } from 'jotai'
 import { splitAtom } from 'jotai/utils'
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-const splitAtomType = <T>() => splitAtom(atom<T[]>([]))
-type SplitAtom<T> = ReturnType<typeof splitAtomType<T>>
+import { type SplitAtom } from '@takram/plateau-type-helpers'
 
 export interface QualitativeColor {
   value: string | number

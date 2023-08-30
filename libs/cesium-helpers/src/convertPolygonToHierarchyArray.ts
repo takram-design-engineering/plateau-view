@@ -1,4 +1,5 @@
 import { Cartesian3, type PolygonHierarchy } from '@cesium/engine'
+import { unkinkPolygon } from '@turf/turf'
 import { type MultiPolygon, type Polygon, type Position } from 'geojson'
 
 import { isNotNullish } from '@takram/plateau-type-helpers'
@@ -24,11 +25,8 @@ function coordinatesToHierarchy(
 export function convertPolygonToHierarchyArray(
   polygon: Polygon | MultiPolygon
 ): PolygonHierarchy[] {
-  return (
-    polygon.type === 'Polygon'
-      ? [coordinatesToHierarchy(polygon.coordinates)]
-      : polygon.coordinates.map(coordinates =>
-          coordinatesToHierarchy(coordinates)
-        )
-  ).filter(isNotNullish)
+  const polygons = unkinkPolygon(polygon).features
+  return polygons
+    .map(polygon => coordinatesToHierarchy(polygon.geometry.coordinates))
+    .filter(isNotNullish)
 }

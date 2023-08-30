@@ -1,2 +1,3 @@
 export * from './Sketch'
-export * from './SketchProvider'
+export * from './SketchTool'
+export * from './types'

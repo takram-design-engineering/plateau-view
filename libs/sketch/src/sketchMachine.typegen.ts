@@ -16,20 +16,24 @@
           services: never;
         };
         eventsCausingActions: {
-
+          "clearDrawing": "CANCEL" | "CREATE";
+"createCircle": "CIRCLE";
+"createPolygon": "POLYGON";
+"createRectangle": "RECTANGLE";
+"popPosition": "CANCEL";
+"updatePosition": "EXTRUDE" | "NEXT";
         };
         eventsCausingDelays: {
 
         };
         eventsCausingGuards: {
-
+          "canPopPosition": "CANCEL";
         };
         eventsCausingServices: {
 
         };
-        matchesStates: "activeTool" | "activeTool.modal" | "activeTool.modal.drawing" | "activeTool.modal.hand" | "activeTool.modal.select" | "activeTool.momentary" | "activeTool.momentary.hand" | "selectedTool" | "selectedTool.modal" | "selectedTool.modal.drawing" | "selectedTool.modal.hand" | "selectedTool.modal.select" | "selectedTool.momentary" | "selectedTool.momentary.hand" | { "activeTool"?: "modal" | "momentary" | { "modal"?: "drawing" | "hand" | "select";
-"momentary"?: "hand"; };
-"selectedTool"?: "modal" | "momentary" | { "modal"?: "drawing" | "hand" | "select";
-"momentary"?: "hand"; }; };
+        matchesStates: "drawing" | "drawing.circle" | "drawing.circle.diameter" | "drawing.polygon" | "drawing.polygon.vertex" | "drawing.rectangle" | "drawing.rectangle.edge" | "drawing.rectangle.width" | "extruding" | "idle" | { "drawing"?: "circle" | "polygon" | "rectangle" | { "circle"?: "diameter";
+"polygon"?: "vertex";
+"rectangle"?: "edge" | "width"; }; };
         tags: never;
       }
