@@ -2,6 +2,7 @@ import {
   Cartesian3,
   Cartographic,
   Color,
+  HeightReference,
   HorizontalOrigin,
   LabelStyle,
   Rectangle,
@@ -17,8 +18,7 @@ import { useCesium } from '@takram/plateau-cesium'
 import { isNotNullish } from '@takram/plateau-type-helpers'
 
 import { type LabelImageryProvider } from './LabelImageryProvider'
-import { type KeyedImagery } from './types'
-import { HeightReference } from '@cesium/engine'
+import { type Imagery, type KeyedImagery } from './types'
 
 type LabelOptions = Partial<
   Pick<
@@ -72,11 +72,12 @@ function getPosition(
 export interface LabelImageryProps {
   imageryProvider: LabelImageryProvider
   imagery: KeyedImagery
+  descendants: readonly Imagery[]
   height?: number
 }
 
 export const LabelImagery: FC<LabelImageryProps> = memo(
-  ({ imageryProvider, imagery, height = 50 }) => {
+  ({ imageryProvider, imagery, descendants, height = 50 }) => {
     const tile = suspend(async () => {
       // Tiles at 16 level includes features for level 17.
       // https://github.com/gsi-cyberjapan/optimal_bvmap
@@ -107,14 +108,14 @@ export const LabelImagery: FC<LabelImageryProps> = memo(
 
     const descendantsBounds = useMemo(
       () =>
-        imagery.descendants.map(descendant =>
+        descendants.map(descendant =>
           imageryProvider.tilingScheme.tileXYToRectangle(
             descendant.x,
             descendant.y,
             descendant.level
           )
         ),
-      [imageryProvider, imagery]
+      [imageryProvider, descendants]
     )
 
     const annotations = useMemo(() => {

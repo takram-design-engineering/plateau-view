@@ -11,7 +11,7 @@ import {
   type Atom,
   type SetStateAction
 } from 'jotai'
-import { uniqBy, xorBy } from 'lodash'
+import { fromPairs, uniqBy, xorBy } from 'lodash'
 import {
   Suspense,
   useCallback,
@@ -74,6 +74,13 @@ function getAncestorKeys(coords: Coords, minLevel: number): string[] {
   })
 }
 
+function isEqualKeys(
+  a: readonly KeyedImagery[],
+  b?: readonly KeyedImagery[]
+): boolean {
+  return b != null && a.length !== b.length && xorBy(a, b, 'key').length > 0
+}
+
 function getImageriesToRender(
   scene: Scene,
   imageryProvider: ImageryProvider
@@ -95,7 +102,6 @@ function getImageriesToRender(
             }
             assertType<KeyedImagery>(imagery)
             imagery.key = makeKey(imagery)
-            imagery.descendants = []
             if (imagery.level < minLevel) {
               minLevel = imagery.level
             }
@@ -116,22 +122,48 @@ function getImageriesToRender(
     return imageries
   }
 
-  const keys = new Set(imageries.map(({ key }) => key))
+  // Populate children and descendants fields.
+  const map: Record<
+    string,
+    {
+      imagery: KeyedImagery
+      children: KeyedImagery[]
+      descendants: KeyedImagery[]
+    }
+  > = fromPairs(
+    imageries.map(imagery => [
+      imagery.key,
+      {
+        imagery,
+        children: [],
+        descendants: []
+      }
+    ])
+  )
   imageries.forEach(imagery => {
-    const ancestors = getAncestorKeys(imagery, minLevel)
-    ancestors
-      .filter(key => keys.has(key))
-      .forEach(key => {
-        const ancestor = imageries.find(imagery => imagery.key === key)
-        ancestor?.descendants.push(imagery)
-      })
+    const ancestorKeys = getAncestorKeys(imagery, minLevel)
+    ancestorKeys.forEach(key => {
+      const ancestor = map[key]
+      if (ancestor != null) {
+        ancestor.descendants.push(imagery)
+        if (imagery.level - ancestor.imagery.level === 1) {
+          ancestor.children.push(imagery)
+        }
+      }
+    })
   })
-  return imageries.filter(imagery => {
-    const children = imagery.descendants.filter(
-      ({ level }) => level === imagery.level + 1
-    )
-    return children.length < 4
+  Object.values(map).forEach(({ imagery, children, descendants }) => {
+    // Maintain object-equality of arrays.
+    if (!isEqualKeys(children, imagery.children)) {
+      imagery.children = children
+    }
+    if (!isEqualKeys(descendants, imagery.descendants)) {
+      imagery.descendants = descendants
+    }
   })
+
+  // Imageries that have 4 children will not be visible.
+  return imageries.filter(imagery => imagery.children.length < 4)
 }
 
 const LabelImageryCollection: FC<{
@@ -143,7 +175,11 @@ const LabelImageryCollection: FC<{
     <>
       {imageries.map(imagery => (
         <Suspense key={imagery.key}>
-          <LabelImagery imageryProvider={imageryProvider} imagery={imagery} />
+          <LabelImagery
+            imageryProvider={imageryProvider}
+            imagery={imagery}
+            descendants={imagery.descendants}
+          />
         </Suspense>
       ))}
     </>
