@@ -11,7 +11,7 @@ import {
   type Label
 } from '@cesium/engine'
 import { type Feature } from 'protomaps'
-import { memo, useEffect, useMemo, useState, type FC } from 'react'
+import { memo, useCallback, useEffect, useMemo, useRef, type FC } from 'react'
 import { suspend } from 'suspend-react'
 
 import { useCesium } from '@takram/plateau-cesium'
@@ -29,6 +29,8 @@ type LabelOptions = Partial<
     }[keyof Label]
   >
 >
+
+export type LabelStyleOptions = Omit<LabelOptions, 'id' | 'position' | 'show'>
 
 interface AnnotationFeature extends Feature {
   props: {
@@ -133,50 +135,11 @@ export const LabelImagery: FC<LabelImageryProps> = memo(
       )
     }, [tile, imagery])
 
+    const labelsRef = useRef<Array<[AnnotationFeature, Label]>>()
     const scene = useCesium(({ scene }) => scene)
-    const labelCollection = useCesium(({ labels }) => labels)
 
-    const [labels, setLabels] = useState<Array<[AnnotationFeature, Label]>>()
-    useEffect(() => {
-      const labels = annotations
-        .map((feature): [AnnotationFeature, Label] => {
-          // TODO: Change color by the global color mode.
-          const options: LabelOptions = {
-            text: feature.props.vt_text,
-            font: '10pt sans-serif',
-            style: LabelStyle.FILL_AND_OUTLINE,
-            fillColor: Color.BLACK,
-            outlineColor: Color.WHITE.withAlpha(0.8),
-            outlineWidth: 5,
-            horizontalOrigin: HorizontalOrigin.CENTER,
-            verticalOrigin: VerticalOrigin.BOTTOM,
-            heightReference: HeightReference.CLAMP_TO_GROUND,
-            disableDepthTestDistance: Number.POSITIVE_INFINITY
-          }
-          return [feature, labelCollection.add(options)]
-        })
-        .filter(isNotNullish)
-
-      setLabels(labels)
-
-      const removeLabels = (): void => {
-        if (!labelCollection.isDestroyed()) {
-          labels.forEach(([, label]) => {
-            labelCollection.remove(label)
-          })
-        }
-        if (!scene.isDestroyed()) {
-          scene.postRender.removeEventListener(removeLabels)
-        }
-      }
-      return () => {
-        if (!scene.isDestroyed()) {
-          scene.postRender.addEventListener(removeLabels)
-        }
-      }
-    }, [annotations, scene, labelCollection])
-
-    useEffect(() => {
+    const updateVisibility = useCallback(() => {
+      const labels = labelsRef.current
       if (labels == null) {
         return
       }
@@ -198,7 +161,56 @@ export const LabelImagery: FC<LabelImageryProps> = memo(
         }
       })
       scene.requestRender()
-    }, [imageryProvider, height, bounds, descendantsBounds, scene, labels])
+    }, [imageryProvider, height, bounds, descendantsBounds, scene])
+
+    const labelCollection = useCesium(({ labels }) => labels)
+    const updateVisibilityRef = useRef(updateVisibility)
+    updateVisibilityRef.current = updateVisibility
+
+    useEffect(() => {
+      const labels = annotations
+        .map((feature): [AnnotationFeature, Label] => {
+          // TODO: Change color by the global color mode.
+          const options: LabelOptions = {
+            text: feature.props.vt_text,
+            font: '10pt sans-serif',
+            style: LabelStyle.FILL_AND_OUTLINE,
+            fillColor: Color.BLACK,
+            outlineColor: Color.WHITE.withAlpha(0.8),
+            outlineWidth: 5,
+            horizontalOrigin: HorizontalOrigin.CENTER,
+            verticalOrigin: VerticalOrigin.BOTTOM,
+            heightReference: HeightReference.CLAMP_TO_GROUND,
+            disableDepthTestDistance: Number.POSITIVE_INFINITY
+          }
+          return [feature, labelCollection.add(options)]
+        })
+        .filter(isNotNullish)
+
+      labelsRef.current = labels
+      updateVisibilityRef.current()
+
+      const removeLabels = (): void => {
+        if (!labelCollection.isDestroyed()) {
+          labels.forEach(([, label]) => {
+            labelCollection.remove(label)
+          })
+        }
+        if (!scene.isDestroyed()) {
+          scene.postRender.removeEventListener(removeLabels)
+        }
+      }
+      return () => {
+        labelsRef.current = undefined
+        if (!scene.isDestroyed()) {
+          scene.postRender.addEventListener(removeLabels)
+        }
+      }
+    }, [annotations, scene, labelCollection])
+
+    useEffect(() => {
+      updateVisibility()
+    }, [updateVisibility])
 
     return null
   }
