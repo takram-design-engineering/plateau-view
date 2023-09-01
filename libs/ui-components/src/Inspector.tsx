@@ -1,9 +1,5 @@
 import { Paper, styled, type PaperProps } from '@mui/material'
-import {
-  Resizable,
-  type ResizeCallback,
-  type ResizeStartCallback
-} from 're-resizable'
+import { Resizable, type ResizableProps } from 're-resizable'
 import { forwardRef } from 'react'
 
 import { AutoHeight } from './AutoHeight'
@@ -30,17 +26,20 @@ const ScrollableRoundedBox = styled(Scrollable)(({ theme }) => ({
   borderRadius: theme.shape.borderRadius
 }))
 
-export interface InspectorProps extends Omit<PaperProps, 'onResize'> {
+export interface InspectorProps
+  extends Omit<PaperProps, 'onResize'>,
+    Pick<
+      ResizableProps,
+      'maxWidth' | 'onResize' | 'onResizeStart' | 'onResizeStop'
+    > {
   defaultWidth?: number
-  onResize?: ResizeCallback
-  onResizeStart?: ResizeStartCallback
-  onResizeStop?: ResizeCallback
 }
 
 export const Inspector = forwardRef<HTMLDivElement, InspectorProps>(
   (
     {
       defaultWidth = 360,
+      maxWidth,
       onResize,
       onResizeStart,
       onResizeStop,
@@ -58,6 +57,7 @@ export const Inspector = forwardRef<HTMLDivElement, InspectorProps>(
             height: 'auto'
           }}
           minWidth={320}
+          maxWidth={maxWidth}
           enable={{
             left: true,
             right: true

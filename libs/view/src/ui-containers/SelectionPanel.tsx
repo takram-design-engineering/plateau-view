@@ -1,3 +1,4 @@
+import { useTheme } from '@mui/material'
 import { useAtom, useAtomValue } from 'jotai'
 import { type ResizeCallback } from 're-resizable'
 import { useCallback, type FC } from 'react'
@@ -11,7 +12,11 @@ import { ColorSchemeContent } from '../selection/ColorSchemeContent'
 import { LayerContent } from '../selection/LayerContent'
 import { PedestrianLayerContent } from '../selection/PedestrianLayerContent'
 import { TileFeatureContent } from '../selection/TileFeatureContent'
-import { inspectorWidthAtom, pedestrianInspectorWidthAtom } from '../states/app'
+import {
+  inspectorWidthAtom,
+  pedestrianInspectorWidthAtom,
+  viewportWidthAtom
+} from '../states/app'
 import {
   COLOR_SCHEME_SELECTION,
   LAYER_SELECTION,
@@ -75,6 +80,13 @@ export const SelectionPanel: FC = () => {
     [setPedestrianInspectorWidth]
   )
 
+  const viewportWidth = useAtomValue(viewportWidthAtom)
+  const theme = useTheme()
+  const maxWidth =
+    viewportWidth != null
+      ? viewportWidth - parseFloat(theme.spacing(2))
+      : undefined
+
   if (content == null) {
     return null
   }
@@ -83,6 +95,7 @@ export const SelectionPanel: FC = () => {
       <Inspector
         key='pedestrian'
         defaultWidth={pedestrianInspectorWidth}
+        maxWidth={maxWidth}
         onResizeStop={handlePedestrianResizeStop}
       >
         <div>{content}</div>
@@ -93,6 +106,7 @@ export const SelectionPanel: FC = () => {
     <Inspector
       key='default'
       defaultWidth={inspectorWidth}
+      maxWidth={maxWidth}
       onResizeStop={handleResizeStop}
     >
       <div>{content}</div>
