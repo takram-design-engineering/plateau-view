@@ -32,6 +32,7 @@ export const Sketch: FC<SketchProps> = ({ featuresAtom }) => {
           isDrawableFeature(feature) && (
             <SketchObject
               key={index}
+              id={feature.properties.id}
               geometry={feature.geometry}
               extrudedHeight={feature.properties.extrudedHeight}
             />

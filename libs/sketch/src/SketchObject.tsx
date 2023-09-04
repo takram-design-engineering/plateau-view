@@ -1,7 +1,6 @@
 import { Color, Entity } from '@cesium/engine'
 import { useTheme } from '@mui/material'
 import { type MultiPolygon, type Polygon } from 'geojson'
-import { nanoid } from 'nanoid'
 import { useMemo, useState, type FC } from 'react'
 
 import {
@@ -9,7 +8,6 @@ import {
   convertPolygonToHierarchyArray,
   match
 } from '@takram/plateau-cesium-helpers'
-import { useConstant } from '@takram/plateau-react-helpers'
 import {
   useScreenSpaceSelectionResponder,
   type ScreenSpaceSelectionEntry
@@ -29,7 +27,7 @@ declare module '@takram/plateau-screen-space-selection' {
 }
 
 export interface SketchObjectProps {
-  id?: string
+  id: string
   geometry: Polygon | MultiPolygon
   extrudedHeight: number
   disableShadow?: ExtrudedPolygonEntityProps['disableShadow']
@@ -43,9 +41,6 @@ export const SketchObject: FC<SketchObjectProps> = ({
   disableShadow,
   color
 }) => {
-  const defaultId = useConstant(() => nanoid())
-  const objectId = id ?? defaultId
-
   const [highlighted, setHighlighted] = useState(false)
 
   useScreenSpaceSelectionResponder({
@@ -53,7 +48,7 @@ export const SketchObject: FC<SketchObjectProps> = ({
     convertToSelection: object => {
       return 'id' in object &&
         object.id instanceof Entity &&
-        match(object.id.id, { type: 'Sketch', key: objectId })
+        match(object.id.id, { type: 'Sketch', key: id })
         ? {
             type: SKETCH_OBJECT,
             value: object.id.id
@@ -65,7 +60,7 @@ export const SketchObject: FC<SketchObjectProps> = ({
     ): value is ScreenSpaceSelectionEntry<typeof SKETCH_OBJECT> => {
       return (
         value.type === SKETCH_OBJECT &&
-        match(value.value, { type: 'Sketch', key: objectId })
+        match(value.value, { type: 'Sketch', key: id })
       )
     },
     onSelect: () => {
@@ -91,7 +86,7 @@ export const SketchObject: FC<SketchObjectProps> = ({
   return hierarchyArray?.map((hierarchy, index) => (
     <ExtrudedPolygonEntity
       key={index}
-      id={compose({ type: 'Sketch', key: objectId, index })}
+      id={compose({ type: 'Sketch', key: id, index })}
       hierarchy={hierarchy}
       extrudedHeight={extrudedHeight}
       disableShadow={disableShadow}

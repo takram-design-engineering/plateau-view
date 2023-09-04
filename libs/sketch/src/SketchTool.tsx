@@ -6,6 +6,7 @@ import {
 } from '@cesium/engine'
 import { feature } from '@turf/turf'
 import { atom, useAtom, useSetAtom } from 'jotai'
+import { nanoid } from 'nanoid'
 import { useCallback, useMemo, useRef, type FC } from 'react'
 import invariant from 'tiny-invariant'
 
@@ -199,6 +200,7 @@ export const SketchTool: FC<SketchToolProps> = ({
       }
       onCreate?.(
         feature(geometry, {
+          id: nanoid(),
           type: state.context.type,
           positions: state.context.controlPoints.map(({ x, y, z }) => [
             x,

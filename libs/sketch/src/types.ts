@@ -10,6 +10,7 @@ export function isSketchGeometryType(
 }
 
 export interface SketchFeatureProperties {
+  id: string
   type?: SketchGeometryType
   positions?: Array<[number, number, number]>
   extrudedHeight?: number
