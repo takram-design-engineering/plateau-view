@@ -13,16 +13,16 @@ export type EventObject =
       | { type: 'EXTRUDE' }
     ) & {
       pointerPosition: Cartesian2
-      position: Cartesian3
+      controlPoint: Cartesian3
     })
   | { type: 'CREATE' }
   | { type: 'CANCEL' }
 
 interface Context {
   lastPointerPosition?: Cartesian2
-  lastPosition?: Cartesian3
+  lastControlPoint?: Cartesian3
   type?: SketchGeometryType
-  positions?: Cartesian3[]
+  controlPoints?: Cartesian3[]
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
@@ -159,46 +159,48 @@ export function createSketchMachine() {
     {
       guards: {
         canPopPosition: (context, event) => {
-          return context.positions != null && context.positions.length > 1
+          return (
+            context.controlPoints != null && context.controlPoints.length > 1
+          )
         }
       },
       actions: {
         createCircle: (context, event) => {
           context.lastPointerPosition = event.pointerPosition.clone()
-          const position = event.position.clone()
-          context.lastPosition = position
+          const controlPoint = event.controlPoint.clone()
+          context.lastControlPoint = controlPoint
           context.type = 'circle'
-          context.positions = [position]
+          context.controlPoints = [controlPoint]
         },
         createRectangle: (context, event) => {
           context.lastPointerPosition = event.pointerPosition.clone()
-          const position = event.position.clone()
-          context.lastPosition = position
+          const controlPoint = event.controlPoint.clone()
+          context.lastControlPoint = controlPoint
           context.type = 'rectangle'
-          context.positions = [position]
+          context.controlPoints = [controlPoint]
         },
         createPolygon: (context, event) => {
           context.lastPointerPosition = event.pointerPosition.clone()
-          const position = event.position.clone()
-          context.lastPosition = position
+          const controlPoint = event.controlPoint.clone()
+          context.lastControlPoint = controlPoint
           context.type = 'polygon'
-          context.positions = [position]
+          context.controlPoints = [controlPoint]
         },
         popPosition: (context, event) => {
-          invariant(context.positions != null)
-          invariant(context.positions.length > 1)
-          context.positions.pop()
+          invariant(context.controlPoints != null)
+          invariant(context.controlPoints.length > 1)
+          context.controlPoints.pop()
         },
         clearDrawing: (context, event) => {
-          delete context.lastPosition
+          delete context.lastControlPoint
           delete context.type
-          delete context.positions
+          delete context.controlPoints
         },
         updatePosition: (context, event) => {
           context.lastPointerPosition = event.pointerPosition.clone()
-          const position = event.position.clone()
-          context.lastPosition = position
-          context.positions?.push(position)
+          const controlPoint = event.controlPoint.clone()
+          context.lastControlPoint = controlPoint
+          context.controlPoints?.push(controlPoint)
         }
       }
     }
