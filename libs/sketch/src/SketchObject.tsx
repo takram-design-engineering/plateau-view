@@ -17,14 +17,7 @@ import {
   ExtrudedPolygonEntity,
   type ExtrudedPolygonEntityProps
 } from './ExtrudedPolygonEntity'
-
-export const SKETCH_OBJECT = 'SKETCH_OBJECT'
-
-declare module '@takram/plateau-screen-space-selection' {
-  interface ScreenSpaceSelectionOverrides {
-    [SKETCH_OBJECT]: string
-  }
-}
+import { SKETCH_OBJECT } from './types'
 
 export interface SketchObjectProps {
   id: string

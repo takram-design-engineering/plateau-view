@@ -4,12 +4,14 @@ import { useCallback, type FC } from 'react'
 
 import { PLATEAU_TILE_FEATURE } from '@takram/plateau-datasets'
 import { PEDESTRIAN_OBJECT } from '@takram/plateau-pedestrian'
+import { SKETCH_OBJECT } from '@takram/plateau-sketch'
 import { Inspector } from '@takram/plateau-ui-components'
 import { PEDESTRIAN_LAYER } from '@takram/plateau-view-layers'
 
 import { ColorSchemeContent } from '../selection/ColorSchemeContent'
 import { LayerContent } from '../selection/LayerContent'
 import { PedestrianLayerContent } from '../selection/PedestrianLayerContent'
+import { SketchObjectContent } from '../selection/SketchObjectContent'
 import { TileFeatureContent } from '../selection/TileFeatureContent'
 import { inspectorWidthAtom, pedestrianInspectorWidthAtom } from '../states/app'
 import {
@@ -46,6 +48,9 @@ export const SelectionPanel: FC = () => {
           case PEDESTRIAN_OBJECT:
             content = <PedestrianLayerContent values={selectionGroup.values} />
             contentType = 'pedestrian'
+            break
+          case SKETCH_OBJECT:
+            content = <SketchObjectContent values={selectionGroup.values} />
             break
         }
         break

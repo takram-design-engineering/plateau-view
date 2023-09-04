@@ -1,6 +1,14 @@
 import { type Feature, type MultiPolygon, type Polygon } from 'geojson'
 import { type SetRequired } from 'type-fest'
 
+export const SKETCH_OBJECT = 'SKETCH_OBJECT'
+
+declare module '@takram/plateau-screen-space-selection' {
+  interface ScreenSpaceSelectionOverrides {
+    [SKETCH_OBJECT]: string
+  }
+}
+
 export type SketchGeometryType = 'circle' | 'rectangle' | 'polygon'
 
 export function isSketchGeometryType(
