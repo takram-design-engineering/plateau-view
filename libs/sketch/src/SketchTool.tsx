@@ -90,6 +90,7 @@ export const SketchTool: FC<SketchToolProps> = ({
 
   const updateGeometryOptions = useCallback(
     (controlPoint?: Cartesian3) => {
+      setExtrudedHeight(0)
       if (state.context.type == null || state.context.controlPoints == null) {
         setGeometryOptions(null)
         return
@@ -103,7 +104,7 @@ export const SketchTool: FC<SketchToolProps> = ({
         ellipsoid: scene.globe.ellipsoid
       })
     },
-    [state, scene, setGeometryOptions]
+    [state, scene, setGeometryOptions, setExtrudedHeight]
   )
 
   useWindowEvent('keydown', event => {
@@ -144,7 +145,6 @@ export const SketchTool: FC<SketchToolProps> = ({
       controlPoint
     })
     setGeometryOptions(null)
-    setExtrudedHeight(0)
   })
 
   useScreenSpaceEvent(eventHandler, ScreenSpaceEventType.MOUSE_MOVE, event => {
