@@ -1,6 +1,7 @@
 import {
   CallbackProperty,
   ClassificationType,
+  ColorMaterialProperty,
   HeightReference,
   ShadowMode,
   type Color
@@ -15,12 +16,14 @@ export interface ExtrudedPolygonEntityProps
     Pick<NonNullable<EntityProps['polygon']>, 'hierarchy' | 'extrudedHeight'>
   > {
   dynamic?: boolean
+  id?: string
   color?: Color
   disableShadow?: boolean
 }
 
 export const ExtrudedPolygonEntity: FC<ExtrudedPolygonEntityProps> = ({
   dynamic = false,
+  id,
   hierarchy: hierarchyProp,
   extrudedHeight,
   color,
@@ -33,6 +36,14 @@ export const ExtrudedPolygonEntity: FC<ExtrudedPolygonEntityProps> = ({
   )
   const hierarchy = dynamic ? hierarchyProperty : hierarchyProp
 
+  // Non-constant callback property in color doesn't request render in every
+  // frame; prevents it from flashing when the color changes instead.
+  const colorRef = useRef(color)
+  colorRef.current = color
+  const colorProperty = useConstant(
+    () => new CallbackProperty(() => colorRef.current, false)
+  )
+
   const options = useMemo(
     (): EntityProps => ({
       polygon: {
@@ -40,16 +51,16 @@ export const ExtrudedPolygonEntity: FC<ExtrudedPolygonEntityProps> = ({
         extrudedHeight,
         extrudedHeightReference: HeightReference.RELATIVE_TO_GROUND,
         fill: true,
-        material: color,
+        material: new ColorMaterialProperty(colorProperty),
         classificationType: ClassificationType.TERRAIN,
         shadows: disableShadow ? ShadowMode.DISABLED : ShadowMode.ENABLED
       }
     }),
-    [extrudedHeight, color, disableShadow, hierarchy]
+    [extrudedHeight, disableShadow, hierarchy, colorProperty]
   )
 
   const scene = useCesium(({ scene }) => scene)
   scene.requestRender()
 
-  return <Entity {...options} />
+  return <Entity id={id} {...options} />
 }

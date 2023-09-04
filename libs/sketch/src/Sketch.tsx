@@ -1,14 +1,15 @@
-import { type Feature, type MultiPolygon, type Polygon } from 'geojson'
+import { type Feature } from 'geojson'
 import { useAtomValue, type PrimitiveAtom } from 'jotai'
 import { type FC } from 'react'
 
 import { SketchObject } from './SketchObject'
 import { type SketchFeature } from './types'
 
-type DrawableFeature = Feature<
-  Polygon | MultiPolygon,
-  { extrudedHeight: number }
->
+type DrawableFeature = SketchFeature & {
+  properties: {
+    extrudedHeight: number
+  }
+}
 
 function isDrawableFeature(feature: Feature): feature is DrawableFeature {
   return (
