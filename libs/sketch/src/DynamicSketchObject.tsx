@@ -100,7 +100,10 @@ export const DynamicSketchObject: FC<DynamicSketchObjectProps> = memo(
           />
         ))}
         {geometryOptions != null && extrudedHeight == null && (
-          <ControlPoints geometryOptions={geometryOptions} />
+          <ControlPoints
+            geometryOptions={geometryOptions}
+            color={color ?? primaryColor}
+          />
         )}
         {extrudedHeight != null &&
           hierarchyArray?.map((hierarchy, index) => (
