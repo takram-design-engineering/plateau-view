@@ -1,4 +1,4 @@
-import { Color } from '@cesium/engine'
+import { Color, type Property } from '@cesium/engine'
 import { useTheme } from '@mui/material'
 import { type LineString, type MultiPolygon, type Polygon } from 'geojson'
 import { atom, useAtomValue, type Atom } from 'jotai'
@@ -10,7 +10,6 @@ import {
   convertPolygonToHierarchyArray
 } from '@takram/plateau-cesium-helpers'
 
-import { ControlPoints } from './ControlPoints'
 import { createGeometry, type GeometryOptions } from './createGeometry'
 import {
   ExtrudedPolygonEntity,
@@ -18,12 +17,13 @@ import {
 } from './ExtrudedPolygonEntity'
 import { PolygonEntity } from './PolygonEntity'
 import { PolylineEntity } from './PolylineEntity'
+import { SurfaceControlPoints } from './SurfaceControlPoints'
 
 export type DynamicSketchObjectProps = RequireExactlyOne<
   {
     geometryAtom?: Atom<LineString | Polygon | MultiPolygon | null>
     geometryOptionsAtom?: Atom<GeometryOptions | null>
-    extrudedHeight?: ExtrudedPolygonEntityProps['extrudedHeight']
+    extrudedHeight?: Property
     disableShadow?: ExtrudedPolygonEntityProps['disableShadow']
     color?: Color
   },
@@ -100,7 +100,7 @@ export const DynamicSketchObject: FC<DynamicSketchObjectProps> = memo(
           />
         ))}
         {geometryOptions != null && extrudedHeight == null && (
-          <ControlPoints
+          <SurfaceControlPoints
             geometryOptions={geometryOptions}
             color={color ?? primaryColor}
           />

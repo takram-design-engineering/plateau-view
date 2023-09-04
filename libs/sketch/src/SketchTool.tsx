@@ -57,7 +57,7 @@ export const SketchTool: FC<SketchToolProps> = ({
   const [state, send] = useAtom(sketchMachineAtom)
 
   const pointerPositionRef = useRef<Cartesian2>()
-  const extrudedHeightRef = useRef<number>(0)
+  const extrudedHeightRef = useRef(0)
   const extrudedHeightProperty = useConstant(
     () => new CallbackProperty(() => extrudedHeightRef.current, false)
   )
