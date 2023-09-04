@@ -147,11 +147,17 @@ function createPolygon(
   }
 }
 
-export function createGeometry(
-  type: SketchGeometryType,
-  positions: readonly Cartesian3[],
+export interface GeometryOptions {
+  type: SketchGeometryType
+  positions: readonly Cartesian3[]
   ellipsoid?: Ellipsoid
-): LineString | Polygon | MultiPolygon | undefined {
+}
+
+export function createGeometry({
+  type,
+  positions,
+  ellipsoid
+}: GeometryOptions): LineString | Polygon | MultiPolygon | undefined {
   switch (type) {
     case 'circle':
       return createCircle(positions, ellipsoid)

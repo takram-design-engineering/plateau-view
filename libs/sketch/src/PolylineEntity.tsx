@@ -1,66 +1,46 @@
 import {
+  CallbackProperty,
   ClassificationType,
-  Color,
-  ColorMaterialProperty
+  type Color
 } from '@cesium/engine'
-import { useEffect, useMemo, type FC } from 'react'
+import { useMemo, useRef, type FC } from 'react'
 
 import { Entity, useCesium, type EntityProps } from '@takram/plateau-cesium'
-import {
-  compose,
-  convertGeometryToPositionsArray
-} from '@takram/plateau-cesium-helpers'
+import { useConstant } from '@takram/plateau-react-helpers'
 
-import { type GeometryFeature } from './types'
-
-export interface PolylineEntityProps {
-  feature: GeometryFeature
+export interface PolylineEntityProps
+  extends Required<Pick<NonNullable<EntityProps['polyline']>, 'positions'>> {
+  dynamic?: boolean
   color?: Color
-  alpha?: number
 }
 
 export const PolylineEntity: FC<PolylineEntityProps> = ({
-  feature,
-  color = Color.GRAY,
-  alpha = 0.5
+  dynamic = false,
+  positions: positionsProp,
+  color
 }) => {
-  const positionsArray = useMemo(
-    () => convertGeometryToPositionsArray(feature.geometry),
-    [feature]
+  const positionsRef = useRef(positionsProp)
+  positionsRef.current = positionsProp
+  const positionsProperty = useConstant(
+    () => new CallbackProperty(() => positionsRef.current, !dynamic)
+  )
+  const positions = dynamic ? positionsProperty : positionsProp
+
+  const options = useMemo(
+    (): EntityProps => ({
+      polyline: {
+        positions,
+        width: 1.5,
+        material: color,
+        classificationType: ClassificationType.TERRAIN,
+        clampToGround: true
+      }
+    }),
+    [color, positions]
   )
 
   const scene = useCesium(({ scene }) => scene)
   scene.requestRender()
 
-  useEffect(() => {
-    return () => {
-      scene.requestRender()
-    }
-  }, [scene])
-
-  const polylines = useMemo(() => {
-    const material = new ColorMaterialProperty(color.withAlpha(alpha))
-    return positionsArray.map(
-      (positions, index): EntityProps => ({
-        ...(feature.id != null && {
-          id: compose({ type: 'PolylineEntity', key: feature.id, index })
-        }),
-        polyline: {
-          positions,
-          width: 2,
-          material,
-          classificationType: ClassificationType.TERRAIN,
-          clampToGround: true
-        }
-      })
-    )
-  }, [feature.id, color, alpha, positionsArray])
-
-  return (
-    <>
-      {polylines.map((props, index) => (
-        <Entity key={index} {...props} />
-      ))}
-    </>
-  )
+  return <Entity {...options} />
 }

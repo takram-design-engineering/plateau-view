@@ -2,33 +2,23 @@ import {
   CallbackProperty,
   Cartesian2,
   Cartesian3,
-  ClassificationType,
-  Color,
-  HeightReference,
-  ScreenSpaceEventType,
-  ShadowMode,
-  type PolygonHierarchy
+  ScreenSpaceEventType
 } from '@cesium/engine'
-import { useTheme } from '@mui/material'
 import { feature } from '@turf/turf'
-import { useAtom } from 'jotai'
+import { type LineString, type MultiPolygon, type Polygon } from 'geojson'
+import { atom, useAtom, useSetAtom } from 'jotai'
 import { useCallback, useMemo, useRef, type FC } from 'react'
 import invariant from 'tiny-invariant'
 
 import {
-  Entity,
   useCesium,
   useScreenSpaceEvent,
-  useScreenSpaceEventHandler,
-  type EntityProps
+  useScreenSpaceEventHandler
 } from '@takram/plateau-cesium'
-import {
-  convertGeometryToPositionsArray,
-  convertPolygonToHierarchyArray
-} from '@takram/plateau-cesium-helpers'
 import { useConstant, useWindowEvent } from '@takram/plateau-react-helpers'
 
 import { createGeometry } from './createGeometry'
+import { DynamicSketchObject } from './DynamicSketchObject'
 import { getExtrudedHeight } from './getExtrudedHeight'
 import { pickGround } from './pickGround'
 import { sketchMachineAtom } from './states'
@@ -67,48 +57,36 @@ export const SketchTool: FC<SketchToolProps> = ({
   const [state, send] = useAtom(sketchMachineAtom)
 
   const pointerPositionRef = useRef<Cartesian2>()
-  const positionsRef = useRef<Cartesian3[]>()
-  const polylinePositionsProperty = useConstant(
-    () => new CallbackProperty(() => positionsRef.current, false)
-  )
-  const hierarchyRef = useRef<PolygonHierarchy>()
-  const polygonHierarchyProperty = useConstant(
-    () => new CallbackProperty(() => hierarchyRef.current, false)
-  )
   const extrudedHeightRef = useRef<number>(0)
   const extrudedHeightProperty = useConstant(
     () => new CallbackProperty(() => extrudedHeightRef.current, false)
   )
+
+  const geometryAtom = useMemo(
+    () => atom<LineString | Polygon | MultiPolygon | null>(null),
+    []
+  )
+  const setGeometry = useSetAtom(geometryAtom)
 
   const scene = useCesium(({ scene }) => scene)
 
   const updateGeometryProperties = useCallback(
     (position?: Cartesian3) => {
       if (state.context.type == null || state.context.positions == null) {
-        positionsRef.current = undefined
-        hierarchyRef.current = undefined
+        setGeometry(null)
         return
       }
-      const geometry = createGeometry(
-        state.context.type,
-        position != null
-          ? [...state.context.positions, position]
-          : state.context.positions,
-        scene.globe.ellipsoid
-      )
-      if (geometry == null) {
-        return
-      }
-      if (geometry.type === 'LineString') {
-        positionsRef.current = convertGeometryToPositionsArray(geometry)[0]
-        hierarchyRef.current = undefined
-      } else {
-        positionsRef.current = convertGeometryToPositionsArray(geometry)[0]
-        hierarchyRef.current = convertPolygonToHierarchyArray(geometry)[0]
-      }
-      scene.requestRender()
+      const geometry = createGeometry({
+        type: state.context.type,
+        positions:
+          position != null
+            ? [...state.context.positions, position]
+            : state.context.positions,
+        ellipsoid: scene.globe.ellipsoid
+      })
+      setGeometry(geometry ?? null)
     },
-    [state, scene]
+    [state, scene, setGeometry]
   )
 
   useWindowEvent('keydown', event => {
@@ -148,8 +126,7 @@ export const SketchTool: FC<SketchToolProps> = ({
       pointerPosition: event.position,
       position
     })
-    positionsRef.current = undefined
-    hierarchyRef.current = undefined
+    setGeometry(null)
     extrudedHeightRef.current = 0
   })
 
@@ -209,11 +186,11 @@ export const SketchTool: FC<SketchToolProps> = ({
     } else if (state.matches('extruding')) {
       invariant(state.context.type != null)
       invariant(state.context.positions != null)
-      const geometry = createGeometry(
-        state.context.type,
-        state.context.positions,
-        scene.globe.ellipsoid
-      )
+      const geometry = createGeometry({
+        type: state.context.type,
+        positions: state.context.positions,
+        ellipsoid: scene.globe.ellipsoid
+      })
       if (geometry == null || geometry.type === 'LineString') {
         return
       }
@@ -225,6 +202,7 @@ export const SketchTool: FC<SketchToolProps> = ({
         })
       )
       send({ type: 'CREATE' })
+      setGeometry(null)
     }
   })
 
@@ -253,64 +231,15 @@ export const SketchTool: FC<SketchToolProps> = ({
     }
   )
 
-  const theme = useTheme()
-  const primaryColor = useMemo(
-    () => Color.fromCssColorString(theme.palette.primary.main),
-    [theme]
-  )
-
-  const entityOptions = useMemo(
-    (): EntityProps | undefined =>
-      !state.matches('idle')
-        ? {
-            polyline: {
-              positions: polylinePositionsProperty,
-              width: 1.5,
-              material: primaryColor,
-              classificationType: ClassificationType.TERRAIN,
-              clampToGround: true
-            },
-            polygon: {
-              hierarchy: polygonHierarchyProperty,
-              fill: true,
-              material: primaryColor.withAlpha(0.5),
-              classificationType: ClassificationType.TERRAIN
-            }
-          }
-        : undefined,
-    [state, polylinePositionsProperty, polygonHierarchyProperty, primaryColor]
-  )
-
-  const extrudedEntityOptions = useMemo(
-    (): EntityProps | undefined =>
-      state.matches('extruding')
-        ? {
-            polygon: {
-              hierarchy: polygonHierarchyProperty,
-              extrudedHeight: extrudedHeightProperty,
-              extrudedHeightReference: HeightReference.RELATIVE_TO_GROUND,
-              fill: true,
-              material: primaryColor,
-              shadows: disableShadow ? ShadowMode.DISABLED : ShadowMode.ENABLED
-            }
-          }
-        : undefined,
-    [
-      disableShadow,
-      state,
-      polygonHierarchyProperty,
-      extrudedHeightProperty,
-      primaryColor
-    ]
-  )
-
   if (state.matches('idle')) {
     return null
   }
   return (
-    <>
-      {entityOptions != null && <Entity {...entityOptions} />}
-      {extrudedEntityOptions != null && <Entity {...extrudedEntityOptions} />}
-    </>
+    <DynamicSketchObject
+      geometryAtom={geometryAtom}
+      {...(state.matches('extruding') && {
+        extrudedHeight: extrudedHeightProperty
+      })}
+    />
   )
 }

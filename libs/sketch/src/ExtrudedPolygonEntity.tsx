@@ -1,6 +1,8 @@
 import {
   CallbackProperty,
   ClassificationType,
+  HeightReference,
+  ShadowMode,
   type Color
 } from '@cesium/engine'
 import { useMemo, useRef, type FC } from 'react'
@@ -8,16 +10,21 @@ import { useMemo, useRef, type FC } from 'react'
 import { Entity, useCesium, type EntityProps } from '@takram/plateau-cesium'
 import { useConstant } from '@takram/plateau-react-helpers'
 
-export interface PolygonEntityProps
-  extends Required<Pick<NonNullable<EntityProps['polygon']>, 'hierarchy'>> {
+export interface ExtrudedPolygonEntityProps
+  extends Required<
+    Pick<NonNullable<EntityProps['polygon']>, 'hierarchy' | 'extrudedHeight'>
+  > {
   dynamic?: boolean
   color?: Color
+  disableShadow?: boolean
 }
 
-export const PolygonEntity: FC<PolygonEntityProps> = ({
+export const ExtrudedPolygonEntity: FC<ExtrudedPolygonEntityProps> = ({
   dynamic = false,
   hierarchy: hierarchyProp,
-  color
+  extrudedHeight,
+  color,
+  disableShadow = false
 }) => {
   const hierarchyRef = useRef(hierarchyProp)
   hierarchyRef.current = hierarchyProp
@@ -30,12 +37,15 @@ export const PolygonEntity: FC<PolygonEntityProps> = ({
     (): EntityProps => ({
       polygon: {
         hierarchy,
+        extrudedHeight,
+        extrudedHeightReference: HeightReference.RELATIVE_TO_GROUND,
         fill: true,
-        material: color?.withAlpha(0.5),
-        classificationType: ClassificationType.TERRAIN
+        material: color,
+        classificationType: ClassificationType.TERRAIN,
+        shadows: disableShadow ? ShadowMode.DISABLED : ShadowMode.ENABLED
       }
     }),
-    [color, hierarchy]
+    [extrudedHeight, color, disableShadow, hierarchy]
   )
 
   const scene = useCesium(({ scene }) => scene)
