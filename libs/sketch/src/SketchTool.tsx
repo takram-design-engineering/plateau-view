@@ -1,9 +1,4 @@
-import {
-  CallbackProperty,
-  Cartesian2,
-  Cartesian3,
-  ScreenSpaceEventType
-} from '@cesium/engine'
+import { Cartesian2, Cartesian3, ScreenSpaceEventType } from '@cesium/engine'
 import { feature } from '@turf/turf'
 import { atom, useAtom, useSetAtom } from 'jotai'
 import { nanoid } from 'nanoid'
@@ -15,7 +10,7 @@ import {
   useScreenSpaceEvent,
   useScreenSpaceEventHandler
 } from '@takram/plateau-cesium'
-import { useConstant, useWindowEvent } from '@takram/plateau-react-helpers'
+import { useWindowEvent } from '@takram/plateau-react-helpers'
 
 import { createGeometry, type GeometryOptions } from './createGeometry'
 import { DynamicSketchObject } from './DynamicSketchObject'
@@ -57,15 +52,39 @@ export const SketchTool: FC<SketchToolProps> = ({
   const [state, send] = useAtom(sketchMachineAtom)
 
   const pointerPositionRef = useRef<Cartesian2>()
-  const extrudedHeightRef = useRef(0)
-  const extrudedHeightProperty = useConstant(
-    () => new CallbackProperty(() => extrudedHeightRef.current, false)
-  )
   const geometryOptionsAtom = useMemo(
     () => atom<GeometryOptions | null>(null),
     []
   )
+  const extrudedHeightAtom = useMemo(() => atom(0), [])
   const setGeometryOptions = useSetAtom(geometryOptionsAtom)
+  const setExtrudedHeight = useSetAtom(extrudedHeightAtom)
+
+  const createFeature = useSetAtom(
+    useMemo(
+      () =>
+        atom(null, (get, set) => {
+          const geometryOptions = get(geometryOptionsAtom)
+          const extrudedHeight = get(extrudedHeightAtom)
+          if (geometryOptions == null) {
+            return null
+          }
+          const geometry = createGeometry(geometryOptions)
+          if (geometry == null || geometry.type === 'LineString') {
+            return null
+          }
+          return feature(geometry, {
+            id: nanoid(),
+            type: geometryOptions.type,
+            positions: geometryOptions.controlPoints.map(
+              ({ x, y, z }): [number, number, number] => [x, y, z]
+            ),
+            extrudedHeight
+          })
+        }),
+      [geometryOptionsAtom, extrudedHeightAtom]
+    )
+  )
 
   const scene = useCesium(({ scene }) => scene)
 
@@ -125,7 +144,7 @@ export const SketchTool: FC<SketchToolProps> = ({
       controlPoint
     })
     setGeometryOptions(null)
-    extrudedHeightRef.current = 0
+    setExtrudedHeight(0)
   })
 
   useScreenSpaceEvent(eventHandler, ScreenSpaceEventType.MOUSE_MOVE, event => {
@@ -152,8 +171,7 @@ export const SketchTool: FC<SketchToolProps> = ({
         event.endPosition
       )
       if (extrudedHeight != null) {
-        extrudedHeightRef.current = extrudedHeight
-        scene.requestRender()
+        setExtrudedHeight(extrudedHeight)
       }
     }
   })
@@ -188,28 +206,11 @@ export const SketchTool: FC<SketchToolProps> = ({
         controlPoint
       })
     } else if (state.matches('extruding')) {
-      invariant(state.context.type != null)
-      invariant(state.context.controlPoints != null)
-      const geometry = createGeometry({
-        type: state.context.type,
-        controlPoints: state.context.controlPoints,
-        ellipsoid: scene.globe.ellipsoid
-      })
-      if (geometry == null || geometry.type === 'LineString') {
+      const feature = createFeature()
+      if (feature == null) {
         return
       }
-      onCreate?.(
-        feature(geometry, {
-          id: nanoid(),
-          type: state.context.type,
-          positions: state.context.controlPoints.map(({ x, y, z }) => [
-            x,
-            y,
-            z
-          ]),
-          extrudedHeight: extrudedHeightRef.current
-        })
-      )
+      onCreate?.(feature)
       send({ type: 'CREATE' })
       setGeometryOptions(null)
     }
@@ -247,7 +248,7 @@ export const SketchTool: FC<SketchToolProps> = ({
     <DynamicSketchObject
       geometryOptionsAtom={geometryOptionsAtom}
       {...(state.matches('extruding') && {
-        extrudedHeight: extrudedHeightProperty
+        extrudedHeightAtom
       })}
     />
   )

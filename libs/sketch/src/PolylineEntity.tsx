@@ -1,6 +1,7 @@
 import {
   CallbackProperty,
   ClassificationType,
+  type Cartesian3,
   type Color
 } from '@cesium/engine'
 import { useMemo, useRef, type FC } from 'react'
@@ -8,9 +9,9 @@ import { useMemo, useRef, type FC } from 'react'
 import { Entity, useCesium, type EntityProps } from '@takram/plateau-cesium'
 import { useConstant } from '@takram/plateau-react-helpers'
 
-export interface PolylineEntityProps
-  extends Required<Pick<NonNullable<EntityProps['polyline']>, 'positions'>> {
+export interface PolylineEntityProps {
   dynamic?: boolean
+  positions: Cartesian3[]
   color?: Color
 }
 

@@ -13,17 +13,14 @@ import {
   type ScreenSpaceSelectionEntry
 } from '@takram/plateau-screen-space-selection'
 
-import {
-  ExtrudedPolygonEntity,
-  type ExtrudedPolygonEntityProps
-} from './ExtrudedPolygonEntity'
+import { ExtrudedPolygonEntity } from './ExtrudedPolygonEntity'
 import { SKETCH_OBJECT } from './types'
 
 export interface SketchObjectProps {
   id: string
   geometry: Polygon | MultiPolygon
   extrudedHeight: number
-  disableShadow?: ExtrudedPolygonEntityProps['disableShadow']
+  disableShadow?: boolean
   color?: Color
 }
 

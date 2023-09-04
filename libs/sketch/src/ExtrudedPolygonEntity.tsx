@@ -4,19 +4,19 @@ import {
   ColorMaterialProperty,
   HeightReference,
   ShadowMode,
-  type Color
+  type Color,
+  type PolygonHierarchy
 } from '@cesium/engine'
 import { useMemo, useRef, type FC } from 'react'
 
 import { Entity, useCesium, type EntityProps } from '@takram/plateau-cesium'
 import { useConstant } from '@takram/plateau-react-helpers'
 
-export interface ExtrudedPolygonEntityProps
-  extends Required<
-    Pick<NonNullable<EntityProps['polygon']>, 'hierarchy' | 'extrudedHeight'>
-  > {
+export interface ExtrudedPolygonEntityProps {
   dynamic?: boolean
   id?: string
+  hierarchy: PolygonHierarchy
+  extrudedHeight: number
   color?: Color
   disableShadow?: boolean
 }
@@ -25,7 +25,7 @@ export const ExtrudedPolygonEntity: FC<ExtrudedPolygonEntityProps> = ({
   dynamic = false,
   id,
   hierarchy: hierarchyProp,
-  extrudedHeight,
+  extrudedHeight: extrudedHeightProp,
   color,
   disableShadow = false
 }) => {
@@ -35,6 +35,13 @@ export const ExtrudedPolygonEntity: FC<ExtrudedPolygonEntityProps> = ({
     () => new CallbackProperty(() => hierarchyRef.current, false)
   )
   const hierarchy = dynamic ? hierarchyProperty : hierarchyProp
+
+  const extrudedHeightRef = useRef(extrudedHeightProp)
+  extrudedHeightRef.current = extrudedHeightProp
+  const extrudedHeightProperty = useConstant(
+    () => new CallbackProperty(() => extrudedHeightRef.current, false)
+  )
+  const extrudedHeight = dynamic ? extrudedHeightProperty : extrudedHeightProp
 
   // Non-constant callback property in color doesn't request render in every
   // frame; prevents it from flashing when the color changes instead.

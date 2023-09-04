@@ -1,16 +1,17 @@
 import {
   CallbackProperty,
   ClassificationType,
-  type Color
+  type Color,
+  type PolygonHierarchy
 } from '@cesium/engine'
 import { useMemo, useRef, type FC } from 'react'
 
 import { Entity, useCesium, type EntityProps } from '@takram/plateau-cesium'
 import { useConstant } from '@takram/plateau-react-helpers'
 
-export interface PolygonEntityProps
-  extends Required<Pick<NonNullable<EntityProps['polygon']>, 'hierarchy'>> {
+export interface PolygonEntityProps {
   dynamic?: boolean
+  hierarchy?: PolygonHierarchy
   color?: Color
 }
 
