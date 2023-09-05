@@ -117,7 +117,7 @@ export const NumberParameterItem = forwardRef<
           <StyledTextField
             inputRef={inputRef}
             size='small'
-            value={value}
+            value={value === MIXED ? '混在' : value}
             onChange={handleChange}
             onFocus={handleFocus}
             InputProps={{
