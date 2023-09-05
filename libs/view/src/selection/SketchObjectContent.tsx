@@ -1,16 +1,19 @@
 import { Divider, IconButton, List, Tooltip } from '@mui/material'
-import { atom, useAtomValue, useSetAtom } from 'jotai'
-import { uniq } from 'lodash'
+import { atom, useAtomValue, useSetAtom, type SetStateAction } from 'jotai'
+import { merge, uniq } from 'lodash'
 import { useCallback, useMemo, type FC } from 'react'
 
-import { parse } from '@takram/plateau-cesium-helpers'
+import { match, parse } from '@takram/plateau-cesium-helpers'
 import { layerSelectionAtom } from '@takram/plateau-layers'
 import { screenSpaceSelectionAtom } from '@takram/plateau-screen-space-selection'
 import { type SKETCH_OBJECT } from '@takram/plateau-sketch'
 import { isNotNullish } from '@takram/plateau-type-helpers'
 import {
   InspectorHeader,
+  InspectorItem,
   LayerIcon,
+  NumberParameterItem,
+  ParameterList,
   SketchIcon,
   TrashIcon
 } from '@takram/plateau-ui-components'
@@ -71,6 +74,47 @@ export const SketchObjectContent: FC<SketchObjectContentProps> = ({
     removeFeatures(featureIds)
   }, [values, removeFeatures])
 
+  const extrudedHeightAtoms = useAtomValue(
+    useMemo(
+      () =>
+        atom(get => {
+          return sketchLayers
+            .flatMap(sketchLayer => {
+              const featureAtoms = get(sketchLayer.featureAtomsAtom)
+              return values.map(value => {
+                const featureAtom = featureAtoms.find(featureAtom =>
+                  match(value, {
+                    type: 'Sketch',
+                    key: get(featureAtom).properties.id
+                  })
+                )
+                return featureAtom != null
+                  ? atom(
+                      get => get(featureAtom).properties.extrudedHeight ?? 0,
+                      (get, set, value: SetStateAction<number>) => {
+                        const feature = get(featureAtom)
+                        const prevValue = feature.properties.extrudedHeight ?? 0
+                        const nextValue =
+                          typeof value === 'function' ? value(prevValue) : value
+                        set(
+                          featureAtom,
+                          merge(feature, {
+                            properties: {
+                              extrudedHeight: nextValue
+                            }
+                          })
+                        )
+                      }
+                    )
+                  : undefined
+              })
+            })
+            .filter(isNotNullish)
+        }),
+      [values, sketchLayers]
+    )
+  )
+
   return (
     <List disablePadding>
       <InspectorHeader
@@ -96,6 +140,15 @@ export const SketchObjectContent: FC<SketchObjectContentProps> = ({
         onClose={handleClose}
       />
       <Divider />
+      <InspectorItem>
+        <ParameterList>
+          <NumberParameterItem
+            label='高さ'
+            atom={extrudedHeightAtoms}
+            unit='m'
+          />
+        </ParameterList>
+      </InspectorItem>
     </List>
   )
 }
