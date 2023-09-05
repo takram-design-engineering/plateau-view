@@ -1,51 +1,42 @@
-import { ClassificationType, Color } from '@cesium/engine'
-import { useTheme } from '@mui/material'
-import { useAtomValue } from 'jotai'
-import { useContext, type FC } from 'react'
+import { type Feature } from 'geojson'
+import { useAtomValue, type PrimitiveAtom } from 'jotai'
+import { type FC } from 'react'
 
-import { Entity } from '@takram/plateau-cesium'
+import { SketchObject } from './SketchObject'
+import { type SketchFeature } from './types'
 
-import { PolygonEntity } from './PolygonEntity'
-import { PolylineEntity } from './PolylineEntity'
-import { SketchContext } from './SketchProvider'
-import { SketchToolbar } from './SketchToolbar'
-import { Union } from './Union'
-import { useDrawingTool } from './useDrawingTool'
-import { useHandTool } from './useHandTool'
-import { useSendStateMachineEvents } from './useSendStateMachineEvents'
+type DrawableFeature = SketchFeature & {
+  properties: {
+    extrudedHeight: number
+  }
+}
 
-export const Sketch: FC = () => {
-  useSendStateMachineEvents()
-  useHandTool()
-  const { polygonHierarchyProperty } = useDrawingTool()
+function isDrawableFeature(feature: Feature): feature is DrawableFeature {
+  return (
+    (feature.geometry.type === 'Polygon' ||
+      feature.geometry.type === 'MultiPolygon') &&
+    typeof feature.properties?.extrudedHeight === 'number'
+  )
+}
 
-  const { featuresAtom } = useContext(SketchContext)
+export interface SketchProps {
+  featuresAtom: PrimitiveAtom<SketchFeature[]>
+}
+
+export const Sketch: FC<SketchProps> = ({ featuresAtom }) => {
   const features = useAtomValue(featuresAtom)
-
-  const theme = useTheme()
   return (
     <>
-      <SketchToolbar />
-      <Union
-        of={PolygonEntity}
-        features={features}
-        color={theme.palette.primary.main}
-      />
-      <Union
-        of={PolylineEntity}
-        features={features}
-        color={theme.palette.primary.main}
-        alpha={1}
-      />
-      {polygonHierarchyProperty != null && (
-        <Entity
-          polygon={{
-            hierarchy: polygonHierarchyProperty,
-            fill: true,
-            material: Color.fromCssColorString('#808080').withAlpha(0.5),
-            classificationType: ClassificationType.TERRAIN
-          }}
-        />
+      {features.map(
+        (feature, index) =>
+          isDrawableFeature(feature) && (
+            <SketchObject
+              key={index}
+              id={feature.properties.id}
+              geometry={feature.geometry}
+              extrudedHeight={feature.properties.extrudedHeight}
+            />
+          )
       )}
     </>
   )

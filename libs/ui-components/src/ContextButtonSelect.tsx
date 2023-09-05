@@ -1,5 +1,3 @@
-import AddOutlined from '@mui/icons-material/AddOutlined'
-import CheckOutlined from '@mui/icons-material/CheckOutlined'
 import {
   Button,
   buttonClasses,
@@ -23,6 +21,7 @@ import {
 } from 'react'
 import invariant from 'tiny-invariant'
 
+import { PrefixedAddSmallIcon, PrefixedCheckSmallIcon } from './icons'
 import { DropDownIcon } from './icons/DropDownIcon'
 
 const StyledButton = styled(Button)(({ theme }) => ({
@@ -56,7 +55,9 @@ const StyledDivider = styled(Divider)(({ theme }) => ({
   marginRight: -1
 }))
 
-const renderValue = (): null => null
+function renderValue(): null {
+  return null
+}
 
 export interface ContextButtonSelectProps
   extends Omit<SelectProps<string>, 'onClick'> {
@@ -108,9 +109,9 @@ export const ContextButtonSelect = forwardRef<
         color={selected ? 'primary' : 'inherit'}
         startIcon={
           selected ? (
-            <CheckOutlined color='primary' fontSize='small' />
+            <PrefixedCheckSmallIcon color='primary' fontSize='small' />
           ) : (
-            <AddOutlined color='action' fontSize='small' />
+            <PrefixedAddSmallIcon color='action' fontSize='small' />
           )
         }
         onClick={onClick}

@@ -13,5 +13,10 @@ export interface ScreenSpaceSelectionProps
 
 export const ScreenSpaceSelection: FC<ScreenSpaceSelectionProps> = props => {
   const tool = useAtomValue(toolAtom)
-  return <PlateauScreenSpaceSelection {...props} disabled={tool !== 'select'} />
+  return (
+    <PlateauScreenSpaceSelection
+      {...props}
+      disabled={tool?.type !== 'select'}
+    />
+  )
 }

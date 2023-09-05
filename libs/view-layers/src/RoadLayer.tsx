@@ -1,6 +1,5 @@
 import { useAtomValue, useSetAtom } from 'jotai'
 import { useEffect, type FC } from 'react'
-import { type SetOptional } from 'type-fest'
 
 import { useCesium } from '@takram/plateau-cesium'
 import {
@@ -11,34 +10,45 @@ import {
 import { type LayerProps } from '@takram/plateau-layers'
 
 import {
-  createDatasetLayerBase,
+  createDatasetLayerModel,
   type DatasetLayerModel,
   type DatasetLayerModelParams
-} from './createDatasetLayerBase'
+} from './createDatasetLayerModel'
+import {
+  createMVTLayerState,
+  type MVTLayerState,
+  type MVTLayerStateParams
+} from './createMVTLayerState'
 import { ROAD_LAYER } from './layerTypes'
 import { MVTLayerContent } from './MVTLayerContent'
+import { type ConfigurableLayerModel } from './types'
 import { useDatasetDatum } from './useDatasetDatum'
 import { useDatasetLayerTitle } from './useDatasetLayerTitle'
 
-export interface RoadLayerModelParams extends DatasetLayerModelParams {}
+export interface RoadLayerModelParams
+  extends DatasetLayerModelParams,
+    MVTLayerStateParams {}
 
-export interface RoadLayerModel extends DatasetLayerModel {}
+export interface RoadLayerModel extends DatasetLayerModel, MVTLayerState {}
 
 export function createRoadLayer(
   params: RoadLayerModelParams
-): SetOptional<RoadLayerModel, 'id'> {
+): ConfigurableLayerModel<RoadLayerModel> {
   return {
-    ...createDatasetLayerBase(params),
+    ...createDatasetLayerModel(params),
+    ...createMVTLayerState(params),
     type: ROAD_LAYER
   }
 }
 
 export const RoadLayer: FC<LayerProps<typeof ROAD_LAYER>> = ({
+  handleRef,
   titleAtom,
   hiddenAtom,
   boundingSphereAtom,
   municipalityCode,
-  datumIdAtom
+  datumIdAtom,
+  opacityAtom
 }) => {
   const query = useMunicipalityDatasetsQuery({
     variables: {
@@ -77,9 +87,11 @@ export const RoadLayer: FC<LayerProps<typeof ROAD_LAYER>> = ({
   if (datum.format === PlateauDatasetFormat.Mvt) {
     return (
       <MVTLayerContent
+        handleRef={handleRef}
         url={datum.url}
         styles={styles}
         boundingSphereAtom={boundingSphereAtom}
+        opacityAtom={opacityAtom}
       />
     )
   }

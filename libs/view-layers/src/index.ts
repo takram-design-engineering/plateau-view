@@ -2,12 +2,12 @@ export * from './createViewLayer'
 export type {
   DatasetLayerModelParams,
   DatasetLayerModel
-} from './createDatasetLayerBase'
-export type { PlateauTilesetProperty } from './createPlateauTilesetLayerBase'
+} from './createDatasetLayerModel'
+export type { PlateauTilesetProperty } from './createPlateauTilesetLayerState'
 export type {
   ViewLayerModel,
   ViewLayerModelParams
-} from './createViewLayerBase'
+} from './createViewLayerModel'
 export * from './layerComponents'
 export * from './layerTypeIcons'
 export * from './layerTypeNames'

@@ -7,7 +7,7 @@ export const MuiListSubheader: Components<Theme>['MuiListSubheader'] = {
   },
   styleOverrides: {
     root: ({ theme }) => ({
-      ...theme.typography.subtitle2,
+      ...theme.typography.subtitle1,
       position: 'relative',
       display: 'flex',
       flexDirection: 'row',

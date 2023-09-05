@@ -1,14 +1,17 @@
 import { type BoundingSphere } from '@cesium/engine'
 import { type Atom, type PrimitiveAtom } from 'jotai'
+import { type SetOptional } from 'type-fest'
 
 import {
   type QualitativeColorSet,
   type QuantitativeColorMap
 } from '@takram/plateau-datasets'
+import { type LayerModelBase } from '@takram/plateau-layers'
 import { type LayerListItemProps } from '@takram/plateau-ui-components'
 
 import { type BridgeLayerModel } from './BridgeLayer'
 import { type BuildingLayerModel } from './BuildingLayer'
+import { type HeatmapLayerModel } from './HeatmapLayer'
 import { type LandSlideRiskLayerModel } from './LandSlideRiskLayer'
 import { type LandUseLayerModel } from './LandUseLayer'
 import {
@@ -18,6 +21,7 @@ import {
   type CITY_FURNITURE_LAYER,
   type EMERGENCY_ROUTE_LAYER,
   type GENERIC_CITY_OBJECT_LAYER,
+  type HEATMAP_LAYER,
   type HIGH_TIDE_RISK_LAYER,
   type INLAND_FLOODING_RISK_LAYER,
   type LAND_SLIDE_RISK_LAYER,
@@ -29,6 +33,7 @@ import {
   type RIVER_FLOODING_RISK_LAYER,
   type ROAD_LAYER,
   type SHELTER_LAYER,
+  type SKETCH_LAYER,
   type STATION_LAYER,
   type TSUNAMI_RISK_LAYER,
   type URBAN_PLANNING_LAYER,
@@ -38,7 +43,18 @@ import {
 import { type PedestrianLayerModel } from './PedestrianLayer'
 import { type RiverFloodingRiskLayerModel } from './RiverFloodingRiskLayer'
 import { type RoadLayerModel } from './RoadLayer'
+import { type SketchLayerModel } from './SketchLayer'
 import { type UrbanPlanningLayerModel } from './UrbanPlanningLayer'
+
+export type ConfigurableLayerModel<T extends LayerModelBase> = SetOptional<
+  T,
+  'id'
+>
+
+export type ConfigurableLayerModelBase<T extends LayerModelBase> = Omit<
+  ConfigurableLayerModel<T>,
+  'type'
+>
 
 export type LayerTitle = LayerListItemProps['title']
 
@@ -54,7 +70,10 @@ declare module '@takram/plateau-layers' {
   }
 
   interface LayerModelOverrides {
+    [HEATMAP_LAYER]: HeatmapLayerModel
     [PEDESTRIAN_LAYER]: PedestrianLayerModel
+    [SKETCH_LAYER]: SketchLayerModel
+
     // Dataset layers
     [BORDER_LAYER]: never // BorderLayerModel
     [BRIDGE_LAYER]: BridgeLayerModel

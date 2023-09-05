@@ -7,28 +7,25 @@ import {
   type PrimitiveAtom,
   type SetStateAction
 } from 'jotai'
-import { useCallback, useEffect, useMemo, type FC } from 'react'
+import { useCallback, useEffect, type FC } from 'react'
 import invariant from 'tiny-invariant'
-import { type SetOptional } from 'type-fest'
 
 import { useCesium } from '@takram/plateau-cesium'
-import { match } from '@takram/plateau-cesium-helpers'
 import { useAddress } from '@takram/plateau-geocoder'
 import { type LayerProps } from '@takram/plateau-layers'
 import {
   Pedestrian,
-  PEDESTRIAN_OBJECT,
   type HeadingPitch,
   type Location
 } from '@takram/plateau-pedestrian'
-import { screenSpaceSelectionAtom } from '@takram/plateau-screen-space-selection'
 
 import {
-  createViewLayerBase,
+  createViewLayerModel,
   type ViewLayerModel,
   type ViewLayerModelParams
-} from './createViewLayerBase'
+} from './createViewLayerModel'
 import { PEDESTRIAN_LAYER } from './layerTypes'
+import { type ConfigurableLayerModel } from './types'
 
 let nextLayerIndex = 1
 
@@ -49,7 +46,7 @@ export interface PedestrianLayerModel extends ViewLayerModel {
 
 export function createPedestrianLayer(
   params: PedestrianLayerModelParams
-): SetOptional<PedestrianLayerModel, 'id'> {
+): ConfigurableLayerModel<PedestrianLayerModel> {
   const locationPrimitiveAtom = atom<Location>({
     longitude: params.location.longitude,
     latitude: params.location.latitude,
@@ -88,7 +85,7 @@ export function createPedestrianLayer(
   )
 
   return {
-    ...createViewLayerBase({
+    ...createViewLayerModel({
       ...params,
       // TODO: Avoid side-effect
       title: `歩行者視点${nextLayerIndex++}`
@@ -123,17 +120,6 @@ export const PedestrianLayer: FC<LayerProps<typeof PEDESTRIAN_LAYER>> = ({
   const headingPitch = useAtomValue(headingPitchAtom)
   const zoom = useAtomValue(zoomAtom)
   const synchronized = useAtomValue(synchronizedAtom)
-
-  const selection = useAtomValue(screenSpaceSelectionAtom)
-  const objectSelected = useMemo(
-    () =>
-      selection.length > 0 &&
-      selection.every(
-        ({ type, value }) =>
-          type === PEDESTRIAN_OBJECT && match(value, { key: id })
-      ),
-    [id, selection]
-  )
 
   const handleChange = useCallback(
     (location: Location) => {
@@ -192,7 +178,6 @@ export const PedestrianLayer: FC<LayerProps<typeof PEDESTRIAN_LAYER>> = ({
   return (
     <Pedestrian
       id={id}
-      selected={selected === true || objectSelected}
       location={location}
       headingPitch={headingPitch ?? undefined}
       zoom={zoom ?? undefined}

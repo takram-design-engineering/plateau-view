@@ -18,6 +18,7 @@ import { Scrollable } from './Scrollable'
 const Root = styled(List)({
   position: 'relative',
   padding: 0,
+  height: '100%',
   maxHeight: 'calc(100% - 50px)'
 }) as unknown as typeof List // For generics
 
@@ -38,7 +39,7 @@ const Footer = styled(ListItemButton)(({ theme }) => ({
 })) as unknown as typeof ListItem // For generics
 
 const StyledScrollable = styled(Scrollable)(({ theme }) => ({
-  maxHeight: `calc(100% - ${theme.spacing(4)} - 1px)`
+  maxHeight: `calc(100% - ${theme.spacing(4)})`
 }))
 
 export interface LayerListProps extends ListProps<'div'> {

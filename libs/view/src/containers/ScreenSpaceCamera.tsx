@@ -14,7 +14,7 @@ export interface ScreenSpaceCameraProps
 
 export const ScreenSpaceCamera: FC<ScreenSpaceCameraProps> = props => {
   const tool = useAtomValue(toolAtom)
-  const isHand = tool === 'hand'
+  const isHand = tool?.type === 'hand'
   const useKeyboard = useAtomValue(enableKeyboardCameraControlAtom)
   return (
     <CesiumScreenSpaceCamera
