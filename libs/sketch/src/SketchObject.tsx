@@ -1,7 +1,8 @@
 import { Color, Entity } from '@cesium/engine'
 import { useTheme } from '@mui/material'
 import { type MultiPolygon, type Polygon } from 'geojson'
-import { useMemo, useState, type FC } from 'react'
+import { atom, useAtomValue } from 'jotai'
+import { useMemo, type FC } from 'react'
 
 import {
   compose,
@@ -9,6 +10,7 @@ import {
   match
 } from '@takram/plateau-cesium-helpers'
 import {
+  screenSpaceSelectionAtom,
   useScreenSpaceSelectionResponder,
   type ScreenSpaceSelectionEntry
 } from '@takram/plateau-screen-space-selection'
@@ -31,8 +33,6 @@ export const SketchObject: FC<SketchObjectProps> = ({
   disableShadow,
   color
 }) => {
-  const [highlighted, setHighlighted] = useState(false)
-
   useScreenSpaceSelectionResponder({
     type: SKETCH_OBJECT,
     convertToSelection: object => {
@@ -52,15 +52,24 @@ export const SketchObject: FC<SketchObjectProps> = ({
         value.type === SKETCH_OBJECT &&
         match(value.value, { type: 'Sketch', key: id })
       )
-    },
-    onSelect: () => {
-      setHighlighted(true)
-    },
-    onDeselect: () => {
-      setHighlighted(false)
     }
+    // TODO:
     // computeBoundingSphere: (value, result = new BoundingSphere()) => {}
   })
+
+  const selected = useAtomValue(
+    useMemo(
+      () =>
+        atom(get =>
+          get(screenSpaceSelectionAtom).some(
+            ({ type, value }) =>
+              type === SKETCH_OBJECT &&
+              match(value, { type: 'Sketch', key: id })
+          )
+        ),
+      [id]
+    )
+  )
 
   const hierarchyArray = useMemo(
     () => convertPolygonToHierarchyArray(geometry),
@@ -80,7 +89,7 @@ export const SketchObject: FC<SketchObjectProps> = ({
       hierarchy={hierarchy}
       extrudedHeight={extrudedHeight}
       disableShadow={disableShadow}
-      color={highlighted ? primaryColor : color}
+      color={selected ? primaryColor : color}
     />
   ))
 }
