@@ -54,6 +54,12 @@ export const ScreenSpaceSelection: FC<ScreenSpaceSelectionProps> = ({
         return
       }
       let objects: object[] = []
+
+      // Ignore ground primitives to pick objects below them.
+      // TODO: Support ground primitives.
+      const showGroundPrimitives = scene.groundPrimitives.show
+      scene.groundPrimitives.show = false
+
       switch (event.type) {
         case 'point': {
           const object = scene.pick(event.position)
@@ -72,6 +78,7 @@ export const ScreenSpaceSelection: FC<ScreenSpaceSelectionProps> = ({
           break
         }
       }
+      scene.groundPrimitives.show = showGroundPrimitives
       ;({ replace, add, remove })[event.action](objects)
     })
   }, [scene, handler, replace, add, remove])

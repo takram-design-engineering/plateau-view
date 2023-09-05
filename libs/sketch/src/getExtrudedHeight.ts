@@ -57,7 +57,7 @@ export function getExtrudedHeight(
       scene.globe.ellipsoid,
       cartographicScratch
     ).height
-    return toHeight - fromHeight
+    return Math.max(0, toHeight - fromHeight)
   } catch (error) {
     console.error(error)
   }

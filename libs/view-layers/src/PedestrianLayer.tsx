@@ -7,20 +7,17 @@ import {
   type PrimitiveAtom,
   type SetStateAction
 } from 'jotai'
-import { useCallback, useEffect, useMemo, type FC } from 'react'
+import { useCallback, useEffect, type FC } from 'react'
 import invariant from 'tiny-invariant'
 
 import { useCesium } from '@takram/plateau-cesium'
-import { match } from '@takram/plateau-cesium-helpers'
 import { useAddress } from '@takram/plateau-geocoder'
 import { type LayerProps } from '@takram/plateau-layers'
 import {
   Pedestrian,
-  PEDESTRIAN_OBJECT,
   type HeadingPitch,
   type Location
 } from '@takram/plateau-pedestrian'
-import { screenSpaceSelectionAtom } from '@takram/plateau-screen-space-selection'
 
 import {
   createViewLayerModel,
@@ -124,17 +121,6 @@ export const PedestrianLayer: FC<LayerProps<typeof PEDESTRIAN_LAYER>> = ({
   const zoom = useAtomValue(zoomAtom)
   const synchronized = useAtomValue(synchronizedAtom)
 
-  const selection = useAtomValue(screenSpaceSelectionAtom)
-  const objectSelected = useMemo(
-    () =>
-      selection.length > 0 &&
-      selection.every(
-        ({ type, value }) =>
-          type === PEDESTRIAN_OBJECT && match(value, { key: id })
-      ),
-    [id, selection]
-  )
-
   const handleChange = useCallback(
     (location: Location) => {
       setPano(null)
@@ -192,7 +178,6 @@ export const PedestrianLayer: FC<LayerProps<typeof PEDESTRIAN_LAYER>> = ({
   return (
     <Pedestrian
       id={id}
-      selected={selected === true || objectSelected}
       location={location}
       headingPitch={headingPitch ?? undefined}
       zoom={zoom ?? undefined}
