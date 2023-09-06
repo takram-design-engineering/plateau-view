@@ -12,6 +12,7 @@ import { AppFrame } from '@takram/plateau-ui-components'
 import { layerComponents } from '@takram/plateau-view-layers'
 
 import { Areas } from './containers/Areas'
+import { AutoRotateCamera } from './containers/AutoRotateCamera'
 import { Canvas } from './containers/Canvas'
 import { Environments } from './containers/Environments'
 import { FileDrop } from './containers/FileDrop'
@@ -75,6 +76,7 @@ export const PlateauView: FC<PlateauViewProps> = () => {
         <SketchTool />
         <SelectionCoordinator />
         <SelectionBoundingSphere />
+        <AutoRotateCamera />
       </Canvas>
       <KeyBindings />
       <ScreenSpaceSelection />
