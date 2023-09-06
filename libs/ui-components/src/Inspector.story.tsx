@@ -15,6 +15,7 @@ import { Inspector } from './Inspector'
 import { InspectorActions } from './InspectorActions'
 import { InspectorHeader } from './InspectorHeader'
 import { InspectorItem } from './InspectorItem'
+import { NumberParameterItem } from './NumberParameterItem'
 import { ParameterList } from './ParameterList'
 import { SegmentParameterItem } from './SegmentParameterItem'
 import { SelectParameterItem } from './SelectParameterItem'
@@ -91,6 +92,12 @@ export const Default: Story = {
               label='Slider'
               min={0}
               max={10}
+              unit='unit'
+              atom={sliderAtom1}
+            />
+            <NumberParameterItem
+              label='Number'
+              unit='unit'
               atom={sliderAtom1}
             />
             <GroupedParameterItem label='Group'>

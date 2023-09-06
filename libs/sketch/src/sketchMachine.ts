@@ -13,23 +13,23 @@ export type EventObject =
       | { type: 'EXTRUDE' }
     ) & {
       pointerPosition: Cartesian2
-      position: Cartesian3
+      controlPoint: Cartesian3
     })
   | { type: 'CREATE' }
   | { type: 'CANCEL' }
 
 interface Context {
   lastPointerPosition?: Cartesian2
-  lastPosition?: Cartesian3
+  lastControlPoint?: Cartesian3
   type?: SketchGeometryType
-  positions?: Cartesian3[]
+  controlPoints?: Cartesian3[]
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export function createSketchMachine() {
   return createMachine(
     {
-      /** @xstate-layout N4IgpgJg5mDOIC5SwNZgC4GMAWA6AlhADZgDEAwgJIBK5AMgKIDaADALqKgAOA9rPunw8AdpxAAPRAFoALAE4ATLgCMAdhYyFAVhYsAbCzkBmPTIA0IAJ6JVuI1tXKAHPYUutR5UaMBfHxdQMHAJiMmoGcgAVAEEAOQBxRlYOJBBefkERMUkEKQUZLVx8-TkZAzk5FgVqi2sEW3tHdzd7TxM-ALQsPEISUgAFAHk6AE14wdjksXSBIVFUnPsipz1qvVVVHS1Ko1qbOwdnV3c2vQ6QQO7cCAAnAEMAd3xhKAo48gY6KdSZzPnQRYKWymBx6PTKORg5T6PYIeyFLw6GQyIxOZQ6OSqc6XYK3R7PV7kd6fJjKFLcPizLILRBGFEqVSeDxOHTKNawqSqOS4TEsDamdZORwyLH+C5dXH3J4vUgMAAakWoAFUACLMdjTSl-bK0pQKIzGLRqTYsbZVWFglhFLTbFwyJzyJxA7ESvB46VQXCYfA3TAka74O4AWwwYBupFi8si3wpGTmOtyrNwqiF4O0+kMJnMVkQIqtpi8dNUMmNKLOYpxbqlBNwNzAmHQdxe-sgMAjUZjaS18ZpuXyhWKqgUcicLjkWicsKMQ9wVSNaNNClNJi0LqCVfxL1r9cbzbAuCeEHQ2HbCs7vx7AOk-aKMj5w9HBonFoM1ttdIdI+dFdd12rW94IhLCgERcAANzDdAwHEU9ow1H5u2pK84T1A17GNLZKgUKcZznZxoS0JcPD0Vcf3XXBoPQG4AFcIAJChwmiSJ1XJLs4yQiRpCMPlcDtSpVgdYtSlhFYjB5Uc2WqG1ilIzpyMomi6JlIlYg+L54NjKl-k4hA3CUPRR3HEUHCkrQXytbR33tR0FHLMVhB4CA4DEStNXY7Sck5ExeIqFZh3WVQDF2HNcmUdZcDzFNpz5SoS3LOSrl6MA3K0hMpAMpwfJHVZIX5FhgrqKQtD0XAjVMJ8SyHU1RQSyVNygFLtV7Iri2TOR0WcTZyhMWEvD1bRViMIEChZWTxXI90a29X0SEay8dKK2y2o6oViszPRYQUCFk0s4xbO2RRNDXK5Jq3aa-X3Ojg1DG45o4zyRUyrkVq69bszqbjbFMvQhocA1jGOuqPW3BsmygWaEPctLhzEwcHzHZ8Qq27khxtPaSIqfIFEBjdgbrUG9wo6Bksh1LmqXWwHGRYwURTAySKnHjvt+xkKl8MiTv-T18d3cH90PY87o869DF43RnGXPR2uNWF7Uy+RAvysEdHBJwcb-ercEA4COIve7pHRZMDFMJ18lKQxJyR7bUe2IaMcO7GOaBmttZA4RwMg6ChYTUwIohfLFBNM1sJCz6iksn7tFZgGndxmtsHwWB0B4G46k0prkLcTKvHyqrHH0NR3sQDxCnylEXCXFZiPVhTaIJb3ms8ZRSrCn6J22SzAthOmVCFDYnQNAzRT8IA */
+      /** @xstate-layout N4IgpgJg5mDOIC5SwNZgC4GMAWA6AlhADZgDEAwgJIBK5AMgKIDaADALqKgAOA9rPunw8AdpxAAPRAFoALAE4ATLgCMAdhYyFAVhYsAbCzkBmPQBoQAT0SrcRrauUAOOwudajyhXoC+386gwcAmIyagZyABUAQQA5AHFGVg4kEF5+QRExSQQpBWUZWxYjVRldDQUNR0dzKwQbfVctRxYtTyMFDrlffzQsPEISUgAFAHk6AE04kZiksTSBIVEU7OVdXGc5LUUZUpZHDuUa61t7Jxc3DwUuvxAAvtwIACcAQwB3fGEoCljyBjpZlLzDJLUDZYrKXAlGTuOTqUpGFiqIxHBAeOTrTTuVRaBQlbSI7q3XpBJ5vD5fcg-P5MZTJbh8BaZZaIdrouT5YpGdktIwmGQoqSqNmrUqaXFndqEu4kl7vT64TD4R6YEi4ABuYEe6DA4lIMQYAA0IgD6elFllpDoWLgtnoKkZHOpHQp+ZZEDs9Lgxe0WGpsVpSqopcS8KS5VBcI8wJh0M9PqqNVqdXrDcb2HMGcCLTlXNbijtEaVcXJHa7ajojF6FB5RR5VA4fDdpaHZeTI9HY-GwOrNdrdfqjTS6alM+bmTmZJW9hy5IG9DInNU3aj2bgDA7fa19Mo9EYZMHAi2yfLeEQLFARD2k-3UyaR2amaDECXcCWF-lHGcWHlkcuuRD12aZQtz0Hd9ybEMHlbE8eDPC9hCvPtSFTagAFUABFmHTQFR0fCRn0cV9HHfPRFFcVQXTMZcmnRfZVEcedHC0LQ9BY64ekPXAdXQR4AFcIHJCgwiiCIsOHIExyfHJ2k9TZYXo7E0TUFFVF3G0dE2Bo5HZPQgwgzjuL4gTPm+GJfn+bDTUZEF8IQSclF9TdPA05QuRRPQDFwbQtmcGRiJLLxfBuYQeAgOAxGbDMHxs7JBRMdZtIYq5dNUooBR3GwFw0DR3CufZlAPe4BjAKLrOzKQ9CqBKSztOQUvXAUWJtMCuQDNQKnsQqZWPKBSqzccpBYrQ10RRQmKcZQ1DkFFXIhMi1GKKpeXncCOPuMM20VZUSD6yTbMGtQRqFRoJqmlE8nRUivGIvJdwXOwuqPcMFSVFVu0TPtdrw2KZFIo6xtaT8zr-REVEUK7dw8Jp9EeqCevbGM4ygHacOi8qrghadJ1nRF52Uablwuqs8n2DrgKh2GNvlKNEa7RCdS+mLpCcGxXNA6sP1nUCl1qBFZIOJo-UcEtgMp6CI1Pc88Ik77EB0Ij3z8r8f3O-G10UBwAraJi9LW7rnsl+D6eyKz+qkzw2Qohd4UhxEUQRVmNdcatmmYowxfh7B8FgdAeEeWpTb27JJ0rAx6JdZjDDDlFfsIj8qlhTwrmYxs9bwQz+PJRnysuV8HHkLkHQ8vYy0QSrK2rbzGLkLSgu8IA */
       id: 'sketch',
       initial: 'idle',
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
@@ -54,35 +54,35 @@ export function createSketchMachine() {
         drawing: {
           states: {
             circle: {
-              initial: 'diameter',
+              initial: 'vertex',
               states: {
-                diameter: {
+                vertex: {
                   on: {
                     NEXT: {
                       target: '#sketch.extruding',
-                      actions: ['updatePosition']
+                      actions: ['pushPosition']
                     }
                   }
                 }
               }
             },
             rectangle: {
-              initial: 'edge',
+              initial: 'vertex',
               states: {
-                edge: {
+                vertex: {
                   on: {
-                    NEXT: {
-                      target: 'width',
-                      actions: ['updatePosition']
-                    }
-                  }
-                },
-                width: {
-                  on: {
-                    NEXT: {
-                      target: '#sketch.extruding',
-                      actions: ['updatePosition']
-                    }
+                    NEXT: [
+                      {
+                        target: '#sketch.extruding',
+                        cond: 'willRectangleComplete',
+                        actions: ['pushPosition']
+                      },
+                      {
+                        target: 'vertex',
+                        internal: true,
+                        actions: ['pushPosition']
+                      }
+                    ]
                   }
                 }
               }
@@ -95,7 +95,11 @@ export function createSketchMachine() {
                     NEXT: {
                       target: 'vertex',
                       internal: true,
-                      actions: ['updatePosition']
+                      actions: ['pushPosition']
+                    },
+                    EXTRUDE: {
+                      target: '#sketch.extruding',
+                      actions: ['pushPosition']
                     }
                   }
                 }
@@ -116,11 +120,7 @@ export function createSketchMachine() {
                 target: 'idle',
                 actions: ['clearDrawing']
               }
-            ],
-            EXTRUDE: {
-              target: 'extruding',
-              actions: ['updatePosition']
-            }
+            ]
           }
         },
         extruding: {
@@ -147,46 +147,53 @@ export function createSketchMachine() {
     {
       guards: {
         canPopPosition: (context, event) => {
-          return context.positions != null && context.positions.length > 1
+          return (
+            context.controlPoints != null && context.controlPoints.length > 1
+          )
+        },
+        willRectangleComplete: (context, event) => {
+          return (
+            context.controlPoints != null && context.controlPoints.length === 2
+          )
         }
       },
       actions: {
         createCircle: (context, event) => {
           context.lastPointerPosition = event.pointerPosition.clone()
-          const position = event.position.clone()
-          context.lastPosition = position
+          const controlPoint = event.controlPoint.clone()
+          context.lastControlPoint = controlPoint
           context.type = 'circle'
-          context.positions = [position]
+          context.controlPoints = [controlPoint]
         },
         createRectangle: (context, event) => {
           context.lastPointerPosition = event.pointerPosition.clone()
-          const position = event.position.clone()
-          context.lastPosition = position
+          const controlPoint = event.controlPoint.clone()
+          context.lastControlPoint = controlPoint
           context.type = 'rectangle'
-          context.positions = [position]
+          context.controlPoints = [controlPoint]
         },
         createPolygon: (context, event) => {
           context.lastPointerPosition = event.pointerPosition.clone()
-          const position = event.position.clone()
-          context.lastPosition = position
+          const controlPoint = event.controlPoint.clone()
+          context.lastControlPoint = controlPoint
           context.type = 'polygon'
-          context.positions = [position]
+          context.controlPoints = [controlPoint]
+        },
+        pushPosition: (context, event) => {
+          context.lastPointerPosition = event.pointerPosition.clone()
+          const controlPoint = event.controlPoint.clone()
+          context.lastControlPoint = controlPoint
+          context.controlPoints?.push(controlPoint)
         },
         popPosition: (context, event) => {
-          invariant(context.positions != null)
-          invariant(context.positions.length > 1)
-          context.positions.pop()
+          invariant(context.controlPoints != null)
+          invariant(context.controlPoints.length > 1)
+          context.controlPoints.pop()
         },
         clearDrawing: (context, event) => {
-          delete context.lastPosition
+          delete context.lastControlPoint
           delete context.type
-          delete context.positions
-        },
-        updatePosition: (context, event) => {
-          context.lastPointerPosition = event.pointerPosition.clone()
-          const position = event.position.clone()
-          context.lastPosition = position
-          context.positions?.push(position)
+          delete context.controlPoints
         }
       }
     }

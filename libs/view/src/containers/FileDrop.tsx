@@ -17,7 +17,6 @@ import { nanoid } from 'nanoid'
 import { useEffect, useState, type FC } from 'react'
 
 import { useAddLayer } from '@takram/plateau-layers'
-import { type SketchFeatureProperties } from '@takram/plateau-sketch'
 import { createViewLayer, SKETCH_LAYER } from '@takram/plateau-view-layers'
 
 const Root = styled(motion.div)({
@@ -104,19 +103,22 @@ export const FileDrop: FC = () => {
           geojsonType(data, 'FeatureCollection', 'FileDrop')
           const featureCollection = data as FeatureCollection
           const id = nanoid()
+          const features = featureCollection.features.filter(
+            (feature): feature is Feature<Polygon | MultiPolygon> =>
+              feature.geometry.type === 'Polygon' ||
+              feature.geometry.type === 'MultiPolygon'
+          )
           const layer = createViewLayer({
             id,
             type: SKETCH_LAYER,
-            features: featureCollection.features.filter(
-              (
-                feature
-              ): feature is Feature<
-                Polygon | MultiPolygon,
-                SketchFeatureProperties
-              > =>
-                feature.geometry.type === 'Polygon' ||
-                feature.geometry.type === 'MultiPolygon'
-            )
+            features: features.map(feature => ({
+              ...feature,
+              properties: {
+                ...(feature.properties ?? {}),
+                // TODO: This always overrides IDs to avoid conflicts.
+                id: nanoid()
+              }
+            }))
           })
           addLayer(layer)
         })

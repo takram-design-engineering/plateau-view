@@ -1,46 +1,31 @@
-import {
-  CallbackProperty,
-  Cartesian2,
-  Cartesian3,
-  ClassificationType,
-  Color,
-  HeightReference,
-  ScreenSpaceEventType,
-  ShadowMode,
-  type PolygonHierarchy
-} from '@cesium/engine'
-import { useTheme } from '@mui/material'
+import { Cartesian2, Cartesian3, ScreenSpaceEventType } from '@cesium/engine'
 import { feature } from '@turf/turf'
-import { useAtom } from 'jotai'
+import { atom, useAtom, useSetAtom } from 'jotai'
+import { nanoid } from 'nanoid'
 import { useCallback, useMemo, useRef, type FC } from 'react'
 import invariant from 'tiny-invariant'
 
 import {
-  Entity,
   useCesium,
   useScreenSpaceEvent,
-  useScreenSpaceEventHandler,
-  type EntityProps
+  useScreenSpaceEventHandler
 } from '@takram/plateau-cesium'
-import {
-  convertGeometryToPositionsArray,
-  convertPolygonToHierarchyArray
-} from '@takram/plateau-cesium-helpers'
-import { useConstant, useWindowEvent } from '@takram/plateau-react-helpers'
+import { useWindowEvent } from '@takram/plateau-react-helpers'
 
-import { createGeometry } from './createGeometry'
+import { createGeometry, type GeometryOptions } from './createGeometry'
+import { DynamicSketchObject } from './DynamicSketchObject'
 import { getExtrudedHeight } from './getExtrudedHeight'
 import { pickGround } from './pickGround'
 import { sketchMachineAtom } from './states'
 import { type SketchFeature, type SketchGeometryType } from './types'
 
 function hasDuplicate(
-  position: Cartesian3,
-  positions?: readonly Cartesian3[]
+  controlPoint: Cartesian3,
+  controlPoints?: readonly Cartesian3[]
 ): boolean {
   return (
-    positions?.some(another =>
-      position.equalsEpsilon(
+    controlPoints?.some(another =>
+      controlPoint.equalsEpsilon(
         another,
         0,
         1e-7 // Epsilon in radians
@@ -67,48 +52,59 @@ export const SketchTool: FC<SketchToolProps> = ({
   const [state, send] = useAtom(sketchMachineAtom)
 
   const pointerPositionRef = useRef<Cartesian2>()
-  const positionsRef = useRef<Cartesian3[]>()
-  const polylinePositionsProperty = useConstant(
-    () => new CallbackProperty(() => positionsRef.current, false)
+  const geometryOptionsAtom = useMemo(
+    () => atom<GeometryOptions | null>(null),
+    []
   )
-  const hierarchyRef = useRef<PolygonHierarchy>()
-  const polygonHierarchyProperty = useConstant(
-    () => new CallbackProperty(() => hierarchyRef.current, false)
-  )
-  const extrudedHeightRef = useRef<number>(0)
-  const extrudedHeightProperty = useConstant(
-    () => new CallbackProperty(() => extrudedHeightRef.current, false)
+  const extrudedHeightAtom = useMemo(() => atom(0), [])
+  const setGeometryOptions = useSetAtom(geometryOptionsAtom)
+  const setExtrudedHeight = useSetAtom(extrudedHeightAtom)
+
+  const createFeature = useSetAtom(
+    useMemo(
+      () =>
+        atom(null, (get, set) => {
+          const geometryOptions = get(geometryOptionsAtom)
+          const extrudedHeight = get(extrudedHeightAtom)
+          if (geometryOptions == null) {
+            return null
+          }
+          const geometry = createGeometry(geometryOptions)
+          if (geometry == null || geometry.type === 'LineString') {
+            return null
+          }
+          return feature(geometry, {
+            id: nanoid(),
+            type: geometryOptions.type,
+            positions: geometryOptions.controlPoints.map(
+              ({ x, y, z }): [number, number, number] => [x, y, z]
+            ),
+            extrudedHeight
+          })
+        }),
+      [geometryOptionsAtom, extrudedHeightAtom]
+    )
   )
 
   const scene = useCesium(({ scene }) => scene)
 
-  const updateGeometryProperties = useCallback(
-    (position?: Cartesian3) => {
-      if (state.context.type == null || state.context.positions == null) {
-        positionsRef.current = undefined
-        hierarchyRef.current = undefined
+  const updateGeometryOptions = useCallback(
+    (controlPoint?: Cartesian3) => {
+      setExtrudedHeight(0)
+      if (state.context.type == null || state.context.controlPoints == null) {
+        setGeometryOptions(null)
         return
       }
-      const geometry = createGeometry(
-        state.context.type,
-        position != null
-          ? [...state.context.positions, position]
-          : state.context.positions,
-        scene.globe.ellipsoid
-      )
-      if (geometry == null) {
-        return
-      }
-      if (geometry.type === 'LineString') {
-        positionsRef.current = convertGeometryToPositionsArray(geometry)[0]
-        hierarchyRef.current = undefined
-      } else {
-        positionsRef.current = convertGeometryToPositionsArray(geometry)[0]
-        hierarchyRef.current = convertPolygonToHierarchyArray(geometry)[0]
-      }
-      scene.requestRender()
+      setGeometryOptions({
+        type: state.context.type,
+        controlPoints:
+          controlPoint != null
+            ? [...state.context.controlPoints, controlPoint]
+            : state.context.controlPoints,
+        ellipsoid: scene.globe.ellipsoid
+      })
     },
-    [state, scene]
+    [state, scene, setGeometryOptions, setExtrudedHeight]
   )
 
   useWindowEvent('keydown', event => {
@@ -117,11 +113,11 @@ export const SketchTool: FC<SketchToolProps> = ({
     }
     if (event.key === 'Escape') {
       send({ type: 'CANCEL' })
-      const position =
+      const controlPoint =
         pointerPositionRef.current != null
           ? pickGround(scene, pointerPositionRef.current, positionScratch)
           : undefined
-      updateGeometryProperties(position)
+      updateGeometryOptions(controlPoint)
     }
   })
 
@@ -134,9 +130,9 @@ export const SketchTool: FC<SketchToolProps> = ({
     if (!state.matches('idle')) {
       return
     }
-    invariant(state.context.lastPosition == null)
-    const position = pickGround(scene, event.position, positionScratch)
-    if (position == null) {
+    invariant(state.context.lastControlPoint == null)
+    const controlPoint = pickGround(scene, event.position, positionScratch)
+    if (controlPoint == null) {
       return
     }
     send({
@@ -146,11 +142,9 @@ export const SketchTool: FC<SketchToolProps> = ({
         polygon: 'POLYGON' as const
       }[type],
       pointerPosition: event.position,
-      position
+      controlPoint
     })
-    positionsRef.current = undefined
-    hierarchyRef.current = undefined
-    extrudedHeightRef.current = 0
+    setGeometryOptions(null)
   })
 
   useScreenSpaceEvent(eventHandler, ScreenSpaceEventType.MOUSE_MOVE, event => {
@@ -160,22 +154,24 @@ export const SketchTool: FC<SketchToolProps> = ({
     pointerPositionRef.current = event.endPosition
     if (state.matches('drawing')) {
       invariant(state.context.type != null)
-      invariant(state.context.positions != null)
-      const position = pickGround(scene, event.endPosition, positionScratch)
-      if (position == null || hasDuplicate(position, state.context.positions)) {
+      invariant(state.context.controlPoints != null)
+      const controlPoint = pickGround(scene, event.endPosition, positionScratch)
+      if (
+        controlPoint == null ||
+        hasDuplicate(controlPoint, state.context.controlPoints)
+      ) {
         return
       }
-      updateGeometryProperties(position)
+      updateGeometryOptions(controlPoint)
     } else if (state.matches('extruding')) {
-      invariant(state.context.lastPosition != null)
+      invariant(state.context.lastControlPoint != null)
       const extrudedHeight = getExtrudedHeight(
         scene,
-        state.context.lastPosition,
+        state.context.lastControlPoint,
         event.endPosition
       )
       if (extrudedHeight != null) {
-        extrudedHeightRef.current = extrudedHeight
-        scene.requestRender()
+        setExtrudedHeight(extrudedHeight)
       }
     }
   })
@@ -185,7 +181,7 @@ export const SketchTool: FC<SketchToolProps> = ({
       return
     }
     if (
-      state.context.positions?.length === 1 &&
+      state.context.controlPoints?.length === 1 &&
       state.context.lastPointerPosition != null &&
       Cartesian2.equalsEpsilon(
         event.position,
@@ -197,34 +193,26 @@ export const SketchTool: FC<SketchToolProps> = ({
       return // Too close to the first position user clicked.
     }
     if (state.matches('drawing')) {
-      const position = pickGround(scene, event.position, positionScratch)
-      if (position == null || hasDuplicate(position, state.context.positions)) {
+      const controlPoint = pickGround(scene, event.position, positionScratch)
+      if (
+        controlPoint == null ||
+        hasDuplicate(controlPoint, state.context.controlPoints)
+      ) {
         return
       }
       send({
         type: 'NEXT',
         pointerPosition: event.position,
-        position
+        controlPoint
       })
     } else if (state.matches('extruding')) {
-      invariant(state.context.type != null)
-      invariant(state.context.positions != null)
-      const geometry = createGeometry(
-        state.context.type,
-        state.context.positions,
-        scene.globe.ellipsoid
-      )
-      if (geometry == null || geometry.type === 'LineString') {
+      const feature = createFeature()
+      if (feature == null) {
         return
       }
-      onCreate?.(
-        feature(geometry, {
-          type: state.context.type,
-          positions: state.context.positions.map(({ x, y, z }) => [x, y, z]),
-          extrudedHeight: extrudedHeightRef.current
-        })
-      )
+      onCreate?.(feature)
       send({ type: 'CREATE' })
+      setGeometryOptions(null)
     }
   })
 
@@ -237,80 +225,31 @@ export const SketchTool: FC<SketchToolProps> = ({
         return
       }
       if (state.matches('drawing.polygon')) {
-        const position = pickGround(scene, event.position, positionScratch)
+        const controlPoint = pickGround(scene, event.position, positionScratch)
         if (
-          position == null ||
-          hasDuplicate(position, state.context.positions)
+          controlPoint == null ||
+          hasDuplicate(controlPoint, state.context.controlPoints)
         ) {
           return
         }
         send({
           type: 'EXTRUDE',
           pointerPosition: event.position,
-          position
+          controlPoint
         })
       }
     }
-  )
-
-  const theme = useTheme()
-  const primaryColor = useMemo(
-    () => Color.fromCssColorString(theme.palette.primary.main),
-    [theme]
-  )
-
-  const entityOptions = useMemo(
-    (): EntityProps | undefined =>
-      !state.matches('idle')
-        ? {
-            polyline: {
-              positions: polylinePositionsProperty,
-              width: 1.5,
-              material: primaryColor,
-              classificationType: ClassificationType.TERRAIN,
-              clampToGround: true
-            },
-            polygon: {
-              hierarchy: polygonHierarchyProperty,
-              fill: true,
-              material: primaryColor.withAlpha(0.5),
-              classificationType: ClassificationType.TERRAIN
-            }
-          }
-        : undefined,
-    [state, polylinePositionsProperty, polygonHierarchyProperty, primaryColor]
-  )
-
-  const extrudedEntityOptions = useMemo(
-    (): EntityProps | undefined =>
-      state.matches('extruding')
-        ? {
-            polygon: {
-              hierarchy: polygonHierarchyProperty,
-              extrudedHeight: extrudedHeightProperty,
-              extrudedHeightReference: HeightReference.RELATIVE_TO_GROUND,
-              fill: true,
-              material: primaryColor,
-              shadows: disableShadow ? ShadowMode.DISABLED : ShadowMode.ENABLED
-            }
-          }
-        : undefined,
-    [
-      disableShadow,
-      state,
-      polygonHierarchyProperty,
-      extrudedHeightProperty,
-      primaryColor
-    ]
   )
 
   if (state.matches('idle')) {
     return null
   }
   return (
-    <>
-      {entityOptions != null && <Entity {...entityOptions} />}
-      {extrudedEntityOptions != null && <Entity {...extrudedEntityOptions} />}
-    </>
+    <DynamicSketchObject
+      geometryOptionsAtom={geometryOptionsAtom}
+      {...(state.matches('extruding') && {
+        extrudedHeightAtom
+      })}
+    />
   )
 }

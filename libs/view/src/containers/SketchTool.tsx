@@ -1,19 +1,25 @@
 import { atom, useAtomValue, useSetAtom } from 'jotai'
 import { nanoid } from 'nanoid'
 import { useCallback, type FC } from 'react'
-import invariant from 'tiny-invariant'
 
+import { compose } from '@takram/plateau-cesium-helpers'
 import {
   layersAtom,
   layerSelectionAtom,
   useAddLayer,
   type LayerModel
 } from '@takram/plateau-layers'
+import { screenSpaceSelectionAtom } from '@takram/plateau-screen-space-selection'
 import {
+  SKETCH_OBJECT,
   SketchTool as SketchToolComponent,
   type SketchFeature
 } from '@takram/plateau-sketch'
-import { createViewLayer, SKETCH_LAYER } from '@takram/plateau-view-layers'
+import {
+  createViewLayer,
+  highlightedSketchLayersAtom,
+  SKETCH_LAYER
+} from '@takram/plateau-view-layers'
 
 import {
   modalToolAtom,
@@ -21,23 +27,24 @@ import {
   sketchTypeAtom
 } from '../states/tool'
 
-const selectedSketchLayerAtom = atom<LayerModel<typeof SKETCH_LAYER> | null>(
+const targetSketchLayerAtom = atom<LayerModel<typeof SKETCH_LAYER> | null>(
   get => {
-    const selection = get(layerSelectionAtom)
     const layers = get(layersAtom)
-    if (selection.length !== 1) {
-      return null
+    const selection = get(layerSelectionAtom)
+    const selectedSketchLayers = layers.filter(
+      (layer): layer is LayerModel<typeof SKETCH_LAYER> =>
+        layer.type === SKETCH_LAYER && selection.includes(layer.id)
+    )
+    const highlightedSketchLayers = get(highlightedSketchLayersAtom)
+    if (selectedSketchLayers.length === 0) {
+      return highlightedSketchLayers[0] ?? null
     }
-    const layer = layers.find(layer => layer.id === selection[0])
-    invariant(layer != null)
-    return layer.type === SKETCH_LAYER
-      ? (layer as LayerModel<typeof SKETCH_LAYER>)
-      : null
+    return selectedSketchLayers[0] ?? null
   }
 )
 
 const addFeatureAtom = atom(null, (get, set, value: SketchFeature) => {
-  const layer = get(selectedSketchLayerAtom)
+  const layer = get(targetSketchLayerAtom)
   if (layer == null) {
     return
   }
@@ -48,10 +55,11 @@ const addFeatureAtom = atom(null, (get, set, value: SketchFeature) => {
 })
 
 const Wrapped: FC = () => {
-  const layer = useAtomValue(selectedSketchLayerAtom)
+  const layer = useAtomValue(targetSketchLayerAtom)
   const addFeature = useSetAtom(addFeatureAtom)
-
   const addLayer = useAddLayer()
+  const setScreenSpaceSelection = useSetAtom(screenSpaceSelectionAtom)
+
   const handleCreate = useCallback(
     (feature: SketchFeature) => {
       if (layer != null) {
@@ -63,10 +71,16 @@ const Wrapped: FC = () => {
           type: SKETCH_LAYER,
           features: [feature]
         })
-        addLayer(layer)
+        addLayer(layer, { autoSelect: false })
       }
+      setScreenSpaceSelection([
+        {
+          type: SKETCH_OBJECT,
+          value: compose({ type: 'Sketch', key: feature.properties.id })
+        }
+      ])
     },
-    [layer, addFeature, addLayer]
+    [layer, addFeature, addLayer, setScreenSpaceSelection]
   )
 
   const momentaryTool = useAtomValue(momentaryToolAtom)

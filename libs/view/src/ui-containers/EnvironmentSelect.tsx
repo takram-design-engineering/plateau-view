@@ -1,4 +1,12 @@
-import { alpha, Button, Popover, styled } from '@mui/material'
+import {
+  alpha,
+  Button,
+  Divider,
+  FormControlLabel,
+  Popover,
+  styled,
+  Switch
+} from '@mui/material'
 import { useAtom, useAtomValue } from 'jotai'
 import {
   bindPopover,
@@ -30,6 +38,7 @@ import satelliteImage from '../assets/satellite.webp'
 import {
   environmentTypeAtom,
   logarithmicTerrainElevationAtom,
+  showMapLabelAtom,
   terrainElevationHeightRangeAtom
 } from '../states/app'
 
@@ -46,11 +55,9 @@ const LegendButton = styled(Button)(({ theme }) => ({
 
 const StyledSelectItem = styled(SelectItem)(({ theme }) => ({
   padding: theme.spacing(1),
+  paddingRight: theme.spacing(2),
   '&:first-of-type': {
     marginTop: theme.spacing(1)
-  },
-  '&:last-of-type': {
-    marginBottom: theme.spacing(1)
   }
 })) as typeof SelectItem // For generics
 
@@ -117,6 +124,11 @@ const Item: FC<
     <Label>{environmentItems[item].label}</Label>
   </StyledSelectItem>
 )
+
+const ControlItem = styled('div')(({ theme }) => ({
+  padding: `${theme.spacing(1.5)} ${theme.spacing(2)}`,
+  paddingTop: 0
+}))
 
 const ElevationLegendButton: FC = () => {
   const elevationRange = useAtomValue(terrainElevationHeightRangeAtom)
@@ -219,6 +231,14 @@ export const EnvironmentSelect: FC = () => {
       ? 'elevation'
       : undefined
 
+  const [showMapLabel, setShowMapLabel] = useAtom(showMapLabelAtom)
+  const handleShowMapLabelChange = useCallback(
+    (event: unknown, checked: boolean) => {
+      setShowMapLabel(checked)
+    },
+    [setShowMapLabel]
+  )
+
   return (
     <>
       <AppIconButton
@@ -252,6 +272,18 @@ export const EnvironmentSelect: FC = () => {
             selectedItem={selectedItem}
             onClick={handleElevation}
           />
+          <Divider sx={{ marginTop: 0, marginBottom: 0 }} />
+          <ControlItem>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={showMapLabel}
+                  onChange={handleShowMapLabelChange}
+                />
+              }
+              label='ラベル表示'
+            />
+          </ControlItem>
         </FloatingPanel>
       </OverlayPopper>
     </>

@@ -13,6 +13,7 @@ import { useCesium } from './useCesium'
 import { useInstance } from './useInstance'
 
 export interface ImageryLayerHandle {
+  imageryLayer: CesiumImageryLayer
   bringToFront: () => void
   sendToBack: () => void
 }
@@ -36,6 +37,7 @@ export const ImageryLayer = withEphemerality(
           imageryLayers.add(imageryLayer)
 
           assignForwardedRef(ref, {
+            imageryLayer,
             bringToFront: () => {
               imageryLayers.raiseToTop(imageryLayer)
             },

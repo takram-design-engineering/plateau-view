@@ -21,19 +21,20 @@
 "createPolygon": "POLYGON";
 "createRectangle": "RECTANGLE";
 "popPosition": "CANCEL";
-"updatePosition": "EXTRUDE" | "NEXT";
+"pushPosition": "EXTRUDE" | "NEXT";
         };
         eventsCausingDelays: {
 
         };
         eventsCausingGuards: {
           "canPopPosition": "CANCEL";
+"willRectangleComplete": "NEXT";
         };
         eventsCausingServices: {
 
         };
-        matchesStates: "drawing" | "drawing.circle" | "drawing.circle.diameter" | "drawing.polygon" | "drawing.polygon.vertex" | "drawing.rectangle" | "drawing.rectangle.edge" | "drawing.rectangle.width" | "extruding" | "idle" | { "drawing"?: "circle" | "polygon" | "rectangle" | { "circle"?: "diameter";
+        matchesStates: "drawing" | "drawing.circle" | "drawing.circle.vertex" | "drawing.polygon" | "drawing.polygon.vertex" | "drawing.rectangle" | "drawing.rectangle.vertex" | "extruding" | "idle" | { "drawing"?: "circle" | "polygon" | "rectangle" | { "circle"?: "vertex";
 "polygon"?: "vertex";
-"rectangle"?: "edge" | "width"; }; };
+"rectangle"?: "vertex"; }; };
         tags: never;
       }

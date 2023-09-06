@@ -26,6 +26,7 @@ export const terrainTypeAtom = atomWithReset<TerrainType>('plateau')
 export const enableTerrainLightingAtom = atomWithReset(true)
 export const terrainElevationHeightRangeAtom = atomWithReset([0, 4000])
 export const logarithmicTerrainElevationAtom = atomWithReset(true)
+export const showMapLabelAtom = atomWithReset(false)
 
 export const debugSphericalHarmonicsAtom = atomWithReset(false)
 export const showShadowMapDepthAtom = atomWithReset(false)
@@ -37,6 +38,7 @@ export const showAreaEntitiesAtom = atomWithReset(false)
 export const showSelectionBoundingSphereAtom = atomWithReset(false)
 
 export const enableKeyboardCameraControlAtom = atomWithReset(false)
+export const autoRotateCameraAtom = atomWithReset(false)
 
 export const inspectorWidthAtom = atomWithStorageValidation({
   key: 'inspectorWidth',

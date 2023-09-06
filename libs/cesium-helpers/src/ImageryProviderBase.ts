@@ -13,6 +13,12 @@ import {
 
 // Type assertions to "any" are necessary due to Cesium's poor type definitions.
 
+export interface ImageryProviderBaseOptions {
+  tilingScheme?: TilingScheme
+  tileWidth?: number
+  tileHeight?: number
+}
+
 export abstract class ImageryProviderBase implements ImageryProvider {
   // Deprecated fields
   readonly defaultAlpha = undefined
@@ -39,6 +45,18 @@ export abstract class ImageryProviderBase implements ImageryProvider {
   credit: Credit = undefined as any
   proxy: Proxy = undefined as any
   hasAlphaChannel = true
+
+  constructor(options?: ImageryProviderBaseOptions) {
+    if (options?.tilingScheme != null) {
+      this.tilingScheme = options.tilingScheme
+    }
+    if (options?.tileWidth != null) {
+      this.tileWidth = options.tileWidth
+    }
+    if (options?.tileHeight != null) {
+      this.tileHeight = options.tileHeight
+    }
+  }
 
   getTileCredits(x: number, y: number, level: number): Credit[] {
     return undefined as any
