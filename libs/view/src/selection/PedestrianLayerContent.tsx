@@ -215,7 +215,9 @@ export const Content: FC<{
       return
     }
     if (containerRef.current != null) {
-      containerRef.current.style.aspectRatio = `${frustum.aspectRatio}`
+      // Prevent street view from stretching too much in portrait.
+      const aspectRatio = Math.max(1, frustum.aspectRatio)
+      containerRef.current.style.aspectRatio = `${aspectRatio}`
     }
   })
 
