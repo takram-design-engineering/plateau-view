@@ -38,12 +38,6 @@ import { DatasetAreaList } from './DatasetAreaList'
 import { DatasetTypeList } from './DatasetTypeList'
 import { SearchList } from './SearchList'
 
-const Root = styled(FloatingPanel)(({ theme }) => ({
-  [theme.breakpoints.down('sm')]: {
-    maxHeight: '50vh'
-  }
-}))
-
 const StyledScrollable = styled(Scrollable)(({ theme }) => ({
   maxHeight: `calc(100% - ${theme.spacing(6)} - 1px)`
 }))
@@ -179,7 +173,7 @@ export const SearchAutocompletePanel: FC<SearchAutocompletePanelProps> = ({
   const platform = useAtomValue(platformAtom)
   return (
     <ClickAwayListener onClickAway={handleClickAway}>
-      <Root>
+      <FloatingPanel>
         <SearchAutocomplete
           inputRef={textFieldRef}
           placeholder='データセット、建築物、住所を検索'
@@ -223,7 +217,7 @@ export const SearchAutocompletePanel: FC<SearchAutocompletePanelProps> = ({
             </StyledScrollable>
           )}
         </SearchAutocomplete>
-      </Root>
+      </FloatingPanel>
     </ClickAwayListener>
   )
 }
