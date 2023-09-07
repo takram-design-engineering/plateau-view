@@ -13,16 +13,11 @@ export async function animateZoom(
 ): Promise<void> {
   const camera = scene.camera
   const focus = getCameraEllipsoidIntersection(scene, cartesianScratch)
-  const direction = Cartesian3.subtract(
-    focus,
-    camera.position,
-    cartesianScratch
-  )
-  const movement = Cartesian3.multiplyByScalar(
-    direction,
+  const offset = Cartesian3.multiplyByScalar(
+    Cartesian3.subtract(focus, camera.position, cartesianScratch),
     multiplier,
     cartesianScratch
   )
-  const position = Cartesian3.add(camera.position, movement, cartesianScratch)
+  const position = Cartesian3.add(camera.position, offset, cartesianScratch)
   await flyToDestination(scene, position, undefined, options)
 }

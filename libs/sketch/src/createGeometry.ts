@@ -14,19 +14,19 @@ const cartesianScratch1 = new Cartesian3()
 const cartesianScratch2 = new Cartesian3()
 
 function createCircle(
-  positions: readonly Cartesian3[],
+  controlPoints: readonly Cartesian3[],
   ellipsoid?: Ellipsoid
 ): Polygon | undefined {
-  if (positions.length !== 2) {
+  if (controlPoints.length !== 2) {
     return
   }
-  const radius = Cartesian3.distance(positions[0], positions[1])
+  const radius = Cartesian3.distance(controlPoints[0], controlPoints[1])
   if (radius === 0) {
     return
   }
   try {
     const cartographic = Cartographic.fromCartesian(
-      positions[0],
+      controlPoints[0],
       ellipsoid,
       cartographicScratch
     )
@@ -46,18 +46,18 @@ function createCircle(
 }
 
 function createRectangle(
-  positions: readonly Cartesian3[],
+  controlPoints: readonly Cartesian3[],
   ellipsoid?: Ellipsoid
 ): LineString | Polygon | undefined {
-  if (positions.length !== 2 && positions.length !== 3) {
+  if (controlPoints.length !== 2 && controlPoints.length !== 3) {
     return
   }
   try {
-    if (positions.length === 2) {
+    if (controlPoints.length === 2) {
       const feature = lineString(
-        positions.map(position => {
+        controlPoints.map(controlPoint => {
           const cartographic = Cartographic.fromCartesian(
-            position,
+            controlPoint,
             ellipsoid,
             cartographicScratch
           )
@@ -71,7 +71,7 @@ function createRectangle(
     }
 
     // Rectangle from 3 points.
-    const [p1, p2, p3] = positions
+    const [p1, p2, p3] = controlPoints
     const projection = Cartesian3.projectVector(
       Cartesian3.subtract(p3, p1, cartesianScratch1),
       Cartesian3.subtract(p2, p1, cartesianScratch2),
@@ -85,9 +85,9 @@ function createRectangle(
     const p4 = Cartesian3.add(p1, offset, cartesianScratch1)
     const p5 = Cartesian3.add(p2, offset, cartesianScratch2)
     const feature = polygon([
-      [p1, p2, p5, p4, p1].map(position => {
+      [p1, p2, p5, p4, p1].map(controlPoint => {
         const cartographic = Cartographic.fromCartesian(
-          position,
+          controlPoint,
           ellipsoid,
           cartographicScratch
         )
@@ -104,18 +104,18 @@ function createRectangle(
 }
 
 function createPolygon(
-  positions: readonly Cartesian3[],
+  controlPoints: readonly Cartesian3[],
   ellipsoid?: Ellipsoid
 ): LineString | Polygon | undefined {
-  if (positions.length < 2) {
+  if (controlPoints.length < 2) {
     return
   }
   try {
-    if (positions.length === 2) {
+    if (controlPoints.length === 2) {
       const feature = lineString(
-        positions.map(position => {
+        controlPoints.map(controlPoint => {
           const cartographic = Cartographic.fromCartesian(
-            position,
+            controlPoint,
             ellipsoid,
             cartographicScratch
           )
@@ -129,9 +129,9 @@ function createPolygon(
     }
 
     const feature = polygon([
-      [...positions, positions[0]].map(position => {
+      [...controlPoints, controlPoints[0]].map(controlPoint => {
         const cartographic = Cartographic.fromCartesian(
-          position,
+          controlPoint,
           ellipsoid,
           cartographicScratch
         )
@@ -147,17 +147,23 @@ function createPolygon(
   }
 }
 
-export function createGeometry(
-  type: SketchGeometryType,
-  positions: readonly Cartesian3[],
+export interface GeometryOptions {
+  type: SketchGeometryType
+  controlPoints: readonly Cartesian3[]
   ellipsoid?: Ellipsoid
-): LineString | Polygon | MultiPolygon | undefined {
+}
+
+export function createGeometry({
+  type,
+  controlPoints,
+  ellipsoid
+}: GeometryOptions): LineString | Polygon | MultiPolygon | undefined {
   switch (type) {
     case 'circle':
-      return createCircle(positions, ellipsoid)
+      return createCircle(controlPoints, ellipsoid)
     case 'rectangle':
-      return createRectangle(positions, ellipsoid)
+      return createRectangle(controlPoints, ellipsoid)
     case 'polygon':
-      return createPolygon(positions, ellipsoid)
+      return createPolygon(controlPoints, ellipsoid)
   }
 }

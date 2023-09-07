@@ -151,7 +151,7 @@ export const LabelImagery: FC<LabelImageryProps> = memo(
             horizontalOrigin: HorizontalOrigin.CENTER,
             verticalOrigin: VerticalOrigin.BOTTOM,
             heightReference: HeightReference.CLAMP_TO_GROUND,
-            disableDepthTestDistance: Number.POSITIVE_INFINITY
+            disableDepthTestDistance: Infinity
           }
           return [feature, labelCollection.add(options)]
         })
