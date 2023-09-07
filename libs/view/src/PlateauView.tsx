@@ -16,6 +16,7 @@ import { AutoRotateCamera } from './containers/AutoRotateCamera'
 import { Canvas } from './containers/Canvas'
 import { Environments } from './containers/Environments'
 import { FileDrop } from './containers/FileDrop'
+import { HighlightedAreas } from './containers/HighlightedAreas'
 import { InitialLayers } from './containers/InitialLayers'
 import { KeyBindings } from './containers/KeyBindings'
 import { Notifications } from './containers/Notifications'
@@ -70,6 +71,7 @@ export const PlateauView: FC<PlateauViewProps> = () => {
         </Suspense>
         <MapLabel />
         <Areas />
+        <HighlightedAreas />
         <ReverseGeocoding />
         <ToolMachineEvents />
         <PedestrianTool />

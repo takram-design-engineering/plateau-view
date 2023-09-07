@@ -26,6 +26,7 @@ async function main(): Promise<void> {
   try {
     target = await import(`${importPath}.js`)
   } catch (error) {
+    console.error(error)
     await printTargets(targetDir)
     process.exit(1)
   }

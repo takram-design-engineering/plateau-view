@@ -4,7 +4,9 @@ import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
 import { ServeStaticModule } from '@nestjs/serve-static'
 import * as envalid from 'envalid'
+import GraphQLJSON from 'graphql-type-json'
 
+import { EstatAreasModule } from '@takram/plateau-nest-estat-areas'
 import { FirestoreModule } from '@takram/plateau-nest-firestore'
 import { PlateauModule } from '@takram/plateau-nest-plateau'
 import { TerrainTileModule } from '@takram/plateau-nest-terrain-tile'
@@ -26,7 +28,10 @@ const env = envalid.cleanEnv(process.env, {
       useGlobalPrefix: true,
       driver: ApolloDriver,
       autoSchemaFile: 'schema.gql',
-      sortSchema: true
+      sortSchema: true,
+      resolvers: {
+        JSON: GraphQLJSON
+      }
     }),
     FirestoreModule.forRoot({
       rootPath: 'api'
@@ -35,6 +40,7 @@ const env = envalid.cleanEnv(process.env, {
       baseUrl: env.DATA_BASE_URL,
       storageRoot: env.DATA_STORAGE_ROOT
     }),
+    EstatAreasModule.forRoot({}),
     TileCacheModule.forRoot({
       cacheRoot:
         process.env.TILE_CACHE_ROOT !== ''
