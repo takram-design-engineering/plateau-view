@@ -29,7 +29,7 @@ import { BUILDING_LAYER, createViewLayer } from '@takram/plateau-view-layers'
 
 import { datasetTypeLayers } from '../constants/datasetTypeLayers'
 import { highlightAreaAtom } from '../containers/HighlightedAreas'
-import { areasAtom } from '../states/address'
+import { addressAtom, areasAtom } from '../states/address'
 
 export interface DatasetSearchOption extends SearchOption {
   type: 'dataset'
@@ -179,7 +179,7 @@ function useAreaSearchOptions({
   inputValue,
   skip = false
 }: SearchOptionsParams = {}): readonly AreaSearchOption[] {
-  const [fetch, { data }] = useAreasLazyQuery()
+  const [fetch, query] = useAreasLazyQuery()
   const debouncedFetch = useMemo(
     () =>
       debounce(
@@ -189,14 +189,33 @@ function useAreaSearchOptions({
     [fetch]
   )
 
+  const [areas, setAreas] = useState(query.data?.areas)
+  useEffect(() => {
+    if (!query.loading) {
+      setAreas(query.data?.areas)
+    }
+  }, [query])
+
   const skipRef = useRef(skip)
   skipRef.current = skip
+
+  const address = useAtomValue(addressAtom)
   useEffect(() => {
     if (skipRef.current) {
       return
     }
-    const searchTokens =
+    let searchTokens =
       inputValue?.split(/\s+/).filter(value => value.length > 0) ?? []
+    if (
+      searchTokens.length === 0 &&
+      address != null &&
+      address.areas.length > 0
+    ) {
+      searchTokens = address.areas
+        // Tokyo 23 wards is the only area which is not a municipality.
+        .filter(area => area.name !== '東京都23区')
+        .map(area => area.name)
+    }
     if (searchTokens.length > 0) {
       debouncedFetch({
         variables: {
@@ -205,22 +224,24 @@ function useAreaSearchOptions({
       })?.catch(error => {
         console.error(error)
       })
+    } else {
+      setAreas([])
     }
-  }, [inputValue, debouncedFetch])
+  }, [inputValue, debouncedFetch, address])
 
   return useMemo(() => {
     if (skip) {
       return []
     }
     return (
-      data?.areas.map(area => ({
+      areas?.map(area => ({
         type: 'area' as const,
         id: area.id,
         name: area.address,
         bbox: area.bbox as [number, number, number, number]
       })) ?? []
     )
-  }, [skip, data])
+  }, [skip, areas])
 }
 
 export interface SearchOptions {

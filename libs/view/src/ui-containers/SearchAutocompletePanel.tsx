@@ -59,11 +59,9 @@ function filterOptions(
 ): SearchOption[] {
   const tokens = state.inputValue.split(/\s+/).filter(value => value.length > 0)
   return tokens.length > 0
-    ? options.filter(option => {
-        return tokens.some(token =>
-          state.getOptionLabel(option).includes(token)
-        )
-      })
+    ? options.filter(option =>
+        tokens.some(token => state.getOptionLabel(option).includes(token))
+      )
     : options
 }
 

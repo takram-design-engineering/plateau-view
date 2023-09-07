@@ -113,7 +113,7 @@ export const HighlightedAreas: FC = () => {
   return (
     <>
       {optionsArray.map(options => (
-        <HighlightedArea {...options} />
+        <HighlightedArea key={options.areaId} {...options} />
       ))}
     </>
   )
