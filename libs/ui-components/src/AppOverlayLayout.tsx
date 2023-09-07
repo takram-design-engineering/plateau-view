@@ -128,6 +128,9 @@ const Main = styled('main', {
   )}))`]: {
     flexBasis: mainWidth,
     flexShrink: 0
+  },
+  [theme.breakpoints.down('sm')]: {
+    width: `calc(100vw - ${theme.spacing(spacing * 2)})`
   }
 }))
 
