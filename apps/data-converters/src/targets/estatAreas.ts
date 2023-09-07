@@ -113,9 +113,16 @@ async function uploadFeatures(params: {
       feature.geometry.type === 'Polygon' ||
         feature.geometry.type === 'MultiPolygon'
     )
+    const id = props.KEY_CODE
     const longitude = props.X_CODE
     const latitude = props.Y_CODE
-    const id = props.KEY_CODE
+    const addressComponents = [
+      props.PREF_NAME,
+      props.GST_NAME,
+      props.CSS_NAME,
+      props.S_NAME
+    ].filter(isNotNullish)
+    invariant(addressComponents.length === 3 || addressComponents.length === 4)
     const doc = params.collection.doc(id)
     void writer
       .set(doc, {
@@ -123,16 +130,16 @@ async function uploadFeatures(params: {
         geohash: geohashForLocation([latitude, longitude]),
         longitude,
         latitude,
-        ...(props.GST_NAME != null && props.CSS_NAME != null
+        ...(addressComponents.length === 3
           ? {
-              shortAddress: `${props.CSS_NAME}${props.S_NAME}`,
-              middleAddress: `${props.GST_NAME}${props.CSS_NAME}${props.S_NAME}`,
-              fullAddress: `${props.PREF_NAME}${props.GST_NAME}${props.CSS_NAME}${props.S_NAME}`
+              shortAddress: `${props.GST_NAME ?? props.CSS_NAME}${props.S_NAME}`
             }
           : {
-              shortAddress: `${props.CITY_NAME}${props.S_NAME}`,
-              fullAddress: `${props.PREF_NAME}${props.CITY_NAME}${props.S_NAME}`
+              shortAddress: `${props.CSS_NAME}${props.S_NAME}`,
+              middleAddress: `${props.GST_NAME}${props.CSS_NAME}${props.S_NAME}`
             }),
+        fullAddress: addressComponents.join(''),
+        addressComponents,
         properties: props,
         geometry: packGeometry(feature.geometry),
         bbox: turf.bbox(feature)

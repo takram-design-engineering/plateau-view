@@ -15,8 +15,24 @@ import { EstatAreaDocument } from './dto/EstatAreaDocument'
 import { EstatAreaGeometry } from './dto/EstatAreaGeometry'
 import { unpackGeometry } from './helpers/packGeometry'
 
+const areaFields = [
+  'PREF_NAME',
+  'GST_NAME',
+  'CSS_NAME',
+  'S_NAME',
+  'PREF',
+  'CITY'
+] as const
+const selectAreaFields = areaFields.map(field => `properties.${field}`)
+
+type AreaFields = (typeof areaFields)[number]
+
+type AreaQuerySnapshot = QuerySnapshot<{
+  properties: Pick<EstatAreaDocument['properties'], AreaFields>
+}>
+
 function createAreas(
-  snapshot: QuerySnapshot<Pick<EstatAreaDocument, 'properties'>>,
+  snapshot: AreaQuerySnapshot,
   searchTokens?: readonly string[]
 ): EstatArea[] {
   const result = snapshot.docs.map(doc => {
@@ -86,24 +102,29 @@ export class EstatAreasService {
         .where(field, 'in', params.searchTokens)
         .orderBy('properties.SETAI', 'desc')
         .limit(limit)
-        .select('properties')
-        .get()) as QuerySnapshot<Pick<EstatAreaDocument, 'properties'>>
-      if (snapshot.size > 0) {
-        return createAreas(snapshot).slice(0, limit)
+        .select(...selectAreaFields)
+        .get()) as AreaQuerySnapshot
+      if (!snapshot.empty) {
+        return createAreas(snapshot)
       }
     }
 
     let result: EstatArea[] = []
     for (const fields of compoundSearchFields) {
-      const query = fields.reduce<Query>(
-        (query, field) => query.where(field, 'in', params.searchTokens),
-        this.areaCollection
-      )
+      let disjunctionCount = 1
+      let query: Query | typeof this.areaCollection = this.areaCollection
+      for (const field of fields) {
+        disjunctionCount *= params.searchTokens.length
+        if (disjunctionCount > 30) {
+          break
+        }
+        query = query.where(field, 'in', params.searchTokens)
+      }
       const snapshot = (await query
         .orderBy('properties.SETAI', 'desc')
         .limit(limit * 2) // Double this because some will be filtered out.
-        .select('properties')
-        .get()) as QuerySnapshot<Pick<EstatAreaDocument, 'properties'>>
+        .select(...selectAreaFields)
+        .get()) as AreaQuerySnapshot
       result = uniqBy(
         [...result, ...createAreas(snapshot, params.searchTokens)],
         'id'

@@ -149,6 +149,9 @@ export class EstatAreaDocument {
   @IsString()
   fullAddress!: string
 
+  @IsString({ each: true })
+  addressComponents!: string[]
+
   @Type(() => EstatAreaDocumentProperties)
   @ValidateNested()
   properties!: EstatAreaDocumentProperties
