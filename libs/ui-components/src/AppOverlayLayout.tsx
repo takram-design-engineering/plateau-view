@@ -1,4 +1,4 @@
-import { styled } from '@mui/material'
+import { styled, useMediaQuery, useTheme } from '@mui/material'
 import { atom, useSetAtom, type Atom } from 'jotai'
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react'
 import {
@@ -79,9 +79,16 @@ const RootGrid = styled('div', {
   minHeight: 0
 }))
 
-const SizeContainer = styled('div')({
-  containerType: 'size'
-})
+const SizeContainer = styled('div', {
+  shouldForwardProp: prop => prop !== 'hidden'
+})<{
+  hidden?: boolean
+}>(({ hidden = false }) => ({
+  containerType: 'size',
+  ...(hidden && {
+    visibility: 'hidden'
+  })
+}))
 
 const MainContainer = styled('div', {
   shouldForwardProp: prop =>
@@ -226,12 +233,14 @@ export const AppOverlayLayout: FC<AppOverlayLayoutProps> = memo(
       [maxMainHeightAtom]
     )
 
+    const theme = useTheme()
+    const smDown = useMediaQuery(theme.breakpoints.down('sm'))
     return (
       <AppOverlayLayoutContext.Provider value={contextValue}>
         <Root hidden={hidden}>
           <RootColumn>
             <RootGrid spacing={spacing}>
-              <SizeContainer ref={mainRef}>
+              <SizeContainer ref={mainRef} hidden={smDown && aside != null}>
                 <MainContainer
                   spacing={spacing}
                   mainWidth={mainWidth}

@@ -1,7 +1,7 @@
 import { useTheme } from '@mui/material'
 import { useAtom, useAtomValue } from 'jotai'
 import { type ResizeCallback } from 're-resizable'
-import { useCallback, type FC } from 'react'
+import { useCallback, type ReactNode } from 'react'
 
 import { PLATEAU_TILE_FEATURE } from '@takram/plateau-datasets'
 import { PEDESTRIAN_OBJECT } from '@takram/plateau-pedestrian'
@@ -26,7 +26,7 @@ import {
   selectionGroupsAtom
 } from '../states/selection'
 
-export const SelectionPanel: FC = () => {
+export function useSelectionPanel(): ReactNode {
   let content = null
   let contentType: 'default' | 'pedestrian' = 'default'
   const selectionGroups = useAtomValue(selectionGroupsAtom)
