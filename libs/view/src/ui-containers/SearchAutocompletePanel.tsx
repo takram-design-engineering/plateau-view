@@ -65,16 +65,25 @@ export const SearchAutocompletePanel: FC<SearchAutocompletePanelProps> = ({
     setFocused(true)
   }, [])
 
+  const [inputValue, setInputValue] = useState('')
+  const handleInputChange: NonNullable<
+    SearchAutocompleteProps['onInputChange']
+  > = useCallback((event, value, reason) => {
+    setInputValue(value)
+  }, [])
+
+  const deferredInputValue = useDeferredValue(inputValue)
   const searchOptions = useSearchOptions({
+    inputValue: deferredInputValue,
     skip: !focused
   })
   const options = useMemo(
     () => [
       ...searchOptions.datasets,
       ...searchOptions.buildings,
-      ...searchOptions.addresses
+      ...searchOptions.areas
     ],
-    [searchOptions.datasets, searchOptions.buildings, searchOptions.addresses]
+    [searchOptions.datasets, searchOptions.buildings, searchOptions.areas]
   )
 
   const selectOption = searchOptions.select
@@ -160,6 +169,7 @@ export const SearchAutocompletePanel: FC<SearchAutocompletePanelProps> = ({
           maxHeight={maxMainHeight}
           onFocus={handleFocus}
           onChange={handleChange}
+          onInputChange={handleInputChange}
           endAdornment={
             <Shortcut
               variant='outlined'
@@ -183,7 +193,7 @@ export const SearchAutocompletePanel: FC<SearchAutocompletePanelProps> = ({
                 <SearchList
                   datasets={searchOptions.datasets}
                   buildings={searchOptions.buildings}
-                  addresses={searchOptions.addresses}
+                  areas={searchOptions.areas}
                   onOptionSelect={handleOptionSelect}
                   onFiltersChange={handleFiltersChange}
                 />

@@ -1,6 +1,7 @@
 import { BoundingSphere, Cartesian3 } from '@cesium/engine'
 import { atom, useAtomValue, useSetAtom } from 'jotai'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { debounce } from 'lodash'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { useCesium } from '@takram/plateau-cesium'
 import { flyToBoundingSphere } from '@takram/plateau-cesium-helpers'
@@ -11,6 +12,7 @@ import {
 } from '@takram/plateau-datasets'
 import {
   PlateauDatasetType,
+  useAreasLazyQuery,
   useDatasetsQuery,
   type DatasetsQuery
 } from '@takram/plateau-graphql'
@@ -40,11 +42,12 @@ export interface BuildingSearchOption
   featureIndex: TileFeatureIndex
 }
 
-export interface AddressSearchOption extends SearchOption {
-  type: 'address'
+export interface AreaSearchOption extends SearchOption {
+  type: 'area'
 }
 
 export interface SearchOptionsParams {
+  inputValue?: string
   skip?: boolean
 }
 
@@ -104,6 +107,7 @@ function useDatasetSearchOptions({
         })
         .map(dataset => ({
           type: 'dataset' as const,
+          id: dataset.id,
           name: dataset.name !== '' ? dataset.name : dataset.typeName,
           dataset
         })) ?? []
@@ -111,7 +115,7 @@ function useDatasetSearchOptions({
   }, [skip, query, layers, findLayer])
 }
 
-function useBuildingSearchOption({
+function useBuildingSearchOptions({
   skip = false
 }: SearchOptionsParams = {}): readonly BuildingSearchOption[] {
   const layers = useAtomValue(layersAtom)
@@ -153,6 +157,7 @@ function useBuildingSearchOption({
         featureIndex.searchableFeatures.map(
           ({ key, name, feature, longitude, latitude }) => ({
             type: 'building' as const,
+            id: key,
             name,
             feature,
             featureIndex,
@@ -168,16 +173,58 @@ function useBuildingSearchOption({
   )
 }
 
+function useAreaSearchOptions({
+  inputValue,
+  skip = false
+}: SearchOptionsParams = {}): readonly AreaSearchOption[] {
+  const [fetch, { data }] = useAreasLazyQuery()
+  const debouncedFetch = useMemo(
+    () => debounce((...args: Parameters<typeof fetch>) => fetch(...args), 200),
+    [fetch]
+  )
+
+  const skipRef = useRef(skip)
+  skipRef.current = skip
+  useEffect(() => {
+    if (skipRef.current) {
+      return
+    }
+    const searchTokens =
+      inputValue?.split(/\s+/).filter(value => value.length > 0) ?? []
+    if (searchTokens.length > 0) {
+      debouncedFetch({
+        variables: {
+          searchTokens
+        }
+      })
+    }
+  }, [inputValue, debouncedFetch])
+
+  return useMemo(() => {
+    if (skip) {
+      return []
+    }
+    return (
+      data?.areas.map(area => ({
+        type: 'area' as const,
+        id: area.id,
+        name: area.address
+      })) ?? []
+    )
+  }, [skip, data])
+}
+
 export interface SearchOptions {
   datasets: readonly DatasetSearchOption[]
   buildings: readonly BuildingSearchOption[]
-  addresses: readonly AddressSearchOption[]
+  areas: readonly AreaSearchOption[]
   select: (option: SearchOption) => void
 }
 
 export function useSearchOptions(options?: SearchOptionsParams): SearchOptions {
   const datasets = useDatasetSearchOptions(options)
-  const buildings = useBuildingSearchOption(options)
+  const buildings = useBuildingSearchOptions(options)
+  const areas = useAreaSearchOptions(options)
 
   const scene = useCesium(({ scene }) => scene, { indirect: true })
   const addLayer = useSetAtom(addLayerAtom)
@@ -249,6 +296,9 @@ export function useSearchOptions(options?: SearchOptionsParams): SearchOptions {
           ])
           break
         }
+        case 'area': {
+          break
+        }
       }
     },
     [scene, addLayer, setScreenSpaceSelection]
@@ -257,7 +307,7 @@ export function useSearchOptions(options?: SearchOptionsParams): SearchOptions {
   return {
     datasets,
     buildings,
-    addresses: [],
+    areas,
     select
   }
 }
