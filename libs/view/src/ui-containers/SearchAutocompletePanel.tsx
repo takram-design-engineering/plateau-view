@@ -4,7 +4,8 @@ import {
   styled,
   Tab,
   tabClasses,
-  Tabs
+  Tabs,
+  type FilterOptionsState
 } from '@mui/material'
 import { useAtomValue } from 'jotai'
 import {
@@ -51,6 +52,20 @@ const StyledTabs = styled(Tabs)(({ theme }) => ({
     minHeight: theme.spacing(5)
   }
 }))
+
+function filterOptions(
+  options: SearchOption[],
+  state: FilterOptionsState<SearchOption>
+): SearchOption[] {
+  const tokens = state.inputValue.split(/\s+/).filter(value => value.length > 0)
+  return tokens.length > 0
+    ? options.filter(option => {
+        return tokens.some(token =>
+          state.getOptionLabel(option).includes(token)
+        )
+      })
+    : options
+}
 
 export interface SearchAutocompletePanelProps {
   children?: ReactNode
@@ -166,6 +181,7 @@ export const SearchAutocompletePanel: FC<SearchAutocompletePanelProps> = ({
           placeholder='データセット、建築物、住所を検索'
           options={options}
           filters={filters}
+          filterOptions={filterOptions}
           maxHeight={maxMainHeight}
           onFocus={handleFocus}
           onChange={handleChange}
