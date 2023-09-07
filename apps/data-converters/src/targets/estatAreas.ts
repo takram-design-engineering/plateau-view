@@ -2,11 +2,7 @@ import path from 'path'
 import { Firestore, type CollectionReference } from '@google-cloud/firestore'
 import * as turf from '@turf/turf'
 import { geohashForLocation } from 'geofire-common'
-import {
-  type FeatureCollection,
-  type MultiPolygon,
-  type Polygon
-} from 'geojson'
+import { type FeatureCollection } from 'geojson'
 import { mapValues } from 'lodash'
 import { applyCommands } from 'mapshaper'
 import moji from 'moji'
@@ -15,7 +11,11 @@ import invariant from 'tiny-invariant'
 import { feature } from 'topojson-client'
 import type TopoJSON from 'topojson-specification'
 
-import { type EstatAreaDocumentProperties } from '@takram/plateau-nest-estat-areas'
+import {
+  packGeometry,
+  type EstatAreaDocument,
+  type EstatAreaDocumentProperties
+} from '@takram/plateau-nest-estat-areas'
 import { isNotNullish } from '@takram/plateau-type-helpers'
 
 type Topology = TopoJSON.Topology<{
@@ -55,7 +55,10 @@ async function processGeoJSON(
           typeof input.CITY !== 'string' ||
           typeof input.PREF_NAME !== 'string' ||
           typeof input.CITY_NAME !== 'string' ||
-          typeof input.S_NAME !== 'string'
+          typeof input.S_NAME !== 'string' ||
+          // Filter garbages out.
+          input.S_NAME === '\u2010' ||
+          input.S_NAME.startsWith('（')
         ) {
           return undefined
         }
@@ -93,55 +96,9 @@ async function convertToTopoJSON(params: {
   return JSON.parse(result['output.topojson'])
 }
 
-type ArrayObject<T> = Record<string, T | number> & {
-  length: number
-}
-
-function toArrayObject<T>(array: readonly T[]): ArrayObject<T> {
-  return array.reduce(
-    (object, value, index) => ({ ...object, [`${index}`]: value }),
-    { length: array.length }
-  )
-}
-
-export type PackedGeometry =
-  | {
-      type: 'Polygon'
-      coordinates: ArrayObject<Buffer>
-    }
-  | {
-      type: 'MultiPolygon'
-      coordinates: ArrayObject<ArrayObject<Buffer>>
-    }
-
-function packGeometry(geometry: Polygon | MultiPolygon): PackedGeometry {
-  if (geometry.type === 'Polygon') {
-    return {
-      type: 'Polygon',
-      coordinates: toArrayObject(
-        geometry.coordinates.flatMap(coordinates =>
-          Buffer.from(new Float64Array(coordinates.flat()).buffer)
-        )
-      )
-    }
-  }
-  return {
-    type: 'MultiPolygon',
-    coordinates: toArrayObject(
-      geometry.coordinates.map(coordinates =>
-        toArrayObject(
-          coordinates.flatMap(coordinates =>
-            Buffer.from(new Float64Array(coordinates.flat()).buffer)
-          )
-        )
-      )
-    )
-  }
-}
-
 async function uploadFeatures(params: {
   topology: Topology
-  collection: CollectionReference
+  collection: CollectionReference<EstatAreaDocument>
 }): Promise<void> {
   const features = feature(
     params.topology,
@@ -150,28 +107,45 @@ async function uploadFeatures(params: {
 
   const writer = params.collection.firestore.bulkWriter()
   for (const feature of features) {
-    invariant(feature.properties.S_NAME != null)
+    const props = feature.properties
+    invariant(props.S_NAME != null)
     invariant(
       feature.geometry.type === 'Polygon' ||
         feature.geometry.type === 'MultiPolygon'
     )
-    const longitude = feature.properties.X_CODE
-    const latitude = feature.properties.Y_CODE
-    const id = [feature.properties.KEY_CODE, feature.properties.KIGO_E]
-      .filter(isNotNullish)
-      .join(':')
+    const longitude = props.X_CODE
+    const latitude = props.Y_CODE
+    const id = props.KEY_CODE
     const doc = params.collection.doc(id)
-    void writer.create(doc, {
-      // Notice the order is [latitude, longitude].
-      geohash: geohashForLocation([latitude, longitude]),
-      longitude,
-      latitude,
-      address1: `${feature.properties.CITY_NAME}${feature.properties.S_NAME}`,
-      address2: `${feature.properties.PREF_NAME}${feature.properties.CITY_NAME}${feature.properties.S_NAME}`,
-      properties: feature.properties,
-      geometry: packGeometry(feature.geometry),
-      bbox: turf.bbox(feature)
-    })
+    void writer
+      .set(doc, {
+        // Notice the order is [latitude, longitude].
+        geohash: geohashForLocation([latitude, longitude]),
+        longitude,
+        latitude,
+        ...(props.GST_NAME != null && props.CSS_NAME != null
+          ? {
+              shortAddress: `${props.CSS_NAME}${props.S_NAME}`,
+              middleAddress: `${props.GST_NAME}${props.CSS_NAME}${props.S_NAME}`,
+              fullAddress: `${props.PREF_NAME}${props.GST_NAME}${props.CSS_NAME}${props.S_NAME}`
+            }
+          : {
+              shortAddress: `${props.CITY_NAME}${props.S_NAME}`,
+              fullAddress: `${props.PREF_NAME}${props.CITY_NAME}${props.S_NAME}`
+            }),
+        properties: props,
+        geometry: packGeometry(feature.geometry),
+        bbox: turf.bbox(feature)
+      })
+      .catch(error => {
+        if (
+          !(error instanceof Error) ||
+          // Ignore documents of the same KEY_CODE with different KIGO_E.
+          !error.message.startsWith('Document already exists')
+        ) {
+          throw error
+        }
+      })
   }
   await writer.close()
 }
@@ -200,7 +174,9 @@ export async function main(): Promise<void> {
     const firestore = new Firestore({
       projectId: process.env.GOOGLE_CLOUD_PROJECT
     })
-    const collection = firestore.collection('api/estat/areas')
+    const collection = firestore.collection(
+      'api/estat/areas'
+    ) as CollectionReference<EstatAreaDocument>
     await uploadFeatures({
       topology: topojson,
       collection

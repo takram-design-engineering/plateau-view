@@ -29,6 +29,25 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean }
   Int: { input: number; output: number }
   Float: { input: number; output: number }
+  /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
+  JSON: { input: any; output: any }
+}
+
+export type EstatArea = {
+  __typename?: 'EstatArea'
+  address: Scalars['String']['output']
+  addressComponents: Array<Scalars['String']['output']>
+  id: Scalars['ID']['output']
+  municipalityCode: Scalars['String']['output']
+  name: Scalars['String']['output']
+  prefectureCode: Scalars['String']['output']
+}
+
+export type EstatAreaGeometry = {
+  __typename?: 'EstatAreaGeometry'
+  bbox: Array<Scalars['Float']['output']>
+  geometry: Scalars['JSON']['output']
+  id: Scalars['String']['output']
 }
 
 export type PlateauArea = {
@@ -168,12 +187,22 @@ export type PlateauPrefecture = PlateauArea & {
 
 export type Query = {
   __typename?: 'Query'
+  areaGeometry?: Maybe<EstatAreaGeometry>
+  areas: Array<EstatArea>
   dataset?: Maybe<PlateauDataset>
   datasets: Array<PlateauDataset>
   municipalities: Array<PlateauMunicipality>
   municipality?: Maybe<PlateauMunicipality>
   prefecture?: Maybe<PlateauPrefecture>
   prefectures: Array<PlateauPrefecture>
+}
+
+export type QueryAreaGeometryArgs = {
+  areaId: Scalars['ID']['input']
+}
+
+export type QueryAreasArgs = {
+  searchTokens: Array<Scalars['String']['input']>
 }
 
 export type QueryDatasetArgs = {
