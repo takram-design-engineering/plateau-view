@@ -4,10 +4,7 @@ import { debounce } from 'lodash'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { useCesium } from '@takram/plateau-cesium'
-import {
-  flyToBoundingSphere,
-  flyToDestination
-} from '@takram/plateau-cesium-helpers'
+import { flyToBoundingSphere } from '@takram/plateau-cesium-helpers'
 import {
   computePlateauBoundingSphere,
   type SearchableFeatureRecord,
@@ -31,6 +28,7 @@ import { type SearchOption } from '@takram/plateau-ui-components'
 import { BUILDING_LAYER, createViewLayer } from '@takram/plateau-view-layers'
 
 import { datasetTypeLayers } from '../constants/datasetTypeLayers'
+import { highlightAreaAtom } from '../containers/HighlightedAreas'
 import { areasAtom } from '../states/address'
 
 export interface DatasetSearchOption extends SearchOption {
@@ -183,7 +181,11 @@ function useAreaSearchOptions({
 }: SearchOptionsParams = {}): readonly AreaSearchOption[] {
   const [fetch, { data }] = useAreasLazyQuery()
   const debouncedFetch = useMemo(
-    () => debounce((...args: Parameters<typeof fetch>) => fetch(...args), 200),
+    () =>
+      debounce(
+        async (...args: Parameters<typeof fetch>) => await fetch(...args),
+        200
+      ),
     [fetch]
   )
 
@@ -200,6 +202,8 @@ function useAreaSearchOptions({
         variables: {
           searchTokens
         }
+      })?.catch(error => {
+        console.error(error)
       })
     }
   }, [inputValue, debouncedFetch])
@@ -234,6 +238,8 @@ export function useSearchOptions(options?: SearchOptionsParams): SearchOptions {
   const scene = useCesium(({ scene }) => scene, { indirect: true })
   const addLayer = useSetAtom(addLayerAtom)
   const setScreenSpaceSelection = useSetAtom(screenSpaceSelectionAtom)
+  const highlightArea = useSetAtom(highlightAreaAtom)
+
   const select = useCallback(
     (option: SearchOption) => {
       if (scene == null) {
@@ -303,15 +309,18 @@ export function useSearchOptions(options?: SearchOptionsParams): SearchOptions {
         }
         case 'area': {
           const areaOption = option as AreaSearchOption
-          void flyToDestination(
-            scene,
+          const boundingSphere = BoundingSphere.fromRectangle3D(
             Rectangle.fromDegrees(...areaOption.bbox)
           )
+          void flyToBoundingSphere(scene, boundingSphere)
+          highlightArea({
+            areaId: areaOption.id
+          })
           break
         }
       }
     },
-    [scene, addLayer, setScreenSpaceSelection]
+    [scene, addLayer, setScreenSpaceSelection, highlightArea]
   )
 
   return {
