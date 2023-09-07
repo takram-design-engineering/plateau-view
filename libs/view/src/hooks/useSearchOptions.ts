@@ -1,7 +1,7 @@
 import { BoundingSphere, Cartesian3, Rectangle } from '@cesium/engine'
 import { atom, useAtomValue, useSetAtom } from 'jotai'
 import { debounce } from 'lodash'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { useCesium } from '@takram/plateau-cesium'
 import { flyToBoundingSphere } from '@takram/plateau-cesium-helpers'
@@ -29,7 +29,7 @@ import { BUILDING_LAYER, createViewLayer } from '@takram/plateau-view-layers'
 
 import { datasetTypeLayers } from '../constants/datasetTypeLayers'
 import { highlightAreaAtom } from '../containers/HighlightedAreas'
-import { addressAtom, areasAtom } from '../states/address'
+import { areasAtom } from '../states/address'
 
 export interface DatasetSearchOption extends SearchOption {
   type: 'dataset'
@@ -196,22 +196,19 @@ function useAreaSearchOptions({
     }
   }, [query])
 
-  const skipRef = useRef(skip)
-  skipRef.current = skip
-
-  const address = useAtomValue(addressAtom)
+  const currentAreas = useAtomValue(areasAtom)
   useEffect(() => {
-    if (skipRef.current) {
+    if (skip) {
       return
     }
     let searchTokens =
       inputValue?.split(/\s+/).filter(value => value.length > 0) ?? []
     if (
       searchTokens.length === 0 &&
-      address != null &&
-      address.areas.length > 0
+      currentAreas != null &&
+      currentAreas.length > 0
     ) {
-      searchTokens = address.areas
+      searchTokens = currentAreas
         // Tokyo 23 wards is the only area which is not a municipality.
         .filter(area => area.name !== '東京都23区')
         .map(area => area.name)
@@ -227,7 +224,7 @@ function useAreaSearchOptions({
     } else {
       setAreas([])
     }
-  }, [inputValue, debouncedFetch, address])
+  }, [inputValue, skip, debouncedFetch, currentAreas])
 
   return useMemo(() => {
     if (skip) {
