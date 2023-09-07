@@ -202,6 +202,7 @@ export type QueryAreaGeometryArgs = {
 }
 
 export type QueryAreasArgs = {
+  limit?: InputMaybe<Scalars['Float']['input']>
   searchTokens: Array<Scalars['String']['input']>
 }
 

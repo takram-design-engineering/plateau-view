@@ -147,7 +147,7 @@ type PlateauPrefecture implements PlateauArea {
 
 type Query {
   areaGeometry(areaId: ID!): EstatAreaGeometry
-  areas(searchTokens: [String!]!): [EstatArea!]!
+  areas(limit: Float, searchTokens: [String!]!): [EstatArea!]!
   dataset(datasetId: String!): PlateauDataset
   datasets(excludeTypes: [PlateauDatasetType!], includeTypes: [PlateauDatasetType!], municipalityCodes: [String!], searchTokens: [String!]): [PlateauDataset!]!
   municipalities(datasetType: PlateauDatasetType, prefectureCode: String): [PlateauMunicipality!]!

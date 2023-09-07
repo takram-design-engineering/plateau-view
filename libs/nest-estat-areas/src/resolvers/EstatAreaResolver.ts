@@ -13,9 +13,14 @@ export class EstatAreaResolver {
   @Query(() => [EstatArea])
   async areas(
     @Args('searchTokens', { type: () => [String] })
-    searchTokens: readonly string[]
+    searchTokens: readonly string[],
+    @Args('limit', { type: () => Number, nullable: true })
+    limit?: number | null
   ): Promise<EstatArea[]> {
-    return await this.service.findAll({ searchTokens })
+    return await this.service.findAll({
+      searchTokens,
+      limit: limit ?? undefined
+    })
   }
 
   @Query(() => EstatAreaGeometry, { nullable: true })

@@ -95,19 +95,7 @@ export class EstatAreasService {
     searchTokens: readonly string[]
     limit?: number
   }): Promise<EstatArea[]> {
-    const { limit = 10 } = params
-
-    for (const field of searchFields) {
-      const snapshot = (await this.areaCollection
-        .where(field, 'in', params.searchTokens)
-        .orderBy('properties.SETAI', 'desc')
-        .limit(limit)
-        .select(...selectAreaFields)
-        .get()) as AreaQuerySnapshot
-      if (!snapshot.empty) {
-        return createAreas(snapshot)
-      }
-    }
+    const { limit = 100 } = params
 
     let result: EstatArea[] = []
     for (const fields of compoundSearchFields) {
@@ -133,8 +121,25 @@ export class EstatAreasService {
         return result.slice(0, limit)
       }
     }
+    if (result.length > 0) {
+      return result
+    }
 
-    return result
+    const [searchToken] = [...params.searchTokens].sort(
+      (a, b) => b.length - a.length
+    )
+    for (const field of searchFields) {
+      const snapshot = (await this.areaCollection
+        .where(field, '>=', searchToken)
+        .where(field, '<=', `${searchToken}\uf8ff`)
+        .limit(limit)
+        .select(...selectAreaFields)
+        .get()) as AreaQuerySnapshot
+      if (!snapshot.empty) {
+        return createAreas(snapshot)
+      }
+    }
+    return []
   }
 
   async findGeometry(params: {
