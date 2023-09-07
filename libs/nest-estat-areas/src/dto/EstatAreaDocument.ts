@@ -1,7 +1,6 @@
 import { type QueryDocumentSnapshot } from '@google-cloud/firestore'
 import { plainToInstance, Type } from 'class-transformer'
 import { IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator'
-import { type BBox } from 'geojson'
 
 import {
   FirestoreCollection,
@@ -157,5 +156,5 @@ export class EstatAreaDocument {
   properties!: EstatAreaDocumentProperties
 
   geometry!: PackedGeometry
-  bbox!: BBox
+  bbox!: [number, number, number, number]
 }

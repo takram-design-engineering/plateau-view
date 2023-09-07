@@ -54,10 +54,10 @@ fragment EstatArea on EstatArea {
   name
   address
   addressComponents
+  bbox
 }
 
 fragment EstatAreaGeometry on EstatAreaGeometry {
   id
   geometry
-  bbox
 }

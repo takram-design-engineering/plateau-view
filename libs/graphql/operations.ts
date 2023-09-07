@@ -37,6 +37,7 @@ export type EstatArea = {
   __typename?: 'EstatArea'
   address: Scalars['String']['output']
   addressComponents: Array<Scalars['String']['output']>
+  bbox: Array<Scalars['Float']['output']>
   id: Scalars['ID']['output']
   municipalityCode: Scalars['String']['output']
   name: Scalars['String']['output']
@@ -45,7 +46,6 @@ export type EstatArea = {
 
 export type EstatAreaGeometry = {
   __typename?: 'EstatAreaGeometry'
-  bbox: Array<Scalars['Float']['output']>
   geometry: Scalars['JSON']['output']
   id: Scalars['String']['output']
 }
@@ -431,13 +431,13 @@ export type EstatAreaFragment = {
   name: string
   address: string
   addressComponents: Array<string>
+  bbox: Array<number>
 }
 
 export type EstatAreaGeometryFragment = {
   __typename?: 'EstatAreaGeometry'
   id: string
   geometry: any
-  bbox: Array<number>
 }
 
 export type PrefecturesQueryVariables = Exact<{
@@ -774,6 +774,7 @@ export type AreasQuery = {
     name: string
     address: string
     addressComponents: Array<string>
+    bbox: Array<number>
   }>
 }
 
@@ -787,7 +788,6 @@ export type AreaGeometryQuery = {
     __typename?: 'EstatAreaGeometry'
     id: string
     geometry: any
-    bbox: Array<number>
   } | null
 }
 
@@ -857,13 +857,13 @@ export const EstatAreaFragmentDoc = gql`
     name
     address
     addressComponents
+    bbox
   }
 `
 export const EstatAreaGeometryFragmentDoc = gql`
   fragment EstatAreaGeometry on EstatAreaGeometry {
     id
     geometry
-    bbox
   }
 `
 export const PrefecturesDocument = gql`

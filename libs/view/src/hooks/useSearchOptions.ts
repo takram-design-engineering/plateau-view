@@ -1,10 +1,13 @@
-import { BoundingSphere, Cartesian3 } from '@cesium/engine'
+import { BoundingSphere, Cartesian3, Rectangle } from '@cesium/engine'
 import { atom, useAtomValue, useSetAtom } from 'jotai'
 import { debounce } from 'lodash'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { useCesium } from '@takram/plateau-cesium'
-import { flyToBoundingSphere } from '@takram/plateau-cesium-helpers'
+import {
+  flyToBoundingSphere,
+  flyToDestination
+} from '@takram/plateau-cesium-helpers'
 import {
   computePlateauBoundingSphere,
   type SearchableFeatureRecord,
@@ -44,6 +47,7 @@ export interface BuildingSearchOption
 
 export interface AreaSearchOption extends SearchOption {
   type: 'area'
+  bbox: [number, number, number, number]
 }
 
 export interface SearchOptionsParams {
@@ -208,7 +212,8 @@ function useAreaSearchOptions({
       data?.areas.map(area => ({
         type: 'area' as const,
         id: area.id,
-        name: area.address
+        name: area.address,
+        bbox: area.bbox as [number, number, number, number]
       })) ?? []
     )
   }, [skip, data])
@@ -297,6 +302,11 @@ export function useSearchOptions(options?: SearchOptionsParams): SearchOptions {
           break
         }
         case 'area': {
+          const areaOption = option as AreaSearchOption
+          void flyToDestination(
+            scene,
+            Rectangle.fromDegrees(...areaOption.bbox)
+          )
           break
         }
       }

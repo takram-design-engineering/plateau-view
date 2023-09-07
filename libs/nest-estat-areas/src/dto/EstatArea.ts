@@ -19,4 +19,7 @@ export class EstatArea {
 
   @Field(() => [String])
   addressComponents!: string[]
+
+  @Field(() => [Number])
+  bbox!: [number, number, number, number]
 }

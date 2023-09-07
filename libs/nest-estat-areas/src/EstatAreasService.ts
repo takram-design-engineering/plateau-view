@@ -15,7 +15,7 @@ import { EstatAreaDocument } from './dto/EstatAreaDocument'
 import { EstatAreaGeometry } from './dto/EstatAreaGeometry'
 import { unpackGeometry } from './helpers/packGeometry'
 
-const areaFields = [
+const areaPropertyKeys = [
   'PREF_NAME',
   'GST_NAME',
   'CSS_NAME',
@@ -23,12 +23,18 @@ const areaFields = [
   'PREF',
   'CITY'
 ] as const
-const selectAreaFields = areaFields.map(field => `properties.${field}`)
 
-type AreaFields = (typeof areaFields)[number]
+const selectFields = [
+  ...areaPropertyKeys.map(field => `properties.${field}`),
+  'bbox'
+]
 
 type AreaQuerySnapshot = QuerySnapshot<{
-  properties: Pick<EstatAreaDocument['properties'], AreaFields>
+  properties: Pick<
+    EstatAreaDocument['properties'],
+    (typeof areaPropertyKeys)[number]
+  >
+  bbox: EstatAreaDocument['bbox']
 }>
 
 function createAreas(
@@ -50,7 +56,8 @@ function createAreas(
       municipalityCode: `${props.PREF}${props.CITY}`,
       name: props.S_NAME,
       address: addressComponents.join(''),
-      addressComponents
+      addressComponents,
+      bbox: data.bbox
     } satisfies EstatArea)
   })
   if (searchTokens == null || searchTokens.length === 0) {
@@ -111,7 +118,7 @@ export class EstatAreasService {
       const snapshot = (await query
         .orderBy('properties.SETAI', 'desc')
         .limit(limit * 2) // Double this because some will be filtered out.
-        .select(...selectAreaFields)
+        .select(...selectFields)
         .get()) as AreaQuerySnapshot
       result = uniqBy(
         [...result, ...createAreas(snapshot, params.searchTokens)],
@@ -133,7 +140,7 @@ export class EstatAreasService {
         .where(field, '>=', searchToken)
         .where(field, '<=', `${searchToken}\uf8ff`)
         .limit(limit)
-        .select(...selectAreaFields)
+        .select(...selectFields)
         .get()) as AreaQuerySnapshot
       if (!snapshot.empty) {
         return createAreas(snapshot)
@@ -154,8 +161,7 @@ export class EstatAreasService {
     return plainToInstance(EstatAreaGeometry, {
       id: doc.id,
       // @ts-expect-error Coerce to JSON type
-      geometry: unpackGeometry(data.geometry),
-      bbox: data.bbox
+      geometry: unpackGeometry(data.geometry)
     } satisfies EstatAreaGeometry)
   }
 }

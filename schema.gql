@@ -5,6 +5,7 @@
 type EstatArea {
   address: String!
   addressComponents: [String!]!
+  bbox: [Float!]!
   id: ID!
   municipalityCode: String!
   name: String!
@@ -12,7 +13,6 @@ type EstatArea {
 }
 
 type EstatAreaGeometry {
-  bbox: [Float!]!
   geometry: JSON!
   id: String!
 }
