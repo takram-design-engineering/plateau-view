@@ -17,24 +17,24 @@ import { ToolButtons } from './ToolButtons'
 export const AppHeader: FC = () => {
   const hidden = useAtomValue(hideAppOverlayAtom)
   const theme = useTheme()
-  const smUp = useMediaQuery(theme.breakpoints.up('sm'))
+  const smDown = useMediaQuery(theme.breakpoints.down('sm'))
   if (hidden) {
     return null
   }
   return (
     <AppBar>
       <MainMenuButton />
-      {smUp && (
+      {!smDown && (
         <>
           <Space size={2} />
           <ToolButtons />
         </>
       )}
-      <Space flexible={!smUp} />
+      <Space flexible={smDown} />
       <SettingsButton />
       <DateControlButton />
       <EnvironmentSelect />
-      {smUp && (
+      {!smDown && (
         <>
           <Space flexible />
           <LocationBreadcrumbs />
@@ -42,7 +42,7 @@ export const AppHeader: FC = () => {
         </>
       )}
       <GeolocationButton />
-      {smUp && <CameraButtons />}
+      {!smDown && <CameraButtons />}
     </AppBar>
   )
 }

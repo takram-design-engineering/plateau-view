@@ -15,7 +15,10 @@ import {
 
 const Root = styled(FloatingPanel)(({ theme }) => ({
   width: 360,
-  padding: theme.spacing(1)
+  padding: theme.spacing(1),
+  [theme.breakpoints.down('sm')]: {
+    width: `calc(100vw - ${theme.spacing(2)})`
+  }
 }))
 
 const Title = styled('div')(({ theme }) => ({
