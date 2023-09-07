@@ -5,7 +5,7 @@ import {
   ColorMaterialProperty
 } from '@cesium/engine'
 import { useTheme } from '@mui/material'
-import { animate } from 'framer-motion'
+import { animate, type AnimationPlaybackControls } from 'framer-motion'
 import { type MultiPolygon, type Polygon } from 'geojson'
 import { atom, useAtomValue, useSetAtom } from 'jotai'
 import { useEffect, useMemo, useRef, type FC } from 'react'
@@ -49,6 +49,7 @@ const HighlightedArea: FC<{
     variables: { areaId }
   })
 
+  const scene = useCesium(({ scene }) => scene)
   const unhighlightArea = useSetAtom(unhighlightAreaAtom)
   useEffect(() => {
     if (!loading && data == null) {
@@ -56,18 +57,13 @@ const HighlightedArea: FC<{
     }
   }, [areaId, data, loading, unhighlightArea])
 
-  const theme = useTheme()
-  const colorRef = useRef(
-    Color.fromCssColorString(theme.palette.primary.main).withAlpha(opacity)
-  )
-  const colorProperty = useConstant(
-    () => new CallbackProperty(() => colorRef.current, false)
-  )
-
-  const scene = useCesium(({ scene }) => scene)
   useEffect(() => {
-    setTimeout(() => {
-      void animate(opacity, 0, {
+    if (data == null) {
+      return
+    }
+    let controls: AnimationPlaybackControls | undefined
+    const timeout = setTimeout(() => {
+      controls = animate(opacity, 0, {
         duration: 0.5,
         onUpdate: value => {
           colorRef.current = colorRef.current.withAlpha(value)
@@ -79,9 +75,19 @@ const HighlightedArea: FC<{
       })
     }, duration * 1000)
     return () => {
+      clearTimeout(timeout)
+      controls?.stop()
       scene.requestRender()
     }
-  }, [areaId, opacity, duration, unhighlightArea, scene])
+  }, [areaId, data, opacity, duration, unhighlightArea, scene])
+
+  const theme = useTheme()
+  const colorRef = useRef(
+    Color.fromCssColorString(theme.palette.primary.main).withAlpha(opacity)
+  )
+  const colorProperty = useConstant(
+    () => new CallbackProperty(() => colorRef.current, false)
+  )
 
   const optionsArray = useMemo((): EntityProps[] | undefined => {
     if (data?.areaGeometry == null) {
