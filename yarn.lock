@@ -10246,6 +10246,7 @@ __metadata:
     eslint-plugin-storybook: 0.6.12
     file-saver: ^2.0.5
     framer-motion: ^10.15.2
+    geofire-common: ^6.0.0
     geojson: ^0.5.0
     glob: ^10.3.3
     graphql: ^16.8.0
@@ -20513,6 +20514,13 @@ __metadata:
   version: 1.0.0-beta.2
   resolution: "gensync@npm:1.0.0-beta.2"
   checksum: a7437e58c6be12aa6c90f7730eac7fa9833dc78872b4ad2963d2031b00a3367a93f98aec75f9aaac7220848e4026d67a8655e870b24f20a543d103c0d65952ec
+  languageName: node
+  linkType: hard
+
+"geofire-common@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "geofire-common@npm:6.0.0"
+  checksum: 316c5a709fc4737d889cfe63c588661f526aa3aa7964f7df6947917ee7e3b68e796d3126946b857f1db83b9dfbb949c44008c302b5badfba7dc9fc6eee2993af
   languageName: node
   linkType: hard
 
