@@ -48,3 +48,16 @@ fragment PlateauDatasetDetail on PlateauDataset {
     ...PlateauMunicipality
   }
 }
+
+fragment EstatArea on EstatArea {
+  id
+  name
+  address
+  addressComponents
+}
+
+fragment EstatAreaGeometry on EstatAreaGeometry {
+  id
+  geometry
+  bbox
+}
