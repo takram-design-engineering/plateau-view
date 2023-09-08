@@ -28,7 +28,7 @@ function computeOutlierThreshold(values: number[]): number {
 }
 
 export function parseCSV(
-  data: string | string[],
+  data: string | readonly string[],
   { codeColumn, valueColumn, skipHeader = 1 }: ParseCSVOptions
 ): ParseCSVResult {
   let meshType: MeshType | undefined

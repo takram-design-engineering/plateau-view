@@ -6,19 +6,21 @@ import { type ColorTuple, type LUT } from './types'
 export type ColorMapType = 'sequential' | 'diverging'
 
 export class ColorMap<T extends ColorMapType = ColorMapType> {
+  private image?: HTMLCanvasElement
+  private scaleLinear?: ScaleLinear<ColorTuple, ColorTuple>
+
   constructor(readonly type: T, readonly name: string, readonly lut: LUT) {
     invariant(lut.length > 1)
   }
 
-  #linear?: ScaleLinear<ColorTuple, ColorTuple> | undefined
   linear(value: number): ColorTuple {
-    if (this.#linear == null) {
-      this.#linear = scaleLinear<ColorTuple>()
+    if (this.scaleLinear == null) {
+      this.scaleLinear = scaleLinear<ColorTuple>()
         .domain(quantize(interpolate(0, 1), this.lut.length))
         .range(this.lut)
         .clamp(true)
     }
-    const result = this.#linear(value)
+    const result = this.scaleLinear(value)
     invariant(result != null)
     return result
   }
@@ -35,6 +37,9 @@ export class ColorMap<T extends ColorMapType = ColorMapType> {
   }
 
   createImage(): HTMLCanvasElement {
+    if (this.image != null) {
+      return this.image
+    }
     const canvas = document.createElement('canvas')
     canvas.width = this.lut.length
     canvas.height = 1
@@ -44,6 +49,7 @@ export class ColorMap<T extends ColorMapType = ColorMapType> {
       context.fillStyle = rgb(r * 255, g * 255, b * 255).toString()
       context.fillRect(index, 0, 1, 1)
     })
-    return canvas
+    this.image = canvas
+    return this.image
   }
 }

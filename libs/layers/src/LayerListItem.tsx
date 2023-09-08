@@ -31,9 +31,8 @@ export const LayerListItem = forwardRef<HTMLDivElement, LayerListItemProps>(
 
     const [selection, setSelection] = useAtom(layerSelectionAtom)
     const addSelection = useSetAtom(addLayerSelectionAtom)
-    const handleMouseDown = useCallback(
+    const handleClick = useCallback(
       (event: MouseEvent) => {
-        event.stopPropagation()
         if (event.shiftKey) {
           // TODO: Toggle selection
           addSelection([layer.id])
@@ -61,7 +60,7 @@ export const LayerListItem = forwardRef<HTMLDivElement, LayerListItemProps>(
           index={index}
           selected={selection.includes(layer.id)}
           itemProps={{
-            onMouseDown: handleMouseDown
+            onClick: handleClick
           }}
         />
       </Root>

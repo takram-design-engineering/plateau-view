@@ -1,5 +1,5 @@
 import { useAtomValue, useSetAtom } from 'jotai'
-import { useCallback, useState, type FC } from 'react'
+import { useCallback, useRef, useState, type FC, type MouseEvent } from 'react'
 
 import {
   clearLayerSelectionAtom,
@@ -25,19 +25,26 @@ export const MainPanel: FC = () => {
   }, [])
 
   const clearLayerSelection = useSetAtom(clearLayerSelectionAtom)
-  const handleLayersMouseDown = useCallback(() => {
-    clearLayerSelection()
-  }, [clearLayerSelection])
+  const listRef = useRef<HTMLDivElement>(null)
+  const handleLayersClick = useCallback(
+    (event: MouseEvent) => {
+      if (event.target === listRef.current) {
+        clearLayerSelection()
+      }
+    },
+    [clearLayerSelection]
+  )
 
   return (
     <AutoHeight>
       <SearchAutocompletePanel>
         <LayerListComponent
+          listRef={listRef}
           footer={`${layerAtoms.length}項目`}
           open={layersOpen}
           onOpen={handleLayersOpen}
           onClose={handleLayersClose}
-          onMouseDown={handleLayersMouseDown}
+          onClick={handleLayersClick}
         >
           <LayerList itemComponent={ViewLayerListItem} unmountWhenEmpty />
         </LayerListComponent>

@@ -1,4 +1,4 @@
-import { atom, type PrimitiveAtom } from 'jotai'
+import { atom, type PrimitiveAtom, type SetStateAction } from 'jotai'
 
 import { colorMapPlateau, type ColorMap } from '@takram/plateau-color-maps'
 import {
@@ -19,9 +19,9 @@ export interface PlateauTilesetLayerState {
   hiddenFeaturesAtom: PrimitiveAtom<readonly string[] | null>
   propertiesAtom: PrimitiveAtom<readonly PlateauTilesetProperty[] | null>
   colorPropertyAtom: PrimitiveAtom<string | null>
+  colorSchemeAtom: ViewLayerModel['colorSchemeAtom']
   colorMapAtom: PrimitiveAtom<ColorMap>
   colorRangeAtom: PrimitiveAtom<number[]>
-  colorSchemeAtom: ViewLayerModel['colorSchemeAtom']
   opacityAtom: PrimitiveAtom<number>
 }
 
@@ -45,6 +45,22 @@ export function createPlateauTilesetLayerState(
   const colorPropertyAtom = atom<string | null>(null)
   const colorMapAtom = atom<ColorMap>(colorMapPlateau)
   const colorRangeAtom = atom([0, 100])
+  const valueRangeAtom = atom(
+    get => {
+      const properties = get(propertiesAtom)
+      const colorProperty = get(colorPropertyAtom)
+      const property =
+        colorProperty != null
+          ? properties?.find(({ name }) => name === colorProperty)
+          : undefined
+      return property?.type === 'number'
+        ? [property.minimum, property.maximum]
+        : []
+    },
+    (get, set, value: SetStateAction<number[]>) => {
+      // Not writable
+    }
+  )
 
   const colorSchemeAtom = atom<LayerColorScheme | null>(get => {
     const properties = get(propertiesAtom)
@@ -59,7 +75,8 @@ export function createPlateauTilesetLayerState(
           type: 'quantitative',
           name: colorProperty.replaceAll('_', ' '),
           colorMapAtom,
-          colorRangeAtom
+          colorRangeAtom,
+          valueRangeAtom
         }
   })
 
@@ -71,9 +88,9 @@ export function createPlateauTilesetLayerState(
     ),
     propertiesAtom,
     colorPropertyAtom,
+    colorSchemeAtom,
     colorMapAtom,
     colorRangeAtom,
-    colorSchemeAtom,
     opacityAtom: atom(1)
   }
 }

@@ -15,7 +15,9 @@ import {
 } from '@takram/plateau-graphql'
 import { DatasetTreeItem, DatasetTreeView } from '@takram/plateau-ui-components'
 
+import { censusDatasets } from '../constants/censusDatasets'
 import { datasetTypeOrder } from '../constants/datasetTypeOrder'
+import { CensusDatasetListItem } from './CensusDatasetListItem'
 import { DatasetListItem, joinPath } from './DatasetListItem'
 
 const expandedAtom = atomWithReset<string[]>([])
@@ -139,6 +141,28 @@ const PrefectureItem: FC<{
   )
 }
 
+const RegionalMeshItem: FC = () => {
+  return (
+    <DatasetTreeItem nodeId='RegionalMesh' label='地域メッシュ'>
+      {censusDatasets.map(dataset => (
+        <DatasetTreeItem
+          key={dataset.name}
+          nodeId={`RegionalMesh:${dataset.name}`}
+          label={dataset.name}
+        >
+          {dataset.data.map(data => (
+            <CensusDatasetListItem
+              key={data.name}
+              dataset={dataset}
+              data={data}
+            />
+          ))}
+        </DatasetTreeItem>
+      ))}
+    </DatasetTreeItem>
+  )
+}
+
 export const DatasetAreaList: FC = () => {
   const query = usePrefecturesQuery()
   const [expanded, setExpanded] = useAtom(expandedAtom)
@@ -150,6 +174,7 @@ export const DatasetAreaList: FC = () => {
   )
   return (
     <DatasetTreeView expanded={expanded} onNodeToggle={handleNodeToggle}>
+      <RegionalMeshItem />
       {query.data?.prefectures.map(prefecture => (
         <PrefectureItem key={prefecture.code} prefecture={prefecture} />
       ))}

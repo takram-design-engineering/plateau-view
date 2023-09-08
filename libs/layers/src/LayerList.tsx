@@ -3,6 +3,7 @@ import {
   DndContext,
   KeyboardSensor,
   MouseSensor,
+  TouchSensor,
   useSensor,
   useSensors,
   type DragEndEvent
@@ -53,6 +54,12 @@ export const LayerList = forwardRef<HTMLDivElement, LayerListProps>(
       useSensor(MouseSensor, {
         activationConstraint: {
           distance: minimumDragDistance
+        }
+      }),
+      useSensor(TouchSensor, {
+        activationConstraint: {
+          delay: 200,
+          tolerance: minimumDragDistance
         }
       }),
       useSensor(KeyboardSensor, {
