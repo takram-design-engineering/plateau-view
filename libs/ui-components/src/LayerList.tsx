@@ -10,7 +10,12 @@ import {
   type ListItem,
   type ListProps
 } from '@mui/material'
-import { forwardRef, type MouseEventHandler, type ReactNode } from 'react'
+import {
+  forwardRef,
+  type ForwardedRef,
+  type MouseEventHandler,
+  type ReactNode
+} from 'react'
 
 import { ExpandArrowIcon } from './icons'
 import { Scrollable } from './Scrollable'
@@ -43,6 +48,7 @@ const StyledScrollable = styled(Scrollable)(({ theme }) => ({
 }))
 
 export interface LayerListProps extends ListProps<'div'> {
+  listRef?: ForwardedRef<HTMLDivElement>
   footer?: ReactNode
   open?: boolean
   onOpen?: MouseEventHandler<HTMLLIElement>
@@ -50,12 +56,15 @@ export interface LayerListProps extends ListProps<'div'> {
 }
 
 export const LayerList = forwardRef<HTMLDivElement, LayerListProps>(
-  ({ footer, open = true, onOpen, onClose, children, ...props }, ref) => (
+  (
+    { listRef, footer, open = true, onOpen, onClose, children, ...props },
+    ref
+  ) => (
     <Root ref={ref} component='div' dense {...props}>
       {open && (
         <>
           <StyledScrollable>
-            <List component='div' dense>
+            <List ref={listRef} component='div' dense>
               {children}
             </List>
           </StyledScrollable>
