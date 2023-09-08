@@ -20,6 +20,8 @@ export interface PlateauTilesetLayerState {
   propertiesAtom: PrimitiveAtom<readonly PlateauTilesetProperty[] | null>
   colorPropertyAtom: PrimitiveAtom<string | null>
   colorSchemeAtom: ViewLayerModel['colorSchemeAtom']
+  colorMapAtom: PrimitiveAtom<ColorMap>
+  colorRangeAtom: PrimitiveAtom<number[]>
   opacityAtom: PrimitiveAtom<number>
 }
 
@@ -87,6 +89,8 @@ export function createPlateauTilesetLayerState(
     propertiesAtom,
     colorPropertyAtom,
     colorSchemeAtom,
+    colorMapAtom,
+    colorRangeAtom,
     opacityAtom: atom(1)
   }
 }
