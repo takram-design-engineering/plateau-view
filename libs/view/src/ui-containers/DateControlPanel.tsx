@@ -15,9 +15,12 @@ import { DateControl, FloatingPanel } from '@takram/plateau-ui-components'
 const cartesianScratch = new Cartesian3()
 const cartographicScratch = new Cartographic()
 
-const Root = styled(FloatingPanel)({
-  width: 640
-})
+const Root = styled(FloatingPanel)(({ theme }) => ({
+  width: 640,
+  [theme.breakpoints.down('sm')]: {
+    width: `calc(100vw - ${theme.spacing(2)})`
+  }
+}))
 
 export const DateControlPanel: FC = () => {
   const clock = useCesium(({ clock }) => clock, { indirect: true })

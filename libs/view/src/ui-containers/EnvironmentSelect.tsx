@@ -5,7 +5,9 @@ import {
   FormControlLabel,
   Popover,
   styled,
-  Switch
+  Switch,
+  useMediaQuery,
+  useTheme
 } from '@mui/material'
 import { useAtom, useAtomValue } from 'jotai'
 import {
@@ -239,6 +241,8 @@ export const EnvironmentSelect: FC = () => {
     [setShowMapLabel]
   )
 
+  const theme = useTheme()
+  const smDown = useMediaQuery(theme.breakpoints.down('sm'))
   return (
     <>
       <AppIconButton
@@ -249,7 +253,7 @@ export const EnvironmentSelect: FC = () => {
       >
         <MapIcon />
       </AppIconButton>
-      {selectedItem === 'elevation' && <ElevationLegendButton />}
+      {selectedItem === 'elevation' && !smDown && <ElevationLegendButton />}
       <OverlayPopper {...popoverProps} inset={1.5}>
         <FloatingPanel>
           <Item

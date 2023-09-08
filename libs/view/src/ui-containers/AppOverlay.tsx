@@ -5,8 +5,8 @@ import { Suspense, type FC } from 'react'
 import { AppOverlayLayout } from '@takram/plateau-ui-components'
 
 import { DeveloperPanels } from '../developer/DeveloperPanels'
+import { useSelectionPanel } from '../hooks/useSelectionPanel'
 import { hideAppOverlayAtom } from '../states/app'
-import { SelectionPanel } from './SelectionPanel'
 
 const MainPanel = dynamic(async () => (await import('./MainPanel')).MainPanel, {
   ssr: false
@@ -14,6 +14,7 @@ const MainPanel = dynamic(async () => (await import('./MainPanel')).MainPanel, {
 
 export const AppOverlay: FC = () => {
   const hidden = useAtomValue(hideAppOverlayAtom)
+  const selectionPanel = useSelectionPanel()
   return (
     <AppOverlayLayout
       hidden={hidden}
@@ -22,7 +23,7 @@ export const AppOverlay: FC = () => {
           <MainPanel />
         </Suspense>
       }
-      aside={<SelectionPanel />}
+      aside={selectionPanel}
       developer={<DeveloperPanels />}
     />
   )

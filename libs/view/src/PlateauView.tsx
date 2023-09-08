@@ -30,6 +30,7 @@ import { SketchTool } from './containers/SketchTool'
 import { Terrains } from './containers/Terrains'
 import { ToolMachineEvents } from './containers/ToolMachineEvents'
 import { MapLabel } from './containers/VectorMapLabel'
+import { ViewportObserver } from './containers/ViewportObserver'
 import { readyAtom } from './states/app'
 import { AppHeader } from './ui-containers/AppHeader'
 import { AppOverlay } from './ui-containers/AppOverlay'
@@ -83,6 +84,7 @@ export const PlateauView: FC<PlateauViewProps> = () => {
       <KeyBindings />
       <ScreenSpaceSelection />
       <FileDrop />
+      <ViewportObserver />
       <AppOverlay />
       <Notifications />
       <InitialLayers />

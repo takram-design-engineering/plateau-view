@@ -7,6 +7,7 @@ import { type SetRequired } from 'type-fest'
 const Root = styled(Slider)(({ theme }) => {
   const borderRadius = 5
   return {
+    display: 'block',
     width: `calc(100% - ${borderRadius * 2}px)`,
     marginLeft: borderRadius,
     marginBottom: 0,

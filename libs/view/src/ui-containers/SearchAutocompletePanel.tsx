@@ -5,6 +5,8 @@ import {
   Tab,
   tabClasses,
   Tabs,
+  useMediaQuery,
+  useTheme,
   type FilterOptionsState
 } from '@mui/material'
 import { useAtomValue } from 'jotai'
@@ -171,6 +173,8 @@ export const SearchAutocompletePanel: FC<SearchAutocompletePanelProps> = ({
   const maxMainHeight = useAtomValue(maxMainHeightAtom)
 
   const platform = useAtomValue(platformAtom)
+  const theme = useTheme()
+  const smDown = useMediaQuery(theme.breakpoints.down('sm'))
   return (
     <ClickAwayListener onClickAway={handleClickAway}>
       <FloatingPanel>
@@ -185,12 +189,14 @@ export const SearchAutocompletePanel: FC<SearchAutocompletePanelProps> = ({
           onChange={handleChange}
           onInputChange={handleInputChange}
           endAdornment={
-            <Shortcut
-              variant='outlined'
-              platform={platform}
-              shortcutKey='K'
-              commandKey
-            />
+            !smDown && (
+              <Shortcut
+                variant='outlined'
+                platform={platform}
+                shortcutKey='K'
+                commandKey
+              />
+            )
           }
         >
           <Divider />
