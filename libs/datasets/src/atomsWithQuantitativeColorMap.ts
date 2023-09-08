@@ -7,25 +7,30 @@ export interface QuantitativeColorMap {
   name: string
   colorMapAtom: PrimitiveAtom<ColorMap>
   colorRangeAtom: PrimitiveAtom<number[]>
+  valueRangeAtom: PrimitiveAtom<number[]>
 }
 
 export interface QuantitativeColorSetOptions {
   name: string
   colorMap?: ColorMap
   colorRange?: number[]
+  valueRange?: number[]
 }
 
 export function atomsWithQuantitativeColorMap({
   name,
-  colorMap,
-  colorRange
+  colorMap = colorMapPlateau,
+  colorRange = [0, 100],
+  valueRange = colorRange
 }: QuantitativeColorSetOptions): QuantitativeColorMap {
-  const colorMapAtom = atom(colorMap ?? colorMapPlateau)
-  const colorRangeAtom = atom(colorRange ?? [0, 100])
+  const colorMapAtom = atom(colorMap)
+  const colorRangeAtom = atom(colorRange)
+  const valueRangeAtom = atom(valueRange)
   return {
     type: 'quantitative',
     name,
     colorMapAtom,
-    colorRangeAtom
+    colorRangeAtom,
+    valueRangeAtom
   }
 }

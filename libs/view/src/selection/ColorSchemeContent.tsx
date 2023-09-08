@@ -30,6 +30,7 @@ const QuantitativeContent: FC<{
 }> = ({ colorScheme, onClose }) => {
   const colorMap = useAtomValue(colorScheme.colorMapAtom)
   const colorRange = useAtomValue(colorScheme.colorRangeAtom)
+  const valueRange = useAtomValue(colorScheme.valueRangeAtom)
 
   return (
     <List disablePadding>
@@ -51,6 +52,8 @@ const QuantitativeContent: FC<{
           <ColorMapParameterItem label='配色' atom={colorScheme.colorMapAtom} />
           <SliderParameterItem
             label='値範囲'
+            min={valueRange[0]}
+            max={valueRange[1]}
             // @ts-expect-error Safe assertion
             atom={colorScheme.colorRangeAtom}
           />

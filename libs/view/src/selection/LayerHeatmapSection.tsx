@@ -74,6 +74,7 @@ export const LayerHeatmapSection: FC<LayerHeatmapSectionProps> = ({
       [layers]
     )
   )
+
   if (
     colorMapAtoms == null ||
     colorRangeAtoms == null ||

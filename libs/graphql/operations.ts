@@ -29,6 +29,25 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean }
   Int: { input: number; output: number }
   Float: { input: number; output: number }
+  /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
+  JSON: { input: any; output: any }
+}
+
+export type EstatArea = {
+  __typename?: 'EstatArea'
+  address: Scalars['String']['output']
+  addressComponents: Array<Scalars['String']['output']>
+  bbox: Array<Scalars['Float']['output']>
+  id: Scalars['ID']['output']
+  municipalityCode: Scalars['String']['output']
+  name: Scalars['String']['output']
+  prefectureCode: Scalars['String']['output']
+}
+
+export type EstatAreaGeometry = {
+  __typename?: 'EstatAreaGeometry'
+  geometry: Scalars['JSON']['output']
+  id: Scalars['String']['output']
 }
 
 export type PlateauArea = {
@@ -168,12 +187,23 @@ export type PlateauPrefecture = PlateauArea & {
 
 export type Query = {
   __typename?: 'Query'
+  areaGeometry?: Maybe<EstatAreaGeometry>
+  areas: Array<EstatArea>
   dataset?: Maybe<PlateauDataset>
   datasets: Array<PlateauDataset>
   municipalities: Array<PlateauMunicipality>
   municipality?: Maybe<PlateauMunicipality>
   prefecture?: Maybe<PlateauPrefecture>
   prefectures: Array<PlateauPrefecture>
+}
+
+export type QueryAreaGeometryArgs = {
+  areaId: Scalars['ID']['input']
+}
+
+export type QueryAreasArgs = {
+  limit?: InputMaybe<Scalars['Float']['input']>
+  searchTokens: Array<Scalars['String']['input']>
 }
 
 export type QueryDatasetArgs = {
@@ -394,6 +424,21 @@ type PlateauDatasetDetail_PlateauDefaultDataset_Fragment = {
 export type PlateauDatasetDetailFragment =
   | PlateauDatasetDetail_PlateauBuildingDataset_Fragment
   | PlateauDatasetDetail_PlateauDefaultDataset_Fragment
+
+export type EstatAreaFragment = {
+  __typename?: 'EstatArea'
+  id: string
+  name: string
+  address: string
+  addressComponents: Array<string>
+  bbox: Array<number>
+}
+
+export type EstatAreaGeometryFragment = {
+  __typename?: 'EstatAreaGeometry'
+  id: string
+  geometry: any
+}
 
 export type PrefecturesQueryVariables = Exact<{
   datasetType?: InputMaybe<PlateauDatasetType>
@@ -717,6 +762,35 @@ export type DatasetDetailQuery = {
     | null
 }
 
+export type AreasQueryVariables = Exact<{
+  searchTokens: Array<Scalars['String']['input']> | Scalars['String']['input']
+}>
+
+export type AreasQuery = {
+  __typename?: 'Query'
+  areas: Array<{
+    __typename?: 'EstatArea'
+    id: string
+    name: string
+    address: string
+    addressComponents: Array<string>
+    bbox: Array<number>
+  }>
+}
+
+export type AreaGeometryQueryVariables = Exact<{
+  areaId: Scalars['ID']['input']
+}>
+
+export type AreaGeometryQuery = {
+  __typename?: 'Query'
+  areaGeometry?: {
+    __typename?: 'EstatAreaGeometry'
+    id: string
+    geometry: any
+  } | null
+}
+
 export const PlateauDatasetDatumFragmentDoc = gql`
   fragment PlateauDatasetDatum on PlateauDatasetDatum {
     id
@@ -776,6 +850,21 @@ export const PlateauDatasetDetailFragmentDoc = gql`
   }
   ${PlateauDatasetFragmentDoc}
   ${PlateauMunicipalityFragmentDoc}
+`
+export const EstatAreaFragmentDoc = gql`
+  fragment EstatArea on EstatArea {
+    id
+    name
+    address
+    addressComponents
+    bbox
+  }
+`
+export const EstatAreaGeometryFragmentDoc = gql`
+  fragment EstatAreaGeometry on EstatAreaGeometry {
+    id
+    geometry
+  }
 `
 export const PrefecturesDocument = gql`
   query prefectures($datasetType: PlateauDatasetType) {
@@ -1092,4 +1181,112 @@ export type DatasetDetailLazyQueryHookResult = ReturnType<
 export type DatasetDetailQueryResult = Apollo.QueryResult<
   DatasetDetailQuery,
   DatasetDetailQueryVariables
+>
+export const AreasDocument = gql`
+  query areas($searchTokens: [String!]!) {
+    areas(searchTokens: $searchTokens) {
+      ...EstatArea
+    }
+  }
+  ${EstatAreaFragmentDoc}
+`
+
+/**
+ * __useAreasQuery__
+ *
+ * To run a query within a React component, call `useAreasQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAreasQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAreasQuery({
+ *   variables: {
+ *      searchTokens: // value for 'searchTokens'
+ *   },
+ * });
+ */
+export function useAreasQuery(
+  baseOptions: Apollo.QueryHookOptions<AreasQuery, AreasQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<AreasQuery, AreasQueryVariables>(
+    AreasDocument,
+    options
+  )
+}
+export function useAreasLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<AreasQuery, AreasQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<AreasQuery, AreasQueryVariables>(
+    AreasDocument,
+    options
+  )
+}
+export type AreasQueryHookResult = ReturnType<typeof useAreasQuery>
+export type AreasLazyQueryHookResult = ReturnType<typeof useAreasLazyQuery>
+export type AreasQueryResult = Apollo.QueryResult<
+  AreasQuery,
+  AreasQueryVariables
+>
+export const AreaGeometryDocument = gql`
+  query areaGeometry($areaId: ID!) {
+    areaGeometry(areaId: $areaId) {
+      ...EstatAreaGeometry
+    }
+  }
+  ${EstatAreaGeometryFragmentDoc}
+`
+
+/**
+ * __useAreaGeometryQuery__
+ *
+ * To run a query within a React component, call `useAreaGeometryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAreaGeometryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAreaGeometryQuery({
+ *   variables: {
+ *      areaId: // value for 'areaId'
+ *   },
+ * });
+ */
+export function useAreaGeometryQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    AreaGeometryQuery,
+    AreaGeometryQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<AreaGeometryQuery, AreaGeometryQueryVariables>(
+    AreaGeometryDocument,
+    options
+  )
+}
+export function useAreaGeometryLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    AreaGeometryQuery,
+    AreaGeometryQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<AreaGeometryQuery, AreaGeometryQueryVariables>(
+    AreaGeometryDocument,
+    options
+  )
+}
+export type AreaGeometryQueryHookResult = ReturnType<
+  typeof useAreaGeometryQuery
+>
+export type AreaGeometryLazyQueryHookResult = ReturnType<
+  typeof useAreaGeometryLazyQuery
+>
+export type AreaGeometryQueryResult = Apollo.QueryResult<
+  AreaGeometryQuery,
+  AreaGeometryQueryVariables
 >

@@ -54,7 +54,5 @@ export const SketchLayer: FC<LayerProps<typeof SKETCH_LAYER>> = ({
   if (hidden) {
     return null
   }
-  return (
-    <Sketch featuresAtom={featuresAtom} featureAtomsAtom={featureAtomsAtom} />
-  )
+  return <Sketch featuresAtom={featuresAtom} />
 }

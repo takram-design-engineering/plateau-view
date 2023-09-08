@@ -48,3 +48,15 @@ query datasetDetail($datasetId: String!) {
     ...PlateauDatasetDetail
   }
 }
+
+query areas($searchTokens: [String!]!) {
+  areas(searchTokens: $searchTokens) {
+    ...EstatArea
+  }
+}
+
+query areaGeometry($areaId: ID!) {
+  areaGeometry(areaId: $areaId) {
+    ...EstatAreaGeometry
+  }
+}

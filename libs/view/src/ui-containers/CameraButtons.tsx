@@ -4,14 +4,16 @@ import { useCallback, type FC } from 'react'
 import {
   AppIconButton,
   KeyboardMovementIcon,
-  LocationIcon,
   MinusIcon,
   PlusIcon,
   RotateAroundIcon
 } from '@takram/plateau-ui-components'
 
 import { useCameraZoom } from '../hooks/useCameraZoom'
-import { enableKeyboardCameraControlAtom } from '../states/app'
+import {
+  autoRotateCameraAtom,
+  enableKeyboardCameraControlAtom
+} from '../states/app'
 
 function useBooleanAtomProps(atom: PrimitiveAtom<boolean>): {
   selected: boolean
@@ -28,9 +30,8 @@ export const CameraButtons: FC = () => {
   const enableKeyboardCameraControlProps = useBooleanAtomProps(
     enableKeyboardCameraControlAtom
   )
-
+  const autoRotateCameraProps = useBooleanAtomProps(autoRotateCameraAtom)
   const { zoomIn, zoomOut } = useCameraZoom()
-
   return (
     <>
       <AppIconButton
@@ -39,10 +40,7 @@ export const CameraButtons: FC = () => {
       >
         <KeyboardMovementIcon />
       </AppIconButton>
-      <AppIconButton title='現在地' disabled>
-        <LocationIcon />
-      </AppIconButton>
-      <AppIconButton title='自動回転' disabled>
+      <AppIconButton title='自動回転' {...autoRotateCameraProps}>
         <RotateAroundIcon />
       </AppIconButton>
       <AppIconButton title='縮小' onClick={zoomOut}>

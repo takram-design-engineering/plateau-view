@@ -6,7 +6,8 @@ const Root = styled('div')({
   display: 'flex',
   flexDirection: 'column',
   position: 'fixed',
-  inset: 0
+  inset: 0,
+  touchAction: 'none'
 })
 
 const Header = styled('div')({

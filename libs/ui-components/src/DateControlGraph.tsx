@@ -1,4 +1,4 @@
-import { styled, useTheme } from '@mui/material'
+import { styled, useMediaQuery, useTheme } from '@mui/material'
 import { Body, Equator, Horizon, type Observer } from 'astronomy-engine'
 import {
   area as createArea,
@@ -300,6 +300,7 @@ const Graph: FC<
   const y = scaleY(getAltitude(date, observer))
 
   const theme = useTheme()
+  const smDown = useMediaQuery(theme.breakpoints.down('sm'))
   const color = theme.palette.text.primary
   return (
     <svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'>
@@ -349,7 +350,7 @@ const Graph: FC<
         stroke='none'
       />
       <XAxis height={height} date={date} scale={scaleX} />
-      <YAxis width={width} scale={scaleY} />
+      {!smDown && <YAxis width={width} scale={scaleY} />}
     </svg>
   )
 }

@@ -4,7 +4,10 @@ import {
   styled,
   Tab,
   tabClasses,
-  Tabs
+  Tabs,
+  useMediaQuery,
+  useTheme,
+  type FilterOptionsState
 } from '@mui/material'
 import { useAtomValue } from 'jotai'
 import {
@@ -52,6 +55,18 @@ const StyledTabs = styled(Tabs)(({ theme }) => ({
   }
 }))
 
+function filterOptions(
+  options: SearchOption[],
+  state: FilterOptionsState<SearchOption>
+): SearchOption[] {
+  const tokens = state.inputValue.split(/\s+/).filter(value => value.length > 0)
+  return tokens.length > 0
+    ? options.filter(option =>
+        tokens.some(token => state.getOptionLabel(option).includes(token))
+      )
+    : options
+}
+
 export interface SearchAutocompletePanelProps {
   children?: ReactNode
 }
@@ -65,16 +80,25 @@ export const SearchAutocompletePanel: FC<SearchAutocompletePanelProps> = ({
     setFocused(true)
   }, [])
 
+  const [inputValue, setInputValue] = useState('')
+  const handleInputChange: NonNullable<
+    SearchAutocompleteProps['onInputChange']
+  > = useCallback((event, value, reason) => {
+    setInputValue(value)
+  }, [])
+
+  const deferredInputValue = useDeferredValue(inputValue)
   const searchOptions = useSearchOptions({
+    inputValue: deferredInputValue,
     skip: !focused
   })
   const options = useMemo(
     () => [
       ...searchOptions.datasets,
       ...searchOptions.buildings,
-      ...searchOptions.addresses
+      ...searchOptions.areas
     ],
-    [searchOptions.datasets, searchOptions.buildings, searchOptions.addresses]
+    [searchOptions.datasets, searchOptions.buildings, searchOptions.areas]
   )
 
   const selectOption = searchOptions.select
@@ -149,6 +173,8 @@ export const SearchAutocompletePanel: FC<SearchAutocompletePanelProps> = ({
   const maxMainHeight = useAtomValue(maxMainHeightAtom)
 
   const platform = useAtomValue(platformAtom)
+  const theme = useTheme()
+  const smDown = useMediaQuery(theme.breakpoints.down('sm'))
   return (
     <ClickAwayListener onClickAway={handleClickAway}>
       <FloatingPanel>
@@ -157,16 +183,20 @@ export const SearchAutocompletePanel: FC<SearchAutocompletePanelProps> = ({
           placeholder='データセット、建築物、住所を検索'
           options={options}
           filters={filters}
+          filterOptions={filterOptions}
           maxHeight={maxMainHeight}
           onFocus={handleFocus}
           onChange={handleChange}
+          onInputChange={handleInputChange}
           endAdornment={
-            <Shortcut
-              variant='outlined'
-              platform={platform}
-              shortcutKey='K'
-              commandKey
-            />
+            !smDown && (
+              <Shortcut
+                variant='outlined'
+                platform={platform}
+                shortcutKey='K'
+                commandKey
+              />
+            )
           }
         >
           <Divider />
@@ -183,7 +213,7 @@ export const SearchAutocompletePanel: FC<SearchAutocompletePanelProps> = ({
                 <SearchList
                   datasets={searchOptions.datasets}
                   buildings={searchOptions.buildings}
-                  addresses={searchOptions.addresses}
+                  areas={searchOptions.areas}
                   onOptionSelect={handleOptionSelect}
                   onFiltersChange={handleFiltersChange}
                 />

@@ -1,17 +1,24 @@
+import { useTheme } from '@mui/material'
 import { useAtom, useAtomValue } from 'jotai'
 import { type ResizeCallback } from 're-resizable'
-import { useCallback, type FC } from 'react'
+import { useCallback, type ReactNode } from 'react'
 
 import { PLATEAU_TILE_FEATURE } from '@takram/plateau-datasets'
 import { PEDESTRIAN_OBJECT } from '@takram/plateau-pedestrian'
+import { SKETCH_OBJECT } from '@takram/plateau-sketch'
 import { Inspector } from '@takram/plateau-ui-components'
 import { PEDESTRIAN_LAYER } from '@takram/plateau-view-layers'
 
 import { ColorSchemeContent } from '../selection/ColorSchemeContent'
 import { LayerContent } from '../selection/LayerContent'
 import { PedestrianLayerContent } from '../selection/PedestrianLayerContent'
+import { SketchObjectContent } from '../selection/SketchObjectContent'
 import { TileFeatureContent } from '../selection/TileFeatureContent'
-import { inspectorWidthAtom, pedestrianInspectorWidthAtom } from '../states/app'
+import {
+  inspectorWidthAtom,
+  pedestrianInspectorWidthAtom,
+  viewportWidthAtom
+} from '../states/app'
 import {
   COLOR_SCHEME_SELECTION,
   LAYER_SELECTION,
@@ -19,7 +26,7 @@ import {
   selectionGroupsAtom
 } from '../states/selection'
 
-export const SelectionPanel: FC = () => {
+export function useSelectionPanel(): ReactNode {
   let content = null
   let contentType: 'default' | 'pedestrian' = 'default'
   const selectionGroups = useAtomValue(selectionGroupsAtom)
@@ -46,6 +53,9 @@ export const SelectionPanel: FC = () => {
           case PEDESTRIAN_OBJECT:
             content = <PedestrianLayerContent values={selectionGroup.values} />
             contentType = 'pedestrian'
+            break
+          case SKETCH_OBJECT:
+            content = <SketchObjectContent values={selectionGroup.values} />
             break
         }
         break
@@ -75,6 +85,13 @@ export const SelectionPanel: FC = () => {
     [setPedestrianInspectorWidth]
   )
 
+  const viewportWidth = useAtomValue(viewportWidthAtom)
+  const theme = useTheme()
+  const maxWidth =
+    viewportWidth != null
+      ? viewportWidth - parseFloat(theme.spacing(2))
+      : undefined
+
   if (content == null) {
     return null
   }
@@ -83,6 +100,7 @@ export const SelectionPanel: FC = () => {
       <Inspector
         key='pedestrian'
         defaultWidth={pedestrianInspectorWidth}
+        maxWidth={maxWidth}
         onResizeStop={handlePedestrianResizeStop}
       >
         <div>{content}</div>
@@ -93,6 +111,7 @@ export const SelectionPanel: FC = () => {
     <Inspector
       key='default'
       defaultWidth={inspectorWidth}
+      maxWidth={maxWidth}
       onResizeStop={handleResizeStop}
     >
       <div>{content}</div>

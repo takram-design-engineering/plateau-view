@@ -12,12 +12,12 @@ import { AppFrame } from '@takram/plateau-ui-components'
 import { layerComponents } from '@takram/plateau-view-layers'
 
 import { Areas } from './containers/Areas'
+import { AutoRotateCamera } from './containers/AutoRotateCamera'
 import { Canvas } from './containers/Canvas'
 import { Environments } from './containers/Environments'
-import { FileDrop } from './containers/FileDrop'
+import { HighlightedAreas } from './containers/HighlightedAreas'
 import { InitialLayers } from './containers/InitialLayers'
 import { KeyBindings } from './containers/KeyBindings'
-import { Notifications } from './containers/Notifications'
 import { PedestrianTool } from './containers/PedestrianTool'
 import { ReverseGeocoding } from './containers/ReverseGeocoding'
 import { ScreenSpaceCamera } from './containers/ScreenSpaceCamera'
@@ -28,9 +28,12 @@ import { SketchTool } from './containers/SketchTool'
 import { Terrains } from './containers/Terrains'
 import { ToolMachineEvents } from './containers/ToolMachineEvents'
 import { MapLabel } from './containers/VectorMapLabel'
+import { ViewportObserver } from './containers/ViewportObserver'
 import { readyAtom } from './states/app'
 import { AppHeader } from './ui-containers/AppHeader'
 import { AppOverlay } from './ui-containers/AppOverlay'
+import { FileDrop } from './ui-containers/FileDrop'
+import { Notifications } from './ui-containers/Notifications'
 
 const initialDestination = Cartesian3.fromDegrees(139.755, 35.675, 1000)
 const initialOrientation = new HeadingPitchRoll(Math.PI * 0.4, -Math.PI * 0.2)
@@ -69,16 +72,19 @@ export const PlateauView: FC<PlateauViewProps> = () => {
         </Suspense>
         <MapLabel />
         <Areas />
+        <HighlightedAreas />
         <ReverseGeocoding />
         <ToolMachineEvents />
         <PedestrianTool />
         <SketchTool />
         <SelectionCoordinator />
         <SelectionBoundingSphere />
+        <AutoRotateCamera />
       </Canvas>
       <KeyBindings />
       <ScreenSpaceSelection />
       <FileDrop />
+      <ViewportObserver />
       <AppOverlay />
       <Notifications />
       <InitialLayers />

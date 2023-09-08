@@ -97,7 +97,7 @@ export type SearchOptionType =
   | 'history'
   | 'dataset'
   | 'building'
-  | 'address'
+  | 'area'
 
 function isSearchOptionType(
   value: unknown
@@ -106,13 +106,13 @@ function isSearchOptionType(
     value === 'history' ||
     value === 'dataset' ||
     value === 'building' ||
-    value === 'address'
+    value === 'area'
   )
 }
 
 export interface SearchOption {
   type: SearchOptionType
-  id?: string
+  id: string
   name: string
 }
 
@@ -123,14 +123,14 @@ const iconComponents: Record<
   history: HistoryIcon,
   dataset: DatasetIcon,
   building: BuildingIcon,
-  address: AddressIcon
+  area: AddressIcon
 }
 
 const groupNames: Record<Exclude<SearchOptionType, 'filter'>, string> = {
   history: '最近の検索',
   dataset: 'データセット',
   building: '建築物',
-  address: '住所'
+  area: 'エリア'
 }
 
 function getOptionLabel(value: string | SearchOption): string {
@@ -306,7 +306,6 @@ export const SearchAutocomplete = forwardRef<
       useCallback(
         (event, value, reason) => {
           if (reason === 'reset') {
-            setFocused(false)
             return // Disable auto clear
           }
           setInputValue(value)

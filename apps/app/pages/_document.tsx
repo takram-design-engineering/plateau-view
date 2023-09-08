@@ -25,6 +25,10 @@ class Document extends NextDocument<DocumentProps> {
       <Html lang='ja'>
         <Head>
           <link rel='shortcut icon' href='/favicon.ico' />
+          <meta
+            name='viewport'
+            content='width=device-width, initial-scale=1, maximum-scale=1'
+          />
           <meta name='emotion-insertion-point' content='' />
           <link rel='stylesheet' href='https://use.typekit.net/vgl5alg.css' />
           {this.props.emotionStyleTags}

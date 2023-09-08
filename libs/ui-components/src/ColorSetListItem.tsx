@@ -44,7 +44,6 @@ export const ColorSetListItem: FC<ColorSetListItemProps> = ({
     variant: 'popover',
     popupId: id
   })
-  const popoverProps = bindPopover(popupState)
 
   const [color, setColor] = useAtom(colorAtom)
   const [indeterminateColor, setIndeterminateColor] = useState(color.color)
@@ -88,7 +87,7 @@ export const ColorSetListItem: FC<ColorSetListItemProps> = ({
         </Stack>
       </ListItem>
       <Popover
-        {...popoverProps}
+        {...bindPopover(popupState)}
         anchorOrigin={{
           horizontal: 'center',
           vertical: 'bottom'

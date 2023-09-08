@@ -30,6 +30,9 @@
       "@takram/plateau-heatmap": ["libs/heatmap/src/index.ts"],
       "@takram/plateau-layers": ["libs/layers/src/index.ts"],
       "@takram/plateau-nest-cesium": ["libs/nest-cesium/src/index.ts"],
+      "@takram/plateau-nest-estat-areas": [
+        "libs/nest-estat-areas/src/index.ts"
+      ],
       "@takram/plateau-nest-firestore": ["libs/nest-firestore/src/index.ts"],
       "@takram/plateau-nest-plateau": ["libs/nest-plateau/src/index.ts"],
       "@takram/plateau-nest-terrain-tile": [
