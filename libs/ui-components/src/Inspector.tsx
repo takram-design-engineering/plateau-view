@@ -1,4 +1,10 @@
-import { Paper, styled, type PaperProps } from '@mui/material'
+import {
+  Paper,
+  styled,
+  useMediaQuery,
+  useTheme,
+  type PaperProps
+} from '@mui/material'
 import { Resizable, type ResizableProps } from 're-resizable'
 import { forwardRef } from 'react'
 
@@ -9,7 +15,10 @@ const StyledPaper = styled(Paper)(({ theme, elevation = 4 }) => ({
   position: 'relative',
   maxHeight: '100%',
   boxShadow: theme.shadows[elevation],
-  pointerEvents: 'auto'
+  pointerEvents: 'auto',
+  [theme.breakpoints.down('sm')]: {
+    width: `calc(100vw - ${theme.spacing(2)})`
+  }
 }))
 
 const ResizableRoot = styled('div')({
@@ -47,28 +56,36 @@ export const Inspector = forwardRef<HTMLDivElement, InspectorProps>(
       ...props
     },
     ref
-  ) => (
-    <AutoHeight>
-      <StyledPaper ref={ref} {...props}>
-        <Resizable
-          as={ResizableRoot}
-          defaultSize={{
-            width: defaultWidth,
-            height: 'auto'
-          }}
-          minWidth={320}
-          maxWidth={maxWidth}
-          enable={{
-            left: true,
-            right: true
-          }}
-          onResize={onResize}
-          onResizeStart={onResizeStart}
-          onResizeStop={onResizeStop}
-        >
-          <ScrollableRoundedBox defer>{children}</ScrollableRoundedBox>
-        </Resizable>
-      </StyledPaper>
-    </AutoHeight>
-  )
+  ) => {
+    const theme = useTheme()
+    const smDown = useMediaQuery(theme.breakpoints.down('sm'))
+    return (
+      <AutoHeight>
+        <StyledPaper ref={ref} {...props}>
+          {smDown ? (
+            <ScrollableRoundedBox defer>{children}</ScrollableRoundedBox>
+          ) : (
+            <Resizable
+              as={ResizableRoot}
+              defaultSize={{
+                width: defaultWidth,
+                height: 'auto'
+              }}
+              minWidth={320}
+              maxWidth={maxWidth}
+              enable={{
+                left: true,
+                right: true
+              }}
+              onResize={onResize}
+              onResizeStart={onResizeStart}
+              onResizeStop={onResizeStop}
+            >
+              <ScrollableRoundedBox defer>{children}</ScrollableRoundedBox>
+            </Resizable>
+          )}
+        </StyledPaper>
+      </AutoHeight>
+    )
+  }
 )
