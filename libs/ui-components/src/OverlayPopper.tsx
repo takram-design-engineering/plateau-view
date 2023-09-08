@@ -107,6 +107,13 @@ export const OverlayPopper: FC<OverlayPopperProps> = ({
             offset: [0, parseFloat(theme.spacing(inset))]
           }
         },
+        {
+          name: 'preventOverflow',
+          enabled: true,
+          options: {
+            padding: parseFloat(theme.spacing(1))
+          }
+        },
         arrow && {
           name: 'arrow',
           enabled: true,

@@ -14,7 +14,7 @@ export const PedestrianTool: FC = () => {
   const tool = useAtomValue(toolAtom)
 
   const addLayer = useAddLayer()
-  const handleClick = useCallback(
+  const handleCreate = useCallback(
     (location: Cartographic) => {
       const id = nanoid()
       const layer = createViewLayer({
@@ -31,8 +31,8 @@ export const PedestrianTool: FC = () => {
     [addLayer, send]
   )
 
-  if (tool !== 'pedestrian') {
+  if (tool?.type !== 'pedestrian') {
     return null
   }
-  return <PedestrianToolComponent onClick={handleClick} />
+  return <PedestrianToolComponent onCreate={handleCreate} />
 }

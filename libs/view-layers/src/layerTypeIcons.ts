@@ -20,6 +20,7 @@ import {
   RiverFloodingRiskIcon,
   RoadIcon,
   ShelterIcon,
+  SketchIcon,
   StationIcon,
   TsunamiRiskIcon,
   UrbanPlanningIcon,
@@ -46,6 +47,7 @@ import {
   RIVER_FLOODING_RISK_LAYER,
   ROAD_LAYER,
   SHELTER_LAYER,
+  SKETCH_LAYER,
   STATION_LAYER,
   TSUNAMI_RISK_LAYER,
   URBAN_PLANNING_LAYER,
@@ -54,8 +56,10 @@ import {
 } from './layerTypes'
 
 export const layerTypeIcons: Record<LayerType, ComponentType<SvgIconProps>> = {
-  [PEDESTRIAN_LAYER]: PedestrianIcon,
   [HEATMAP_LAYER]: UseCaseIcon,
+  [PEDESTRIAN_LAYER]: PedestrianIcon,
+  [SKETCH_LAYER]: SketchIcon,
+
   // Dataset layers
   [BORDER_LAYER]: BorderIcon,
   [BRIDGE_LAYER]: BridgeIcon,

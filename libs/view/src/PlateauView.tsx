@@ -12,8 +12,11 @@ import { AppFrame } from '@takram/plateau-ui-components'
 import { layerComponents } from '@takram/plateau-view-layers'
 
 import { Areas } from './containers/Areas'
+import { AutoRotateCamera } from './containers/AutoRotateCamera'
 import { Canvas } from './containers/Canvas'
 import { Environments } from './containers/Environments'
+import { FileDrop } from './containers/FileDrop'
+import { HighlightedAreas } from './containers/HighlightedAreas'
 import { InitialLayers } from './containers/InitialLayers'
 import { KeyBindings } from './containers/KeyBindings'
 import { Notifications } from './containers/Notifications'
@@ -23,8 +26,11 @@ import { ScreenSpaceCamera } from './containers/ScreenSpaceCamera'
 import { ScreenSpaceSelection } from './containers/ScreenSpaceSelection'
 import { SelectionBoundingSphere } from './containers/SelectionBoundingSphere'
 import { SelectionCoordinator } from './containers/SelectionCoordinator'
+import { SketchTool } from './containers/SketchTool'
 import { Terrains } from './containers/Terrains'
 import { ToolMachineEvents } from './containers/ToolMachineEvents'
+import { MapLabel } from './containers/VectorMapLabel'
+import { ViewportObserver } from './containers/ViewportObserver'
 import { readyAtom } from './states/app'
 import { AppHeader } from './ui-containers/AppHeader'
 import { AppOverlay } from './ui-containers/AppOverlay'
@@ -64,15 +70,21 @@ export const PlateauView: FC<PlateauViewProps> = () => {
             <LayersRenderer components={layerComponents} />
           </SuspendUntilTilesLoaded>
         </Suspense>
+        <MapLabel />
         <Areas />
+        <HighlightedAreas />
         <ReverseGeocoding />
         <ToolMachineEvents />
         <PedestrianTool />
+        <SketchTool />
         <SelectionCoordinator />
         <SelectionBoundingSphere />
+        <AutoRotateCamera />
       </Canvas>
       <KeyBindings />
       <ScreenSpaceSelection />
+      <FileDrop />
+      <ViewportObserver />
       <AppOverlay />
       <Notifications />
       <InitialLayers />

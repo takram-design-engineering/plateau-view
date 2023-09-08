@@ -1,67 +1,46 @@
 import {
+  CallbackProperty,
   ClassificationType,
-  Color,
-  ColorMaterialProperty
+  type Color,
+  type PolygonHierarchy
 } from '@cesium/engine'
-import { type Feature, type MultiPolygon, type Polygon } from 'geojson'
-import { useEffect, useMemo, type FC } from 'react'
+import { useMemo, useRef, type FC } from 'react'
 
 import { Entity, useCesium, type EntityProps } from '@takram/plateau-cesium'
-import {
-  compose,
-  convertPolygonToHierarchyArray
-} from '@takram/plateau-cesium-helpers'
+import { useConstant } from '@takram/plateau-react-helpers'
 
 export interface PolygonEntityProps {
-  feature: Feature<Polygon | MultiPolygon>
-  color?: string
-  alpha?: number
+  dynamic?: boolean
+  hierarchy?: PolygonHierarchy
+  color?: Color
 }
 
 export const PolygonEntity: FC<PolygonEntityProps> = ({
-  feature,
-  color = '#808080',
-  alpha = 0.5
+  dynamic = false,
+  hierarchy: hierarchyProp,
+  color
 }) => {
-  const hierarchyArray = useMemo(
-    () => convertPolygonToHierarchyArray(feature.geometry),
-    [feature]
+  const hierarchyRef = useRef(hierarchyProp)
+  hierarchyRef.current = hierarchyProp
+  const hierarchyProperty = useConstant(
+    () => new CallbackProperty(() => hierarchyRef.current, false)
+  )
+  const hierarchy = dynamic ? hierarchyProperty : hierarchyProp
+
+  const options = useMemo(
+    (): EntityProps => ({
+      polygon: {
+        hierarchy,
+        fill: true,
+        material: color?.withAlpha(0.5),
+        classificationType: ClassificationType.TERRAIN
+      }
+    }),
+    [color, hierarchy]
   )
 
   const scene = useCesium(({ scene }) => scene)
-  useEffect(() => {
-    scene.requestRender()
-  })
-  useEffect(() => {
-    return () => {
-      scene.requestRender()
-    }
-  }, [scene])
+  scene.requestRender()
 
-  const polygons = useMemo(() => {
-    const material = new ColorMaterialProperty(
-      Color.fromCssColorString(color).withAlpha(alpha)
-    )
-    return hierarchyArray.map(
-      (hierarchy, index): EntityProps => ({
-        ...(feature.id != null && {
-          id: compose({ type: 'PolygonEntity', key: feature.id, index })
-        }),
-        polygon: {
-          hierarchy,
-          fill: true,
-          material,
-          classificationType: ClassificationType.TERRAIN
-        }
-      })
-    )
-  }, [feature.id, color, alpha, hierarchyArray])
-
-  return (
-    <>
-      {polygons.map((props, index) => (
-        <Entity key={index} {...props} />
-      ))}
-    </>
-  )
+  return <Entity {...options} />
 }

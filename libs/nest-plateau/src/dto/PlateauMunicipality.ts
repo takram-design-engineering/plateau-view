@@ -6,9 +6,11 @@ import { Field, ObjectType } from '@nestjs/graphql'
 import { instanceToPlain, plainToInstance } from 'class-transformer'
 import { IsNumberString, IsString } from 'class-validator'
 
-import { FirestoreCollection } from '@takram/plateau-nest-firestore'
+import {
+  FirestoreCollection,
+  validateSyncOrThrow
+} from '@takram/plateau-nest-firestore'
 
-import { validateSyncOrThrow } from '../helpers/validateSyncOrThrow'
 import { PlateauArea } from './PlateauArea'
 import { PlateauAreaType, PlateauAreaTypeEnum } from './PlateauAreaType'
 

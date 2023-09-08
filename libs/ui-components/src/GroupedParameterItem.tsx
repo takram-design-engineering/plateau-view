@@ -1,4 +1,10 @@
-import { Divider, Popover, styled, useTheme } from '@mui/material'
+import {
+  Divider,
+  Popover,
+  popoverClasses,
+  styled,
+  useTheme
+} from '@mui/material'
 import {
   anchorRef,
   bindPopover,
@@ -15,6 +21,15 @@ import { ParameterItemButton } from './ParameterItemButton'
 const Content = styled('div')(({ theme }) => ({
   marginRight: theme.spacing(1),
   marginLeft: theme.spacing(1)
+}))
+
+const StyledPopover = styled(Popover)(({ theme }) => ({
+  [`& .${popoverClasses.paper}`]: {
+    width: 320,
+    [theme.breakpoints.down('sm')]: {
+      width: '100vw'
+    }
+  }
 }))
 
 export interface GroupedParameterItemProps
@@ -48,7 +63,7 @@ export const GroupedParameterItem: FC<GroupedParameterItemProps> = ({
         {...bindTrigger(popupState)}
       />
       <Content>{content}</Content>
-      <Popover
+      <StyledPopover
         {...bindPopover(popupState)}
         anchorOrigin={{
           horizontal: parseFloat(theme.spacing(-1)),
@@ -62,7 +77,7 @@ export const GroupedParameterItem: FC<GroupedParameterItemProps> = ({
         <InspectorHeader title={label} onClose={popupState.close} />
         <Divider />
         {children}
-      </Popover>
+      </StyledPopover>
     </>
   )
 }

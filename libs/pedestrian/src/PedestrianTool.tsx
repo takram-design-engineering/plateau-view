@@ -16,14 +16,14 @@ import { LevitationCircle } from './LevitationCircle'
 import { useMotionPosition } from './useMotionPosition'
 
 export interface PedestrianToolProps {
-  onClick?: (position: Cartographic) => void
+  onCreate?: (position: Cartographic) => void
 }
 
 const rayScratch = new Ray()
 const positionScratch = new Cartesian3()
 const cartographicScratch = new Cartographic()
 
-export const PedestrianTool: FC<PedestrianToolProps> = ({ onClick }) => {
+export const PedestrianTool: FC<PedestrianToolProps> = ({ onCreate }) => {
   const motionPosition = useMotionPosition()
 
   const scene = useCesium(({ scene }) => scene)
@@ -64,7 +64,7 @@ export const PedestrianTool: FC<PedestrianToolProps> = ({ onClick }) => {
       if (cartographic == null) {
         return
       }
-      onClick?.(cartographic)
+      onCreate?.(cartographic)
     }
   )
 

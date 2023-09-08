@@ -51,7 +51,7 @@ export function createMeshData({
   const height = Math.round((y2 - y1) / latitude)
   const data = new Uint8ClampedArray(width * height * 4)
   for (let i = 0; i < data.length; i += 4) {
-    data[i + 2] = 0x80
+    data[i] = 0x80
     // Denotes N/A. Because Canvas API doesn't allow us to turn off
     // premultiplied alpha, alpha components must not be zero. This will alter
     // the colors but not much.
@@ -68,9 +68,10 @@ export function createMeshData({
       )
     }
     const v = scaledValue + 0x800000
-    data[i] = v & 0xff
+    // Note that the buffer order is ABGR.
+    data[i] = (v >>> 16) & 0xff
     data[i + 1] = (v >>> 8) & 0xff
-    data[i + 2] = (v >>> 16) & 0xff
+    data[i + 2] = v & 0xff
     data[i + 3] = 0xff
   })
   return {

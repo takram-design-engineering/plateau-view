@@ -55,7 +55,9 @@ const StyledDivider = styled(Divider)(({ theme }) => ({
   marginRight: -1
 }))
 
-const renderValue = (): null => null
+function renderValue(): null {
+  return null
+}
 
 export interface ContextButtonSelectProps
   extends Omit<SelectProps<string>, 'onClick'> {

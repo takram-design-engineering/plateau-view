@@ -267,7 +267,7 @@ export const LayerColorSection: FC<LayerColorSectionProps> = ({ layers }) => {
             label='色分け'
             content={<Legend layers={layers} />}
           >
-            <InspectorItem sx={{ width: 320 }}>
+            <InspectorItem>
               <ParameterList>
                 <SelectParameterItem
                   label='モデル属性'

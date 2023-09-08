@@ -61,8 +61,9 @@ This repository consists of the following apps and libraries. The README for eac
 | [regional-mesh](libs/regional-mesh)                   | Converters for Japanese regional mesh                                                                 |
 | [screen-space-selection](libs/screen-space-selection) | Screen-space selection for Cesium                                                                     |
 | [shared-states](libs/shared-states)                   | Collection of states shared across libraries                                                          |
-| [sketch](libs/sketch)                                 | Work in progress                                                                                      |
+| [sketch](libs/sketch)                                 | Interaction for drawing extruded polygons                                                             |
 | [type-helpers](libs/type-helpers)                     | Helper functions for TypeScript                                                                       |
 | [ui-components](libs/ui-components)                   | UI components used in PLATEAU VIEW                                                                    |
+| [vector-map-imagery](libs/vector-map-imagery)         | Renders texts in MVT by label entities                                                                |
 | [view-layers](libs/view-layers)                       | Implementation of [layers](libs/layers) for PLATEAU VIEW                                              |
 | [view](libs/view)                                     | Provides the main component                                                                           |

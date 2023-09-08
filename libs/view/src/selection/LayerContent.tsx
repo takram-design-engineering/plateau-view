@@ -33,6 +33,7 @@ import { LayerHeatmapSection } from './LayerHeatmapSection'
 import { LayerHiddenFeaturesSection } from './LayerHiddenFeaturesSection'
 import { LayerOpacitySection } from './LayerOpacitySection'
 import { LayerShowWireframeSection } from './LayerShowWireframeSection'
+import { LayerSketchSection } from './LayerSketchSection'
 
 export interface LayerContentProps<T extends LayerType> {
   values: (SelectionGroup & {
@@ -145,6 +146,7 @@ export function LayerContent<T extends LayerType>({
       <InspectorItem>
         <LayerOpacitySection layers={values} />
         <LayerShowWireframeSection layers={values} />
+        <LayerSketchSection layers={values} />
       </InspectorItem>
     </List>
   )

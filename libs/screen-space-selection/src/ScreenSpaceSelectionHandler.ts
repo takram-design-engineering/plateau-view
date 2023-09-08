@@ -43,7 +43,8 @@ export class ScreenSpaceSelectionHandler {
   private readonly handler: ScreenSpaceEventHandler
   private startPosition?: Cartesian2
 
-  #disabled = false
+  disabled = false
+  allowClickWhenDisabled = false
 
   constructor(readonly scene: Scene) {
     const handler = new ScreenSpaceEventHandler(scene.canvas)
@@ -72,14 +73,6 @@ export class ScreenSpaceSelectionHandler {
     this.handler.destroy()
   }
 
-  get disabled(): boolean {
-    return this.#disabled
-  }
-
-  set disabled(value: boolean) {
-    this.#disabled = value
-  }
-
   private handleClickWithModifier(
     modifier: KeyboardEventModifier,
     event: ScreenSpaceEventHandler.PositionedEvent
@@ -91,7 +84,7 @@ export class ScreenSpaceSelectionHandler {
     event: ScreenSpaceEventHandler.PositionedEvent,
     modifier?: KeyboardEventModifier
   ): void => {
-    if (this.disabled) {
+    if (this.disabled && !this.allowClickWhenDisabled) {
       return
     }
     pointEvent.action = actionForModifier(modifier)

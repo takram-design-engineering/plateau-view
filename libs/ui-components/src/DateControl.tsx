@@ -1,9 +1,23 @@
-import { Stack, styled } from '@mui/material'
+import {
+  Box,
+  IconButton,
+  Popover,
+  Stack,
+  styled,
+  useMediaQuery,
+  useTheme
+} from '@mui/material'
 import { endOfYear, format, set, startOfDay, startOfYear } from 'date-fns'
 import { omit } from 'lodash'
 import {
+  bindPopover,
+  bindTrigger,
+  usePopupState
+} from 'material-ui-popup-state/hooks'
+import {
   forwardRef,
   useCallback,
+  useId,
   useRef,
   type ComponentPropsWithRef,
   type MouseEvent,
@@ -14,6 +28,7 @@ import invariant from 'tiny-invariant'
 import { DateControlList } from './DateControlList'
 import { DateControlSliderGraph } from './DateControlSliderGraph'
 import { DateSlider } from './DateSlider'
+import { ListIcon } from './icons'
 import {
   useDateControlState,
   type DateControlStateParams
@@ -22,7 +37,11 @@ import {
 const Root = styled('div')(({ theme }) => ({
   padding: theme.spacing(3),
   paddingRight: theme.spacing(6),
-  paddingBottom: theme.spacing(5)
+  paddingBottom: theme.spacing(5),
+  [theme.breakpoints.down('sm')]: {
+    paddingTop: theme.spacing(2),
+    paddingRight: theme.spacing(3)
+  }
 }))
 
 const DateText = styled('div')(({ theme }) => ({
@@ -33,6 +52,10 @@ const DateText = styled('div')(({ theme }) => ({
 const TimeText = styled('div')(({ theme }) => ({
   ...theme.typography.h4,
   fontVariantNumeric: 'tabular-nums'
+}))
+
+const StyledIconButton = styled(IconButton)(({ theme }) => ({
+  marginRight: theme.spacing(-1)
 }))
 
 export interface DateControlProps
@@ -95,26 +118,75 @@ export const DateControl = forwardRef<HTMLDivElement, DateControlProps>(
       [onChange]
     )
 
+    const id = useId()
+    const popupState = usePopupState({
+      variant: 'popover',
+      popupId: id
+    })
+
+    const theme = useTheme()
+    const smDown = useMediaQuery(theme.breakpoints.down('sm'))
     return (
       <Root ref={ref} {...props}>
-        <Stack direction='row' spacing={3} width='100%'>
-          <Stack spacing={2} width={200}>
-            <Stack spacing={0.5}>
+        <Stack
+          width='100%'
+          {...(smDown
+            ? { direction: 'column', spacing: 1 }
+            : { direction: 'row', spacing: 3 })}
+        >
+          <Stack
+            {...(smDown
+              ? { direction: 'row', justifyContent: 'space-between' }
+              : { direction: 'column', spacing: 2, width: 200 })}
+          >
+            <Stack
+              {...(smDown
+                ? { direction: 'row', spacing: 2, alignItems: 'center' }
+                : { direction: 'column', spacing: 0.5 })}
+            >
               <DateText>{format(date, "yyyy'年'M'月'd'日'")}</DateText>
               <TimeText>{format(date, 'H:mm')}</TimeText>
             </Stack>
-            <DateControlList
-              {...omit(state, ['dateAtom', 'observerAtom'])}
-              onChange={handleListChange}
-            />
+            {!smDown ? (
+              <DateControlList
+                {...omit(state, ['dateAtom', 'observerAtom'])}
+                onChange={handleListChange}
+              />
+            ) : (
+              <>
+                <StyledIconButton {...bindTrigger(popupState)}>
+                  <ListIcon fontSize='medium' />
+                </StyledIconButton>
+                <Popover
+                  {...bindPopover(popupState)}
+                  anchorOrigin={{
+                    horizontal: 'center',
+                    vertical: 'bottom'
+                  }}
+                  transformOrigin={{
+                    horizontal: 'center',
+                    vertical: 'top'
+                  }}
+                >
+                  <Box width={200} padding={2}>
+                    <DateControlList
+                      {...omit(state, ['dateAtom', 'observerAtom'])}
+                      onChange={handleListChange}
+                    />
+                  </Box>
+                </Popover>
+              </>
+            )}
           </Stack>
           <Stack width='100%' spacing={2}>
-            <DateSlider
-              min={+startOfYear(date)}
-              max={+startOfDay(endOfYear(date))}
-              value={+startOfDay(date)}
-              onChange={handleSliderChange}
-            />
+            <div>
+              <DateSlider
+                min={+startOfYear(date)}
+                max={+startOfDay(endOfYear(date))}
+                value={+startOfDay(date)}
+                onChange={handleSliderChange}
+              />
+            </div>
             <DateControlSliderGraph
               {...state}
               onChange={handleGraphSliderChange}

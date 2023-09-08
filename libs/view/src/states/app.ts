@@ -12,6 +12,9 @@ export const readyAtom = atom<boolean>(false)
 export const hideAppOverlayAtom = atom(false)
 export const showDeveloperPanelsAtom = atom(false)
 
+export const viewportWidthAtom = atom<number | null>(null)
+export const viewportHeightAtom = atom<number | null>(null)
+
 const environmentTypePrimitiveAtom = atomWithReset<EnvironmentType>('map')
 export const environmentTypeAtom = atom(
   get => get(environmentTypePrimitiveAtom),
@@ -26,6 +29,7 @@ export const terrainTypeAtom = atomWithReset<TerrainType>('plateau')
 export const enableTerrainLightingAtom = atomWithReset(true)
 export const terrainElevationHeightRangeAtom = atomWithReset([0, 4000])
 export const logarithmicTerrainElevationAtom = atomWithReset(true)
+export const showMapLabelAtom = atomWithReset(false)
 
 export const debugSphericalHarmonicsAtom = atomWithReset(false)
 export const showShadowMapDepthAtom = atomWithReset(false)
@@ -37,6 +41,7 @@ export const showAreaEntitiesAtom = atomWithReset(false)
 export const showSelectionBoundingSphereAtom = atomWithReset(false)
 
 export const enableKeyboardCameraControlAtom = atomWithReset(false)
+export const autoRotateCameraAtom = atomWithReset(false)
 
 export const inspectorWidthAtom = atomWithStorageValidation({
   key: 'inspectorWidth',

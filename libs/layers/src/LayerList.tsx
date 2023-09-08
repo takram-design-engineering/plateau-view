@@ -2,7 +2,7 @@ import {
   closestCenter,
   DndContext,
   KeyboardSensor,
-  PointerSensor,
+  MouseSensor,
   useSensor,
   useSensors,
   type DragEndEvent
@@ -50,7 +50,7 @@ export const LayerList = forwardRef<HTMLDivElement, LayerListProps>(
     ref
   ) => {
     const sensors = useSensors(
-      useSensor(PointerSensor, {
+      useSensor(MouseSensor, {
         activationConstraint: {
           distance: minimumDragDistance
         }

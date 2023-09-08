@@ -4,7 +4,7 @@ export { DMS }
 
 export * from './animateZoom'
 export * from './convertPolygonToHierarchyArray'
-export * from './convertPolygonToPositionsArray'
+export * from './convertGeometryToPositionsArray'
 export * from './createUniforms'
 export * from './flyToBoundingSphere'
 export * from './flyToDestination'
