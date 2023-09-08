@@ -59,10 +59,12 @@ export const HeatmapMesh = forwardRef<HeatmapMeshHandle, HeatmapMeshProps>(
           const instance = new GeometryInstance({
             geometry: new PolygonGeometry({
               polygonHierarchy,
-              arcType: ArcType.RHUMB,
+              arcType: ArcType.GEODESIC,
               vertexFormat: EllipsoidSurfaceAppearance.VERTEX_FORMAT
             })
           })
+          // TODO: Needs trapezoidal texture projection to accurately map the
+          // data. See also: https://github.com/CesiumGS/cesium/issues/4164
           return new GroundPrimitive({
             geometryInstances: instance,
             classificationType: ClassificationType.BOTH,

@@ -1,13 +1,14 @@
 import { bboxPolygon } from '@turf/turf'
 import axios from 'axios'
+import { atom, useAtomValue, useSetAtom, type PrimitiveAtom } from 'jotai'
 import {
-  atom,
-  useAtom,
-  useAtomValue,
-  useSetAtom,
-  type PrimitiveAtom
-} from 'jotai'
-import { useEffect, useMemo, useState, type FC } from 'react'
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type FC
+} from 'react'
 import invariant from 'tiny-invariant'
 
 import { useCesium } from '@takram/plateau-cesium'
@@ -32,16 +33,16 @@ import { HEATMAP_LAYER } from './layerTypes'
 import { type ConfigurableLayerModel, type LayerColorScheme } from './types'
 
 export interface HeatmapLayerModelParams extends ViewLayerModelParams {
-  urls: string[]
+  title?: string
+  urls: readonly string[][]
   parserOptions: ParseCSVOptions
   opacity?: number
 }
 
 export interface HeatmapLayerModel extends ViewLayerModel {
-  urls: string[]
+  urls: readonly string[][]
   parserOptions: ParseCSVOptions
   opacityAtom: PrimitiveAtom<number>
-  valueRangeAtom: PrimitiveAtom<number[]>
   contourSpacingAtom: PrimitiveAtom<number>
 }
 
@@ -50,59 +51,46 @@ export function createHeatmapLayer(
 ): ConfigurableLayerModel<HeatmapLayerModel> {
   const colorMapAtom = atom<ColorMap>(colorMapFlare)
   const colorRangeAtom = atom([0, 100])
+  const valueRangeAtom = atom([0, 100])
   const colorSchemeAtom = atom<LayerColorScheme | null>({
     type: 'quantitative',
-    name: '統計データ',
+    name: params.title ?? '統計データ',
     colorMapAtom,
-    colorRangeAtom
+    colorRangeAtom,
+    valueRangeAtom
   })
 
   return {
     ...createViewLayerModel({
       ...params,
-      title: '統計データ'
+      title: params.title ?? '統計データ'
     }),
     type: HEATMAP_LAYER,
     urls: params.urls,
     parserOptions: params.parserOptions,
     opacityAtom: atom(params.opacity ?? 0.8),
-    valueRangeAtom: atom([0, 100]),
     contourSpacingAtom: atom(10),
     colorSchemeAtom
   }
 }
 
-export const HeatmapLayer: FC<LayerProps<typeof HEATMAP_LAYER>> = ({
+const Subdivision: FC<
+  Omit<HeatmapLayerModel, 'urls'> & {
+    urls: readonly string[]
+    onLoad?: (data: ParseCSVResult, urls: readonly string[]) => void
+  }
+> = ({
   hiddenAtom,
-  boundingSphereAtom,
   colorSchemeAtom,
   urls,
   parserOptions,
   opacityAtom,
-  valueRangeAtom,
-  contourSpacingAtom
+  contourSpacingAtom,
+  onLoad
 }) => {
-  const hidden = useAtomValue(hiddenAtom)
-  const scene = useCesium(({ scene }) => scene)
-  scene.requestRender()
-
-  useEffect(() => {
-    return () => {
-      if (!scene.isDestroyed()) {
-        scene.requestRender()
-      }
-    }
-  }, [scene])
-
-  const setValueRange = useSetAtom(valueRangeAtom)
-  const [contourSpacing, setContourSpacing] = useAtom(contourSpacingAtom)
-
-  const colorScheme = useAtomValue(colorSchemeAtom)
-  invariant(colorScheme?.type === 'quantitative')
-  const colorMap = useAtomValue(colorScheme.colorMapAtom)
-  const [colorRange, setColorRange] = useAtom(colorScheme.colorRangeAtom)
-
   const [data, setData] = useState<ParseCSVResult>()
+  const onLoadRef = useRef(onLoad)
+  onLoadRef.current = onLoad
   useEffect(() => {
     ;(async () => {
       const responses = await Promise.all(
@@ -122,13 +110,11 @@ export const HeatmapLayer: FC<LayerProps<typeof HEATMAP_LAYER>> = ({
         parserOptions
       )
       setData(data)
-      setValueRange([0, data.maxValue])
-      setContourSpacing(data.outlierThreshold / 20)
-      setColorRange([0, data.outlierThreshold])
+      onLoadRef.current?.(data, urls)
     })().catch(error => {
       console.error(error)
     })
-  }, [urls, parserOptions, setValueRange, setContourSpacing, setColorRange])
+  }, [urls, parserOptions])
 
   const [meshImageData, setMeshImageData] = useState<MeshImageData>()
   useEffect(() => {
@@ -154,6 +140,24 @@ export const HeatmapLayer: FC<LayerProps<typeof HEATMAP_LAYER>> = ({
     [meshImageData]
   )
 
+  const scene = useCesium(({ scene }) => scene)
+  scene.requestRender()
+
+  useEffect(() => {
+    return () => {
+      if (!scene.isDestroyed()) {
+        scene.requestRender()
+      }
+    }
+  }, [scene])
+
+  const colorScheme = useAtomValue(colorSchemeAtom)
+  invariant(colorScheme?.type === 'quantitative')
+  const colorMap = useAtomValue(colorScheme.colorMapAtom)
+  const colorRange = useAtomValue(colorScheme.colorRangeAtom)
+  const contourSpacing = useAtomValue(contourSpacingAtom)
+
+  const hidden = useAtomValue(hiddenAtom)
   const opacity = useAtomValue(opacityAtom)
 
   if (hidden || meshImageData == null || geometry == null) {
@@ -169,5 +173,40 @@ export const HeatmapLayer: FC<LayerProps<typeof HEATMAP_LAYER>> = ({
       maxValue={colorRange[1]}
       contourSpacing={contourSpacing}
     />
+  )
+}
+
+function extendRange(a: number[], b: number[]): [number, number] {
+  invariant(a.length === 2)
+  invariant(b.length === 2)
+  return [Math.min(a[0], b[0]), Math.max(a[1], b[1])]
+}
+
+export const HeatmapLayer: FC<LayerProps<typeof HEATMAP_LAYER>> = props => {
+  const colorScheme = useAtomValue(props.colorSchemeAtom)
+  invariant(colorScheme?.type === 'quantitative')
+  const setColorRange = useSetAtom(colorScheme.colorRangeAtom)
+  const setValueRange = useSetAtom(colorScheme.valueRangeAtom)
+  const setContourSpacing = useSetAtom(props.contourSpacingAtom)
+
+  const handleLoad = useCallback(
+    (data: ParseCSVResult) => {
+      setValueRange(prevValue => extendRange(prevValue, [0, data.maxValue]))
+      setContourSpacing(prevValue =>
+        Math.max(prevValue, data.outlierThreshold / 20)
+      )
+      setColorRange(prevValue =>
+        extendRange(prevValue, [0, data.outlierThreshold])
+      )
+    },
+    [setValueRange, setContourSpacing, setColorRange]
+  )
+
+  return (
+    <>
+      {props.urls.map((urls, index) => (
+        <Subdivision key={index} {...props} urls={urls} onLoad={handleLoad} />
+      ))}
+    </>
   )
 }
