@@ -16,7 +16,7 @@ import {
   usePopupState
 } from 'material-ui-popup-state/hooks'
 import NextImage from 'next/image'
-import { useCallback, useId, type FC } from 'react'
+import { useCallback, useId, type ChangeEvent, type FC } from 'react'
 
 import { colorMapTurbo } from '@takram/plateau-color-maps'
 import { colorModeAtom } from '@takram/plateau-shared-states'
@@ -128,8 +128,9 @@ const Item: FC<
 )
 
 const ControlItem = styled('div')(({ theme }) => ({
-  padding: `${theme.spacing(1.5)} ${theme.spacing(2)}`,
-  paddingTop: 0
+  paddingRight: theme.spacing(3),
+  paddingBottom: theme.spacing(1),
+  paddingLeft: theme.spacing(2)
 }))
 
 const ElevationLegendButton: FC = () => {
@@ -235,8 +236,11 @@ export const EnvironmentSelect: FC = () => {
 
   const [showMapLabel, setShowMapLabel] = useAtom(showMapLabelAtom)
   const handleShowMapLabelChange = useCallback(
-    (event: unknown, checked: boolean) => {
-      setShowMapLabel(checked)
+    (event: ChangeEvent<HTMLInputElement>, checked: boolean) => {
+      setShowMapLabel(prevValue => ({
+        ...prevValue,
+        [event.target.name]: checked
+      }))
     },
     [setShowMapLabel]
   )
@@ -276,18 +280,41 @@ export const EnvironmentSelect: FC = () => {
             selectedItem={selectedItem}
             onClick={handleElevation}
           />
-          <Divider sx={{ marginTop: 0, marginBottom: 0 }} />
-          <ControlItem>
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={showMapLabel}
-                  onChange={handleShowMapLabelChange}
-                />
-              }
-              label='ラベル表示'
-            />
-          </ControlItem>
+          <Divider />
+          {(
+            [
+              'municipalities',
+              'towns',
+              'roads',
+              'railways',
+              'stations',
+              'landmarks',
+              'topography'
+            ] as const
+          ).map(name => (
+            <ControlItem key={name}>
+              <FormControlLabel
+                control={
+                  <Switch
+                    name={name}
+                    checked={showMapLabel[name]}
+                    onChange={handleShowMapLabelChange}
+                  />
+                }
+                label={
+                  {
+                    municipalities: '都道府県、市区町村',
+                    towns: '町丁字',
+                    roads: '道路',
+                    railways: '線路',
+                    stations: '鉄道駅',
+                    landmarks: '建物、ランドマーク',
+                    topography: '地形'
+                  }[name]
+                }
+              />
+            </ControlItem>
+          ))}
         </FloatingPanel>
       </OverlayPopper>
     </>

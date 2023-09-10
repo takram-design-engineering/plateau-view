@@ -5,18 +5,21 @@ import {
   HeightReference,
   HorizontalOrigin,
   LabelStyle,
+  NearFarScalar,
   Rectangle,
   VerticalOrigin,
   type Ellipsoid,
   type Label
 } from '@cesium/engine'
+import { merge, omit } from 'lodash'
 import { type Feature } from 'protomaps'
-import { memo, useEffect, useMemo, useState, type FC } from 'react'
+import { memo, useCallback, useEffect, useMemo, useRef, type FC } from 'react'
 import { suspend } from 'suspend-react'
 
 import { useCesium } from '@takram/plateau-cesium'
 import { isNotNullish } from '@takram/plateau-type-helpers'
 
+import { getAnnotationType, type AnnotationType } from './getAnnotationType'
 import { getTileCoords } from './helpers'
 import { type LabelImageryProvider } from './LabelImageryProvider'
 import { type Imagery, type KeyedImagery } from './types'
@@ -29,6 +32,87 @@ type LabelOptions = Partial<
     }[keyof Label]
   >
 >
+
+export type AnnotationStyle = Partial<
+  Record<
+    AnnotationType | 'default',
+    | (Omit<LabelOptions, 'id' | 'position' | 'text' | 'font' | 'show'> & {
+        fontSize?: number
+        fontFamily?: string
+      })
+    | false
+  >
+>
+
+const fontScale = 5
+const scaleByDistance = new NearFarScalar(
+  0,
+  1 / fontScale,
+  Number.POSITIVE_INFINITY,
+  1 / fontScale
+)
+
+const defaultStyle: AnnotationStyle = {
+  default: {
+    fontFamily: 'sans-serif',
+    fillColor: Color.BLACK,
+    outlineColor: Color.WHITE.withAlpha(0.8),
+    outlineWidth: 5
+  },
+  municipalities: {
+    fontSize: 12
+  },
+  towns: {
+    fontSize: 8,
+    fillColor: Color.BLACK.withAlpha(0.6),
+    outlineColor: Color.WHITE.withAlpha(0.4)
+  },
+  roads: {
+    fontSize: 8
+  },
+  railways: {
+    fontSize: 8
+  },
+  stations: {
+    fontSize: 9
+  },
+  landmarks: {
+    fontSize: 8
+  },
+  topography: {
+    fontSize: 8,
+    fillColor: Color.BLACK.withAlpha(0.6),
+    outlineColor: Color.WHITE.withAlpha(0.4)
+  }
+}
+
+function resolveStyle(
+  code: number,
+  style?: AnnotationStyle
+): Partial<LabelOptions> | undefined {
+  const type = getAnnotationType(code)
+  if (type == null) {
+    return
+  }
+  const typeStyle = style?.[type]
+  if (typeStyle === false) {
+    return
+  }
+  const mergedStyle = merge(
+    {},
+    defaultStyle.default,
+    defaultStyle[type],
+    typeStyle
+  )
+  return {
+    scaleByDistance,
+    ...omit(mergedStyle, ['fontSize', 'fontFamily']),
+    font:
+      mergedStyle?.fontSize != null && mergedStyle.fontFamily != null
+        ? `${mergedStyle.fontSize * fontScale}pt ${mergedStyle.fontFamily}`
+        : undefined
+  }
+}
 
 interface AnnotationFeature extends Feature {
   props: {
@@ -77,10 +161,17 @@ export interface LabelImageryProps {
   imagery: KeyedImagery
   descendants?: readonly Imagery[]
   height?: number
+  style?: AnnotationStyle
 }
 
 export const LabelImagery: FC<LabelImageryProps> = memo(
-  ({ imageryProvider, imagery, descendants, height = 50 }) => {
+  ({
+    imageryProvider,
+    imagery,
+    descendants,
+    height = 50,
+    style = defaultStyle
+  }) => {
     const tile = suspend(
       async () => await imageryProvider.tileCache.get(getTileCoords(imagery)),
       [LabelImagery, imagery.key]
@@ -117,7 +208,7 @@ export const LabelImagery: FC<LabelImageryProps> = memo(
         (feature): feature is AnnotationFeature =>
           typeof feature.props.vt_code === 'number' &&
           // Look for annotations with 3-digits code only.
-          // https://www.gsi.go.jp/common/000218028.pdf
+          // https://maps.gsi.go.jp/help/pdf/vector/optbv_featurecodes.pdf
           `${feature.props.vt_code}`.length === 3 &&
           typeof feature.props.vt_text === 'string' &&
           (feature.props.vt_arrng == null ||
@@ -133,50 +224,11 @@ export const LabelImagery: FC<LabelImageryProps> = memo(
       )
     }, [tile, imagery])
 
+    const labelsRef = useRef<Array<[AnnotationFeature, Label]>>()
     const scene = useCesium(({ scene }) => scene)
-    const labelCollection = useCesium(({ labels }) => labels)
 
-    const [labels, setLabels] = useState<Array<[AnnotationFeature, Label]>>()
-    useEffect(() => {
-      const labels = annotations
-        .map((feature): [AnnotationFeature, Label] => {
-          // TODO: Change color by the global color mode.
-          const options: LabelOptions = {
-            text: feature.props.vt_text,
-            font: '10pt sans-serif',
-            style: LabelStyle.FILL_AND_OUTLINE,
-            fillColor: Color.BLACK,
-            outlineColor: Color.WHITE.withAlpha(0.8),
-            outlineWidth: 5,
-            horizontalOrigin: HorizontalOrigin.CENTER,
-            verticalOrigin: VerticalOrigin.BOTTOM,
-            heightReference: HeightReference.CLAMP_TO_GROUND,
-            disableDepthTestDistance: Infinity
-          }
-          return [feature, labelCollection.add(options)]
-        })
-        .filter(isNotNullish)
-
-      setLabels(labels)
-
-      const removeLabels = (): void => {
-        if (!labelCollection.isDestroyed()) {
-          labels.forEach(([, label]) => {
-            labelCollection.remove(label)
-          })
-        }
-        if (!scene.isDestroyed()) {
-          scene.postRender.removeEventListener(removeLabels)
-        }
-      }
-      return () => {
-        if (!scene.isDestroyed()) {
-          scene.postRender.addEventListener(removeLabels)
-        }
-      }
-    }, [annotations, scene, labelCollection])
-
-    useEffect(() => {
+    const updateVisibility = useCallback(() => {
+      const labels = labelsRef.current
       if (labels == null) {
         return
       }
@@ -198,7 +250,62 @@ export const LabelImagery: FC<LabelImageryProps> = memo(
         }
       })
       scene.requestRender()
-    }, [imageryProvider, height, bounds, descendantsBounds, scene, labels])
+    }, [imageryProvider, height, bounds, descendantsBounds, scene])
+
+    const labelCollection = useCesium(({ labels }) => labels)
+    const updateVisibilityRef = useRef(updateVisibility)
+    updateVisibilityRef.current = updateVisibility
+
+    useEffect(() => {
+      const texts: string[] = []
+      const labels = annotations
+        .map((feature): [AnnotationFeature, Label] | undefined => {
+          const styleOptions = resolveStyle(feature.props.vt_code, style)
+          if (styleOptions == null) {
+            return undefined
+          }
+          const text = feature.props.vt_text
+          if (texts.includes(text)) {
+            return undefined // Basic dedupe, mostly for stations.
+          }
+          texts.push(text)
+          const options: LabelOptions = {
+            text,
+            style: LabelStyle.FILL_AND_OUTLINE,
+            horizontalOrigin: HorizontalOrigin.CENTER,
+            verticalOrigin: VerticalOrigin.BOTTOM,
+            heightReference: HeightReference.CLAMP_TO_GROUND,
+            disableDepthTestDistance: Infinity,
+            ...styleOptions
+          }
+          return [feature, labelCollection.add(options)]
+        })
+        .filter(isNotNullish)
+
+      labelsRef.current = labels
+      updateVisibilityRef.current()
+
+      const removeLabels = (): void => {
+        if (!labelCollection.isDestroyed()) {
+          labels.forEach(([, label]) => {
+            labelCollection.remove(label)
+          })
+        }
+        if (!scene.isDestroyed()) {
+          scene.postRender.removeEventListener(removeLabels)
+        }
+      }
+      return () => {
+        labelsRef.current = undefined
+        if (!scene.isDestroyed()) {
+          scene.postRender.addEventListener(removeLabels)
+        }
+      }
+    }, [style, annotations, scene, labelCollection])
+
+    useEffect(() => {
+      updateVisibility()
+    }, [updateVisibility])
 
     return null
   }

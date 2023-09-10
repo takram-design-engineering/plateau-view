@@ -30,7 +30,7 @@ import {
 import { assertType } from '@takram/plateau-type-helpers'
 
 import { makeKey } from './helpers'
-import { LabelImagery } from './LabelImagery'
+import { LabelImagery, type AnnotationStyle } from './LabelImagery'
 import { LabelImageryLayer } from './LabelImageryLayer'
 import { LabelImageryProvider } from './LabelImageryProvider'
 import { type Imagery, type ImageryCoords, type KeyedImagery } from './types'
@@ -166,7 +166,8 @@ function getImageriesToRender(
 const LabelImageryCollection: FC<{
   imageryProvider: LabelImageryProvider
   imageriesAtom: Atom<KeyedImagery[]>
-}> = ({ imageryProvider, imageriesAtom }) => {
+  style?: AnnotationStyle
+}> = ({ imageryProvider, imageriesAtom, style }) => {
   const imageries = useAtomValue(imageriesAtom)
   return (
     <>
@@ -176,6 +177,7 @@ const LabelImageryCollection: FC<{
             imageryProvider={imageryProvider}
             imagery={imagery}
             descendants={imagery.descendants}
+            style={style}
           />
         </Suspense>
       ))}
@@ -183,7 +185,11 @@ const LabelImageryCollection: FC<{
   )
 }
 
-export const VectorMapLabel: FC = () => {
+export interface VectorMapLabelProps {
+  style?: AnnotationStyle
+}
+
+export const VectorMapLabel: FC<VectorMapLabelProps> = ({ style }) => {
   const [imageryProvider, setImageryProvider] = useState<LabelImageryProvider>()
   const setRef = useCallback((handle: ImageryLayerHandle | null) => {
     setImageryProvider(
@@ -254,6 +260,7 @@ export const VectorMapLabel: FC = () => {
         <LabelImageryCollection
           imageryProvider={imageryProvider}
           imageriesAtom={imageriesAtom}
+          style={style}
         />
       )}
     </>

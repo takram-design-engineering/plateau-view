@@ -3,6 +3,7 @@ import { atom, type SetStateAction } from 'jotai'
 import { atomWithReset, type RESET } from 'jotai/utils'
 
 import { atomWithStorageValidation } from '@takram/plateau-shared-states'
+import type { AnnotationType } from '@takram/plateau-vector-map-label'
 
 import { type EnvironmentType } from '../containers/Environments'
 import { type TerrainType } from '../containers/Terrains'
@@ -29,7 +30,15 @@ export const terrainTypeAtom = atomWithReset<TerrainType>('plateau')
 export const enableTerrainLightingAtom = atomWithReset(true)
 export const terrainElevationHeightRangeAtom = atomWithReset([0, 4000])
 export const logarithmicTerrainElevationAtom = atomWithReset(true)
-export const showMapLabelAtom = atomWithReset(false)
+export const showMapLabelAtom = atomWithReset<Record<AnnotationType, boolean>>({
+  municipalities: false,
+  towns: false,
+  roads: false,
+  railways: false,
+  stations: false,
+  landmarks: false,
+  topography: false
+})
 
 export const debugSphericalHarmonicsAtom = atomWithReset(false)
 export const showShadowMapDepthAtom = atomWithReset(false)
