@@ -257,14 +257,20 @@ export const LabelImagery: FC<LabelImageryProps> = memo(
     updateVisibilityRef.current = updateVisibility
 
     useEffect(() => {
+      const texts: string[] = []
       const labels = annotations
         .map((feature): [AnnotationFeature, Label] | undefined => {
           const styleOptions = resolveStyle(feature.props.vt_code, style)
           if (styleOptions == null) {
             return undefined
           }
+          const text = feature.props.vt_text
+          if (texts.includes(text)) {
+            return undefined // Basic dedupe, mostly for stations.
+          }
+          texts.push(text)
           const options: LabelOptions = {
-            text: feature.props.vt_text,
+            text,
             style: LabelStyle.FILL_AND_OUTLINE,
             horizontalOrigin: HorizontalOrigin.CENTER,
             verticalOrigin: VerticalOrigin.BOTTOM,
