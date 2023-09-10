@@ -189,15 +189,7 @@ export interface VectorMapLabelProps {
   style?: AnnotationStyle
 }
 
-export const VectorMapLabel: FC<VectorMapLabelProps> = ({
-  style = {
-    towns: false,
-    roads: false,
-    railways: false,
-    landmarks: false,
-    topography: false
-  }
-}) => {
+export const VectorMapLabel: FC<VectorMapLabelProps> = ({ style }) => {
   const [imageryProvider, setImageryProvider] = useState<LabelImageryProvider>()
   const setRef = useCallback((handle: ImageryLayerHandle | null) => {
     setImageryProvider(

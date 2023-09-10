@@ -1,6 +1,7 @@
 import { useAtomValue } from 'jotai'
+import { mapValues } from 'lodash'
 import dynamic from 'next/dynamic'
-import { Suspense, type FC } from 'react'
+import { Suspense, useMemo, type FC } from 'react'
 
 import { showMapLabelAtom } from '../states/app'
 
@@ -11,10 +12,15 @@ const VectorMapLabel = dynamic(
 
 export const MapLabel: FC = () => {
   const showMapLabel = useAtomValue(showMapLabelAtom)
+  const style = useMemo(
+    () => mapValues(showMapLabel, value => value && {}),
+    [showMapLabel]
+  )
+  console.log(style)
   return (
-    showMapLabel && (
+    Object.values(showMapLabel).some(value => value) && (
       <Suspense>
-        <VectorMapLabel />
+        <VectorMapLabel style={style} />
       </Suspense>
     )
   )
