@@ -9,6 +9,7 @@ const Root = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
+  width: '100%',
   marginRight: theme.spacing(0.5)
 }))
 

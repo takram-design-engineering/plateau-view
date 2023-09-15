@@ -16,7 +16,6 @@ export const MapLabel: FC = () => {
     () => mapValues(showMapLabel, value => value && {}),
     [showMapLabel]
   )
-  console.log(style)
   return (
     Object.values(showMapLabel).some(value => value) && (
       <Suspense>

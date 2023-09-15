@@ -68,9 +68,9 @@ export const PlateauView: FC<PlateauViewProps> = () => {
             onComplete={handleTilesLoadComplete}
           >
             <LayersRenderer components={layerComponents} />
+            <MapLabel />
           </SuspendUntilTilesLoaded>
         </Suspense>
-        <MapLabel />
         <Areas />
         <HighlightedAreas />
         <ReverseGeocoding />

@@ -64,8 +64,7 @@ const defaultStyle: AnnotationStyle = {
   },
   towns: {
     fontSize: 8,
-    fillColor: Color.BLACK.withAlpha(0.6),
-    outlineColor: Color.WHITE.withAlpha(0.4)
+    fillColor: Color.BLACK.withAlpha(0.6)
   },
   roads: {
     fontSize: 8
@@ -81,8 +80,7 @@ const defaultStyle: AnnotationStyle = {
   },
   topography: {
     fontSize: 8,
-    fillColor: Color.BLACK.withAlpha(0.6),
-    outlineColor: Color.WHITE.withAlpha(0.4)
+    fillColor: Color.BLACK.withAlpha(0.6)
   }
 }
 

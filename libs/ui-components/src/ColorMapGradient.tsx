@@ -9,7 +9,8 @@ const height = 5
 const tickSize = 2
 
 const Root = styled('div')({
-  position: 'relative'
+  position: 'relative',
+  width: '100%'
 })
 
 const Svg = styled('svg')({
