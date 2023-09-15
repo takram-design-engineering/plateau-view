@@ -4,7 +4,7 @@ import {
   PerspectiveFrustum,
   Rectangle
 } from '@cesium/engine'
-import { bboxPolygon } from '@turf/turf'
+import * as turf from '@turf/turf'
 import axios from 'axios'
 import { atom, useAtomValue, useSetAtom, type PrimitiveAtom } from 'jotai'
 import {
@@ -202,7 +202,7 @@ const Subdivision: FC<
     const geometry = useMemo(
       () =>
         meshImageData != null
-          ? bboxPolygon([
+          ? turf.bboxPolygon([
               meshImageData.bounds.east,
               meshImageData.bounds.south,
               meshImageData.bounds.west,

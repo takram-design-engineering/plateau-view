@@ -1,4 +1,4 @@
-import { union } from '@turf/turf'
+import union from '@turf/union'
 import { type Feature, type MultiPolygon, type Polygon } from 'geojson'
 import { omit } from 'lodash'
 import {

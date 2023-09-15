@@ -1,5 +1,5 @@
 import { alpha, styled, useTheme } from '@mui/material'
-import { geojsonType } from '@turf/turf'
+import { geojsonType } from '@turf/invariant'
 import {
   animate,
   motion,
