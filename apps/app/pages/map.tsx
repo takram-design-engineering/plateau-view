@@ -1,7 +1,7 @@
 import { Math as CesiumMath, Rectangle } from '@cesium/engine'
 import { Box } from '@mui/material'
 import maplibre from 'maplibre-gl'
-import { type NextPage } from 'next'
+import { type GetStaticProps, type NextPage } from 'next'
 import { useCallback, useRef, useState } from 'react'
 import {
   Map,
@@ -130,3 +130,9 @@ const Page: NextPage = () => {
 }
 
 export default Page
+
+export const getStaticProps: GetStaticProps = () => {
+  return process.env.NODE_ENV !== 'production'
+    ? { props: {} }
+    : { notFound: true }
+}
