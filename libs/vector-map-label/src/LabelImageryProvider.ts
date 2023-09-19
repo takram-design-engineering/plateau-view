@@ -15,10 +15,13 @@ import { getTileCoords, makeKey } from './helpers'
 export interface LabelImageryProviderOptions
   extends ImageryProviderBaseOptions {
   url: string
+  minimumDataLevel: number
+  maximumDataLevel: number
 }
 
 export class LabelImageryProvider extends ImageryProviderBase {
-  minimumDataLevel = this.minimumLevel
+  minimumDataLevel: number
+  maximumDataLevel: number
 
   readonly tileCache: TileCache
   private readonly image: HTMLCanvasElement
@@ -27,6 +30,8 @@ export class LabelImageryProvider extends ImageryProviderBase {
   constructor(options: LabelImageryProviderOptions) {
     super(options)
     this.tileDiscardPolicy = new DiscardEmptyTileImagePolicy()
+    this.minimumDataLevel = options.minimumDataLevel
+    this.maximumDataLevel = options.maximumDataLevel
 
     const source = new ZxySource(options.url, false)
     this.tileCache = new TileCache(source, 1024)
@@ -48,7 +53,9 @@ export class LabelImageryProvider extends ImageryProviderBase {
         return DiscardEmptyTileImagePolicy.EMPTY_IMAGE
       }
       // Populate tile cache in advance.
-      await this.tileCache.get(getTileCoords({ x, y, level }))
+      await this.tileCache.get(
+        getTileCoords({ x, y, level }, this.maximumDataLevel)
+      )
       return this.image
     })().catch(() => {
       this.discardedTileCoords.add(key)

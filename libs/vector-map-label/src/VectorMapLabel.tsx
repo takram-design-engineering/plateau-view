@@ -251,10 +251,11 @@ export const VectorMapLabel: FC<VectorMapLabelProps> = ({ style }) => {
       <LabelImageryLayer
         ref={setRef}
         url='https://cyberjapandata.gsi.go.jp/xyz/optimal_bvmap-v1/{z}/{x}/{y}.pbf'
-        minimumDataLevel={4}
-        maximumLevel={17}
         tileWidth={1024}
         tileHeight={1024}
+        maximumLevel={17}
+        minimumDataLevel={4}
+        maximumDataLevel={16}
       />
       {imageryProvider != null && (
         <LabelImageryCollection

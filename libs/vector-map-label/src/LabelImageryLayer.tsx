@@ -18,7 +18,8 @@ export interface LabelImageryLayerProps
     LabelImageryProviderOptions {
   minimumLevel?: number
   maximumLevel?: number
-  minimumDataLevel?: number
+  minimumDataLevel: number
+  maximumDataLevel: number
 }
 
 export const LabelImageryLayer = forwardRef<
@@ -34,24 +35,33 @@ export const LabelImageryLayer = forwardRef<
       minimumLevel,
       maximumLevel,
       minimumDataLevel,
+      maximumDataLevel,
       ...props
     },
     ref
   ) => {
     const imageryProvider = useInstance({
-      keys: [url, tilingScheme, tileWidth, tileHeight],
+      keys: [
+        url,
+        tilingScheme,
+        tileWidth,
+        tileHeight,
+        minimumDataLevel,
+        maximumDataLevel
+      ],
       create: () =>
         new LabelImageryProvider({
           url,
           tilingScheme: tilingScheme ?? new WebMercatorTilingScheme(),
           tileWidth,
-          tileHeight
+          tileHeight,
+          minimumDataLevel,
+          maximumDataLevel
         })
     })
     Object.assign(imageryProvider, {
       minimumLevel,
-      maximumLevel,
-      minimumDataLevel
+      maximumLevel
     })
     return (
       <ImageryLayer ref={ref} imageryProvider={imageryProvider} {...props} />

@@ -22,7 +22,7 @@ import { isNotNullish } from '@takram/plateau-type-helpers'
 import { getAnnotationType, type AnnotationType } from './getAnnotationType'
 import { getTileCoords } from './helpers'
 import { type LabelImageryProvider } from './LabelImageryProvider'
-import { type Imagery, type KeyedImagery } from './types'
+import { type Imagery, type ImageryCoords, type KeyedImagery } from './types'
 
 type LabelOptions = Partial<
   Pick<
@@ -125,6 +125,7 @@ const positionScratch = new Cartesian3()
 const cartographicScratch = new Cartographic()
 
 function getPosition(
+  coords: ImageryCoords,
   feature: Feature,
   bounds: Rectangle,
   descendantsBounds: Rectangle[] | undefined,
@@ -133,8 +134,14 @@ function getPosition(
   ellipsoid?: Ellipsoid,
   result = new Cartesian3()
 ): Cartesian3 | undefined {
-  const x = feature.geom[0][0].x / tileSize
-  const y = feature.geom[0][0].y / tileSize
+  let x = feature.geom[0][0].x / tileSize
+  let y = feature.geom[0][0].y / tileSize
+  if (coords.level === 17) {
+    // Tiles at 16 level includes features for level 17.
+    // https://github.com/gsi-cyberjapan/optimal_bvmap
+    x = x * 2 - (coords.x % 2)
+    y = y * 2 - (coords.y % 2)
+  }
   if (x < 0 || x > 1 || y < 0 || y > 1) {
     return
   }
@@ -171,7 +178,8 @@ export const LabelImagery: FC<LabelImageryProps> = memo(
     style = defaultStyle
   }) => {
     const tile = suspend(
-      async () => await imageryProvider.tileCache.get(getTileCoords(imagery)),
+      async () =>
+        await imageryProvider.tileCache.get(getTileCoords(imagery, 16)),
       [LabelImagery, imagery.key]
     )
 
@@ -232,6 +240,7 @@ export const LabelImagery: FC<LabelImageryProps> = memo(
       }
       labels.forEach(([feature, label]) => {
         const position = getPosition(
+          imagery,
           feature,
           bounds,
           descendantsBounds,
@@ -248,11 +257,12 @@ export const LabelImagery: FC<LabelImageryProps> = memo(
         }
       })
       scene.requestRender()
-    }, [imageryProvider, height, bounds, descendantsBounds, scene])
+    }, [imageryProvider, imagery, height, bounds, descendantsBounds, scene])
 
-    const labelCollection = useCesium(({ labels }) => labels)
     const updateVisibilityRef = useRef(updateVisibility)
     updateVisibilityRef.current = updateVisibility
+
+    const labelCollection = useCesium(({ labels }) => labels)
 
     useEffect(() => {
       const texts: string[] = []
