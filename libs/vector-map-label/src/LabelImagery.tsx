@@ -100,6 +100,7 @@ function resolveStyle(
     {},
     defaultStyle.default,
     defaultStyle[type],
+    style?.default,
     typeStyle
   )
   return {
