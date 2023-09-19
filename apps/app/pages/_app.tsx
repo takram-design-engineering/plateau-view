@@ -35,7 +35,10 @@ const App: ComponentType<ComponentProps<AppType> & AppProps> = ({
   return (
     <CacheProvider value={emotionCache}>
       <Head>
-        <meta name='viewport' content='initial-scale=1, width=device-width' />
+        <meta
+          name='viewport'
+          content='width=device-width, initial-scale=1, maximum-scale=1'
+        />
       </Head>
       <ThemeProvider theme={lightTheme}>
         <CssBaseline />

@@ -4,6 +4,7 @@ import { type FC } from 'react'
 
 // Taken from https://www.mlit.go.jp/plateau/assets/img/common/loading_sprite.png
 import sprite from './assets/loading_sprite.webp'
+import loadingText from './assets/loading_text.svg'
 
 const Root = styled(motion.div)({
   position: 'fixed',
@@ -51,13 +52,11 @@ const Logo = styled('div', {
   }
 })
 
-const Name = styled(motion.div)(({ theme }) => ({
-  ...theme.typography.body1,
-  color: theme.palette.text.secondary,
-  fontFamily: 'futura-pt',
-  fontWeight: 500,
-  letterSpacing: '0.1em'
-}))
+const Name = styled(motion.div)({
+  width: loadingText.width,
+  height: loadingText.height,
+  backgroundImage: `url("${loadingText.src}")`
+})
 
 export const LoadingScreen: FC = () => (
   <Root
@@ -69,15 +68,13 @@ export const LoadingScreen: FC = () => (
       exit={{ transform: 'translateY(-15%)' }}
       transition={{ duration: 0.75 }}
     >
-      <Stack spacing={1} alignItems='center'>
+      <Stack spacing={3} alignItems='center'>
         <Logo size={200} />
         <Name
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 1 }}
-        >
-          VIEW 3.0 Design & Technology Preview
-        </Name>
+        />
       </Stack>
     </motion.div>
   </Root>
