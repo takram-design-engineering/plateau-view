@@ -1,26 +1,50 @@
-import { Slider, sliderClasses, styled, type SliderProps } from '@mui/material'
+import {
+  Popover,
+  Slider,
+  sliderClasses,
+  styled,
+  type SliderProps
+} from '@mui/material'
 import { scaleLinear } from 'd3'
 import { atom, useAtom, type PrimitiveAtom, type SetStateAction } from 'jotai'
 import {
+  bindPopover,
+  bindTrigger,
+  usePopupState
+} from 'material-ui-popup-state/hooks'
+import {
   forwardRef,
   useCallback,
+  useEffect,
+  useId,
   useMemo,
+  useRef,
+  useState,
   type PropsWithoutRef,
   type ReactNode,
   type RefAttributes
 } from 'react'
+import { mergeRefs } from 'react-merge-refs'
+import invariant from 'tiny-invariant'
 
 import { formatValue, type ValueFormatter } from './helpers/formatValue'
 import { inversePseudoLog, pseudoLog } from './helpers/pseudoLog'
-import { ParameterItem, type ParameterItemProps } from './ParameterItem'
+import {
+  ParameterItemButton,
+  type ParameterItemButtonProps
+} from './ParameterItemButton'
 
 const StyledSlider = styled(Slider, {
   shouldForwardProp: prop => prop !== 'mixed'
-})<{ mixed?: boolean }>(({ mixed = false }) => ({
-  width: 'calc(100% - 12px)',
-  marginTop: -6,
-  marginRight: 6,
-  marginLeft: 6,
+})<{ mixed?: boolean }>(({ theme, mixed = false }) => ({
+  width: `calc(100% - ${theme.spacing(2)})`,
+  marginRight: theme.spacing(1),
+  marginLeft: theme.spacing(1),
+  marginBottom: 14,
+  [`& .${sliderClasses.markLabel}`]: {
+    ...theme.typography.caption,
+    lineHeight: 1
+  },
   ...(mixed && {
     [`& .${sliderClasses.thumb}`]: {
       display: 'none'
@@ -37,9 +61,13 @@ const Value = styled('div')(({ theme }) => ({
   fontVariantNumeric: 'tabular-nums'
 }))
 
+const PopoverContent = styled('div')(({ theme }) => ({
+  padding: `${theme.spacing(1)} ${theme.spacing(2)}`
+}))
+
 export interface SliderParameterItemProps<Range extends boolean = false>
   extends PropsWithoutRef<Omit<SliderProps, 'value' | 'step'>>,
-    Pick<ParameterItemProps, 'label' | 'labelFontSize' | 'description'> {
+    Pick<ParameterItemButtonProps, 'label' | 'labelFontSize' | 'description'> {
   step?: number
   range?: Range
   format?: ValueFormatter
@@ -82,7 +110,7 @@ export const SliderParameterItem = forwardRef<
       onChange,
       ...props
     },
-    ref
+    forwardedRef
   ) => {
     const mergedAtom = useMemo(
       () =>
@@ -147,13 +175,13 @@ export const SliderParameterItem = forwardRef<
       () =>
         scaleLinear()
           .domain([min, max])
-          .ticks()
+          .ticks(4)
           .map(
             logarithmic
               ? value => ({ value: pseudoLog(value, logarithmicBase) })
-              : value => ({ value })
+              : value => ({ value, label: format(value) })
           ),
-      [min, max, logarithmic, logarithmicBase]
+      [min, max, logarithmic, logarithmicBase, format]
     )
 
     const scaledMin = useMemo(
@@ -176,40 +204,80 @@ export const SliderParameterItem = forwardRef<
       [range, logarithmic, logarithmicBase, value]
     )
 
+    const id = useId()
+    const popupState = usePopupState({
+      variant: 'popover',
+      popupId: id
+    })
+
+    const ref = useRef<HTMLDivElement>(null)
+    const [width, setWidth] = useState<number>()
+    useEffect(() => {
+      invariant(ref.current != null)
+      const observer = new ResizeObserver(([entry]) => {
+        setWidth(entry.contentRect.width)
+      })
+      observer.observe(ref.current)
+      return () => {
+        observer.disconnect()
+      }
+    }, [])
+
     return (
-      <ParameterItem
-        ref={ref}
-        label={label}
-        labelFontSize={labelFontSize}
-        description={description}
-        control={
-          <Value>
-            {value === MIXED
-              ? '混在'
-              : value != null && (
-                  <>
-                    {typeof value === 'number'
-                      ? format(value)
-                      : value.map(value => format(value)).join(' ~ ')}
-                    {unit != null && <> {unit}</>}
-                  </>
-                )}
-          </Value>
-        }
-      >
-        <StyledSlider
-          size='small'
-          marks={marks}
-          min={scaledMin}
-          max={scaledMax}
-          step={logarithmic ? Number.EPSILON : step}
-          disableSwap
-          {...props}
-          value={scaledValue}
-          onChange={handleChange}
-          mixed={value === MIXED}
+      <>
+        <ParameterItemButton
+          ref={mergeRefs([ref, forwardedRef])}
+          label={label}
+          labelFontSize={labelFontSize}
+          description={description}
+          control={
+            <Value>
+              {value === MIXED
+                ? '混在'
+                : value != null && (
+                    <>
+                      {typeof value === 'number' ? (
+                        format(value)
+                      ) : (
+                        <>
+                          {format(value[0])} ~ {format(value[1])}
+                        </>
+                      )}
+                      {unit != null && <> {unit}</>}
+                    </>
+                  )}
+            </Value>
+          }
+          {...bindTrigger(popupState)}
         />
-      </ParameterItem>
+        <Popover
+          {...bindPopover(popupState)}
+          anchorOrigin={{
+            horizontal: 'center',
+            vertical: 'bottom'
+          }}
+          transformOrigin={{
+            horizontal: 'center',
+            vertical: 'top'
+          }}
+          marginThreshold={8}
+        >
+          <PopoverContent sx={{ width }}>
+            <StyledSlider
+              size='small'
+              marks={marks}
+              min={scaledMin}
+              max={scaledMax}
+              step={logarithmic ? Number.EPSILON : step}
+              disableSwap
+              {...props}
+              value={scaledValue}
+              onChange={handleChange}
+              mixed={value === MIXED}
+            />
+          </PopoverContent>
+        </Popover>
+      </>
     )
   }
 ) as <Range extends boolean = false>(

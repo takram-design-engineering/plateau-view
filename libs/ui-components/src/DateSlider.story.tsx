@@ -17,7 +17,7 @@ type Story = StoryObj<typeof DateSlider>
 const min = +parseISO('2020-01-01')
 const max = +endOfYear(parseISO('2020-01-01'))
 
-const Components: FC = () => {
+const Component: FC = () => {
   const [value, setValue] = useState(min)
   const handleChange = useCallback(
     (event: unknown, value: number | number[]) => {
@@ -36,5 +36,5 @@ const Components: FC = () => {
 }
 
 export const Default: Story = {
-  render: () => <Components />
+  render: () => <Component />
 }

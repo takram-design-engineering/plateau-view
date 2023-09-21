@@ -58,11 +58,11 @@ const StyledToggleButton = styled(ToggleButton)(({ theme }) => ({
 
 export interface AppToggleButtonProps
   extends ToggleButtonProps,
-    Pick<ShortcutTooltipProps, 'shortcutKey'> {}
+    Omit<Pick<ShortcutTooltipProps, 'shortcutKey'>, 'children'> {}
 
 export const AppToggleButton = forwardRef<
   HTMLButtonElement,
-  ToggleButtonProps & Omit<ShortcutTooltipProps, 'children'>
+  AppToggleButtonProps
 >(({ title, shortcutKey, ...props }, ref) => {
   const platform = useAtomValue(platformAtom)
   return (

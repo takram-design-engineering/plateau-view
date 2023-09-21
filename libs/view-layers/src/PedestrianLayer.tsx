@@ -1,114 +1,175 @@
+import { BoundingSphere, Cartesian3, Cartographic } from '@cesium/engine'
 import {
   atom,
   useAtom,
   useAtomValue,
+  useSetAtom,
   type PrimitiveAtom,
   type SetStateAction
 } from 'jotai'
-import { useCallback, useMemo, type FC } from 'react'
-import { type SetOptional } from 'type-fest'
+import { useCallback, useEffect, type FC } from 'react'
+import invariant from 'tiny-invariant'
 
-import { match } from '@takram/plateau-cesium-helpers'
+import { useCesium } from '@takram/plateau-cesium'
+import { useAddress } from '@takram/plateau-geocoder'
 import { type LayerProps } from '@takram/plateau-layers'
 import {
   Pedestrian,
-  PEDESTRIAN_OBJECT,
   type HeadingPitch,
   type Location
 } from '@takram/plateau-pedestrian'
-import { screenSpaceSelectionAtom } from '@takram/plateau-screen-space-selection'
 
 import {
-  createViewLayerBase,
+  createViewLayerModel,
   type ViewLayerModel,
   type ViewLayerModelParams
-} from './createViewLayerBase'
+} from './createViewLayerModel'
 import { PEDESTRIAN_LAYER } from './layerTypes'
+import { type ConfigurableLayerModel } from './types'
 
-export interface PedestrianLayerModelParams
-  extends ViewLayerModelParams,
-    Location {}
+let nextLayerIndex = 1
+
+export interface PedestrianLayerModelParams extends ViewLayerModelParams {
+  location: Location
+  headingPitchAtom?: HeadingPitch
+  zoomAtom?: number
+}
 
 export interface PedestrianLayerModel extends ViewLayerModel {
+  panoAtom: PrimitiveAtom<string | null>
   locationAtom: PrimitiveAtom<Location>
-  synchronizeStreetViewAtom: PrimitiveAtom<boolean>
-  streetViewLocationAtom: PrimitiveAtom<Location | null>
-  streetViewHeadingPitchAtom: PrimitiveAtom<HeadingPitch | null>
-  streetViewZoomAtom: PrimitiveAtom<number | null>
+  headingPitchAtom: PrimitiveAtom<HeadingPitch | null>
+  zoomAtom: PrimitiveAtom<number | null>
+  synchronizedAtom: PrimitiveAtom<boolean>
+  addressAtom: PrimitiveAtom<string | null>
 }
 
 export function createPedestrianLayer(
   params: PedestrianLayerModelParams
-): SetOptional<PedestrianLayerModel, 'id'> {
-  const locationAtom = atom<Location>({
-    longitude: params.longitude,
-    latitude: params.latitude,
+): ConfigurableLayerModel<PedestrianLayerModel> {
+  const locationPrimitiveAtom = atom<Location>({
+    longitude: params.location.longitude,
+    latitude: params.location.latitude,
     height: 2.5
   })
-  const streetViewTargetLocationAtom = atom<Location | null>(null)
-  const streetViewActualLocationAtom = atom<Location | null>(null)
-  const streetViewLocationAtom = atom(
-    get => {
-      const target = get(streetViewTargetLocationAtom)
-      const location = get(locationAtom)
-      return target?.longitude === location.longitude &&
-        target?.latitude === location.latitude
-        ? get(streetViewActualLocationAtom)
-        : null
-    },
-    (get, set, value: SetStateAction<Location | null>) => {
-      set(streetViewTargetLocationAtom, get(locationAtom))
-      set(streetViewActualLocationAtom, value)
+  const locationAtom = atom(
+    get => get(locationPrimitiveAtom),
+    (get, set, value: SetStateAction<Location>) => {
+      const prevValue = get(locationPrimitiveAtom)
+      const nextValue = typeof value === 'function' ? value(prevValue) : value
+      if (
+        nextValue.longitude !== prevValue.longitude ||
+        nextValue.latitude !== prevValue.latitude ||
+        nextValue.height !== prevValue.height
+      ) {
+        set(locationPrimitiveAtom, nextValue)
+      }
     }
   )
+
+  const headingPitchPrimitiveAtom = atom<HeadingPitch | null>(
+    params.headingPitchAtom ?? null
+  )
+  const headingPitchAtom = atom(
+    get => get(headingPitchPrimitiveAtom),
+    (get, set, value: SetStateAction<HeadingPitch | null>) => {
+      const prevValue = get(headingPitchAtom)
+      const nextValue = typeof value === 'function' ? value(prevValue) : value
+      if (
+        nextValue?.heading !== prevValue?.heading ||
+        nextValue?.pitch !== prevValue?.pitch
+      ) {
+        set(headingPitchPrimitiveAtom, nextValue)
+      }
+    }
+  )
+
   return {
-    ...createViewLayerBase({
+    ...createViewLayerModel({
       ...params,
-      title: '歩行者視点'
+      // TODO: Avoid side-effect
+      title: `歩行者視点${nextLayerIndex++}`
     }),
     type: PEDESTRIAN_LAYER,
+    panoAtom: atom<string | null>(null),
     locationAtom,
-    synchronizeStreetViewAtom: atom(false),
-    streetViewLocationAtom,
-    streetViewHeadingPitchAtom: atom<HeadingPitch | null>(null),
-    streetViewZoomAtom: atom<number | null>(null)
+    headingPitchAtom,
+    zoomAtom: atom<number | null>(params.zoomAtom ?? null),
+    synchronizedAtom: atom(false),
+    addressAtom: atom<string | null>(null)
   }
 }
+
+const cartographicScratch = new Cartographic()
 
 export const PedestrianLayer: FC<LayerProps<typeof PEDESTRIAN_LAYER>> = ({
   id,
   selected,
+  titleAtom,
   hiddenAtom,
   boundingSphereAtom,
+  panoAtom,
   locationAtom,
-  synchronizeStreetViewAtom,
-  streetViewLocationAtom,
-  streetViewHeadingPitchAtom,
-  streetViewZoomAtom
+  headingPitchAtom,
+  zoomAtom,
+  synchronizedAtom,
+  addressAtom
 }) => {
+  const [pano, setPano] = useAtom(panoAtom)
   const [location, setLocation] = useAtom(locationAtom)
-  const synchronizeStreetView = useAtomValue(synchronizeStreetViewAtom)
-  const streetViewLocation = useAtomValue(streetViewLocationAtom)
-  const streetViewHeadingPitch = useAtomValue(streetViewHeadingPitchAtom)
-  const streetViewZoom = useAtomValue(streetViewZoomAtom)
-
-  const selection = useAtomValue(screenSpaceSelectionAtom)
-  const objectSelected = useMemo(
-    () =>
-      selection.length > 0 &&
-      selection.every(
-        ({ type, value }) =>
-          type === PEDESTRIAN_OBJECT && match(value, { key: id })
-      ),
-    [id, selection]
-  )
+  const headingPitch = useAtomValue(headingPitchAtom)
+  const zoom = useAtomValue(zoomAtom)
+  const synchronized = useAtomValue(synchronizedAtom)
 
   const handleChange = useCallback(
     (location: Location) => {
+      setPano(null)
       setLocation(location)
     },
-    [setLocation]
+    [setPano, setLocation]
   )
+
+  const setBoundingSphere = useSetAtom(boundingSphereAtom)
+  const scene = useCesium(({ scene }) => scene, { indirect: true })
+  useEffect(() => {
+    const boundingSphere = new BoundingSphere()
+    const groundHeight =
+      scene?.globe.getHeight(
+        Cartographic.fromDegrees(
+          location.longitude,
+          location.latitude,
+          undefined,
+          cartographicScratch
+        )
+      ) ?? 0
+    Cartesian3.fromDegrees(
+      location.longitude,
+      location.latitude,
+      groundHeight + (location.height ?? 0),
+      scene?.globe.ellipsoid,
+      boundingSphere.center
+    )
+    boundingSphere.radius = 200 // Arbitrary size
+    setBoundingSphere(boundingSphere)
+  }, [location, setBoundingSphere, scene])
+
+  const setTitle = useSetAtom(titleAtom)
+  const setAddress = useSetAtom(addressAtom)
+  const address = useAddress({
+    longitude: location.longitude,
+    latitude: location.latitude
+  })
+  useEffect(() => {
+    setTitle(title => {
+      const primary = typeof title === 'string' ? title : title?.primary
+      invariant(primary != null)
+      return {
+        primary,
+        secondary: address?.address
+      }
+    })
+    setAddress(address?.address ?? null)
+  }, [setTitle, setAddress, address])
 
   const hidden = useAtomValue(hiddenAtom)
   if (hidden) {
@@ -117,12 +178,10 @@ export const PedestrianLayer: FC<LayerProps<typeof PEDESTRIAN_LAYER>> = ({
   return (
     <Pedestrian
       id={id}
-      selected={selected === true || objectSelected}
       location={location}
-      streetViewLocation={streetViewLocation ?? undefined}
-      streetViewHeadingPitch={streetViewHeadingPitch ?? undefined}
-      streetViewZoom={streetViewZoom ?? undefined}
-      hideFrustum={synchronizeStreetView}
+      headingPitch={headingPitch ?? undefined}
+      zoom={zoom ?? undefined}
+      hideFrustum={pano == null || synchronized}
       onChange={handleChange}
     />
   )

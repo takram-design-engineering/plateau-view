@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 
 export type PanoramaChangeHook<T> = (
-  panorama?: google.maps.StreetViewPanorama,
+  panorama: google.maps.StreetViewPanorama,
   callback?: (value: T) => void
 ) => void
 

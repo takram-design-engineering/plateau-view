@@ -18,14 +18,10 @@ import { ParameterItem, type ParameterItemProps } from './ParameterItem'
 import { SelectItem, type SelectItemProps } from './SelectItem'
 
 const StyledSelect = styled(Select)(({ theme, fullWidth }) => ({
-  ...(fullWidth === true
-    ? {
-        width: `calc(100% - ${theme.spacing(-2)})`,
-        marginLeft: theme.spacing(-1)
-      }
-    : {
-        marginRight: theme.spacing(-1)
-      })
+  ...(fullWidth === true && {
+    width: `calc(100% - ${theme.spacing(-2)})`,
+    marginLeft: theme.spacing(-1)
+  })
 })) as unknown as typeof Select // For generics
 
 const Value = styled('div')(({ theme }) => ({
@@ -142,7 +138,7 @@ export const SelectParameterItem = forwardRef<
         labelFontSize={labelFontSize}
         description={description}
         {...(layout === 'inline'
-          ? { control: select }
+          ? { control: select, controlSpace: 'button' }
           : { gutterBottom: true })}
       >
         {layout === 'stack' && select}

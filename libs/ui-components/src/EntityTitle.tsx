@@ -1,5 +1,6 @@
 import {
   ListItem,
+  listItemSecondaryActionClasses,
   ListItemText,
   listItemTextClasses,
   styled,
@@ -7,11 +8,17 @@ import {
   type ListItemProps,
   type SvgIconProps
 } from '@mui/material'
-import { forwardRef, type ComponentType } from 'react'
+import { forwardRef, type ComponentType, type ReactNode } from 'react'
 
 const StyledListItem = styled(ListItem)(({ theme }) => ({
   alignItems: 'center',
-  minHeight: theme.spacing(5)
+  minHeight: theme.spacing(5),
+  paddingRight: theme.spacing(0.5),
+  [`& .${listItemSecondaryActionClasses.root}`]: {
+    position: 'relative',
+    transform: 'none',
+    flexGrow: 0
+  }
 })) as unknown as typeof ListItem // For generics
 
 export const EntityTitleIcon = styled('div')(({ theme }) => ({
@@ -21,45 +28,56 @@ export const EntityTitleIcon = styled('div')(({ theme }) => ({
   }
 }))
 
-export const EntityTitleText = styled(ListItemText)(({ theme }) => ({
+export const EntityTitleText = styled(ListItemText)({
+  flexGrow: 1,
   marginTop: 4,
   marginBottom: 4,
+  overflow: 'hidden',
+  whiteSpace: 'nowrap',
+  textOverflow: 'ellipsis',
   [`& .${listItemTextClasses.primary}`]: {
-    overflow: 'hidden',
-    whiteSpace: 'nowrap',
-    textOverflow: 'ellipsis'
+    display: 'inline'
   },
   [`& .${listItemTextClasses.secondary}`]: {
-    overflow: 'hidden',
-    whiteSpace: 'nowrap',
-    textOverflow: 'ellipsis',
-    marginTop: '0.1em'
+    display: 'inline'
+  },
+  [`& .${listItemTextClasses.primary} + .${listItemTextClasses.secondary}`]: {
+    marginLeft: '1em'
   }
-}))
+})
 
 export interface EntityTitleProps extends Omit<ListItemProps<'div'>, 'title'> {
   title?:
-    | string
+    | ReactNode
     | {
-        primary: string
-        secondary?: string
+        primary: ReactNode
+        secondary?: ReactNode
       }
   iconComponent?: ComponentType<SvgIconProps>
+  icon?: ReactNode
 }
 
 export const EntityTitle = forwardRef<HTMLDivElement, EntityTitleProps>(
-  ({ title, iconComponent, children, ...props }, ref) => {
+  ({ title, iconComponent, icon, children, ...props }, ref) => {
     const Icon = iconComponent
     return (
       <StyledListItem ref={ref} {...props} component='div'>
-        {Icon != null && (
+        {(icon != null || Icon != null) && (
           <EntityTitleIcon>
-            <Icon fontSize='medium' />
+            {icon != null ? icon : Icon != null ? <Icon /> : null}
           </EntityTitleIcon>
         )}
         <EntityTitleText
-          primary={typeof title === 'object' ? title?.primary : title}
-          secondary={typeof title === 'object' ? title?.secondary : undefined}
+          primary={
+            typeof title === 'object' && title != null && 'primary' in title
+              ? title?.primary
+              : title
+          }
+          secondary={
+            typeof title === 'object' && title != null && 'secondary' in title
+              ? title?.secondary
+              : undefined
+          }
           primaryTypographyProps={{
             variant: 'body1'
           }}

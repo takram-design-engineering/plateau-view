@@ -2,8 +2,8 @@ import { Divider, IconButton } from '@mui/material'
 import { type Meta, type StoryObj } from '@storybook/react'
 import { atom } from 'jotai'
 
-import { ButtonParameterItem } from './ButtonInspectorItem'
 import { FloatingPanel } from './FloatingPanel'
+import { GroupedParameterItem } from './GroupedParameterItem'
 import {
   BuildingIcon,
   LocationIcon,
@@ -15,6 +15,7 @@ import { Inspector } from './Inspector'
 import { InspectorActions } from './InspectorActions'
 import { InspectorHeader } from './InspectorHeader'
 import { InspectorItem } from './InspectorItem'
+import { NumberParameterItem } from './NumberParameterItem'
 import { ParameterList } from './ParameterList'
 import { SegmentParameterItem } from './SegmentParameterItem'
 import { SelectParameterItem } from './SelectParameterItem'
@@ -33,8 +34,7 @@ type Story = StoryObj<typeof Inspector>
 const switchAtom = atom(false)
 const selectAtom = atom(1)
 const sliderAtom1 = atom(1)
-const sliderAtom2 = atom(1)
-const sliderAtom3 = atom([1, 5])
+const sliderAtom2 = atom([1, 5])
 const segmentAtom = atom(1)
 
 export const Default: Story = {
@@ -48,7 +48,7 @@ export const Default: Story = {
           }}
           iconComponent={BuildingIcon}
         />
-        <Divider light />
+        <Divider />
         <InspectorActions>
           <IconButton>
             <VisibilityOnIcon />
@@ -63,7 +63,7 @@ export const Default: Story = {
             <TrashIcon />
           </IconButton>
         </InspectorActions>
-        <Divider light />
+        <Divider />
         <InspectorItem>
           <ParameterList>
             <SwitchParameterItem label='Switch' atom={switchAtom} />
@@ -92,34 +92,38 @@ export const Default: Story = {
               label='Slider'
               min={0}
               max={10}
+              unit='unit'
               atom={sliderAtom1}
             />
-            <SliderParameterItem
-              label='Discrete Slider'
-              min={0}
-              max={10}
-              step={1}
-              atom={sliderAtom2}
+            <NumberParameterItem
+              label='Number'
+              unit='unit'
+              atom={sliderAtom1}
             />
-            <SliderParameterItem
-              label='Range Slider'
-              min={0}
-              max={10}
-              // @ts-expect-error TODO: Fix type
-              atom={sliderAtom3}
-            />
-            <SegmentParameterItem
-              label='Segment'
-              atom={segmentAtom}
-              exclusive
-              items={[
-                [1, 'Value 1'],
-                [2, 'Value 2'],
-                [3, 'Value 3'],
-                [4, 'Value 4']
-              ]}
-            />
-            <ButtonParameterItem label='Segment'>Button</ButtonParameterItem>
+            <GroupedParameterItem label='Group'>
+              <InspectorItem>
+                <ParameterList>
+                  <SliderParameterItem
+                    label='Range Slider'
+                    min={0}
+                    max={10}
+                    range
+                    atom={sliderAtom2}
+                  />
+                  <SegmentParameterItem
+                    label='Segment'
+                    // @ts-expect-error TODO: Fix type
+                    atom={segmentAtom}
+                    items={[
+                      [1, 'Value 1'],
+                      [2, 'Value 2'],
+                      [3, 'Value 3'],
+                      [4, 'Value 4']
+                    ]}
+                  />
+                </ParameterList>
+              </InspectorItem>
+            </GroupedParameterItem>
           </ParameterList>
         </InspectorItem>
       </Inspector>

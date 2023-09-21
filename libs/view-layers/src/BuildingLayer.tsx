@@ -5,12 +5,9 @@ import {
   useSetAtom,
   type PrimitiveAtom
 } from 'jotai'
-import { omit } from 'lodash'
 import { useEffect, useMemo, type FC } from 'react'
-import { type SetOptional } from 'type-fest'
 
 import { useCesium } from '@takram/plateau-cesium'
-import { type ColorScheme } from '@takram/plateau-color-schemes'
 import { PlateauBuildingTileset } from '@takram/plateau-datasets'
 import {
   PlateauDatasetFormat,
@@ -22,42 +19,47 @@ import {
 import { type LayerProps } from '@takram/plateau-layers'
 
 import {
-  createPlateauTilesetLayerBase,
-  type PlateauTilesetLayerModel,
-  type PlateauTilesetLayerModelParams
-} from './createPlateauTilesetLayerBase'
+  createPlateauTilesetLayerState,
+  type PlateauTilesetLayerState,
+  type PlateauTilesetLayerStateParams
+} from './createPlateauTilesetLayerState'
+import {
+  createViewLayerModel,
+  type ViewLayerModel,
+  type ViewLayerModelParams
+} from './createViewLayerModel'
 import { BUILDING_LAYER } from './layerTypes'
 import { PlateauTilesetLayerContent } from './PlateauTilesetLayerContent'
-import { useEvaluateTileFeatureColor } from './useEvaluateTileFeatureColor'
+import { type ConfigurableLayerModel } from './types'
 import { useMunicipalityName } from './useMunicipalityName'
 
 export interface BuildingLayerModelParams
-  extends Omit<PlateauTilesetLayerModelParams, 'datasetId' | 'datumId'> {
+  extends ViewLayerModelParams,
+    PlateauTilesetLayerStateParams {
+  municipalityCode: string
   version?: string
   lod?: number
   textured?: boolean
 }
 
 export interface BuildingLayerModel
-  extends Omit<PlateauTilesetLayerModel, 'datasetId' | 'datumIdAtom'> {
+  extends ViewLayerModel,
+    PlateauTilesetLayerState {
+  municipalityCode: string
   versionAtom: PrimitiveAtom<string | null>
   lodAtom: PrimitiveAtom<number | null>
   texturedAtom: PrimitiveAtom<boolean | null>
-  colorPropertyAtom: PrimitiveAtom<string | null>
-  colorSchemeAtom: PrimitiveAtom<ColorScheme>
-  colorRangeAtom: PrimitiveAtom<number[]>
   showWireframeAtom: PrimitiveAtom<boolean>
 }
 
 export function createBuildingLayer(
   params: BuildingLayerModelParams
-): SetOptional<BuildingLayerModel, 'id'> {
+): ConfigurableLayerModel<BuildingLayerModel> {
   return {
-    ...omit(
-      createPlateauTilesetLayerBase(params as PlateauTilesetLayerModelParams),
-      ['datasetId', 'datumIdAtom']
-    ),
+    ...createViewLayerModel(params),
+    ...createPlateauTilesetLayerState(params),
     type: BUILDING_LAYER,
+    municipalityCode: params.municipalityCode,
     versionAtom: atom(params.version ?? null),
     lodAtom: atom(params.lod ?? null),
     texturedAtom: atom(params.textured ?? null),
@@ -107,7 +109,6 @@ export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
   propertiesAtom,
   colorPropertyAtom,
   colorSchemeAtom,
-  colorRangeAtom,
   opacityAtom,
   showWireframeAtom
 }) => {
@@ -162,12 +163,6 @@ export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
     setTextured(datum.textured)
   }, [setVersion, setLod, setTextured, datum])
 
-  const color = useEvaluateTileFeatureColor({
-    colorPropertyAtom,
-    colorSchemeAtom,
-    colorRangeAtom
-  })
-  const opacity = useAtomValue(opacityAtom)
   const showWireframe = useAtomValue(showWireframeAtom)
 
   if (hidden || datum == null) {
@@ -182,8 +177,9 @@ export const BuildingLayer: FC<LayerProps<typeof BUILDING_LAYER>> = ({
         featureIndexAtom={featureIndexAtom}
         hiddenFeaturesAtom={hiddenFeaturesAtom}
         propertiesAtom={propertiesAtom}
-        color={color}
-        opacity={opacity}
+        colorPropertyAtom={colorPropertyAtom}
+        colorSchemeAtom={colorSchemeAtom}
+        opacityAtom={opacityAtom}
         showWireframe={showWireframe}
       />
     )

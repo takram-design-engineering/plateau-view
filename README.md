@@ -4,7 +4,13 @@ This repository hosts a prototype of PLATEAU VIEW 3.0, a part of [the 2023 PLATE
 
 The prototype under development is available at [plateau.takram.com](https://plateau.takram.com). However, please be aware that it is still in development and is not intended to be a complete service.
 
-![image](https://github.com/takram-design-engineering/plateau-view/assets/8651513/43b6270d-cedc-4fea-86c4-d53cfe959af5)
+![Heatmap](https://github.com/takram-design-engineering/plateau-view/assets/8651513/95489cd2-ee1d-45d1-8953-32a7acb2fb72)
+
+![Flood Risk](https://github.com/takram-design-engineering/plateau-view/assets/8651513/f464a043-0eaa-4fc0-9538-8ffb7df318be)
+
+![Elevation](https://github.com/takram-design-engineering/plateau-view/assets/8651513/dfb7674d-4692-4347-85a3-085a123d8b01)
+
+![Pedestrian](https://github.com/takram-design-engineering/plateau-view/assets/8651513/d7aa2524-8db4-4476-be3b-31a42d1a195d)
 
 ## Background and Goal
 
@@ -37,11 +43,12 @@ This repository consists of the following apps and libraries. The README for eac
 | [cesium-helpers](libs/cesium-helpers)                 | Helper functions for Cesium                                                                           |
 | [cesium-vector-imagery](libs/cesium-vector-imagery)   | [ImageryProvider](https://cesium.com/learn/cesiumjs/ref-doc/ImageryProvider.html) for drawing MVT     |
 | [cesium](libs/cesium)                                 | React components for Cesium                                                                           |
-| [color-schemes](libs/color-schemes)                   | Collection of color schemes                                                                           |
+| [color-maps](libs/color-maps)                         | Collection of color schemes                                                                           |
 | [data-sources](libs/data-sources)                     | Several [DataSources](https://cesium.com/learn/cesiumjs/ref-doc/DataSource.html) used in PLATEAU VIEW |
 | [datasets](libs/datasets)                             | Classes and components that represent PLATEAU and other datasets                                      |
 | [geocoder](libs/geocoder)                             | Simple geocoding functions                                                                            |
 | [graphql](libs/graphql)                               | Generated GraphQL types and hooks                                                                     |
+| [heatmap](libs/heatmap)                               | Visualizes regional mesh heatmap                                                                      |
 | [layers](libs/layers)                                 | Abstract structure of layers                                                                          |
 | [nest-cesium](libs/nest-cesium)                       | Module for using Cesium in NestJS                                                                     |
 | [nest-firestore](libs/nest-firestore)                 | Module for using Google Firestore in NestJS                                                           |
@@ -51,10 +58,12 @@ This repository consists of the following apps and libraries. The README for eac
 | [nest-vector-tile](libs/nest-vector-tile)             | NestJS module for rendering vector map tiles                                                          |
 | [pedestrian](libs/pedestrian)                         | Integration with Google Street View and WASD navigation                                               |
 | [react-helpers](libs/react-helpers)                   | Helper functions and hooks for React                                                                  |
+| [regional-mesh](libs/regional-mesh)                   | Converters for Japanese regional mesh                                                                 |
 | [screen-space-selection](libs/screen-space-selection) | Screen-space selection for Cesium                                                                     |
 | [shared-states](libs/shared-states)                   | Collection of states shared across libraries                                                          |
-| [sketch](libs/sketch)                                 | Work in progress                                                                                      |
+| [sketch](libs/sketch)                                 | Interaction for drawing extruded polygons                                                             |
 | [type-helpers](libs/type-helpers)                     | Helper functions for TypeScript                                                                       |
 | [ui-components](libs/ui-components)                   | UI components used in PLATEAU VIEW                                                                    |
+| [vector-map-imagery](libs/vector-map-imagery)         | Renders texts in MVT by label entities                                                                |
 | [view-layers](libs/view-layers)                       | Implementation of [layers](libs/layers) for PLATEAU VIEW                                              |
 | [view](libs/view)                                     | Provides the main component                                                                           |

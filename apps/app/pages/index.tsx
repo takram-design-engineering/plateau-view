@@ -1,14 +1,20 @@
 import { AnimatePresence } from 'framer-motion'
-import { useAtomValue } from 'jotai'
+import { atom, useAtomValue } from 'jotai'
 import { useHydrateAtoms } from 'jotai/utils'
 import { type GetServerSideProps, type NextPage } from 'next'
+import dynamic from 'next/dynamic'
 import Head from 'next/head'
 import { Suspense, type FC } from 'react'
 import UAParser from 'ua-parser-js'
 
 import { platformAtom, type Platform } from '@takram/plateau-shared-states'
 import { LoadingScreen } from '@takram/plateau-ui-components'
-import { PlateauView, readyAtom } from '@takram/plateau-view'
+
+const PlateauView = dynamic(
+  async () => (await import('@takram/plateau-view')).PlateauView
+)
+
+const readyAtom = atom<boolean>(false)
 
 const Loading: FC = () => {
   const ready = useAtomValue(readyAtom)
@@ -27,7 +33,7 @@ const Page: NextPage<PageProps> = ({ platform }) => {
         <title>PLATEAU VIEW 3.0 Design & Technology Preview</title>
       </Head>
       <Suspense>
-        <PlateauView />
+        <PlateauView readyAtom={readyAtom} />
       </Suspense>
       <Loading />
     </>

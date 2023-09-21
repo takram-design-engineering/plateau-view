@@ -1,9 +1,9 @@
 /// <reference types="vitest" />
 
 import { join } from 'path'
+import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin'
 import { defineConfig } from 'vite'
 import dts from 'vite-plugin-dts'
-import viteTsConfigPaths from 'vite-tsconfig-paths'
 
 export default defineConfig({
   cacheDir: '../../node_modules/.vite/cesium-vector-imagery',
@@ -14,20 +14,13 @@ export default defineConfig({
       tsConfigFilePath: join(__dirname, 'tsconfig.lib.json'),
       skipDiagnostics: true
     }),
-
-    viteTsConfigPaths({
-      root: '../../'
-    })
+    nxViteTsPaths()
   ],
 
   // Uncomment this if you are using workers.
-  // worker: {
-  //  plugins: [
-  //    viteTsConfigPaths({
-  //      root: '../../',
-  //    }),
-  //  ],
-  // },
+  worker: {
+    plugins: [nxViteTsPaths()]
+  },
 
   // Configuration for building your library.
   // See: https://vitejs.dev/guide/build.html#library-mode

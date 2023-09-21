@@ -2,9 +2,13 @@ import {
   DiscardEmptyTileImagePolicy,
   UrlTemplateImageryProvider
 } from '@cesium/engine'
-import { type FC } from 'react'
+import { forwardRef, type FC } from 'react'
 
-import { ImageryLayer, type ImageryLayerProps } from '@takram/plateau-cesium'
+import {
+  ImageryLayer,
+  type ImageryLayerHandle,
+  type ImageryLayerProps
+} from '@takram/plateau-cesium'
 import { useConstant, withEphemerality } from '@takram/plateau-react-helpers'
 
 export interface VectorMapImageryLayerProps
@@ -14,17 +18,29 @@ export interface VectorMapImageryLayerProps
 }
 
 export const VectorMapImageryLayer: FC<VectorMapImageryLayerProps> =
-  withEphemerality(null, ['baseUrl', 'path'], ({ baseUrl, path, ...props }) => {
-    const imageryProvider = useConstant(() => {
-      const imageryProvider = new UrlTemplateImageryProvider({
-        url: `${baseUrl}/${path}/{z}/{x}/{y}.webp`,
-        maximumLevel: 22,
-        tileDiscardPolicy: new DiscardEmptyTileImagePolicy(),
-        tileWidth: 512,
-        tileHeight: 512
-      })
-      imageryProvider.errorEvent.addEventListener(() => {}) // Suppress error log
-      return imageryProvider
-    })
-    return <ImageryLayer imageryProvider={imageryProvider} {...props} />
-  })
+  withEphemerality(
+    null,
+    ['baseUrl', 'path'],
+    forwardRef<ImageryLayerHandle, VectorMapImageryLayerProps>(
+      ({ baseUrl, path, ...props }, ref) => {
+        const imageryProvider = useConstant(() => {
+          const imageryProvider = new UrlTemplateImageryProvider({
+            url: `${baseUrl}/${path}/{z}/{x}/{y}.webp`,
+            maximumLevel: 22,
+            tileDiscardPolicy: new DiscardEmptyTileImagePolicy(),
+            tileWidth: 512,
+            tileHeight: 512
+          })
+          imageryProvider.errorEvent.addEventListener(() => {}) // Suppress error log
+          return imageryProvider
+        })
+        return (
+          <ImageryLayer
+            ref={ref}
+            imageryProvider={imageryProvider}
+            {...props}
+          />
+        )
+      }
+    )
+  )

@@ -1,10 +1,10 @@
 /// <reference types="vitest" />
 
 import { join } from 'path'
+import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 import dts from 'vite-plugin-dts'
-import viteTsConfigPaths from 'vite-tsconfig-paths'
 
 export default defineConfig({
   cacheDir: '../../node_modules/.vite/data-sources',
@@ -16,9 +16,7 @@ export default defineConfig({
       skipDiagnostics: true
     }),
     react(),
-    viteTsConfigPaths({
-      root: '../../'
-    })
+    nxViteTsPaths()
   ],
 
   // Uncomment this if you are using workers.

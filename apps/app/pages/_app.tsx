@@ -3,6 +3,7 @@ import { CacheProvider, type EmotionCache } from '@emotion/react'
 import { ThemeProvider } from '@mui/material/styles'
 import { type AppType } from 'next/app'
 import Head from 'next/head'
+import { SnackbarProvider } from 'notistack'
 import { type ComponentProps, type ComponentType } from 'react'
 import invariant from 'tiny-invariant'
 
@@ -34,13 +35,18 @@ const App: ComponentType<ComponentProps<AppType> & AppProps> = ({
   return (
     <CacheProvider value={emotionCache}>
       <Head>
-        <meta name='viewport' content='initial-scale=1, width=device-width' />
+        <meta
+          name='viewport'
+          content='width=device-width, initial-scale=1, maximum-scale=1'
+        />
       </Head>
       <ThemeProvider theme={lightTheme}>
         <CssBaseline />
-        <ApolloProvider client={apolloClient}>
-          <Component {...pageProps} />
-        </ApolloProvider>
+        <SnackbarProvider maxSnack={1}>
+          <ApolloProvider client={apolloClient}>
+            <Component {...pageProps} />
+          </ApolloProvider>
+        </SnackbarProvider>
       </ThemeProvider>
     </CacheProvider>
   )

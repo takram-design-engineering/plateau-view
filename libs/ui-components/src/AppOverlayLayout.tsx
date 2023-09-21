@@ -1,12 +1,26 @@
-import { styled } from '@mui/material'
+import { styled, useMediaQuery, useTheme } from '@mui/material'
+import { atom, useSetAtom, type Atom } from 'jotai'
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react'
-import { memo, type FC, type ReactNode } from 'react'
+import {
+  createContext,
+  memo,
+  useEffect,
+  useMemo,
+  useRef,
+  type FC,
+  type ReactNode
+} from 'react'
+import invariant from 'tiny-invariant'
 
 import { DarkThemeOverride } from './DarkThemeOverride'
 
 import 'overlayscrollbars/overlayscrollbars.css'
 
-const Root = styled('div')({
+const Root = styled('div', {
+  shouldForwardProp: prop => prop !== 'hidden'
+})<{
+  hidden?: boolean
+}>(({ hidden = false }) => ({
   display: 'grid',
   gridTemplateColumns: '1fr',
   gridAutoFlow: 'column',
@@ -18,8 +32,9 @@ const Root = styled('div')({
   pointerEvents: 'none',
   '& > *': {
     direction: 'ltr'
-  }
-})
+  },
+  ...(hidden && { visibility: 'hidden' })
+}))
 
 const DeveloperColumn = styled('div')({
   minHeight: 0
@@ -64,9 +79,16 @@ const RootGrid = styled('div', {
   minHeight: 0
 }))
 
-const SizeContainer = styled('div')({
-  containerType: 'size'
-})
+const SizeContainer = styled('div', {
+  shouldForwardProp: prop => prop !== 'hidden'
+})<{
+  hidden?: boolean
+}>(({ hidden = false }) => ({
+  containerType: 'size',
+  ...(hidden && {
+    visibility: 'hidden'
+  })
+}))
 
 const MainContainer = styled('div', {
   shouldForwardProp: prop =>
@@ -106,6 +128,9 @@ const Main = styled('main', {
   )}))`]: {
     flexBasis: mainWidth,
     flexShrink: 0
+  },
+  [theme.breakpoints.down('sm')]: {
+    width: `calc(100vw - ${theme.spacing(spacing * 2)})`
   }
 }))
 
@@ -155,7 +180,17 @@ const BottomRightColumn = styled('div')({
   alignItems: 'end'
 })
 
+export interface AppOverlayLayoutContextValue {
+  maxMainHeightAtom: Atom<number>
+}
+
+export const AppOverlayLayoutContext =
+  createContext<AppOverlayLayoutContextValue>({
+    maxMainHeightAtom: atom(0)
+  })
+
 export interface AppOverlayLayoutProps {
+  hidden?: boolean
   spacing?: number
   mainWidth?: number
   contextWidth?: number
@@ -169,6 +204,7 @@ export interface AppOverlayLayoutProps {
 
 export const AppOverlayLayout: FC<AppOverlayLayoutProps> = memo(
   ({
+    hidden = false,
     spacing = 1,
     mainWidth = 360,
     contextWidth = mainWidth,
@@ -178,48 +214,75 @@ export const AppOverlayLayout: FC<AppOverlayLayoutProps> = memo(
     bottomLeft,
     bottomRight,
     developer
-  }) => (
-    <Root>
-      <RootColumn>
-        <RootGrid spacing={spacing}>
-          <SizeContainer>
-            <MainContainer
-              spacing={spacing}
-              mainWidth={mainWidth}
-              contextWidth={contextWidth}
-            >
-              <Main
-                spacing={spacing}
-                mainWidth={mainWidth}
-                contextWidth={contextWidth}
-              >
-                {main}
-              </Main>
-              <Context
-                spacing={spacing}
-                mainWidth={mainWidth}
-                contextWidth={contextWidth}
-              >
-                {context}
-              </Context>
-            </MainContainer>
-          </SizeContainer>
-          {aside}
-        </RootGrid>
-        <DarkThemeOverride>
-          <BottomGrid spacing={spacing}>
-            <BottomLeftColumn>{bottomLeft}</BottomLeftColumn>
-            <BottomRightColumn>{bottomRight}</BottomRightColumn>
-          </BottomGrid>
-        </DarkThemeOverride>
-      </RootColumn>
-      {developer != null && (
-        <DeveloperColumn>
-          <DarkThemeOverride>
-            <Developer>{developer}</Developer>
-          </DarkThemeOverride>
-        </DeveloperColumn>
-      )}
-    </Root>
-  )
+  }) => {
+    const maxMainHeightAtom = useMemo(() => atom(0), [])
+    const setMaxMainHeight = useSetAtom(maxMainHeightAtom)
+
+    const mainRef = useRef<HTMLDivElement>(null)
+    useEffect(() => {
+      invariant(mainRef.current != null)
+      setMaxMainHeight(mainRef.current.getBoundingClientRect().height)
+      const observer = new ResizeObserver(([entry]) => {
+        setMaxMainHeight(entry.contentRect.height)
+      })
+      observer.observe(mainRef.current)
+      return () => {
+        observer.disconnect()
+      }
+    }, [setMaxMainHeight])
+
+    const contextValue = useMemo(
+      () => ({ maxMainHeightAtom }),
+      [maxMainHeightAtom]
+    )
+
+    const theme = useTheme()
+    const smDown = useMediaQuery(theme.breakpoints.down('sm'))
+    return (
+      <AppOverlayLayoutContext.Provider value={contextValue}>
+        <Root hidden={hidden}>
+          <RootColumn>
+            <RootGrid spacing={spacing}>
+              <SizeContainer ref={mainRef} hidden={smDown && aside != null}>
+                <MainContainer
+                  spacing={spacing}
+                  mainWidth={mainWidth}
+                  contextWidth={contextWidth}
+                >
+                  <Main
+                    spacing={spacing}
+                    mainWidth={mainWidth}
+                    contextWidth={contextWidth}
+                  >
+                    {main}
+                  </Main>
+                  <Context
+                    spacing={spacing}
+                    mainWidth={mainWidth}
+                    contextWidth={contextWidth}
+                  >
+                    {context}
+                  </Context>
+                </MainContainer>
+              </SizeContainer>
+              {aside}
+            </RootGrid>
+            <DarkThemeOverride>
+              <BottomGrid spacing={spacing}>
+                <BottomLeftColumn>{bottomLeft}</BottomLeftColumn>
+                <BottomRightColumn>{bottomRight}</BottomRightColumn>
+              </BottomGrid>
+            </DarkThemeOverride>
+          </RootColumn>
+          {developer != null && (
+            <DeveloperColumn>
+              <DarkThemeOverride>
+                <Developer>{developer}</Developer>
+              </DarkThemeOverride>
+            </DeveloperColumn>
+          )}
+        </Root>
+      </AppOverlayLayoutContext.Provider>
+    )
+  }
 )

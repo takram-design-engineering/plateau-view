@@ -8,6 +8,10 @@ import {
   type BuildingLayerModelParams
 } from './BuildingLayer'
 import {
+  createHeatmapLayer,
+  type HeatmapLayerModelParams
+} from './HeatmapLayer'
+import {
   createLandSlideRiskLayer,
   type LandSlideRiskLayerModelParams
 } from './LandSlideRiskLayer'
@@ -22,17 +26,19 @@ import {
   CITY_FURNITURE_LAYER,
   EMERGENCY_ROUTE_LAYER,
   GENERIC_CITY_OBJECT_LAYER,
+  HEATMAP_LAYER,
   HIGH_TIDE_RISK_LAYER,
   INLAND_FLOODING_RISK_LAYER,
+  LAND_SLIDE_RISK_LAYER,
   LAND_USE_LAYER,
   LANDMARK_LAYER,
-  LANDSLIDE_LAYER,
   PARK_LAYER,
   PEDESTRIAN_LAYER,
   RAILWAY_LAYER,
   RIVER_FLOODING_RISK_LAYER,
   ROAD_LAYER,
   SHELTER_LAYER,
+  SKETCH_LAYER,
   STATION_LAYER,
   TSUNAMI_RISK_LAYER,
   URBAN_PLANNING_LAYER,
@@ -48,6 +54,7 @@ import {
   type RiverFloodingRiskLayerModelParams
 } from './RiverFloodingRiskLayer'
 import { createRoadLayer, type RoadLayerModelParams } from './RoadLayer'
+import { createSketchLayer, type SketchLayerModelParams } from './SketchLayer'
 import {
   createUrbanPlanningLayer,
   type UrbanPlanningLayerModelParams
@@ -55,7 +62,10 @@ import {
 
 // prettier-ignore
 type ViewLayerModelParams<T extends LayerType> =
+  T extends typeof HEATMAP_LAYER ? HeatmapLayerModelParams :
   T extends typeof PEDESTRIAN_LAYER ? PedestrianLayerModelParams :
+  T extends typeof SKETCH_LAYER ? SketchLayerModelParams :
+
   // Dataset layers
   T extends typeof BORDER_LAYER ? never : // BorderLayerModelParams
   T extends typeof BRIDGE_LAYER ? BridgeLayerModelParams :
@@ -67,7 +77,7 @@ type ViewLayerModelParams<T extends LayerType> =
   T extends typeof INLAND_FLOODING_RISK_LAYER ? never : // InlandFloodingRiskLayerModelParams
   T extends typeof LAND_USE_LAYER ? LandUseLayerModelParams :
   T extends typeof LANDMARK_LAYER ? never : // LandmarkLayerModelParams
-  T extends typeof LANDSLIDE_LAYER ? LandSlideRiskLayerModelParams :
+  T extends typeof LAND_SLIDE_RISK_LAYER ? LandSlideRiskLayerModelParams :
   T extends typeof PARK_LAYER ? never : // ParkLayerModelParams
   T extends typeof RAILWAY_LAYER ? never : // RailwayLayerModelParams
   T extends typeof RIVER_FLOODING_RISK_LAYER ? RiverFloodingRiskLayerModelParams :
@@ -90,7 +100,10 @@ export function createViewLayer<T extends LayerType>(
 ): SetOptional<LayerModel, 'id'> | undefined {
   // prettier-ignore
   switch (params.type) {
+    case HEATMAP_LAYER: return createHeatmapLayer(params as HeatmapLayerModelParams)
     case PEDESTRIAN_LAYER: return createPedestrianLayer(params as PedestrianLayerModelParams)
+    case SKETCH_LAYER: return createSketchLayer(params as SketchLayerModelParams)
+
     // Dataset layers
     case BORDER_LAYER: return undefined // createBorderLayer(params)
     case BRIDGE_LAYER: return createBridgeLayer(params as BridgeLayerModelParams)
@@ -102,7 +115,7 @@ export function createViewLayer<T extends LayerType>(
     case INLAND_FLOODING_RISK_LAYER: return undefined // createInlandFloodingRiskLayer(params)
     case LAND_USE_LAYER: return createLandUseLayer(params as LandUseLayerModelParams)
     case LANDMARK_LAYER: return undefined // createLandmarkLayer(params)
-    case LANDSLIDE_LAYER: return createLandSlideRiskLayer(params as LandSlideRiskLayerModelParams)
+    case LAND_SLIDE_RISK_LAYER: return createLandSlideRiskLayer(params as LandSlideRiskLayerModelParams)
     case PARK_LAYER: return undefined // createParkLayer(params)
     case RAILWAY_LAYER: return undefined // createRailwayLayer(params)
     case RIVER_FLOODING_RISK_LAYER: return createRiverFloodingRiskLayer(params as RiverFloodingRiskLayerModelParams)

@@ -12,7 +12,8 @@
         "tsConfig": "libs/nest-cesium/tsconfig.lib.json",
         "packageJson": "libs/nest-cesium/package.json",
         "main": "libs/nest-cesium/src/index.ts",
-        "assets": ["libs/nest-cesium/*.md"]
+        "assets": ["libs/nest-cesium/*.md"],
+        "updateBuildableProjectDepsInPackageJson": true
       }
     },
     "publish": {

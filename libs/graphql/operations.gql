@@ -1,3 +1,18 @@
+query prefectures($datasetType: PlateauDatasetType) {
+  prefectures(datasetType: $datasetType) {
+    ...PlateauPrefecture
+  }
+}
+
+query prefectureMunicipalities(
+  $prefectureCode: String!
+  $datasetType: PlateauDatasetType
+) {
+  municipalities(prefectureCode: $prefectureCode, datasetType: $datasetType) {
+    ...PlateauMunicipality
+  }
+}
+
 query municipalityDatasets(
   $municipalityCode: String!
   $includeTypes: [PlateauDatasetType!]
@@ -8,5 +23,40 @@ query municipalityDatasets(
     datasets(includeTypes: $includeTypes, excludeTypes: $excludeTypes) {
       ...PlateauDataset
     }
+  }
+}
+
+query datasets(
+  $municipalityCodes: [String!]
+  $includeTypes: [PlateauDatasetType!]
+  $excludeTypes: [PlateauDatasetType!]
+) {
+  datasets(
+    municipalityCodes: $municipalityCodes
+    includeTypes: $includeTypes
+    excludeTypes: $excludeTypes
+  ) {
+    ...PlateauDataset
+    municipality {
+      ...PlateauMunicipality
+    }
+  }
+}
+
+query datasetDetail($datasetId: String!) {
+  dataset(datasetId: $datasetId) {
+    ...PlateauDatasetDetail
+  }
+}
+
+query areas($searchTokens: [String!]!) {
+  areas(searchTokens: $searchTokens) {
+    ...EstatArea
+  }
+}
+
+query areaGeometry($areaId: ID!) {
+  areaGeometry(areaId: $areaId) {
+    ...EstatAreaGeometry
   }
 }

@@ -1,12 +1,10 @@
 import { type Meta, type StoryObj } from '@storybook/react'
 import { atom } from 'jotai'
 
-import {
-  colorSchemeMagma,
-  type ColorScheme
-} from '@takram/plateau-color-schemes'
+import { colorMapMagma, type ColorMap } from '@takram/plateau-color-maps'
 
-import { ColorSchemeParameterItem } from './ColorSchemeParameterItem'
+import { ButtonParameterItem } from './ButtonParameterItem'
+import { ColorMapParameterItem } from './ColorMapParameterItem'
 import { ParameterList } from './ParameterList'
 import { SegmentParameterItem } from './SegmentParameterItem'
 import { SelectParameterItem } from './SelectParameterItem'
@@ -28,7 +26,7 @@ const sliderAtom1 = atom(1)
 const sliderAtom2 = atom(1)
 const sliderAtom3 = atom([1, 5])
 const segmentAtom = atom([1])
-const colorSchemeAtom = atom<ColorScheme>(colorSchemeMagma)
+const colorMapAtom = atom<ColorMap>(colorMapMagma)
 
 export const Default: Story = {
   render: () => (
@@ -81,77 +79,8 @@ export const Default: Story = {
           [4, 'Value 4']
         ]}
       />
-      <ColorSchemeParameterItem label='Color Scheme' atom={colorSchemeAtom} />
-    </ParameterList>
-  )
-}
-
-export const MediumFontSize: Story = {
-  render: () => (
-    <ParameterList sx={{ width: 280 }}>
-      <SwitchParameterItem
-        label='Switch'
-        labelFontSize='medium'
-        atom={switchAtom}
-      />
-      <SelectParameterItem
-        label='Select'
-        labelFontSize='medium'
-        atom={selectAtom}
-        items={[
-          [1, 'Value 1'],
-          [2, 'Value 2'],
-          [3, 'Value 3'],
-          [4, 'Value 4']
-        ]}
-      />
-      <SelectParameterItem
-        label='Select'
-        labelFontSize='medium'
-        layout='stack'
-        atom={selectAtom}
-        items={[
-          [1, 'Value 1'],
-          [2, 'Value 2'],
-          [3, 'Value 3'],
-          [4, 'Value 4']
-        ]}
-      />
-      <SliderParameterItem
-        label='Slider'
-        labelFontSize='medium'
-        min={0}
-        max={10}
-        atom={sliderAtom1}
-      />
-      <SliderParameterItem
-        label='Discrete Slider'
-        labelFontSize='medium'
-        min={0}
-        max={10}
-        step={1}
-        atom={sliderAtom2}
-      />
-      <SliderParameterItem
-        label='Range Slider'
-        labelFontSize='medium'
-        min={0}
-        max={10}
-        range
-        atom={sliderAtom3}
-      />
-      <SegmentParameterItem
-        label='Segment'
-        labelFontSize='medium'
-        // @ts-expect-error TODO: Fix type
-        atom={segmentAtom}
-        items={[
-          [1, 'Value 1'],
-          [2, 'Value 2'],
-          [3, 'Value 3'],
-          [4, 'Value 4']
-        ]}
-      />
+      <ButtonParameterItem label='Button'>Button</ButtonParameterItem>
+      <ColorMapParameterItem label='Color Map' atom={colorMapAtom} />
     </ParameterList>
   )
 }

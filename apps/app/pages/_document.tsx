@@ -26,7 +26,6 @@ class Document extends NextDocument<DocumentProps> {
         <Head>
           <link rel='shortcut icon' href='/favicon.ico' />
           <meta name='emotion-insertion-point' content='' />
-          <link rel='stylesheet' href='https://use.typekit.net/vgl5alg.css' />
           {this.props.emotionStyleTags}
         </Head>
         <body>

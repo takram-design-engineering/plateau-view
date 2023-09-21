@@ -1,119 +1,68 @@
 import { Cartesian3, HeadingPitchRoll } from '@cesium/engine'
-import { useSetAtom } from 'jotai'
-import { Suspense, useCallback, useEffect, type FC } from 'react'
+import { atom, useSetAtom, type PrimitiveAtom } from 'jotai'
+import { Suspense, useCallback, useMemo, type FC } from 'react'
 
-import { CurrentTime, ViewLocator } from '@takram/plateau-cesium'
-import { SuspendUntilTilesLoaded } from '@takram/plateau-cesium-helpers'
-import { LayersRenderer, useAddLayer } from '@takram/plateau-layers'
-import { isNotFalse } from '@takram/plateau-type-helpers'
 import {
-  AppBar,
-  AppFrame,
-  AppOverlayLayout,
-  Space
-} from '@takram/plateau-ui-components'
-import {
-  BUILDING_LAYER,
-  createViewLayer,
-  layerComponents,
-  PEDESTRIAN_LAYER
-} from '@takram/plateau-view-layers'
+  CurrentTime,
+  SuspendUntilTilesLoaded,
+  ViewLocator
+} from '@takram/plateau-cesium'
+import { LayersRenderer } from '@takram/plateau-layers'
+import { AppFrame } from '@takram/plateau-ui-components'
+import { layerComponents } from '@takram/plateau-view-layers'
 
 import { Areas } from './containers/Areas'
+import { AutoRotateCamera } from './containers/AutoRotateCamera'
 import { Canvas } from './containers/Canvas'
 import { Environments } from './containers/Environments'
+import { HighlightedAreas } from './containers/HighlightedAreas'
+import { InitialLayers } from './containers/InitialLayers'
 import { KeyBindings } from './containers/KeyBindings'
+import { PedestrianTool } from './containers/PedestrianTool'
 import { ReverseGeocoding } from './containers/ReverseGeocoding'
 import { ScreenSpaceCamera } from './containers/ScreenSpaceCamera'
 import { ScreenSpaceSelection } from './containers/ScreenSpaceSelection'
 import { SelectionBoundingSphere } from './containers/SelectionBoundingSphere'
 import { SelectionCoordinator } from './containers/SelectionCoordinator'
+import { SketchTool } from './containers/SketchTool'
 import { Terrains } from './containers/Terrains'
 import { ToolMachineEvents } from './containers/ToolMachineEvents'
-import { DeveloperPanels } from './developer/DeveloperPanels'
-import { CameraButtons } from './panels/CameraButtons'
-import { DateControlButton } from './panels/DateControlButton'
-import { EnvironmentSelect } from './panels/EnvironmentSelect'
-import { LocationBreadcrumbs } from './panels/LocationBreadcrumbs'
-import { MainMenuButton } from './panels/MainMenuButton'
-import { MainPanel } from './panels/MainPanel'
-import { SelectionPanel } from './panels/SelectionPanel'
-import { SettingsButton } from './panels/SettingsButton'
-import { ToolButtons } from './panels/ToolButtons'
+import { MapLabel } from './containers/VectorMapLabel'
+import { ViewportObserver } from './containers/ViewportObserver'
 import { readyAtom } from './states/app'
+import { AppHeader } from './ui-containers/AppHeader'
+import { AppOverlay } from './ui-containers/AppOverlay'
+import { FileDrop } from './ui-containers/FileDrop'
+import { Notifications } from './ui-containers/Notifications'
 
 const initialDestination = Cartesian3.fromDegrees(139.755, 35.675, 1000)
 const initialOrientation = new HeadingPitchRoll(Math.PI * 0.4, -Math.PI * 0.2)
 
-// TODO: Just for temporary.
-const InitialLayers: FC = () => {
-  const addLayer = useAddLayer()
-
-  useEffect(() => {
-    const remove = [
-      addLayer(
-        createViewLayer({
-          type: BUILDING_LAYER,
-          municipalityCode: '13101',
-          version: '2020',
-          lod: 2,
-          textured: false
-        })
-      ),
-      addLayer(
-        createViewLayer({
-          type: BUILDING_LAYER,
-          municipalityCode: '13102',
-          version: '2020',
-          lod: 2,
-          textured: false
-        })
-      ),
-      process.env.NODE_ENV !== 'production' &&
-        addLayer(
-          createViewLayer({
-            type: PEDESTRIAN_LAYER,
-            longitude: 139.769,
-            latitude: 35.68
-          })
-        )
-    ].filter(isNotFalse)
-    return () => {
-      remove.forEach(remove => {
-        remove()
-      })
-    }
-  }, [addLayer])
-
-  return null
+export interface PlateauViewProps {
+  readyAtom?: PrimitiveAtom<boolean>
 }
 
-export interface PlateauViewProps {}
-
-export const PlateauView: FC<PlateauViewProps> = () => {
-  const setReady = useSetAtom(readyAtom)
+export const PlateauView: FC<PlateauViewProps> = ({
+  readyAtom: readyAtomProp
+}) => {
+  const setReady = useSetAtom(
+    useMemo(
+      () =>
+        atom(null, (get, set, value: boolean) => {
+          set(readyAtom, value)
+          if (readyAtomProp != null) {
+            set(readyAtomProp, value)
+          }
+        }),
+      [readyAtomProp]
+    )
+  )
   const handleTilesLoadComplete = useCallback(() => {
     setReady(true)
   }, [setReady])
 
   return (
-    <AppFrame
-      header={
-        <AppBar>
-          <MainMenuButton />
-          <Space size={2} />
-          <ToolButtons />
-          <Space />
-          <SettingsButton />
-          <DateControlButton />
-          <EnvironmentSelect />
-          <Space flexible />
-          <LocationBreadcrumbs />
-          <Space flexible />
-          <CameraButtons />
-        </AppBar>
-      }
-    >
+    <AppFrame header={<AppHeader />}>
       <Canvas>
         <ScreenSpaceCamera tiltByRightButton />
         <CurrentTime hours={7} />
@@ -134,21 +83,25 @@ export const PlateauView: FC<PlateauViewProps> = () => {
             onComplete={handleTilesLoadComplete}
           >
             <LayersRenderer components={layerComponents} />
+            <MapLabel />
           </SuspendUntilTilesLoaded>
         </Suspense>
         <Areas />
+        <HighlightedAreas />
         <ReverseGeocoding />
         <ToolMachineEvents />
+        <PedestrianTool />
+        <SketchTool />
         <SelectionCoordinator />
         <SelectionBoundingSphere />
+        <AutoRotateCamera />
       </Canvas>
       <KeyBindings />
       <ScreenSpaceSelection />
-      <AppOverlayLayout
-        main={<MainPanel />}
-        aside={<SelectionPanel />}
-        developer={<DeveloperPanels />}
-      />
+      <FileDrop />
+      <ViewportObserver />
+      <AppOverlay />
+      <Notifications />
       <InitialLayers />
     </AppFrame>
   )

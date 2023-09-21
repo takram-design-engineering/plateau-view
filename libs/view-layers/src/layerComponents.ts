@@ -2,6 +2,7 @@ import { type LayerComponents } from '@takram/plateau-layers'
 
 import { BridgeLayer } from './BridgeLayer'
 import { BuildingLayer } from './BuildingLayer'
+import { HeatmapLayer } from './HeatmapLayer'
 import { LandSlideRiskLayer } from './LandSlideRiskLayer'
 import { LandUseLayer } from './LandUseLayer'
 import {
@@ -11,17 +12,19 @@ import {
   CITY_FURNITURE_LAYER,
   EMERGENCY_ROUTE_LAYER,
   GENERIC_CITY_OBJECT_LAYER,
+  HEATMAP_LAYER,
   HIGH_TIDE_RISK_LAYER,
   INLAND_FLOODING_RISK_LAYER,
+  LAND_SLIDE_RISK_LAYER,
   LAND_USE_LAYER,
   LANDMARK_LAYER,
-  LANDSLIDE_LAYER,
   PARK_LAYER,
   PEDESTRIAN_LAYER,
   RAILWAY_LAYER,
   RIVER_FLOODING_RISK_LAYER,
   ROAD_LAYER,
   SHELTER_LAYER,
+  SKETCH_LAYER,
   STATION_LAYER,
   TSUNAMI_RISK_LAYER,
   URBAN_PLANNING_LAYER,
@@ -31,10 +34,14 @@ import {
 import { PedestrianLayer } from './PedestrianLayer'
 import { RiverFloodingRiskLayer } from './RiverFloodingRiskLayer'
 import { RoadLayer } from './RoadLayer'
+import { SketchLayer } from './SketchLayer'
 import { UrbanPlanningLayer } from './UrbanPlanningLayer'
 
 export const layerComponents: LayerComponents = {
+  [HEATMAP_LAYER]: HeatmapLayer,
   [PEDESTRIAN_LAYER]: PedestrianLayer,
+  [SKETCH_LAYER]: SketchLayer,
+
   // Dataset layers
   [BORDER_LAYER]: undefined,
   [BRIDGE_LAYER]: BridgeLayer,
@@ -46,7 +53,7 @@ export const layerComponents: LayerComponents = {
   [INLAND_FLOODING_RISK_LAYER]: undefined,
   [LAND_USE_LAYER]: LandUseLayer,
   [LANDMARK_LAYER]: undefined,
-  [LANDSLIDE_LAYER]: LandSlideRiskLayer,
+  [LAND_SLIDE_RISK_LAYER]: LandSlideRiskLayer,
   [PARK_LAYER]: undefined,
   [RAILWAY_LAYER]: undefined,
   [RIVER_FLOODING_RISK_LAYER]: RiverFloodingRiskLayer,

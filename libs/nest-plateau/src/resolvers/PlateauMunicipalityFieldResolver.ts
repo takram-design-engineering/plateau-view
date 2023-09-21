@@ -37,12 +37,18 @@ export class PlateauMunicipalityFieldResolver {
       type: () => [PlateauDatasetTypeEnum],
       nullable: true
     })
-    excludeTypes?: readonly PlateauDatasetType[]
+    excludeTypes?: readonly PlateauDatasetType[],
+    @Args('searchTokens', {
+      type: () => [String],
+      nullable: true
+    })
+    searchTokens?: readonly string[]
   ): Promise<PlateauDataset[]> {
     return await this.catalogService.findAll({
       municipalityCode: municipality.code,
       includeTypes,
-      excludeTypes
+      excludeTypes,
+      searchTokens
     })
   }
 }

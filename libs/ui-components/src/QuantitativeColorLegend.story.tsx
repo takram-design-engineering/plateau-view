@@ -4,10 +4,10 @@ import { atom, useAtomValue } from 'jotai'
 import { type FC } from 'react'
 
 import {
-  colorSchemeCividis,
-  colorSchemeTurbo,
-  colorSchemeViridis
-} from '@takram/plateau-color-schemes'
+  colorMapCividis,
+  colorMapTurbo,
+  colorMapViridis
+} from '@takram/plateau-color-maps'
 
 import { QuantitativeColorLegend } from './QuantitativeColorLegend'
 import { SliderParameterItem } from './SliderParameterItem'
@@ -35,20 +35,16 @@ const Component: FC = () => {
       <QuantitativeColorLegend
         min={min1}
         max={max1}
-        colorScheme={colorSchemeViridis}
+        colorMap={colorMapViridis}
       />
       <SliderParameterItem min={0} max={100} range atom={rangeAtom2} />
       <QuantitativeColorLegend
         min={min2}
         max={max2}
-        colorScheme={colorSchemeCividis}
+        colorMap={colorMapCividis}
       />
       <SliderParameterItem min={0} max={100000} range atom={rangeAtom3} />
-      <QuantitativeColorLegend
-        min={min3}
-        max={max3}
-        colorScheme={colorSchemeTurbo}
-      />
+      <QuantitativeColorLegend min={min3} max={max3} colorMap={colorMapTurbo} />
     </Stack>
   )
 }

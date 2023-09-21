@@ -27,9 +27,9 @@
         eventsCausingServices: {
 
         };
-        matchesStates: "activeTool" | "activeTool.modal" | "activeTool.modal.hand" | "activeTool.modal.pedestrian" | "activeTool.modal.select" | "activeTool.modal.sketch" | "activeTool.modal.story" | "activeTool.momentary" | "activeTool.momentary.hand" | "selectedTool" | "selectedTool.modal" | "selectedTool.modal.hand" | "selectedTool.modal.pedestrian" | "selectedTool.modal.select" | "selectedTool.modal.sketch" | "selectedTool.modal.story" | "selectedTool.momentary" | "selectedTool.momentary.hand" | "selectedTool.momentary.select" | { "activeTool"?: "modal" | "momentary" | { "modal"?: "hand" | "pedestrian" | "select" | "sketch" | "story";
-"momentary"?: "hand"; };
-"selectedTool"?: "modal" | "momentary" | { "modal"?: "hand" | "pedestrian" | "select" | "sketch" | "story";
-"momentary"?: "hand" | "select"; }; };
+        matchesStates: "modal" | "modal.active" | "modal.active.hand" | "modal.active.pedestrian" | "modal.active.select" | "modal.active.sketch" | "modal.active.story" | "modal.selected" | "modal.selected.hand" | "modal.selected.pedestrian" | "modal.selected.select" | "modal.selected.sketch" | "modal.selected.story" | "momentary" | "momentary.active" | "momentary.active.hand" | "momentary.active.select" | "momentary.idle" | "momentary.selected" | "momentary.selected.hand" | "momentary.selected.select" | { "modal"?: "active" | "selected" | { "active"?: "hand" | "pedestrian" | "select" | "sketch" | "story";
+"selected"?: "hand" | "pedestrian" | "select" | "sketch" | "story"; };
+"momentary"?: "active" | "idle" | "selected" | { "active"?: "hand" | "select";
+"selected"?: "hand" | "select"; }; };
         tags: never;
       }

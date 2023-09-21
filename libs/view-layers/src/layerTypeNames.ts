@@ -7,17 +7,19 @@ import {
   CITY_FURNITURE_LAYER,
   EMERGENCY_ROUTE_LAYER,
   GENERIC_CITY_OBJECT_LAYER,
+  HEATMAP_LAYER,
   HIGH_TIDE_RISK_LAYER,
   INLAND_FLOODING_RISK_LAYER,
+  LAND_SLIDE_RISK_LAYER,
   LAND_USE_LAYER,
   LANDMARK_LAYER,
-  LANDSLIDE_LAYER,
   PARK_LAYER,
   PEDESTRIAN_LAYER,
   RAILWAY_LAYER,
   RIVER_FLOODING_RISK_LAYER,
   ROAD_LAYER,
   SHELTER_LAYER,
+  SKETCH_LAYER,
   STATION_LAYER,
   TSUNAMI_RISK_LAYER,
   URBAN_PLANNING_LAYER,
@@ -26,7 +28,10 @@ import {
 } from './layerTypes'
 
 export const layerTypeNames: Record<LayerType, string> = {
+  [HEATMAP_LAYER]: '統計データ',
   [PEDESTRIAN_LAYER]: '歩行者視点',
+  [SKETCH_LAYER]: '作図',
+
   // Dataset layers
   [BORDER_LAYER]: '行政界',
   [BRIDGE_LAYER]: '橋梁',
@@ -38,7 +43,7 @@ export const layerTypeNames: Record<LayerType, string> = {
   [INLAND_FLOODING_RISK_LAYER]: '内水浸水想定区域',
   [LAND_USE_LAYER]: '土地利用',
   [LANDMARK_LAYER]: 'ランドマーク',
-  [LANDSLIDE_LAYER]: '土砂災害警戒区域',
+  [LAND_SLIDE_RISK_LAYER]: '土砂災害警戒区域',
   [PARK_LAYER]: '公園',
   [RAILWAY_LAYER]: '線路',
   [RIVER_FLOODING_RISK_LAYER]: '洪水浸水想定区域',

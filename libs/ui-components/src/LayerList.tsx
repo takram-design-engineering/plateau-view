@@ -10,7 +10,12 @@ import {
   type ListItem,
   type ListProps
 } from '@mui/material'
-import { forwardRef, type MouseEventHandler, type ReactNode } from 'react'
+import {
+  forwardRef,
+  type ForwardedRef,
+  type MouseEventHandler,
+  type ReactNode
+} from 'react'
 
 import { ExpandArrowIcon } from './icons'
 import { Scrollable } from './Scrollable'
@@ -18,6 +23,7 @@ import { Scrollable } from './Scrollable'
 const Root = styled(List)({
   position: 'relative',
   padding: 0,
+  height: '100%',
   maxHeight: 'calc(100% - 50px)'
 }) as unknown as typeof List // For generics
 
@@ -38,10 +44,11 @@ const Footer = styled(ListItemButton)(({ theme }) => ({
 })) as unknown as typeof ListItem // For generics
 
 const StyledScrollable = styled(Scrollable)(({ theme }) => ({
-  maxHeight: `calc(100% - ${theme.spacing(4)} - 1px)`
+  maxHeight: `calc(100% - ${theme.spacing(4)})`
 }))
 
 export interface LayerListProps extends ListProps<'div'> {
+  listRef?: ForwardedRef<HTMLDivElement>
   footer?: ReactNode
   open?: boolean
   onOpen?: MouseEventHandler<HTMLLIElement>
@@ -49,16 +56,19 @@ export interface LayerListProps extends ListProps<'div'> {
 }
 
 export const LayerList = forwardRef<HTMLDivElement, LayerListProps>(
-  ({ footer, open = true, onOpen, onClose, children, ...props }, ref) => (
+  (
+    { listRef, footer, open = true, onOpen, onClose, children, ...props },
+    ref
+  ) => (
     <Root ref={ref} component='div' dense {...props}>
       {open && (
         <>
           <StyledScrollable>
-            <List component='div' dense>
+            <List ref={listRef} component='div' dense>
               {children}
             </List>
           </StyledScrollable>
-          <Divider light />
+          <Divider />
         </>
       )}
       <Footer

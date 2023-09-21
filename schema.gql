@@ -2,6 +2,26 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type EstatArea {
+  address: String!
+  addressComponents: [String!]!
+  bbox: [Float!]!
+  id: ID!
+  municipalityCode: String!
+  name: String!
+  prefectureCode: String!
+}
+
+type EstatAreaGeometry {
+  geometry: JSON!
+  id: String!
+}
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
+
 interface PlateauArea {
   code: String!
   id: ID!
@@ -108,7 +128,7 @@ type PlateauDefaultDatasetDatum implements PlateauDatasetDatum {
 
 type PlateauMunicipality implements PlateauArea {
   code: String!
-  datasets(excludeTypes: [PlateauDatasetType!], includeTypes: [PlateauDatasetType!]): [PlateauDataset!]!
+  datasets(excludeTypes: [PlateauDatasetType!], includeTypes: [PlateauDatasetType!], searchTokens: [String!]): [PlateauDataset!]!
   id: ID!
   name: String!
   parents: [PlateauArea!]!
@@ -126,8 +146,12 @@ type PlateauPrefecture implements PlateauArea {
 }
 
 type Query {
-  municipalities(prefectureCode: String): [PlateauMunicipality!]!
+  areaGeometry(areaId: ID!): EstatAreaGeometry
+  areas(limit: Float, searchTokens: [String!]!): [EstatArea!]!
+  dataset(datasetId: String!): PlateauDataset
+  datasets(excludeTypes: [PlateauDatasetType!], includeTypes: [PlateauDatasetType!], municipalityCodes: [String!], searchTokens: [String!]): [PlateauDataset!]!
+  municipalities(datasetType: PlateauDatasetType, prefectureCode: String): [PlateauMunicipality!]!
   municipality(code: String!): PlateauMunicipality
   prefecture(code: String!): PlateauPrefecture
-  prefectures: [PlateauPrefecture!]!
+  prefectures(datasetType: PlateauDatasetType): [PlateauPrefecture!]!
 }

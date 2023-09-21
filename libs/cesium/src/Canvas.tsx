@@ -19,6 +19,7 @@ import {
 
 import { CesiumRoot, type CesiumRootOptions } from './CesiumRoot'
 import { DefaultImageryProvider } from './DefaultImageryProvider'
+import { requestRenderInNextFrame } from './requestRenderInNextFrame'
 import { cesiumAtom } from './states'
 
 const Root = styled('div')({
@@ -81,6 +82,10 @@ export const Canvas = forwardRef<HTMLDivElement, CanvasProps>(
     const rootRef = useRef<HTMLDivElement>(null)
     const containerRef = useRef<HTMLDivElement>(null)
 
+    const [cesium, setCesium] = useAtom(cesiumAtom)
+    const cesiumRef = useRef(cesium)
+    cesiumRef.current = cesium
+
     // Debounce WebGL context resize.
     useIsomorphicLayoutEffect(() => {
       invariant(rootRef.current != null)
@@ -98,6 +103,9 @@ export const Canvas = forwardRef<HTMLDivElement, CanvasProps>(
             container.style.width = `${entry.contentRect.width}px`
             container.style.height = `${entry.contentRect.height}px`
           }
+          if (cesiumRef.current?.scene != null) {
+            requestRenderInNextFrame(cesiumRef.current.scene)
+          }
         }, 200)
       )
       observer.observe(rootRef.current)
@@ -105,8 +113,6 @@ export const Canvas = forwardRef<HTMLDivElement, CanvasProps>(
         observer.disconnect()
       }
     }, [])
-
-    const [cesium, setCesium] = useAtom(cesiumAtom)
 
     useIsomorphicLayoutEffect(
       () => {

@@ -2,7 +2,6 @@ import { List, ListItem, Stack, styled, Typography } from '@mui/material'
 import { useAtom, useAtomValue } from 'jotai'
 import { useCallback, type FC } from 'react'
 
-import { useWindowEvent } from '@takram/plateau-react-helpers'
 import { platformAtom } from '@takram/plateau-shared-states'
 import { Shortcut } from '@takram/plateau-ui-components'
 
@@ -27,22 +26,14 @@ const Header = styled(List)(({ theme }) => ({
 }))
 
 export const DeveloperPanels: FC = () => {
-  // TODO: Just a temporary key binding
+  const platform = useAtomValue(platformAtom)
   const [showDeveloperPanels, setShowDeveloperPanels] = useAtom(
     showDeveloperPanelsAtom
   )
-  useWindowEvent('keydown', event => {
-    if (event.code === 'Backslash' && event.metaKey) {
-      event.preventDefault()
-      setShowDeveloperPanels(value => !value)
-    }
-  })
 
   const handleClose = useCallback(() => {
     setShowDeveloperPanels(false)
   }, [setShowDeveloperPanels])
-
-  const platform = useAtomValue(platformAtom)
 
   if (!showDeveloperPanels) {
     return null

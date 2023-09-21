@@ -7,11 +7,20 @@ import {
 } from '@takram/plateau-screen-space-selection'
 
 import { toolAtom } from '../states/tool'
+import { useMediaQuery, useTheme } from '@mui/material'
 
 export interface ScreenSpaceSelectionProps
   extends Omit<PlateauScreenSpaceSelectionProps, 'disabled'> {}
 
 export const ScreenSpaceSelection: FC<ScreenSpaceSelectionProps> = props => {
   const tool = useAtomValue(toolAtom)
-  return <PlateauScreenSpaceSelection {...props} disabled={tool !== 'select'} />
+  const theme = useTheme()
+  const smDown = useMediaQuery(theme.breakpoints.down('sm'))
+  return (
+    <PlateauScreenSpaceSelection
+      {...props}
+      disabled={tool?.type !== 'select'}
+      allowClickWhenDisabled={smDown}
+    />
+  )
 }

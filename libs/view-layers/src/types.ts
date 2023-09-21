@@ -1,10 +1,17 @@
 import { type BoundingSphere } from '@cesium/engine'
-import { type PrimitiveAtom } from 'jotai'
+import { type Atom, type PrimitiveAtom } from 'jotai'
+import { type SetOptional } from 'type-fest'
 
+import {
+  type QualitativeColorSet,
+  type QuantitativeColorMap
+} from '@takram/plateau-datasets'
+import { type LayerModelBase } from '@takram/plateau-layers'
 import { type LayerListItemProps } from '@takram/plateau-ui-components'
 
 import { type BridgeLayerModel } from './BridgeLayer'
 import { type BuildingLayerModel } from './BuildingLayer'
+import { type HeatmapLayerModel } from './HeatmapLayer'
 import { type LandSlideRiskLayerModel } from './LandSlideRiskLayer'
 import { type LandUseLayerModel } from './LandUseLayer'
 import {
@@ -14,17 +21,19 @@ import {
   type CITY_FURNITURE_LAYER,
   type EMERGENCY_ROUTE_LAYER,
   type GENERIC_CITY_OBJECT_LAYER,
+  type HEATMAP_LAYER,
   type HIGH_TIDE_RISK_LAYER,
   type INLAND_FLOODING_RISK_LAYER,
+  type LAND_SLIDE_RISK_LAYER,
   type LAND_USE_LAYER,
   type LANDMARK_LAYER,
-  type LANDSLIDE_LAYER,
   type PARK_LAYER,
   type PEDESTRIAN_LAYER,
   type RAILWAY_LAYER,
   type RIVER_FLOODING_RISK_LAYER,
   type ROAD_LAYER,
   type SHELTER_LAYER,
+  type SKETCH_LAYER,
   type STATION_LAYER,
   type TSUNAMI_RISK_LAYER,
   type URBAN_PLANNING_LAYER,
@@ -34,9 +43,22 @@ import {
 import { type PedestrianLayerModel } from './PedestrianLayer'
 import { type RiverFloodingRiskLayerModel } from './RiverFloodingRiskLayer'
 import { type RoadLayerModel } from './RoadLayer'
+import { type SketchLayerModel } from './SketchLayer'
 import { type UrbanPlanningLayerModel } from './UrbanPlanningLayer'
 
+export type ConfigurableLayerModel<T extends LayerModelBase> = SetOptional<
+  T,
+  'id'
+>
+
+export type ConfigurableLayerModelBase<T extends LayerModelBase> = Omit<
+  ConfigurableLayerModel<T>,
+  'type'
+>
+
 export type LayerTitle = LayerListItemProps['title']
+
+export type LayerColorScheme = QuantitativeColorMap | QualitativeColorSet
 
 declare module '@takram/plateau-layers' {
   interface LayerModelBase {
@@ -44,10 +66,14 @@ declare module '@takram/plateau-layers' {
     loadingAtom: PrimitiveAtom<boolean>
     hiddenAtom: PrimitiveAtom<boolean>
     boundingSphereAtom: PrimitiveAtom<BoundingSphere | null>
+    colorSchemeAtom: Atom<LayerColorScheme | null>
   }
 
   interface LayerModelOverrides {
+    [HEATMAP_LAYER]: HeatmapLayerModel
     [PEDESTRIAN_LAYER]: PedestrianLayerModel
+    [SKETCH_LAYER]: SketchLayerModel
+
     // Dataset layers
     [BORDER_LAYER]: never // BorderLayerModel
     [BRIDGE_LAYER]: BridgeLayerModel
@@ -59,7 +85,7 @@ declare module '@takram/plateau-layers' {
     [INLAND_FLOODING_RISK_LAYER]: never // InlandFloodingRiskLayerModel
     [LAND_USE_LAYER]: LandUseLayerModel
     [LANDMARK_LAYER]: never // LandmarkLayerModel
-    [LANDSLIDE_LAYER]: LandSlideRiskLayerModel
+    [LAND_SLIDE_RISK_LAYER]: LandSlideRiskLayerModel
     [PARK_LAYER]: never // ParkLayerModel
     [RAILWAY_LAYER]: never // RailwayLayerModel
     [RIVER_FLOODING_RISK_LAYER]: RiverFloodingRiskLayerModel

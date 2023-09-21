@@ -5,18 +5,30 @@ export interface LayerModelOverrides {}
 
 export type LayerType = keyof LayerModelOverrides
 
+export interface LayerModelHandle {
+  bringToFront: () => void
+}
+
+export interface LayerModelHandleRef {
+  current?: LayerModelHandle
+}
+
 export interface LayerModelBase {
   id: string
   type: LayerType
+  handleRef: LayerModelHandleRef
 }
 
-export type LayerModel<T extends LayerType = LayerType> = {
-  [K in LayerType]: K extends T
-    ? LayerModelOverrides[K] extends LayerModelBase
-      ? LayerModelOverrides[K]
-      : never
-    : never
-}[LayerType]
+export type LayerModel<T extends LayerType = LayerType> =
+  LayerType extends never
+    ? LayerModelBase
+    : {
+        [K in LayerType]: K extends T
+          ? LayerModelOverrides[K] extends LayerModelBase
+            ? LayerModelOverrides[K]
+            : never
+          : never
+      }[LayerType]
 
 export type LayerPredicate<T extends LayerType = LayerType> = (
   layer: LayerModel<T>,

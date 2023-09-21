@@ -1,9 +1,13 @@
 import { Cartesian3 } from '@cesium/engine'
 import { useAtomValue } from 'jotai'
-import { type FC } from 'react'
+import { useEffect, useState, type FC } from 'react'
 import invariant from 'tiny-invariant'
 
-import { Environment, type EnvironmentProps } from '@takram/plateau-cesium'
+import {
+  Environment,
+  type EnvironmentProps,
+  type ImageryLayerHandle
+} from '@takram/plateau-cesium'
 import { BingMapsImageryLayer } from '@takram/plateau-datasets'
 
 import { enableTerrainLightingAtom } from '../states/app'
@@ -29,6 +33,12 @@ export const SatelliteEnvironment: FC<EnvironmentProps> = props => {
     'Missing environment variable: NEXT_PUBLIC_BING_MAPS_APP_KEY'
   )
   const enableTerrainLighting = useAtomValue(enableTerrainLightingAtom)
+
+  const [layer, setLayer] = useState<ImageryLayerHandle | null>(null)
+  useEffect(() => {
+    layer?.sendToBack()
+  }, [layer])
+
   return (
     <>
       <Environment
@@ -39,6 +49,7 @@ export const SatelliteEnvironment: FC<EnvironmentProps> = props => {
         {...props}
       />
       <BingMapsImageryLayer
+        ref={setLayer}
         appKey={process.env.NEXT_PUBLIC_BING_MAPS_APP_KEY}
       />
     </>

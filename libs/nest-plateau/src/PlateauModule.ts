@@ -15,12 +15,14 @@ import {
 } from './moduleDefinitions'
 import { PlateauCatalogService } from './PlateauCatalogService'
 import { PlateauMunicipalityService } from './PlateauMunicipalityService'
+import { PlateauPrefectureService } from './PlateauPrefectureService'
 import {
   PlateauStorageService,
   type PlateauStorageFiles
 } from './PlateauStorageService'
 import { PlateauAreaFieldResolver } from './resolvers/PlateauAreaFieldResolver'
 import { PlateauDatasetFieldResolver } from './resolvers/PlateauDatasetFieldResolver'
+import { PlateauDatasetResolver } from './resolvers/PlateauDatasetResolver'
 import { PlateauMunicipalityFieldResolver } from './resolvers/PlateauMunicipalityFieldResolver'
 import { PlateauMunicipalityResolver } from './resolvers/PlateauMunicipalityResolver'
 import { PlateauPrefectureFieldResolver } from './resolvers/PlateauPrefectureFieldResolver'
@@ -61,13 +63,15 @@ import { PlateauPrefectureResolver } from './resolvers/PlateauPrefectureResolver
     },
     PlateauCatalogService,
     PlateauStorageService,
+    PlateauPrefectureService,
     PlateauMunicipalityService,
     PlateauAreaFieldResolver,
     PlateauDatasetFieldResolver,
     PlateauMunicipalityResolver,
     PlateauMunicipalityFieldResolver,
     PlateauPrefectureResolver,
-    PlateauPrefectureFieldResolver
+    PlateauPrefectureFieldResolver,
+    PlateauDatasetResolver
   ],
   exports: [PlateauCatalogService]
 })

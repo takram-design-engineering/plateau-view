@@ -1,9 +1,14 @@
 import { Math as CesiumMath, Rectangle } from '@cesium/engine'
 import { Box, Paper, Select, type SelectChangeEvent } from '@mui/material'
 import maplibre from 'maplibre-gl'
-import { type NextPage } from 'next'
+import { type GetStaticProps, type NextPage } from 'next'
 import { useCallback, useRef, useState } from 'react'
-import { Map, type MapRef, type ViewStateChangeEvent } from 'react-map-gl'
+import {
+  Map,
+  type MapProps,
+  type MapRef,
+  type ViewStateChangeEvent
+} from 'react-map-gl'
 import invariant from 'tiny-invariant'
 
 import { Canvas, type CesiumRoot } from '@takram/plateau-cesium'
@@ -93,7 +98,6 @@ const Page: NextPage = () => {
           msaaSamples={4}
           useBrowserRecommendedResolution={false}
           requestRenderMode
-          shouldAnimate
           maximumRenderTimeChange={1}
           sx={{
             position: 'absolute',
@@ -116,13 +120,13 @@ const Page: NextPage = () => {
       >
         <Map
           ref={mapRef}
-          mapLib={maplibre}
+          mapLib={maplibre as any}
           mapStyle={
             {
               standard: standardStyle,
               light: lightStyle,
               dark: darkStyle
-            }[path]
+            }[path] as MapProps['mapStyle']
           }
           minZoom={4}
           maxZoom={24}
@@ -150,3 +154,9 @@ const Page: NextPage = () => {
 }
 
 export default Page
+
+export const getStaticProps: GetStaticProps = () => {
+  return process.env.NODE_ENV !== 'production'
+    ? { props: {} }
+    : { notFound: true }
+}

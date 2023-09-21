@@ -4,6 +4,7 @@ import {
   DataSourceCollection,
   DataSourceDisplay,
   EventHelper,
+  LabelCollection,
   type Clock,
   type EntityCollection,
   type ImageryLayer
@@ -22,6 +23,7 @@ export class CesiumRoot extends CesiumWidget {
   })
 
   private readonly billboardCollection: BillboardCollection
+  private readonly labelCollection: LabelCollection
   private readonly eventHelper = new EventHelper()
 
   constructor(
@@ -33,7 +35,11 @@ export class CesiumRoot extends CesiumWidget {
     this.billboardCollection = new BillboardCollection({
       scene: this.scene
     })
+    this.labelCollection = new LabelCollection({
+      scene: this.scene
+    })
     this.scene.primitives.add(this.billboardCollection)
+    this.scene.primitives.add(this.labelCollection)
     this.eventHelper.add(this.clock.onTick, this.handleTick, this)
   }
 
@@ -45,8 +51,13 @@ export class CesiumRoot extends CesiumWidget {
     return this.billboardCollection
   }
 
-  destroy(): void {
+  get labels(): LabelCollection {
+    return this.labelCollection
+  }
+
+  override destroy(): void {
     if (!this.isDestroyed()) {
+      this.scene.primitives.remove(this.labelCollection)
       this.scene.primitives.remove(this.billboardCollection)
       this.eventHelper.removeAll()
       this.dataSourceDisplay.destroy()

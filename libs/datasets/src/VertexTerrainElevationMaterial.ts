@@ -1,6 +1,6 @@
 import { Ellipsoid, Material } from '@cesium/engine'
 
-import { colorSchemeTurbo } from '@takram/plateau-color-schemes'
+import { colorMapTurbo } from '@takram/plateau-color-maps'
 
 import { JapanSeaLevelEllipsoid } from './JapanSeaLevelEllipsoid'
 import source from './shaders/vertexTerrainElevationMaterial.glsl?raw'
@@ -11,7 +11,7 @@ export class VertexTerrainElevationMaterial extends Material {
       fabric: {
         type: 'VertexTerrainElevation',
         uniforms: {
-          image: colorSchemeTurbo.createImage(),
+          colorMap: colorMapTurbo.createImage(),
           minHeight: 0,
           maxHeight: 1000,
           logarithmic: false,

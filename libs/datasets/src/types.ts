@@ -14,4 +14,4 @@ export type TilesetPrimitiveConstructorOptions = {
 export type EvaluateTileFeatureColor = (
   feature: Cesium3DTileFeature,
   result: Color
-) => Color
+) => Color | undefined

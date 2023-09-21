@@ -11,6 +11,7 @@ import {
 const Root = styled('div')(({ theme }) => ({
   position: 'relative',
   flexGrow: 1,
+  minHeight: 150,
   borderRadius: theme.shape.borderRadius / 2,
   // Match the light style of divider.
   // https://github.com/mui/material-ui/blob/v5.13.1/packages/mui-material/src/Divider/Divider.js#L71

@@ -36,31 +36,28 @@ export function useDefaultTileStyle({
       color: {
         evaluateColor: (feature: Cesium3DTileFeature, result: Color): Color => {
           const { color, opacity } = ref.current
-          if (feature.getProperty('selected') === true) {
-            return Color.fromCssColorString(
-              theme.palette.primary.main,
+          if (feature.getProperty('__selected') === true) {
+            return Color.fromCssColorString(theme.palette.primary.main, result)
+          }
+          if (typeof color === 'string') {
+            return Color.fromCssColorString(color, result).withAlpha(
+              opacity,
               result
             )
           }
-          if (color == null) {
-            result = Color.fromCssColorString(
-              colorMode === 'light' ? '#ffffff' : '#444444',
-              result
-            )
-          } else if (typeof color === 'string') {
-            result = Color.fromCssColorString(color, result)
-          } else {
+          if (color != null) {
             try {
-              result = color(feature, result)
+              if (color(feature, result) != null) {
+                return result.withAlpha(opacity, result)
+              }
             } catch (error) {
               console.error(error)
-              result = Color.fromCssColorString(
-                colorMode === 'light' ? '#ffffff' : '#444444',
-                result
-              )
             }
           }
-          return result.withAlpha(opacity, result)
+          return Color.fromCssColorString(
+            colorMode === 'light' ? '#ffffff' : '#444444',
+            result
+          ).withAlpha(opacity, result)
         }
       }
     })

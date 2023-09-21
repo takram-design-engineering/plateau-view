@@ -29,9 +29,18 @@ export {
   clearLayerSelectionAtom
 }
 
+export interface AddLayerOptions {
+  autoSelect?: boolean
+}
+
 export const addLayerAtom = atom(
   null,
-  (get, set, layer: SetOptional<LayerModel, 'id'>) => {
+  (
+    get,
+    set,
+    layer: SetOptional<LayerModel, 'id'>,
+    { autoSelect = true }: AddLayerOptions = {}
+  ) => {
     const id = layer.id ?? nanoid()
     if (get(layerIdsAtom).includes(id)) {
       console.warn(`Layer already exits: ${id}`)
@@ -39,8 +48,13 @@ export const addLayerAtom = atom(
     }
     set(layerAtomsAtom, {
       type: 'insert',
-      value: { ...layer, id }
+      value: { ...layer, id },
+      before: get(layerAtomsAtom)[0]
     })
+    if (autoSelect) {
+      set(layerSelectionAtom, [id])
+    }
+
     return () => {
       const layerAtom = get(layerAtomsAtom).find(
         layerAtom => get(layerAtom).id === id
@@ -135,5 +149,14 @@ export const moveLayerAtom = atom(
           ? layerAtoms[overIndex]
           : layerAtoms[overIndex + 1]
     })
+
+    const layers = get(layersAtom)
+    const layerIndex = Math.max(activeIndex, overIndex)
+    layers
+      .slice(0, layerIndex)
+      .reverse()
+      .forEach(layer => {
+        layer.handleRef.current?.bringToFront()
+      })
   }
 )

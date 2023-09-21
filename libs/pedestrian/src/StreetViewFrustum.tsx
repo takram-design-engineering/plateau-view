@@ -17,8 +17,12 @@ import { animate, useMotionValue, usePresence } from 'framer-motion'
 import { useEffect, useMemo, type FC } from 'react'
 import invariant from 'tiny-invariant'
 
-import { useCesium, useInstance, usePreRender } from '@takram/plateau-cesium'
-import { useReady } from '@takram/plateau-cesium-helpers'
+import {
+  useCesium,
+  useInstance,
+  usePreRender,
+  usePrimitiveReady
+} from '@takram/plateau-cesium'
 
 import { computeCartographicToCartesian } from './computeCartographicToCartesian'
 import { createQuaternionFromHeadingPitch } from './createQuaternionFromHeadingPitch'
@@ -29,9 +33,8 @@ import { useMotionPosition } from './useMotionPosition'
 
 interface StreetViewFrustumProps {
   location: Location
-  streetViewLocation: Location
   headingPitch: HeadingPitch
-  zoom?: number
+  zoom: number
   aspectRatio?: number
   length?: number
 }
@@ -58,9 +61,8 @@ const colorGeometryAttribute = new GeometryAttribute({
 
 export const StreetViewFrustum: FC<StreetViewFrustumProps> = ({
   location,
-  streetViewLocation,
   headingPitch,
-  zoom = 1,
+  zoom,
   aspectRatio = 3 / 2,
   length = 200
 }) => {
@@ -108,8 +110,14 @@ export const StreetViewFrustum: FC<StreetViewFrustumProps> = ({
   const scene = useCesium(({ scene }) => scene)
   scene.requestRender()
 
+  useEffect(() => {
+    return () => {
+      scene.requestRender()
+    }
+  }, [scene])
+
   const motionVisibility = useMotionValue(0)
-  const ready = useReady(primitive)
+  const ready = usePrimitiveReady(primitive)
   const [present, safeToRemove] = usePresence()
   useEffect(() => {
     if (!ready) {
@@ -128,7 +136,7 @@ export const StreetViewFrustum: FC<StreetViewFrustumProps> = ({
   }, [primitive, motionVisibility, ready, present, safeToRemove])
 
   useEffect(() => {
-    return motionVisibility.on('change', () => {
+    return motionVisibility.on('renderRequest', () => {
       scene.requestRender()
     })
   }, [scene, motionVisibility])
@@ -137,17 +145,14 @@ export const StreetViewFrustum: FC<StreetViewFrustumProps> = ({
     () => computeCartographicToCartesian(scene, location),
     [scene, location]
   )
-  const streetViewPosition = useMemo(
-    () => computeCartographicToCartesian(scene, streetViewLocation),
-    [scene, streetViewLocation]
-  )
   const motionPosition = useMotionPosition(position)
-  useEffect(() => {
-    return motionPosition.animatePosition(streetViewPosition)
-  }, [streetViewPosition, motionPosition])
 
   useEffect(() => {
-    return motionPosition.on('change', () => {
+    return motionPosition.animatePosition(position)
+  }, [position, motionPosition])
+
+  useEffect(() => {
+    return motionPosition.on('renderRequest', () => {
       scene.requestRender()
     })
   }, [scene, motionPosition])
