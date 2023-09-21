@@ -2,7 +2,7 @@ import {
   DiscardEmptyTileImagePolicy,
   UrlTemplateImageryProvider
 } from '@cesium/engine'
-import { forwardRef, type FC } from 'react'
+import { forwardRef } from 'react'
 
 import {
   ImageryLayer,
@@ -17,30 +17,25 @@ export interface VectorMapImageryLayerProps
   path: string
 }
 
-export const VectorMapImageryLayer: FC<VectorMapImageryLayerProps> =
-  withEphemerality(
-    null,
-    ['baseUrl', 'path'],
-    forwardRef<ImageryLayerHandle, VectorMapImageryLayerProps>(
-      ({ baseUrl, path, ...props }, ref) => {
-        const imageryProvider = useConstant(() => {
-          const imageryProvider = new UrlTemplateImageryProvider({
-            url: `${baseUrl}/${path}/{z}/{x}/{y}.webp`,
-            maximumLevel: 22,
-            tileDiscardPolicy: new DiscardEmptyTileImagePolicy(),
-            tileWidth: 512,
-            tileHeight: 512
-          })
-          imageryProvider.errorEvent.addEventListener(() => {}) // Suppress error log
-          return imageryProvider
+export const VectorMapImageryLayer = withEphemerality(
+  null,
+  ['baseUrl', 'path'],
+  forwardRef<ImageryLayerHandle, VectorMapImageryLayerProps>(
+    ({ baseUrl, path, ...props }, ref) => {
+      const imageryProvider = useConstant(() => {
+        const imageryProvider = new UrlTemplateImageryProvider({
+          url: `${baseUrl}/${path}/{z}/{x}/{y}.webp`,
+          maximumLevel: 22,
+          tileDiscardPolicy: new DiscardEmptyTileImagePolicy(),
+          tileWidth: 512,
+          tileHeight: 512
         })
-        return (
-          <ImageryLayer
-            ref={ref}
-            imageryProvider={imageryProvider}
-            {...props}
-          />
-        )
-      }
-    )
+        imageryProvider.errorEvent.addEventListener(() => {}) // Suppress error log
+        return imageryProvider
+      })
+      return (
+        <ImageryLayer ref={ref} imageryProvider={imageryProvider} {...props} />
+      )
+    }
   )
+)

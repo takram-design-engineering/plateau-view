@@ -2,16 +2,12 @@ import { type AnyLayer, type Style } from 'mapbox-gl'
 
 import rawStyle from './assets/std.json'
 
-// appends layers below to 'layers' array of the style json.
-
 const layersToInsert: Array<{
-  // 'layer' will be inserted after the layer with ID 'insertAfter'.
-  // if insertAfter is null, it will be inserted at the head of layers.
-  insertAfter: string | null
+  after: string
   layer: AnyLayer
 }> = [
   {
-    insertAfter: '鉄道中心線0',
+    after: '鉄道中心線0',
     layer: {
       id: '鉄道中心線ククリ0',
       minzoom: 11,
@@ -34,7 +30,7 @@ const layersToInsert: Array<{
     }
   },
   {
-    insertAfter: '鉄道中心線1',
+    after: '鉄道中心線1',
     layer: {
       id: '鉄道中心線ククリ1',
       minzoom: 11,
@@ -57,7 +53,7 @@ const layersToInsert: Array<{
     }
   },
   {
-    insertAfter: '鉄道中心線2',
+    after: '鉄道中心線2',
     layer: {
       id: '鉄道中心線ククリ2',
       minzoom: 11,
@@ -80,7 +76,7 @@ const layersToInsert: Array<{
     }
   },
   {
-    insertAfter: '鉄道中心線3',
+    after: '鉄道中心線3',
     layer: {
       id: '鉄道中心線ククリ3',
       minzoom: 11,
@@ -103,7 +99,7 @@ const layersToInsert: Array<{
     }
   },
   {
-    insertAfter: '鉄道中心線4',
+    after: '鉄道中心線4',
     layer: {
       id: '鉄道中心線ククリ4',
       minzoom: 11,
@@ -126,7 +122,7 @@ const layersToInsert: Array<{
     }
   },
   {
-    insertAfter: '鉄道中心線旗竿0',
+    after: '鉄道中心線旗竿0',
     layer: {
       id: '鉄道中心線点線0',
       minzoom: 11,
@@ -151,7 +147,7 @@ const layersToInsert: Array<{
     }
   },
   {
-    insertAfter: '鉄道中心線旗竿1',
+    after: '鉄道中心線旗竿1',
     layer: {
       id: '鉄道中心線点線1',
       minzoom: 11,
@@ -176,7 +172,7 @@ const layersToInsert: Array<{
     }
   },
   {
-    insertAfter: '鉄道中心線旗竿2',
+    after: '鉄道中心線旗竿2',
     layer: {
       id: '鉄道中心線点線2',
       minzoom: 11,
@@ -201,7 +197,7 @@ const layersToInsert: Array<{
     }
   },
   {
-    insertAfter: '鉄道中心線旗竿3',
+    after: '鉄道中心線旗竿3',
     layer: {
       id: '鉄道中心線点線3',
       minzoom: 11,
@@ -226,7 +222,7 @@ const layersToInsert: Array<{
     }
   },
   {
-    insertAfter: '鉄道中心線旗竿4',
+    after: '鉄道中心線旗竿4',
     layer: {
       id: '鉄道中心線点線4',
       minzoom: 11,
@@ -251,7 +247,7 @@ const layersToInsert: Array<{
     }
   },
   {
-    insertAfter: '軌道の中心線',
+    after: '軌道の中心線',
     layer: {
       id: '軌道の中心線点線',
       minzoom: 17,
@@ -271,7 +267,6 @@ const layersToInsert: Array<{
             ]
           ]
         ]
-        // ['==', ['get', 'vt_rtcode'], 'JR']
       ],
       layout: {
         'line-sort-key': ['get', 'vt_drworder']
@@ -280,14 +275,12 @@ const layersToInsert: Array<{
   }
 ]
 
-export function createBaseStyle(): Style {
+export function createStyleBase(): Style {
   const style = rawStyle as Style
   const layers = [...style.layers]
   layersToInsert.forEach(layerToInsert => {
     layers.splice(
-      layerToInsert.insertAfter === null
-        ? 0
-        : layers.findIndex(l => l.id === layerToInsert.insertAfter) + 1,
+      layers.findIndex(({ id }) => id === layerToInsert.after) + 1,
       0,
       layerToInsert.layer
     )

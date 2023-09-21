@@ -1,39 +1,13 @@
-import { darken, lighten } from '@mui/system'
-
 import { createLayerStyles } from './createLayerStyles'
 import { createStyle } from './createStyle'
-
-const primaryColor = '#00bebe'
-const accentColor = '#ebf000'
-const subColor = '#463c64'
 
 function gray(value: number): string {
   const component = Math.min(Math.max(Math.round(0xff * value), 0), 0xff)
   return `rgb(${component}, ${component}, ${component})`
 }
 
-export const standardStyle = createStyle({
-  layerStyles: createLayerStyles({
-    landColor: '#f4f4f4',
-    waterColor: lighten(primaryColor, 0.4),
-    seaRouteColor: lighten(primaryColor, 0.2),
-    coastlineColor: lighten(primaryColor, 0.2),
-    boundaryColor: subColor,
-    roadColor: '#ffffff',
-    majorRoadColor: '#dfdfdf',
-    highwayColor: '#acacac',
-    roadOutlineColor: '#dfdfdf',
-    majorRoadOutlineColor: '#cccccc',
-    highwayOutlineColor: '#999999',
-    railwayColor: darken(accentColor, 0.4),
-    railwayPhysicalWidthColor: lighten(accentColor, 0.4),
-    railwayJRDashColor: darken(accentColor, 0.1),
-    stationColor: darken(accentColor, 0.4)
-  })
-})
-
-export const lightStyle = createStyle({
-  layerStyles: createLayerStyles({
+export const lightStyle = createStyle(
+  createLayerStyles({
     landColor: gray(1),
     waterColor: gray(0.75),
     seaRouteColor: gray(0.675),
@@ -46,14 +20,14 @@ export const lightStyle = createStyle({
     majorRoadOutlineColor: gray(0.85),
     highwayOutlineColor: gray(0.6),
     railwayColor: gray(0.6),
-    railwayPhysicalWidthColor: gray(0.92),
-    railwayJRDashColor: gray(0.9),
+    railwayBackgroundColor: gray(0.92),
+    railwayJrDashColor: gray(1),
     stationColor: gray(0.6)
   })
-})
+)
 
-export const darkStyle = createStyle({
-  layerStyles: createLayerStyles({
+export const darkStyle = createStyle(
+  createLayerStyles({
     landColor: gray(0.1),
     waterColor: gray(0),
     seaRouteColor: gray(0.05),
@@ -66,8 +40,8 @@ export const darkStyle = createStyle({
     majorRoadOutlineColor: gray(0.3),
     highwayOutlineColor: gray(0.5),
     railwayColor: gray(0.4),
-    railwayPhysicalWidthColor: gray(0.15),
-    railwayJRDashColor: gray(0.2),
+    railwayBackgroundColor: gray(0.15),
+    railwayJrDashColor: gray(0.1),
     stationColor: gray(0.4)
   })
-})
+)

@@ -13,10 +13,11 @@ import {
   type LinePaint,
   type Style
 } from 'mapbox-gl'
+import invariant from 'tiny-invariant'
 
 import { isNotNullish } from '@takram/plateau-type-helpers'
 
-import { createBaseStyle } from './createBaseStyle'
+import { createStyleBase } from './createStyleBase'
 
 const layers = {
   background: { type: 'background' },
@@ -158,6 +159,83 @@ const layers = {
 type Layers = typeof layers
 export type LayerId = keyof Layers
 
+// prettier-ignore
+const layerOrder: readonly LayerId[] = [
+  'background',
+  '行政区画',
+  '水域',
+  '地形表記面',
+  '海岸線',
+  '河川中心線人工水路地下',
+  '河川中心線枯れ川部',
+  '河川中心線',
+  '海岸線堤防等に接する部分破線',
+  '水涯線',
+  '水涯線堤防等に接する部分破線',
+  '水部表記線polygon',
+  '水部表記線line',
+  '水部表記線point',
+  '行政区画界線25000所属界（所属を明示する境界線）',
+  '行政区画界線25000市区町村界',
+  '行政区画界線25000都府県界及び北海道総合振興局・振興局界',
+  '行政区画界線地方界',
+  '行政区画界線国の所属界',
+  '等高線',
+  '等高線数値部',
+  '等深線',
+  '等深線数値部',
+  '地形表記線',
+  '水部構造物面',
+  '水部構造物線',
+  '道路中心線ZL4-10国道',
+  '鉄道中心線ZL4-10',
+  '道路中心線ZL4-10高速',
+
+  // Render center lines of railway tracks below JR lines.
+  '建築物0', '建築物1', '建築物2', '建築物3', '建築物4',
+  '建築物の外周線0', '建築物の外周線1', '建築物の外周線2', '建築物の外周線3', '建築物の外周線4',
+  '道路中心線ククリ0', '道路中心線ククリ1', '道路中心線ククリ2', '道路中心線ククリ3', '道路中心線ククリ4',
+  '道路中心線色0', '道路中心線色1', '道路中心線色2', '道路中心線色3', '道路中心線色4',
+  '鉄道中心線駅ククリ0', '鉄道中心線駅ククリ1', '鉄道中心線駅ククリ2', '鉄道中心線駅ククリ3', '鉄道中心線駅ククリ4',
+  '鉄道中心線0', '鉄道中心線1', '鉄道中心線2', '鉄道中心線3', '鉄道中心線4',
+  '鉄道中心線ククリ0', '鉄道中心線ククリ1', '鉄道中心線ククリ2', '鉄道中心線ククリ3', '鉄道中心線ククリ4',
+  '鉄道中心線点線0', '鉄道中心線点線1', '鉄道中心線点線2', '鉄道中心線点線3', '鉄道中心線点線4',
+  '道路中心線ククリ橋0', '道路中心線ククリ橋1', '道路中心線ククリ橋2', '道路中心線ククリ橋3', '道路中心線ククリ橋4',
+  '道路中心線色橋0', '道路中心線色橋1', '道路中心線色橋2', '道路中心線色橋3', '道路中心線色橋4',
+  '鉄道中心線橋ククリ黒0', '鉄道中心線橋ククリ黒1', '鉄道中心線橋ククリ黒2', '鉄道中心線橋ククリ黒3', '鉄道中心線橋ククリ黒4',
+  '鉄道中心線橋ククリ白0', '鉄道中心線橋ククリ白1', '鉄道中心線橋ククリ白2', '鉄道中心線橋ククリ白3', '鉄道中心線橋ククリ白4',
+  '鉄道中心線橋駅ククリ0', '鉄道中心線橋駅ククリ1', '鉄道中心線橋駅ククリ2', '鉄道中心線橋駅ククリ3', '鉄道中心線橋駅ククリ4',
+  '鉄道中心線橋0', '鉄道中心線橋1', '鉄道中心線橋2', '鉄道中心線橋3', '鉄道中心線橋4',
+  '軌道の中心線',
+  '軌道の中心線点線',
+  '鉄道中心線旗竿0', '鉄道中心線旗竿1', '鉄道中心線旗竿2', '鉄道中心線旗竿3', '鉄道中心線旗竿4',
+  '鉄道中心線旗竿橋0', '鉄道中心線旗竿橋1', '鉄道中心線旗竿橋2', '鉄道中心線旗竿橋3', '鉄道中心線旗竿橋4',
+
+  '道路中心線破線',
+  '道路中心線階段',
+  '鉄道中心線地下トンネルククリ',
+  '鉄道中心線地下トンネル',
+  '軌道の中心線トンネル',
+  '道路縁',
+  '道路構成線トンネル内の道路',
+  '道路構成線分離帯',
+  '特定地区界',
+  '構造物面',
+  '構造物面の外周線',
+  '構造物線',
+  '送電線',
+  '送電線破線',
+  '注記シンボル付き重なり',
+  '注記道路番号',
+  '注記シンボル付きソート順100以上',
+  '注記シンボルなし縦ソート順100以上',
+  '注記シンボルなし横ソート順100以上',
+  '注記角度付き線',
+  '注記シンボル付きソート順100未満',
+  '注記シンボルなし縦ソート順100未満',
+  '注記シンボルなし横ソート順100未満'
+]
+
 interface LayerStyleBase {
   minZoom?: number | null
   maxZoom?: number | null
@@ -190,19 +268,18 @@ export type LayerStyles = {
     : never
 }
 
-export interface StyleOptions {
-  layerStyles: LayerStyles
-}
+const base = createStyleBase()
 
-const baseStyle = createBaseStyle()
-
-export function createStyle({ layerStyles }: StyleOptions): Style {
+export function createStyle(layerStyles: LayerStyles): Style {
   return {
-    ...baseStyle,
-    layers: baseStyle.layers
-      .filter(layer => layerStyles[layer.id as LayerId] != null)
-      .map(layer => {
-        const layerStyle = layerStyles[layer.id as LayerId]
+    ...base,
+    layers: layerOrder
+      .map(layerId => {
+        const layer = base.layers.find(({ id }) => id === layerId)
+        if (layer == null) {
+          throw new Error(`Layer not found: ${layerId}`)
+        }
+        const layerStyle = layerStyles[layerId]
         if (layerStyle == null) {
           return undefined
         }

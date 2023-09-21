@@ -56,7 +56,7 @@ export const MapEnvironment: FC<MapEnvironmentProps> = ({
             : Color.fromCssColorString('#000000')
         }
         enableGlobeLighting={enableTerrainLighting}
-        lightIntensity={10}
+        lightIntensity={12}
         shadowDarkness={colorMode === 'light' ? 0.7 : 0.3}
         imageBasedLightingIntensity={1}
         sphericalHarmonicCoefficients={sphericalHarmonicCoefficients}

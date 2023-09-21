@@ -17,11 +17,7 @@ import { VectorMapImageryLayer } from '@takram/plateau-datasets'
 import 'maplibre-gl/dist/maplibre-gl.css'
 
 import { SelectItem } from '@takram/plateau-ui-components'
-import {
-  darkStyle,
-  lightStyle,
-  standardStyle
-} from '@takram/plateau-vector-map-style'
+import { darkStyle, lightStyle } from '@takram/plateau-vector-map-style'
 
 const rectangleScratch = new Rectangle()
 
@@ -67,7 +63,7 @@ const Page: NextPage = () => {
   //   }
   // }, [camera])
 
-  const [path, setPath] = useState('standard')
+  const [path, setPath] = useState('light')
   const handleChange = useCallback((event: SelectChangeEvent) => {
     setPath(event.target.value)
   }, [])
@@ -123,7 +119,6 @@ const Page: NextPage = () => {
           mapLib={maplibre as any}
           mapStyle={
             {
-              standard: standardStyle,
               light: lightStyle,
               dark: darkStyle
             }[path] as MapProps['mapStyle']
