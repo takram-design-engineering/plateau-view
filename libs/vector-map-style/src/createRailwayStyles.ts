@@ -1,3 +1,4 @@
+import { fromPairs } from 'lodash'
 import { type Expression } from 'mapbox-gl'
 
 import {
@@ -55,43 +56,18 @@ const width: Expression = [
   ]
 ]
 
-const filters: { [K in LayerId]?: Expression } = {
-  鉄道中心線橋ククリ白0: [
-    'all',
-    ['!=', ['get', 'vt_rtcode'], 'JR'],
-    ['in', ['get', 'vt_railstate'], '橋・高架'],
-    ['!=', ['get', 'vt_sngldbl'], '駅部分'],
-    ['==', ['get', 'vt_lvorder'], 0]
-  ],
-  鉄道中心線橋ククリ白1: [
-    'all',
-    ['!=', ['get', 'vt_rtcode'], 'JR'],
-    ['in', ['get', 'vt_railstate'], '橋・高架'],
-    ['!=', ['get', 'vt_sngldbl'], '駅部分'],
-    ['==', ['get', 'vt_lvorder'], 1]
-  ],
-  鉄道中心線橋ククリ白2: [
-    'all',
-    ['!=', ['get', 'vt_rtcode'], 'JR'],
-    ['in', ['get', 'vt_railstate'], '橋・高架'],
-    ['!=', ['get', 'vt_sngldbl'], '駅部分'],
-    ['==', ['get', 'vt_lvorder'], 2]
-  ],
-  鉄道中心線橋ククリ白3: [
-    'all',
-    ['!=', ['get', 'vt_rtcode'], 'JR'],
-    ['in', ['get', 'vt_railstate'], '橋・高架'],
-    ['!=', ['get', 'vt_sngldbl'], '駅部分'],
-    ['==', ['get', 'vt_lvorder'], 3]
-  ],
-  鉄道中心線橋ククリ白4: [
-    'all',
-    ['!=', ['get', 'vt_rtcode'], 'JR'],
-    ['in', ['get', 'vt_railstate'], '橋・高架'],
-    ['!=', ['get', 'vt_sngldbl'], '駅部分'],
-    ['==', ['get', 'vt_lvorder'], 4]
-  ]
-}
+const filters: { [K in LayerId]?: Expression } = fromPairs(
+  [...Array(5)].map((_, index) => [
+    `鉄道中心線橋ククリ白${index}`,
+    [
+      'all',
+      ['!=', ['get', 'vt_rtcode'], 'JR'],
+      ['in', ['get', 'vt_railstate'], '橋・高架'],
+      ['!=', ['get', 'vt_sngldbl'], '駅部分'],
+      ['==', ['get', 'vt_lvorder'], index]
+    ]
+  ])
+)
 
 export interface RailwayStylesOptions {
   railwayColor: string
@@ -256,7 +232,7 @@ export function createRailwayStyles(
     }
   }
 
-  const centerLineStyle: LineLayerStyle = {
+  const centerlineStyle: LineLayerStyle = {
     minZoom: null,
     maxZoom: null,
     paint: {
@@ -265,7 +241,7 @@ export function createRailwayStyles(
     }
   }
 
-  const centerLineDashStyle: LineLayerStyle = {
+  const centerlineDashStyle: LineLayerStyle = {
     minZoom: null,
     maxZoom: null,
     paint: {
@@ -290,40 +266,40 @@ export function createRailwayStyles(
     鉄道中心線4: backgroundStyle,
     鉄道中心線橋ククリ黒4: backgroundStyle,
 
-    // Center lines
-    鉄道中心線ククリ0: lineStyle,
+    // Centerlines
+    railwayCenterline0: lineStyle,
     鉄道中心線橋0: lineStyle,
-    鉄道中心線ククリ1: lineStyle,
+    railwayCenterline1: lineStyle,
     鉄道中心線橋1: lineStyle,
-    鉄道中心線ククリ2: lineStyle,
+    railwayCenterline2: lineStyle,
     鉄道中心線橋2: lineStyle,
-    鉄道中心線ククリ3: lineStyle,
+    railwayCenterline3: lineStyle,
     鉄道中心線橋3: lineStyle,
-    鉄道中心線ククリ4: lineStyle,
+    railwayCenterline4: lineStyle,
     鉄道中心線橋4: lineStyle,
 
     // Dashes
-    鉄道中心線点線0: dashStyle,
+    railwayDash0: dashStyle,
     鉄道中心線橋ククリ白0: {
       ...dashStyle,
       filter: filters.鉄道中心線橋ククリ白0
     },
-    鉄道中心線点線1: dashStyle,
+    railwayDash1: dashStyle,
     鉄道中心線橋ククリ白1: {
       ...dashStyle,
       filter: filters.鉄道中心線橋ククリ白1
     },
-    鉄道中心線点線2: dashStyle,
+    railwayDash2: dashStyle,
     鉄道中心線橋ククリ白2: {
       ...dashStyle,
       filter: filters.鉄道中心線橋ククリ白2
     },
-    鉄道中心線点線3: dashStyle,
+    railwayDash3: dashStyle,
     鉄道中心線橋ククリ白3: {
       ...dashStyle,
       filter: filters.鉄道中心線橋ククリ白3
     },
-    鉄道中心線点線4: dashStyle,
+    railwayDash4: dashStyle,
     鉄道中心線橋ククリ白4: {
       ...dashStyle,
       filter: filters.鉄道中心線橋ククリ白4
@@ -341,9 +317,9 @@ export function createRailwayStyles(
     鉄道中心線旗竿4: jrDashStyle,
     鉄道中心線旗竿橋4: jrDashStyle,
 
-    // Detailed center lines and dashes
-    軌道の中心線: centerLineStyle,
-    軌道の中心線点線: centerLineDashStyle,
+    // Detailed centerlines and dashes
+    軌道の中心線: centerlineStyle,
+    railwayTrackCenterlineDash: centerlineDashStyle,
 
     // Stations
     鉄道中心線駅ククリ0: stationStyle,

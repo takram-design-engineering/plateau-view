@@ -2,254 +2,68 @@ import { type AnyLayer, type Style } from 'mapbox-gl'
 
 import rawStyle from './assets/std.json'
 
-const layersToInsert: Array<{
+interface AdditionalLayer {
   after: string
   layer: AnyLayer
-}> = [
-  {
-    after: '鉄道中心線0',
-    layer: {
-      id: '鉄道中心線ククリ0',
-      minzoom: 11,
-      maxzoom: 17,
-      type: 'line',
-      source: 'v',
-      'source-layer': 'RailCL',
-      filter: [
-        'all',
-        [
-          '!',
+}
+
+const additionalLayers: readonly AdditionalLayer[] = [
+  ...[...Array(5)].map(
+    (_, index): AdditionalLayer => ({
+      after: `鉄道中心線${index}`,
+      layer: {
+        id: `railwayCenterline${index}`,
+        minzoom: 11,
+        maxzoom: 17,
+        type: 'line',
+        source: 'v',
+        'source-layer': 'RailCL',
+        filter: [
+          'all',
           [
-            'in',
-            ['get', 'vt_railstate'],
-            ['literal', ['トンネル', '雪覆い', '地下', '橋・高架']]
-          ]
-        ],
-        ['==', ['get', 'vt_lvorder'], 0]
-      ]
-    }
-  },
-  {
-    after: '鉄道中心線1',
-    layer: {
-      id: '鉄道中心線ククリ1',
-      minzoom: 11,
-      maxzoom: 17,
-      type: 'line',
-      source: 'v',
-      'source-layer': 'RailCL',
-      filter: [
-        'all',
-        [
-          '!',
+            '!',
+            [
+              'in',
+              ['get', 'vt_railstate'],
+              ['literal', ['トンネル', '雪覆い', '地下', '橋・高架']]
+            ]
+          ],
+          ['==', ['get', 'vt_lvorder'], index]
+        ]
+      }
+    })
+  ),
+  ...[...Array(5)].map(
+    (_, index): AdditionalLayer => ({
+      after: `鉄道中心線旗竿${index}`,
+      layer: {
+        id: `railwayDash${index}`,
+        minzoom: 11,
+        maxzoom: 17,
+        type: 'line',
+        source: 'v',
+        'source-layer': 'RailCL',
+        filter: [
+          'all',
+          ['!=', ['get', 'vt_rtcode'], 'JR'],
           [
-            'in',
-            ['get', 'vt_railstate'],
-            ['literal', ['トンネル', '雪覆い', '地下', '橋・高架']]
-          ]
-        ],
-        ['==', ['get', 'vt_lvorder'], 1]
-      ]
-    }
-  },
-  {
-    after: '鉄道中心線2',
-    layer: {
-      id: '鉄道中心線ククリ2',
-      minzoom: 11,
-      maxzoom: 17,
-      type: 'line',
-      source: 'v',
-      'source-layer': 'RailCL',
-      filter: [
-        'all',
-        [
-          '!',
-          [
-            'in',
-            ['get', 'vt_railstate'],
-            ['literal', ['トンネル', '雪覆い', '地下', '橋・高架']]
-          ]
-        ],
-        ['==', ['get', 'vt_lvorder'], 2]
-      ]
-    }
-  },
-  {
-    after: '鉄道中心線3',
-    layer: {
-      id: '鉄道中心線ククリ3',
-      minzoom: 11,
-      maxzoom: 17,
-      type: 'line',
-      source: 'v',
-      'source-layer': 'RailCL',
-      filter: [
-        'all',
-        [
-          '!',
-          [
-            'in',
-            ['get', 'vt_railstate'],
-            ['literal', ['トンネル', '雪覆い', '地下', '橋・高架']]
-          ]
-        ],
-        ['==', ['get', 'vt_lvorder'], 3]
-      ]
-    }
-  },
-  {
-    after: '鉄道中心線4',
-    layer: {
-      id: '鉄道中心線ククリ4',
-      minzoom: 11,
-      maxzoom: 17,
-      type: 'line',
-      source: 'v',
-      'source-layer': 'RailCL',
-      filter: [
-        'all',
-        [
-          '!',
-          [
-            'in',
-            ['get', 'vt_railstate'],
-            ['literal', ['トンネル', '雪覆い', '地下', '橋・高架']]
-          ]
-        ],
-        ['==', ['get', 'vt_lvorder'], 4]
-      ]
-    }
-  },
-  {
-    after: '鉄道中心線旗竿0',
-    layer: {
-      id: '鉄道中心線点線0',
-      minzoom: 11,
-      maxzoom: 17,
-      type: 'line',
-      source: 'v',
-      'source-layer': 'RailCL',
-      filter: [
-        'all',
-        ['!=', ['get', 'vt_rtcode'], 'JR'],
-        [
-          '!',
-          [
-            'in',
-            ['get', 'vt_railstate'],
-            ['literal', ['トンネル', '雪覆い', '地下', '橋・高架']]
-          ]
-        ],
-        ['!=', ['get', 'vt_sngldbl'], '駅部分'],
-        ['==', ['get', 'vt_lvorder'], 0]
-      ]
-    }
-  },
-  {
-    after: '鉄道中心線旗竿1',
-    layer: {
-      id: '鉄道中心線点線1',
-      minzoom: 11,
-      maxzoom: 17,
-      type: 'line',
-      source: 'v',
-      'source-layer': 'RailCL',
-      filter: [
-        'all',
-        ['!=', ['get', 'vt_rtcode'], 'JR'],
-        [
-          '!',
-          [
-            'in',
-            ['get', 'vt_railstate'],
-            ['literal', ['トンネル', '雪覆い', '地下', '橋・高架']]
-          ]
-        ],
-        ['!=', ['get', 'vt_sngldbl'], '駅部分'],
-        ['==', ['get', 'vt_lvorder'], 1]
-      ]
-    }
-  },
-  {
-    after: '鉄道中心線旗竿2',
-    layer: {
-      id: '鉄道中心線点線2',
-      minzoom: 11,
-      maxzoom: 17,
-      type: 'line',
-      source: 'v',
-      'source-layer': 'RailCL',
-      filter: [
-        'all',
-        ['!=', ['get', 'vt_rtcode'], 'JR'],
-        [
-          '!',
-          [
-            'in',
-            ['get', 'vt_railstate'],
-            ['literal', ['トンネル', '雪覆い', '地下', '橋・高架']]
-          ]
-        ],
-        ['!=', ['get', 'vt_sngldbl'], '駅部分'],
-        ['==', ['get', 'vt_lvorder'], 2]
-      ]
-    }
-  },
-  {
-    after: '鉄道中心線旗竿3',
-    layer: {
-      id: '鉄道中心線点線3',
-      minzoom: 11,
-      maxzoom: 17,
-      type: 'line',
-      source: 'v',
-      'source-layer': 'RailCL',
-      filter: [
-        'all',
-        ['!=', ['get', 'vt_rtcode'], 'JR'],
-        [
-          '!',
-          [
-            'in',
-            ['get', 'vt_railstate'],
-            ['literal', ['トンネル', '雪覆い', '地下', '橋・高架']]
-          ]
-        ],
-        ['!=', ['get', 'vt_sngldbl'], '駅部分'],
-        ['==', ['get', 'vt_lvorder'], 3]
-      ]
-    }
-  },
-  {
-    after: '鉄道中心線旗竿4',
-    layer: {
-      id: '鉄道中心線点線4',
-      minzoom: 11,
-      maxzoom: 17,
-      type: 'line',
-      source: 'v',
-      'source-layer': 'RailCL',
-      filter: [
-        'all',
-        ['!=', ['get', 'vt_rtcode'], 'JR'],
-        [
-          '!',
-          [
-            'in',
-            ['get', 'vt_railstate'],
-            ['literal', ['トンネル', '雪覆い', '地下', '橋・高架']]
-          ]
-        ],
-        ['!=', ['get', 'vt_sngldbl'], '駅部分'],
-        ['==', ['get', 'vt_lvorder'], 4]
-      ]
-    }
-  },
+            '!',
+            [
+              'in',
+              ['get', 'vt_railstate'],
+              ['literal', ['トンネル', '雪覆い', '地下', '橋・高架']]
+            ]
+          ],
+          ['!=', ['get', 'vt_sngldbl'], '駅部分'],
+          ['==', ['get', 'vt_lvorder'], index]
+        ]
+      }
+    })
+  ),
   {
     after: '軌道の中心線',
     layer: {
-      id: '軌道の中心線点線',
+      id: 'railwayTrackCenterlineDash',
       minzoom: 17,
       type: 'line',
       source: 'v',
@@ -278,11 +92,11 @@ const layersToInsert: Array<{
 export function createStyleBase(): Style {
   const style = rawStyle as Style
   const layers = [...style.layers]
-  layersToInsert.forEach(layerToInsert => {
+  additionalLayers.forEach(additionalLayer => {
     layers.splice(
-      layers.findIndex(({ id }) => id === layerToInsert.after) + 1,
+      layers.findIndex(({ id }) => id === additionalLayer.after) + 1,
       0,
-      layerToInsert.layer
+      additionalLayer.layer
     )
   })
   return {
