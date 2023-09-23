@@ -28,20 +28,20 @@ export const lightStyle = createStyle(
 
 export const darkStyle = createStyle(
   createLayerStyles({
-    landColor: gray(0.1),
+    landColor: gray(0.15),
     waterColor: gray(0),
     seaRouteColor: gray(0.05),
     coastlineColor: gray(0.2),
     boundaryColor: gray(0.66),
-    roadColor: gray(0.2),
-    majorRoadColor: gray(0.2),
+    roadColor: gray(0.25),
+    majorRoadColor: gray(0.25),
     highwayColor: gray(0.4),
     roadOutlineColor: gray(0.3),
     majorRoadOutlineColor: gray(0.3),
-    highwayOutlineColor: gray(0.5),
+    highwayOutlineColor: gray(0.45),
     railwayColor: gray(0.4),
     railwayBackgroundColor: gray(0.15),
-    railwayJrDashColor: gray(0.1),
+    railwayJrDashColor: gray(0.15),
     stationColor: gray(0.4)
   })
 )
