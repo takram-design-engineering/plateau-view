@@ -13,10 +13,12 @@ import {
   type LinePaint,
   type Style
 } from 'mapbox-gl'
+import invariant from 'tiny-invariant'
 
 import { isNotNullish } from '@takram/plateau-type-helpers'
 
-import { createStyleBase } from './createStyleBase'
+import { createStyleBase, type AdditionalLayer } from './createStyleBase'
+import { sequence, sequenceKeys } from './helpers'
 
 const layers = {
   background: { type: 'background' },
@@ -48,86 +50,29 @@ const layers = {
   '道路中心線ZL4-10国道': { type: 'line' },
   '鉄道中心線ZL4-10': { type: 'line' },
   '道路中心線ZL4-10高速': { type: 'line' },
-  道路中心線ククリ0: { type: 'line' },
-  道路中心線色0: { type: 'line' },
-  鉄道中心線駅ククリ0: { type: 'line' },
-  鉄道中心線0: { type: 'line' },
-  railwayCenterline0: { type: 'line' },
-  鉄道中心線旗竿0: { type: 'line' },
-  railwayDash0: { type: 'line' },
-  道路中心線ククリ橋0: { type: 'line' },
-  道路中心線色橋0: { type: 'line' },
-  建築物0: { type: 'fill' },
-  建築物の外周線0: { type: 'line' },
-  鉄道中心線橋ククリ黒0: { type: 'line' },
-  鉄道中心線橋ククリ白0: { type: 'line' },
-  鉄道中心線橋駅ククリ0: { type: 'line' },
-  鉄道中心線橋0: { type: 'line' },
-  鉄道中心線旗竿橋0: { type: 'line' },
-  道路中心線ククリ1: { type: 'line' },
-  道路中心線色1: { type: 'line' },
-  鉄道中心線駅ククリ1: { type: 'line' },
-  鉄道中心線1: { type: 'line' },
-  railwayCenterline1: { type: 'line' },
-  鉄道中心線旗竿1: { type: 'line' },
-  railwayDash1: { type: 'line' },
-  道路中心線ククリ橋1: { type: 'line' },
-  道路中心線色橋1: { type: 'line' },
-  鉄道中心線橋ククリ黒1: { type: 'line' },
-  鉄道中心線橋ククリ白1: { type: 'line' },
-  鉄道中心線橋駅ククリ1: { type: 'line' },
-  鉄道中心線橋1: { type: 'line' },
-  鉄道中心線旗竿橋1: { type: 'line' },
-  建築物1: { type: 'fill' },
-  建築物の外周線1: { type: 'line' },
-  道路中心線ククリ2: { type: 'line' },
-  道路中心線色2: { type: 'line' },
-  鉄道中心線駅ククリ2: { type: 'line' },
-  鉄道中心線2: { type: 'line' },
-  railwayCenterline2: { type: 'line' },
-  鉄道中心線旗竿2: { type: 'line' },
-  railwayDash2: { type: 'line' },
-  道路中心線ククリ橋2: { type: 'line' },
-  道路中心線色橋2: { type: 'line' },
-  鉄道中心線橋ククリ黒2: { type: 'line' },
-  鉄道中心線橋ククリ白2: { type: 'line' },
-  鉄道中心線橋駅ククリ2: { type: 'line' },
-  鉄道中心線橋2: { type: 'line' },
-  鉄道中心線旗竿橋2: { type: 'line' },
-  建築物2: { type: 'fill' },
-  建築物の外周線2: { type: 'line' },
-  道路中心線ククリ3: { type: 'line' },
-  道路中心線色3: { type: 'line' },
-  鉄道中心線駅ククリ3: { type: 'line' },
-  鉄道中心線3: { type: 'line' },
-  railwayCenterline3: { type: 'line' },
-  鉄道中心線旗竿3: { type: 'line' },
-  railwayDash3: { type: 'line' },
-  道路中心線ククリ橋3: { type: 'line' },
-  道路中心線色橋3: { type: 'line' },
-  鉄道中心線橋ククリ黒3: { type: 'line' },
-  鉄道中心線橋ククリ白3: { type: 'line' },
-  鉄道中心線橋駅ククリ3: { type: 'line' },
-  鉄道中心線橋3: { type: 'line' },
-  鉄道中心線旗竿橋3: { type: 'line' },
-  建築物3: { type: 'fill' },
-  建築物の外周線3: { type: 'line' },
-  道路中心線ククリ4: { type: 'line' },
-  道路中心線色4: { type: 'line' },
-  鉄道中心線駅ククリ4: { type: 'line' },
-  鉄道中心線4: { type: 'line' },
-  railwayCenterline4: { type: 'line' },
-  鉄道中心線旗竿4: { type: 'line' },
-  railwayDash4: { type: 'line' },
-  道路中心線ククリ橋4: { type: 'line' },
-  道路中心線色橋4: { type: 'line' },
-  鉄道中心線橋ククリ黒4: { type: 'line' },
-  鉄道中心線橋ククリ白4: { type: 'line' },
-  鉄道中心線橋駅ククリ4: { type: 'line' },
-  鉄道中心線橋4: { type: 'line' },
-  鉄道中心線旗竿橋4: { type: 'line' },
-  建築物4: { type: 'fill' },
-  建築物の外周線4: { type: 'line' },
+
+  ...sequenceKeys(5, {
+    建築物: { type: 'fill' },
+    建築物の外周線: { type: 'line' },
+    道路中心線ククリ: { type: 'line' },
+    道路中心線色: { type: 'line' },
+    鉄道中心線駅ククリ: { type: 'line' },
+    鉄道中心線: { type: 'line' },
+    railwayCenterline: { type: 'line' },
+    railwayDash: { type: 'line' },
+    道路中心線ククリ橋: { type: 'line' },
+    道路中心線色橋: { type: 'line' },
+    鉄道中心線橋ククリ黒: { type: 'line' },
+    鉄道中心線橋ククリ白: { type: 'line' },
+    鉄道中心線橋駅ククリ: { type: 'line' },
+    鉄道中心線橋: { type: 'line' },
+    鉄道中心線旗竿: { type: 'line' },
+    鉄道中心線旗竿橋: { type: 'line' }
+  } as const),
+
+  軌道の中心線: { type: 'line' },
+  railwayTrackCenterlineDash: { type: 'line' },
+
   道路中心線破線: { type: 'line' },
   道路中心線階段: { type: 'line' },
   鉄道中心線地下トンネルククリ: { type: 'line' },
@@ -136,8 +81,6 @@ const layers = {
   道路縁: { type: 'line' },
   道路構成線トンネル内の道路: { type: 'line' },
   道路構成線分離帯: { type: 'line' },
-  軌道の中心線: { type: 'line' },
-  railwayTrackCenterlineDash: { type: 'line' },
   特定地区界: { type: 'line' },
   構造物面: { type: 'fill' },
   構造物面の外周線: { type: 'line' },
@@ -191,24 +134,24 @@ const layerOrder: readonly LayerId[] = [
   '道路中心線ZL4-10高速',
 
   // Render center lines of railway tracks below JR lines.
-  '建築物0', '建築物1', '建築物2', '建築物3', '建築物4',
-  '建築物の外周線0', '建築物の外周線1', '建築物の外周線2', '建築物の外周線3', '建築物の外周線4',
-  '道路中心線ククリ0', '道路中心線ククリ1', '道路中心線ククリ2', '道路中心線ククリ3', '道路中心線ククリ4',
-  '道路中心線色0', '道路中心線色1', '道路中心線色2', '道路中心線色3', '道路中心線色4',
-  '鉄道中心線駅ククリ0', '鉄道中心線駅ククリ1', '鉄道中心線駅ククリ2', '鉄道中心線駅ククリ3', '鉄道中心線駅ククリ4',
-  '鉄道中心線0', '鉄道中心線1', '鉄道中心線2', '鉄道中心線3', '鉄道中心線4',
-  'railwayCenterline0', 'railwayCenterline1', 'railwayCenterline2', 'railwayCenterline3', 'railwayCenterline4',
-  'railwayDash0', 'railwayDash1', 'railwayDash2', 'railwayDash3', 'railwayDash4',
-  '道路中心線ククリ橋0', '道路中心線ククリ橋1', '道路中心線ククリ橋2', '道路中心線ククリ橋3', '道路中心線ククリ橋4',
-  '道路中心線色橋0', '道路中心線色橋1', '道路中心線色橋2', '道路中心線色橋3', '道路中心線色橋4',
-  '鉄道中心線橋ククリ黒0', '鉄道中心線橋ククリ黒1', '鉄道中心線橋ククリ黒2', '鉄道中心線橋ククリ黒3', '鉄道中心線橋ククリ黒4',
-  '鉄道中心線橋ククリ白0', '鉄道中心線橋ククリ白1', '鉄道中心線橋ククリ白2', '鉄道中心線橋ククリ白3', '鉄道中心線橋ククリ白4',
-  '鉄道中心線橋駅ククリ0', '鉄道中心線橋駅ククリ1', '鉄道中心線橋駅ククリ2', '鉄道中心線橋駅ククリ3', '鉄道中心線橋駅ククリ4',
-  '鉄道中心線橋0', '鉄道中心線橋1', '鉄道中心線橋2', '鉄道中心線橋3', '鉄道中心線橋4',
+  ...sequence(5, '建築物'),
+  ...sequence(5, '建築物の外周線'),
+  ...sequence(5, '道路中心線ククリ'),
+  ...sequence(5, '道路中心線色'),
+  ...sequence(5, '鉄道中心線駅ククリ'),
+  ...sequence(5, '鉄道中心線'),
+  ...sequence(5, 'railwayCenterline'),
+  ...sequence(5, 'railwayDash'),
+  ...sequence(5, '道路中心線ククリ橋'),
+  ...sequence(5, '道路中心線色橋'),
+  ...sequence(5, '鉄道中心線橋ククリ黒'),
+  ...sequence(5, '鉄道中心線橋ククリ白'),
+  ...sequence(5, '鉄道中心線橋駅ククリ'),
+  ...sequence(5, '鉄道中心線橋'),
   '軌道の中心線',
   'railwayTrackCenterlineDash',
-  '鉄道中心線旗竿0', '鉄道中心線旗竿1', '鉄道中心線旗竿2', '鉄道中心線旗竿3', '鉄道中心線旗竿4',
-  '鉄道中心線旗竿橋0', '鉄道中心線旗竿橋1', '鉄道中心線旗竿橋2', '鉄道中心線旗竿橋3', '鉄道中心線旗竿橋4',
+  ...sequence(5, '鉄道中心線旗竿'),
+  ...sequence(5, '鉄道中心線旗竿橋'),
 
   '道路中心線破線',
   '道路中心線階段',
@@ -234,6 +177,74 @@ const layerOrder: readonly LayerId[] = [
   '注記シンボルなし縦ソート順100未満',
   '注記シンボルなし横ソート順100未満'
 ]
+
+const additionalLayers: readonly AdditionalLayer[] = [
+  ...[...Array(5)].map(
+    (_, index): AdditionalLayer => ({
+      source: `鉄道中心線${index}`,
+      after: `鉄道中心線${index}`,
+      layer: {
+        id: `railwayCenterline${index}`
+      }
+    })
+  ),
+  ...[...Array(5)].map(
+    (_, index): AdditionalLayer => ({
+      source: `鉄道中心線橋ククリ白${index}`,
+      after: `鉄道中心線橋ククリ白${index}`,
+      layer: {
+        id: `鉄道中心線橋ククリ白${index}`
+      }
+    })
+  ),
+  ...[...Array(5)].map(
+    (_, index): AdditionalLayer => ({
+      source: `鉄道中心線旗竿${index}`,
+      after: `鉄道中心線旗竿${index}`,
+      layer: source => {
+        invariant(source.type === 'line')
+        invariant(source.filter != null)
+        return {
+          ...source,
+          id: `railwayDash${index}`,
+          filter: [
+            ...source.filter.slice(0, 1),
+            ['!=', ['get', 'vt_rtcode'], 'JR'],
+            ...source.filter.slice(2)
+          ]
+        }
+      }
+    })
+  ),
+  {
+    source: '軌道の中心線',
+    after: '軌道の中心線',
+    layer: {
+      id: 'railwayTrackCenterlineDash'
+    }
+  }
+]
+
+const base = createStyleBase(additionalLayers)
+
+base.layers.forEach(layer => {
+  if (layer.id.startsWith('鉄道中心線橋ククリ白')) {
+    invariant(layer.type === 'line')
+    invariant(layer.filter != null)
+    // Exclude JR and railways at the stations.
+    layer.filter.push(
+      ['!=', ['get', 'vt_rtcode'], 'JR'],
+      ['!=', ['get', 'vt_sngldbl'], '駅部分']
+    )
+  }
+  if (layer.id === '道路中心線色0') {
+    invariant(layer.type === 'line')
+    invariant(layer.filter != null)
+    // Always show lines.
+    invariant(layer.filter[0] === 'step')
+    layer.filter = layer.filter[2]
+  }
+})
 
 interface LayerStyleBase {
   minZoom?: number | null
@@ -266,8 +277,6 @@ export type LayerStyles = {
     ? FillLayerStyle | null
     : never
 }
-
-const base = createStyleBase()
 
 export function createStyle(layerStyles: LayerStyles): Style {
   return {

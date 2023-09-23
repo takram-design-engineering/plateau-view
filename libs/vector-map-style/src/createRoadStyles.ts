@@ -1,10 +1,7 @@
 import { type Expression } from 'mapbox-gl'
 
-import {
-  type LayerId,
-  type LayerStyles,
-  type LineLayerStyle
-} from './createStyle'
+import { type LayerStyles, type LineLayerStyle } from './createStyle'
+import { sequenceKeys } from './helpers'
 
 const opacity: Expression = [
   'match',
@@ -56,21 +53,6 @@ const width: Expression = [
     3000
   ]
 ]
-
-const filters: { [K in LayerId]?: Expression } = {
-  道路中心線色0: [
-    'all',
-    ['==', ['get', 'vt_lvorder'], 0],
-    [
-      '!',
-      [
-        'in',
-        ['get', 'vt_code'],
-        ['literal', [2703, 2713, 2723, 2733, 2724, 2734]]
-      ]
-    ]
-  ]
-}
 
 export interface RoadStylesOptions {
   roadColor: string
@@ -191,28 +173,11 @@ export function createRoadStyles(options: RoadStylesOptions): LayerStyles {
   return {
     '道路中心線ZL4-10国道': simplifiedStyle,
     '道路中心線ZL4-10高速': simplifiedStyle,
-    道路中心線ククリ0: outlineStyle,
-    道路中心線ククリ1: outlineStyle,
-    道路中心線ククリ2: outlineStyle,
-    道路中心線ククリ3: outlineStyle,
-    道路中心線ククリ4: outlineStyle,
-    道路中心線ククリ橋0: outlineStyle,
-    道路中心線ククリ橋1: outlineStyle,
-    道路中心線ククリ橋2: outlineStyle,
-    道路中心線ククリ橋3: outlineStyle,
-    道路中心線ククリ橋4: outlineStyle,
-    道路中心線色0: {
-      ...style,
-      filter: filters.道路中心線色0
-    },
-    道路中心線色1: style,
-    道路中心線色2: style,
-    道路中心線色3: style,
-    道路中心線色4: style,
-    道路中心線色橋0: style,
-    道路中心線色橋1: style,
-    道路中心線色橋2: style,
-    道路中心線色橋3: style,
-    道路中心線色橋4: style
+    ...sequenceKeys(5, {
+      道路中心線ククリ: outlineStyle,
+      道路中心線ククリ橋: outlineStyle,
+      道路中心線色: style,
+      道路中心線色橋: style
+    })
   }
 }
