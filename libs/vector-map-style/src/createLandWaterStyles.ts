@@ -45,7 +45,7 @@ export function createLandWaterStyles(
       maxZoom: null,
       paint: {
         'line-color': options.coastlineColor,
-        'line-width': 2
+        'line-width': 1
       }
     },
     河川中心線人工水路地下: {

@@ -63,7 +63,7 @@ const Page: NextPage = () => {
   //   }
   // }, [camera])
 
-  const [path, setPath] = useState('light')
+  const [path, setPath] = useState('light-map')
   const handleChange = useCallback((event: SelectChangeEvent) => {
     setPath(event.target.value)
   }, [])
@@ -119,8 +119,8 @@ const Page: NextPage = () => {
           mapLib={maplibre as any}
           mapStyle={
             {
-              light: lightStyle,
-              dark: darkStyle
+              'light-map': lightStyle,
+              'dark-map': darkStyle
             }[path] as MapProps['mapStyle']
           }
           minZoom={4}
