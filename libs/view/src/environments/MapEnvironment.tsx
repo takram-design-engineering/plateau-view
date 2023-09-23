@@ -68,7 +68,7 @@ export const MapEnvironment: FC<MapEnvironmentProps> = ({
       <VectorMapImageryLayer
         ref={setLayer}
         baseUrl={process.env.NEXT_PUBLIC_TILES_BASE_URL}
-        path={colorMode}
+        path={colorMode === 'light' ? 'light-map' : 'dark-map'}
       />
     </>
   )

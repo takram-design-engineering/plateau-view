@@ -29,13 +29,13 @@ import { AppController } from './AppController'
     // maximumLevel must be +1 of imagery layer's maximum level because tiles
     // are rendered with pixel ratio 2.
     VectorTileModule.forFeature({
-      path: 'light',
+      path: 'light-map',
       mapStyle: lightStyle,
       maximumLevel: 23,
       nativeMaximumLevel: 16
     }),
     VectorTileModule.forFeature({
-      path: 'dark',
+      path: 'dark-map',
       mapStyle: darkStyle,
       maximumLevel: 23,
       nativeMaximumLevel: 16

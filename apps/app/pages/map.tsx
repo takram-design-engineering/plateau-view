@@ -139,9 +139,8 @@ const Page: NextPage = () => {
       </Box>
       <Paper sx={{ position: 'absolute', top: 0, left: 0, margin: 1 }}>
         <Select variant='filled' value={path} onChange={handleChange}>
-          <SelectItem value='standard'>Standard</SelectItem>
-          <SelectItem value='light'>Light</SelectItem>
-          <SelectItem value='dark'>Dark</SelectItem>
+          <SelectItem value='light-map'>Light</SelectItem>
+          <SelectItem value='dark-map'>Dark</SelectItem>
         </Select>
       </Paper>
     </Box>
