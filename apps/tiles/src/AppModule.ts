@@ -29,13 +29,15 @@ import { AppController } from './AppController'
       path: 'light-map',
       mapStyle: lightStyle,
       maximumLevel: 23,
-      nativeMaximumLevel: 16
+      minimumDataLevel: 4,
+      maximumDataLevel: 16
     }),
     VectorTileModule.forFeature({
       path: 'dark-map',
       mapStyle: darkStyle,
       maximumLevel: 23,
-      nativeMaximumLevel: 16
+      minimumDataLevel: 4,
+      maximumDataLevel: 16
     })
   ],
   controllers: [AppController]
