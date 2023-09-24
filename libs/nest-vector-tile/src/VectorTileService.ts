@@ -5,10 +5,9 @@ import {
   type ResourceKind
 } from '@maplibre/maplibre-gl-native'
 import { Inject, Injectable } from '@nestjs/common'
-import axios, { isAxiosError } from 'axios'
+import axios from 'axios'
 import { type CustomLayerInterface, type Style } from 'mapbox-gl'
 import sharp from 'sharp'
-import invariant from 'tiny-invariant'
 
 import { CESIUM, type Cesium } from '@takram/plateau-nest-cesium'
 import {
@@ -64,18 +63,7 @@ export class VectorTileService {
           data: Buffer.from(arrayBuffer)
         })
       } catch (error) {
-        if (isAxiosError(error) && error.response?.status === 404) {
-          if (req.kind === 3 /* ResourceKind.Tile */) {
-            const [level, x, y] = new URL(req.url).pathname
-              .split('/')
-              .slice(-3)
-              .map(value => +value.split('.')[0])
-            invariant(!isNaN(level) && !isNaN(x) && !isNaN(y))
-            const coords = { x, y, level }
-            await this.cacheService.discardOne(this.options.path, coords)
-          }
-          callback()
-        } else if (error instanceof Error) {
+        if (error instanceof Error) {
           callback(error)
         } else {
           callback(new Error('Unknown error'))
@@ -91,14 +79,6 @@ export class VectorTileService {
       request: this.requestTile.bind(this)
     })
     map.load(this.mapStyle)
-
-    // Render upto the maximum level using the native maximum level as data.
-    // TODO: Reduce visible layers
-    if (options.zoom > this.options.nativeMaximumLevel) {
-      this.mapStyle.layers.forEach(({ id }) => {
-        map.setLayerZoomRange(id, 0, this.options.maximumLevel)
-      })
-    }
 
     return await new Promise<Uint8Array>((resolve, reject) => {
       map.render(options, (error, buffer) => {
@@ -116,14 +96,14 @@ export class VectorTileService {
     coords: Coordinates,
     options?: RenderTileOptions
   ): Promise<Readable | string | undefined> {
-    if (coords.level > this.options.maximumLevel) {
+    if (
+      coords.level < this.options.minimumDataLevel ||
+      coords.level > this.options.maximumLevel
+    ) {
       return
     }
-    const [cache, discarded] = await Promise.all([
-      this.cacheService.findOne(this.options.path, coords),
-      this.cacheService.isDiscarded(this.options.path, coords)
-    ])
-    if (cache != null || discarded) {
+    const cache = await this.cacheService.findOne(this.options.path, coords)
+    if (cache != null) {
       return cache
     }
 

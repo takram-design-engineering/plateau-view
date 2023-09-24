@@ -2,6 +2,7 @@ export interface VectorTileOptions {
   path: string
   mapStyle: unknown
   maximumLevel: number
-  nativeMaximumLevel: number
+  minimumDataLevel: number
+  maximumDataLevel: number
   tileSize?: number
 }

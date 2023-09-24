@@ -1,7 +1,7 @@
 import { Math as CesiumMath, Rectangle } from '@cesium/engine'
-import { Box } from '@mui/material'
+import { Box, Paper, Select, type SelectChangeEvent } from '@mui/material'
 import maplibre from 'maplibre-gl'
-import { type NextPage } from 'next'
+import { type GetStaticProps, type NextPage } from 'next'
 import { useCallback, useRef, useState } from 'react'
 import {
   Map,
@@ -14,9 +14,10 @@ import invariant from 'tiny-invariant'
 import { Canvas, type CesiumRoot } from '@takram/plateau-cesium'
 import { VectorMapImageryLayer } from '@takram/plateau-datasets'
 
-import mapStyle from '../public/assets/mapStyles/light.json'
-
 import 'maplibre-gl/dist/maplibre-gl.css'
+
+import { SelectItem } from '@takram/plateau-ui-components'
+import { darkStyle, lightStyle } from '@takram/plateau-vector-map-style'
 
 const rectangleScratch = new Rectangle()
 
@@ -62,6 +63,11 @@ const Page: NextPage = () => {
   //   }
   // }, [camera])
 
+  const [path, setPath] = useState('light-map')
+  const handleChange = useCallback((event: SelectChangeEvent) => {
+    setPath(event.target.value)
+  }, [])
+
   invariant(
     process.env.NEXT_PUBLIC_TILES_BASE_URL != null,
     'Missing environment variable: NEXT_PUBLIC_TILES_BASE_URL'
@@ -96,6 +102,7 @@ const Page: NextPage = () => {
         >
           <VectorMapImageryLayer
             baseUrl={process.env.NEXT_PUBLIC_TILES_BASE_URL}
+            path={path}
           />
         </Canvas>
       </Box>
@@ -110,7 +117,12 @@ const Page: NextPage = () => {
         <Map
           ref={mapRef}
           mapLib={maplibre as any}
-          mapStyle={mapStyle as MapProps['mapStyle']}
+          mapStyle={
+            {
+              'light-map': lightStyle,
+              'dark-map': darkStyle
+            }[path] as MapProps['mapStyle']
+          }
           minZoom={4}
           maxZoom={24}
           onMove={handleMove}
@@ -125,8 +137,20 @@ const Page: NextPage = () => {
           }}
         />
       </Box>
+      <Paper sx={{ position: 'absolute', top: 0, left: 0, margin: 1 }}>
+        <Select variant='filled' value={path} onChange={handleChange}>
+          <SelectItem value='light-map'>Light</SelectItem>
+          <SelectItem value='dark-map'>Dark</SelectItem>
+        </Select>
+      </Paper>
     </Box>
   )
 }
 
 export default Page
+
+export const getStaticProps: GetStaticProps = () => {
+  return process.env.NODE_ENV !== 'production'
+    ? { props: {} }
+    : { notFound: true }
+}

@@ -1,4 +1,4 @@
-import { featureCollection } from '@turf/turf'
+import { featureCollection } from '@turf/helpers'
 import { saveAs } from 'file-saver'
 import { atom, useAtomValue } from 'jotai'
 import { useCallback, useMemo, type FC } from 'react'

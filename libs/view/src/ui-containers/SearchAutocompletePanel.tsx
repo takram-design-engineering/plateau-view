@@ -105,6 +105,7 @@ export const SearchAutocompletePanel: FC<SearchAutocompletePanelProps> = ({
   const handleOptionSelect = useCallback(
     (event: MouseEvent, option: SearchOption) => {
       selectOption(option)
+      setFocused(false)
     },
     [selectOption]
   )

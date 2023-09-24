@@ -64,6 +64,9 @@
       "@takram/plateau-vector-map-label": [
         "libs/vector-map-label/src/index.ts"
       ],
+      "@takram/plateau-vector-map-style": [
+        "libs/vector-map-style/src/index.ts"
+      ],
       "@takram/plateau-view": ["libs/view/src/index.ts"],
       "@takram/plateau-view-layers": ["libs/view-layers/src/index.ts"]
     }

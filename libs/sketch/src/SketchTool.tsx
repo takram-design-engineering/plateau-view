@@ -1,5 +1,5 @@
 import { Cartesian2, Cartesian3, ScreenSpaceEventType } from '@cesium/engine'
-import { feature } from '@turf/turf'
+import { feature } from '@turf/helpers'
 import { atom, useAtom, useSetAtom } from 'jotai'
 import { nanoid } from 'nanoid'
 import { useCallback, useMemo, useRef, type FC } from 'react'

@@ -1,5 +1,5 @@
 import { TreeItem, treeItemClasses, type TreeItemProps } from '@mui/lab'
-import { Stack, styled } from '@mui/material'
+import { Stack, styled, useMediaQuery } from '@mui/material'
 import { useState, type FC, type ReactNode } from 'react'
 
 import { useForkEventHandler } from '@takram/plateau-react-helpers'
@@ -69,12 +69,17 @@ export const DatasetTreeItem: FC<DatasetTreeItemProps> = ({
   onMouseLeave,
   ...props
 }) => {
-  const [hovered, setHovered] = useState(false)
+  const isTouch = useMediaQuery('(hover: none)')
+  const [hovered, setHovered] = useState(isTouch)
   const handleMouseEnter = useForkEventHandler(onMouseEnter, () => {
-    setHovered(true)
+    if (!isTouch) {
+      setHovered(true)
+    }
   })
   const handleMouseLeave = useForkEventHandler(onMouseLeave, () => {
-    setHovered(false)
+    if (!isTouch) {
+      setHovered(false)
+    }
   })
   return (
     <StyledTreeItem

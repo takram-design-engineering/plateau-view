@@ -1,5 +1,5 @@
 import { Cartesian3, type PolygonHierarchy } from '@cesium/engine'
-import { unkinkPolygon } from '@turf/turf'
+import unkinkPolygon from '@turf/unkink-polygon'
 import { type MultiPolygon, type Polygon, type Position } from 'geojson'
 
 import { isNotNullish } from '@takram/plateau-type-helpers'

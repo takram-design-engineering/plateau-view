@@ -1,4 +1,4 @@
-import { IconButton, styled } from '@mui/material'
+import { IconButton, styled, useMediaQuery, useTheme } from '@mui/material'
 import { atom, useAtomValue, useSetAtom } from 'jotai'
 import {
   useCallback,
@@ -79,6 +79,8 @@ export const DatasetListItem: FC<DatasetListItemProps> = ({
   const layerType = datasetTypeLayers[dataset.type]
   const addLayer = useAddLayer()
   const removeLayer = useSetAtom(removeLayerAtom)
+  const theme = useTheme()
+  const smDown = useMediaQuery(theme.breakpoints.down('sm'))
   const handleClick = useCallback(() => {
     if (layerType == null) {
       return
@@ -90,12 +92,21 @@ export const DatasetListItem: FC<DatasetListItemProps> = ({
           municipalityCode,
           datasetId: dataset.id,
           datumId: dataset.data[0]?.id
-        })
+        }),
+        { autoSelect: !smDown }
       )
     } else {
       removeLayer(layer.id)
     }
-  }, [municipalityCode, dataset, layer, layerType, addLayer, removeLayer])
+  }, [
+    municipalityCode,
+    dataset,
+    layer,
+    layerType,
+    addLayer,
+    removeLayer,
+    smDown
+  ])
 
   const [infoOpen, setInfoOpen] = useState(false)
   const handleInfo = useCallback((event: MouseEvent) => {

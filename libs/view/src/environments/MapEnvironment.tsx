@@ -52,11 +52,11 @@ export const MapEnvironment: FC<MapEnvironmentProps> = ({
         // TODO: Swap background when view is ready
         globeBaseColor={
           colorMode === 'light'
-            ? Color.fromCssColorString('#f7f7f7')
+            ? Color.fromCssColorString('#bfbfbf')
             : Color.fromCssColorString('#000000')
         }
         enableGlobeLighting={enableTerrainLighting}
-        lightIntensity={10}
+        lightIntensity={12}
         shadowDarkness={colorMode === 'light' ? 0.7 : 0.3}
         imageBasedLightingIntensity={1}
         sphericalHarmonicCoefficients={sphericalHarmonicCoefficients}
@@ -68,16 +68,7 @@ export const MapEnvironment: FC<MapEnvironmentProps> = ({
       <VectorMapImageryLayer
         ref={setLayer}
         baseUrl={process.env.NEXT_PUBLIC_TILES_BASE_URL}
-        {...{
-          light: {
-            contrast: 0.5,
-            brightness: 1.5
-          },
-          dark: {
-            contrast: 1.5,
-            brightness: 0.3
-          }
-        }[colorMode]}
+        path={colorMode === 'light' ? 'light-map' : 'dark-map'}
       />
     </>
   )

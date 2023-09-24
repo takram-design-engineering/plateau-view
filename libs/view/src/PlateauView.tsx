@@ -1,6 +1,6 @@
 import { Cartesian3, HeadingPitchRoll } from '@cesium/engine'
-import { useSetAtom } from 'jotai'
-import { Suspense, useCallback, type FC } from 'react'
+import { atom, useSetAtom, type PrimitiveAtom } from 'jotai'
+import { Suspense, useCallback, useMemo, type FC } from 'react'
 
 import {
   CurrentTime,
@@ -38,10 +38,25 @@ import { Notifications } from './ui-containers/Notifications'
 const initialDestination = Cartesian3.fromDegrees(139.755, 35.675, 1000)
 const initialOrientation = new HeadingPitchRoll(Math.PI * 0.4, -Math.PI * 0.2)
 
-export interface PlateauViewProps {}
+export interface PlateauViewProps {
+  readyAtom?: PrimitiveAtom<boolean>
+}
 
-export const PlateauView: FC<PlateauViewProps> = () => {
-  const setReady = useSetAtom(readyAtom)
+export const PlateauView: FC<PlateauViewProps> = ({
+  readyAtom: readyAtomProp
+}) => {
+  const setReady = useSetAtom(
+    useMemo(
+      () =>
+        atom(null, (get, set, value: boolean) => {
+          set(readyAtom, value)
+          if (readyAtomProp != null) {
+            set(readyAtomProp, value)
+          }
+        }),
+      [readyAtomProp]
+    )
+  )
   const handleTilesLoadComplete = useCallback(() => {
     setReady(true)
   }, [setReady])
@@ -68,9 +83,9 @@ export const PlateauView: FC<PlateauViewProps> = () => {
             onComplete={handleTilesLoadComplete}
           >
             <LayersRenderer components={layerComponents} />
+            <MapLabel />
           </SuspendUntilTilesLoaded>
         </Suspense>
-        <MapLabel />
         <Areas />
         <HighlightedAreas />
         <ReverseGeocoding />

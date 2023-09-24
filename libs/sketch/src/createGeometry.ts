@@ -4,7 +4,8 @@ import {
   Math as CesiumMath,
   type Ellipsoid
 } from '@cesium/engine'
-import { ellipse, lineString, polygon } from '@turf/turf'
+import ellipse from '@turf/ellipse'
+import { lineString, polygon } from '@turf/helpers'
 import { type LineString, type MultiPolygon, type Polygon } from 'geojson'
 
 import { type SketchGeometryType } from './types'

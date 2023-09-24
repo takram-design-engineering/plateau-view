@@ -6,21 +6,22 @@ export function makeKey({ x, y, level }: ImageryCoords): string {
   return `${level}:${x}:${y}`
 }
 
-export function getTileCoords(coords: ImageryCoords): Zxy {
-  if (coords.level > 17) {
-    throw new Error(`Levels must be below or equal to 17: ${coords.level}`)
+export function getTileCoords(
+  coords: ImageryCoords,
+  maximumDataLevel?: number
+): Zxy {
+  if (maximumDataLevel != null && coords.level > maximumDataLevel) {
+    // Clamp coordinates at the maximum data level.
+    const scale = 2 ** (coords.level - maximumDataLevel)
+    return {
+      x: Math.floor(coords.x / scale),
+      y: Math.floor(coords.y / scale),
+      z: maximumDataLevel
+    }
   }
-  // Tiles at 16 level includes features for level 17.
-  // https://github.com/gsi-cyberjapan/optimal_bvmap
-  return coords.level === 17
-    ? {
-        x: Math.floor(coords.x / 2),
-        y: Math.floor(coords.y / 2),
-        z: 16
-      }
-    : {
-        x: coords.x,
-        y: coords.y,
-        z: coords.level
-      }
+  return {
+    x: coords.x,
+    y: coords.y,
+    z: coords.level
+  }
 }
