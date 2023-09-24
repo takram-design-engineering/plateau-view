@@ -20,7 +20,12 @@ export type AdditionalLayer =
 export function createStyleBase(
   additionalLayers?: readonly AdditionalLayer[]
 ): Style {
-  const style = rawStyle as Style
+  const style = { ...(rawStyle as Style) }
+
+  // Remove data sources to reduce unused requests.
+  delete style.sprite
+  delete style.glyphs
+
   const layers = [...style.layers]
   additionalLayers?.forEach(params => {
     const afterIndex = layers.findIndex(({ id }) => id === params.after)
