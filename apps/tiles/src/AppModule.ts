@@ -13,18 +13,15 @@ import { AppController } from './AppController'
       rootPath: 'api'
     }),
     TileCacheModule.forRoot({
-      // TODO: Enable cache on merging to main.
-      // cacheRoot:
-      //   process.env.TILE_CACHE_ROOT !== ''
-      //     ? process.env.TILE_CACHE_ROOT
-      //     : undefined
+      cacheRoot:
+        process.env.TILE_CACHE_ROOT !== ''
+          ? process.env.TILE_CACHE_ROOT
+          : undefined
     }),
     VectorTileModule.forRoot({
-      // TODO: Enable cache on merging to main.
-      // disableCache:
-      //   process.env.TILE_CACHE_ROOT == null ||
-      //   process.env.TILE_CACHE_ROOT === ''
-      disableCache: true
+      disableCache:
+        process.env.TILE_CACHE_ROOT == null ||
+        process.env.TILE_CACHE_ROOT === ''
     }),
     // maximumLevel must be +1 of imagery layer's maximum level because tiles
     // are rendered with pixel ratio 2.
