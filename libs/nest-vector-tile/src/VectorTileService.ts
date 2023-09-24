@@ -108,7 +108,10 @@ export class VectorTileService {
     coords: Coordinates,
     options?: RenderTileOptions
   ): Promise<Readable | string | undefined> {
-    if (coords.level > this.options.maximumLevel) {
+    if (
+      coords.level < this.options.minimumDataLevel ||
+      coords.level > this.options.maximumLevel
+    ) {
       return
     }
     const [cache, discarded] = await Promise.all([
