@@ -5,10 +5,9 @@ import {
   type ResourceKind
 } from '@maplibre/maplibre-gl-native'
 import { Inject, Injectable } from '@nestjs/common'
-import axios, { isAxiosError } from 'axios'
+import axios from 'axios'
 import { type CustomLayerInterface, type Style } from 'mapbox-gl'
 import sharp from 'sharp'
-import invariant from 'tiny-invariant'
 
 import { CESIUM, type Cesium } from '@takram/plateau-nest-cesium'
 import {
@@ -64,18 +63,7 @@ export class VectorTileService {
           data: Buffer.from(arrayBuffer)
         })
       } catch (error) {
-        if (isAxiosError(error) && error.response?.status === 404) {
-          if (req.kind === 3 /* ResourceKind.Tile */) {
-            const [level, x, y] = new URL(req.url).pathname
-              .split('/')
-              .slice(-3)
-              .map(value => +value.split('.')[0])
-            invariant(!isNaN(level) && !isNaN(x) && !isNaN(y))
-            const coords = { x, y, level }
-            await this.cacheService.discardOne(this.options.path, coords)
-          }
-          callback()
-        } else if (error instanceof Error) {
+        if (error instanceof Error) {
           callback(error)
         } else {
           callback(new Error('Unknown error'))
@@ -114,11 +102,8 @@ export class VectorTileService {
     ) {
       return
     }
-    const [cache, discarded] = await Promise.all([
-      this.cacheService.findOne(this.options.path, coords),
-      this.cacheService.isDiscarded(this.options.path, coords)
-    ])
-    if (cache != null || discarded) {
+    const cache = await this.cacheService.findOne(this.options.path, coords)
+    if (cache != null) {
       return cache
     }
 
