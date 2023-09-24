@@ -52,7 +52,7 @@ export const MapEnvironment: FC<MapEnvironmentProps> = ({
         // TODO: Swap background when view is ready
         globeBaseColor={
           colorMode === 'light'
-            ? Color.fromCssColorString('#f7f7f7')
+            ? Color.fromCssColorString('#bfbfbf')
             : Color.fromCssColorString('#000000')
         }
         enableGlobeLighting={enableTerrainLighting}
