@@ -1,4 +1,3 @@
-import path from 'path'
 import { Module } from '@nestjs/common'
 
 import { FirestoreModule } from '@takram/plateau-nest-firestore'
@@ -6,6 +5,7 @@ import { TileCacheModule } from '@takram/plateau-nest-tile-cache'
 import { VectorTileModule } from '@takram/plateau-nest-vector-tile'
 
 import { AppController } from './AppController'
+import mapStyle from './assets/light.json'
 
 @Module({
   imports: [
@@ -25,10 +25,7 @@ import { AppController } from './AppController'
     }),
     VectorTileModule.forFeature({
       path: 'light',
-      mapStyle: path.resolve(
-        process.env.PROJECT_ROOT,
-        'apps/app/public/assets/mapStyles/light.json'
-      ),
+      mapStyle,
       // This must be +1 of imagery layer's maximum level because tiles are
       // rendered with pixel ratio 2.
       maximumLevel: 23,

@@ -1,6 +1,6 @@
 export interface VectorTileOptions {
   path: string
-  mapStyle: string | JSON
+  mapStyle: unknown
   maximumLevel: number
   nativeMaximumLevel: number
   tileSize?: number
