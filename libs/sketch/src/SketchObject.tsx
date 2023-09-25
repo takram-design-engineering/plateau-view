@@ -5,9 +5,9 @@ import { atom, useAtomValue } from 'jotai'
 import { useMemo, type FC } from 'react'
 
 import {
-  compose,
+  composeIdentifier,
   convertPolygonToHierarchyArray,
-  match
+  matchIdentifier
 } from '@takram/plateau-cesium-helpers'
 import {
   screenSpaceSelectionAtom,
@@ -38,7 +38,7 @@ export const SketchObject: FC<SketchObjectProps> = ({
     convertToSelection: object => {
       return 'id' in object &&
         object.id instanceof Entity &&
-        match(object.id.id, { type: 'Sketch', key: id })
+        matchIdentifier(object.id.id, { type: 'Sketch', key: id })
         ? {
             type: SKETCH_OBJECT,
             value: object.id.id
@@ -50,7 +50,7 @@ export const SketchObject: FC<SketchObjectProps> = ({
     ): value is ScreenSpaceSelectionEntry<typeof SKETCH_OBJECT> => {
       return (
         value.type === SKETCH_OBJECT &&
-        match(value.value, { type: 'Sketch', key: id })
+        matchIdentifier(value.value, { type: 'Sketch', key: id })
       )
     }
     // TODO:
@@ -64,7 +64,7 @@ export const SketchObject: FC<SketchObjectProps> = ({
           get(screenSpaceSelectionAtom).some(
             ({ type, value }) =>
               type === SKETCH_OBJECT &&
-              match(value, { type: 'Sketch', key: id })
+              matchIdentifier(value, { type: 'Sketch', key: id })
           )
         ),
       [id]
@@ -85,7 +85,7 @@ export const SketchObject: FC<SketchObjectProps> = ({
   return hierarchyArray?.map((hierarchy, index) => (
     <ExtrudedPolygonEntity
       key={index}
-      id={compose({ type: 'Sketch', key: id, index })}
+      id={composeIdentifier({ type: 'Sketch', key: id, index })}
       hierarchy={hierarchy}
       extrudedHeight={extrudedHeight}
       disableShadow={disableShadow}

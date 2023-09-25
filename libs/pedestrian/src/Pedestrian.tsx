@@ -16,7 +16,10 @@ import { useCallback, useMemo, useState, type FC } from 'react'
 import invariant from 'tiny-invariant'
 
 import { useCesium } from '@takram/plateau-cesium'
-import { compose, match } from '@takram/plateau-cesium-helpers'
+import {
+  composeIdentifier,
+  matchIdentifier
+} from '@takram/plateau-cesium-helpers'
 import { layerSelectionAtom } from '@takram/plateau-layers'
 import { useConstant, withEphemerality } from '@takram/plateau-react-helpers'
 import {
@@ -55,7 +58,10 @@ export const Pedestrian: FC<PedestrianProps> = withEphemerality(
   [],
   ({ id, location, headingPitch, zoom, hideFrustum = false, onChange }) => {
     const defaultId = useConstant(() => nanoid())
-    const objectId = compose({ type: 'Pedestrian', key: id ?? defaultId })
+    const objectId = composeIdentifier({
+      type: 'Pedestrian',
+      key: id ?? defaultId
+    })
 
     const scene = useCesium(({ scene }) => scene)
 
@@ -91,7 +97,7 @@ export const Pedestrian: FC<PedestrianProps> = withEphemerality(
               screenSpaceSelection.some(
                 ({ type, value }) =>
                   type === PEDESTRIAN_OBJECT &&
-                  match(value, { type: 'Pedestrian', key: id })
+                  matchIdentifier(value, { type: 'Pedestrian', key: id })
               ) || layerSelection.some(layerId => layerId === id)
             )
           }),

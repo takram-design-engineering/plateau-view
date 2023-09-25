@@ -12,11 +12,11 @@ import invariant from 'tiny-invariant'
 
 import { useConstant, useWindowEvent } from '@takram/plateau-react-helpers'
 
-import { useCesium } from '../useCesium'
-import { usePreUpdate } from '../useSceneEvent'
-import { useScreenSpaceEvent } from '../useScreenSpaceEvent'
-import { useScreenSpaceEventHandler } from '../useScreenSpaceEventHandler'
 import { adjustHeightForTerrain } from './adjustHeightForTerrain'
+import { useCesium } from './useCesium'
+import { usePreUpdate } from './useSceneEvent'
+import { useScreenSpaceEvent } from './useScreenSpaceEvent'
+import { useScreenSpaceEventHandler } from './useScreenSpaceEventHandler'
 
 const directions = [
   'forward',

@@ -9,7 +9,7 @@ export interface IdentifierParams {
   index?: number
 }
 
-export function compose({
+export function composeIdentifier({
   type,
   subtype,
   key,
@@ -27,7 +27,7 @@ export interface ParsedIdentifierParams {
   index?: number
 }
 
-export function parse(identifier: string): ParsedIdentifierParams {
+export function parseIdentifier(identifier: string): ParsedIdentifierParams {
   const components = identifier.split(':')
   if (components.length !== 4) {
     console.warn(`Malformed identifier: ${identifier}`)
@@ -39,11 +39,11 @@ export function parse(identifier: string): ParsedIdentifierParams {
   return { type, subtype, key, index: index != null ? +index : undefined }
 }
 
-export function match(
+export function matchIdentifier(
   identifier: string,
   params: RequireAtLeastOne<IdentifierParams>
 ): boolean {
-  const { type, subtype, key, index } = parse(identifier)
+  const { type, subtype, key, index } = parseIdentifier(identifier)
   return (
     (params.type == null || `${params.type}` === type) &&
     (params.subtype == null || `${params.subtype}` === subtype) &&

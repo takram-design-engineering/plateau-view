@@ -2,7 +2,7 @@ import { atom, useAtomValue, useSetAtom } from 'jotai'
 import { nanoid } from 'nanoid'
 import { useCallback, type FC } from 'react'
 
-import { compose } from '@takram/plateau-cesium-helpers'
+import { composeIdentifier } from '@takram/plateau-cesium-helpers'
 import {
   layersAtom,
   layerSelectionAtom,
@@ -76,7 +76,10 @@ const Wrapped: FC = () => {
       setScreenSpaceSelection([
         {
           type: SKETCH_OBJECT,
-          value: compose({ type: 'Sketch', key: feature.properties.id })
+          value: composeIdentifier({
+            type: 'Sketch',
+            key: feature.properties.id
+          })
         }
       ])
     },

@@ -1,7 +1,3 @@
-import * as DMS from './DMS'
-
-export { DMS }
-
 export * from './animateZoom'
 export * from './convertPolygonToHierarchyArray'
 export * from './convertGeometryToPositionsArray'

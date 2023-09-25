@@ -5,7 +5,10 @@ import { Suspense, useCallback, useEffect, useRef, type FC } from 'react'
 import invariant from 'tiny-invariant'
 
 import { useCesium, usePreRender } from '@takram/plateau-cesium'
-import { flyToBoundingSphere, parse } from '@takram/plateau-cesium-helpers'
+import {
+  flyToBoundingSphere,
+  parseIdentifier
+} from '@takram/plateau-cesium-helpers'
 import {
   layersAtom,
   layerSelectionAtom,
@@ -279,7 +282,7 @@ export const PedestrianLayerContent: FC<PedestrianLayerContentProps> = ({
     typeof values[0] === 'string'
       ? findLayer(layers, {
           type: PEDESTRIAN_LAYER,
-          id: parse(values[0]).key
+          id: parseIdentifier(values[0]).key
         })
       : values[0]
 

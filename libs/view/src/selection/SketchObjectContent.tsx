@@ -3,7 +3,10 @@ import { atom, useAtomValue, useSetAtom, type SetStateAction } from 'jotai'
 import { merge, uniq } from 'lodash'
 import { useCallback, useMemo, type FC } from 'react'
 
-import { match, parse } from '@takram/plateau-cesium-helpers'
+import {
+  matchIdentifier,
+  parseIdentifier
+} from '@takram/plateau-cesium-helpers'
 import { layerSelectionAtom } from '@takram/plateau-layers'
 import { screenSpaceSelectionAtom } from '@takram/plateau-screen-space-selection'
 import { type SKETCH_OBJECT } from '@takram/plateau-sketch'
@@ -69,7 +72,7 @@ export const SketchObjectContent: FC<SketchObjectContentProps> = ({
   )
   const handleRemove = useCallback(() => {
     const featureIds = uniq(
-      values.map(value => parse(value).key).filter(isNotNullish)
+      values.map(value => parseIdentifier(value).key).filter(isNotNullish)
     )
     removeFeatures(featureIds)
   }, [values, removeFeatures])
@@ -83,7 +86,7 @@ export const SketchObjectContent: FC<SketchObjectContentProps> = ({
               const featureAtoms = get(sketchLayer.featureAtomsAtom)
               return values.map(value => {
                 const featureAtom = featureAtoms.find(featureAtom =>
-                  match(value, {
+                  matchIdentifier(value, {
                     type: 'Sketch',
                     key: get(featureAtom).properties.id
                   })

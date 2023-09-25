@@ -15,7 +15,7 @@ import type TopoJSON from 'topojson-specification'
 import { type SetRequired } from 'type-fest'
 
 import {
-  compose,
+  composeIdentifier,
   convertPolygonToHierarchyArray
 } from '@takram/plateau-cesium-helpers'
 import { JapanSeaLevelEllipsoid } from '@takram/plateau-datasets'
@@ -125,7 +125,7 @@ export class AreaDataSource extends CustomDataSource {
     const code = properties.municipalityCode ?? properties.prefectureCode
     return hierarchies.map((hierarchy, index) => {
       const entity = new Entity({
-        id: compose({ type: 'AreaEntity', key: code, index }),
+        id: composeIdentifier({ type: 'AreaEntity', key: code, index }),
         properties,
         polygon: {
           hierarchy,

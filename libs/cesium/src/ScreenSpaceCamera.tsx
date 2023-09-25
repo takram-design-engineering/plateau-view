@@ -10,7 +10,7 @@ import { assignPropertyProps } from '@takram/plateau-react-helpers'
 import {
   KeyboardHandlers,
   type KeyboardHandlersProps
-} from './ScreenSpaceCamera/KeyboardHandlers'
+} from './KeyboardHandlers'
 import { useCesium } from './useCesium'
 import { usePreRender } from './useSceneEvent'
 

@@ -1,7 +1,7 @@
 import { atom } from 'jotai'
 import { fromPairs, uniq, without } from 'lodash'
 
-import { match } from '@takram/plateau-cesium-helpers'
+import { matchIdentifier } from '@takram/plateau-cesium-helpers'
 import { featureSelectionAtom } from '@takram/plateau-datasets'
 import { layersAtom, type LayerModel } from '@takram/plateau-layers'
 import { pedestrianSelectionAtom } from '@takram/plateau-pedestrian'
@@ -51,7 +51,7 @@ export const highlightedPedestrianLayersAtom = atom(get => {
   const pedestrianLayers = get(pedestrianLayersAtom)
   return pedestrianLayers.filter(layer =>
     entityIds.some(entityId =>
-      match(entityId, { type: 'Pedestrian', key: layer.id })
+      matchIdentifier(entityId, { type: 'Pedestrian', key: layer.id })
     )
   )
 })
@@ -63,7 +63,10 @@ export const highlightedSketchLayersAtom = atom(get => {
     const features = get(layer.featuresAtom)
     return entityIds.some(entityId =>
       features.some(feature =>
-        match(entityId, { type: 'Sketch', key: feature.properties.id })
+        matchIdentifier(entityId, {
+          type: 'Sketch',
+          key: feature.properties.id
+        })
       )
     )
   })
