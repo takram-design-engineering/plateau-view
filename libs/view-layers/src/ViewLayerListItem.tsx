@@ -1,6 +1,13 @@
 import { IconButton, Tooltip } from '@mui/material'
 import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai'
-import { memo, useCallback, useMemo, type FC, type SyntheticEvent } from 'react'
+import {
+  memo,
+  useCallback,
+  useMemo,
+  type FC,
+  type MouseEvent,
+  type SyntheticEvent
+} from 'react'
 
 import { useCesium } from '@takram/plateau-cesium'
 import { flyToBoundingSphere } from '@takram/plateau-cesium-helpers'
@@ -98,9 +105,13 @@ export const ViewLayerListItem: FC<ViewLayerListItemProps> = memo(
       () => colorSchemeSelection.includes(id),
       [id, colorSchemeSelection]
     )
-    const handleColorSchemeClick = useCallback(() => {
-      setColorSchemeSelection([id])
-    }, [id, setColorSchemeSelection])
+    const handleColorSchemeClick = useCallback(
+      (event: MouseEvent) => {
+        event.stopPropagation()
+        setColorSchemeSelection([id])
+      },
+      [id, setColorSchemeSelection]
+    )
 
     return (
       <LayerListItem
