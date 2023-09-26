@@ -10734,6 +10734,7 @@ __metadata:
     eslint-plugin-storybook: 0.6.12
     file-saver: ^2.0.5
     framer-motion: ^10.16.4
+    generic-pool: ^3.9.0
     geofire-common: ^6.0.0
     geojson: ^0.5.0
     glob: ^10.3.4
@@ -21087,6 +21088,13 @@ __metadata:
   dependencies:
     loader-utils: ^3.2.0
   checksum: 8dabd2505164191501b75f2861b5e1194458a344ae2a7c9776bdd72d1f50b248dff737bcdf118fff677275edb3632f2d10662e6ac122dd7b245c5baa8d303270
+  languageName: node
+  linkType: hard
+
+"generic-pool@npm:^3.9.0":
+  version: 3.9.0
+  resolution: "generic-pool@npm:3.9.0"
+  checksum: 3d89e9b2018d2e3bbf44fec78c76b2b7d56d6a484237aa9daf6ff6eedb14b0899dadd703b5d810219baab2eb28e5128fb18b29e91e602deb2eccac14492d8ca8
   languageName: node
   linkType: hard
 

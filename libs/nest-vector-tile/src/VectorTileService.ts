@@ -6,6 +6,7 @@ import {
 } from '@maplibre/maplibre-gl-native'
 import { Inject, Injectable } from '@nestjs/common'
 import axios from 'axios'
+import { createPool, type Pool } from 'generic-pool'
 import { type CustomLayerInterface, type Style } from 'mapbox-gl'
 import sharp from 'sharp'
 
@@ -38,8 +39,34 @@ type MapStyle = Omit<Style, 'layers'> & {
   layers: Array<Exclude<Style['layers'][number], CustomLayerInterface>>
 }
 
+function requestTile(
+  req: MapRequest,
+  callback: Parameters<MapOptions['request']>[1]
+): void {
+  ;(async () => {
+    try {
+      const { data: arrayBuffer } = await axios<ArrayBuffer>(req.url, {
+        responseType: 'arraybuffer'
+      })
+      callback(undefined, {
+        data: Buffer.from(arrayBuffer)
+      })
+    } catch (error) {
+      if (error instanceof Error) {
+        callback(error)
+      } else {
+        callback(new Error('Unknown error'))
+      }
+    }
+  })().catch(error => {
+    callback(error)
+  })
+}
+
 @Injectable()
 export class VectorTileService {
+  mapPool: Pool<Map>
+
   constructor(
     @Inject(VECTOR_TILE_OPTIONS)
     private readonly options: VectorTileOptions,
@@ -48,41 +75,28 @@ export class VectorTileService {
     private readonly mapStyle: MapStyle,
     @Inject(CESIUM)
     private readonly cesium: Cesium
-  ) {}
-
-  private requestTile(
-    req: MapRequest,
-    callback: Parameters<MapOptions['request']>[1]
-  ): void {
-    ;(async () => {
-      try {
-        const { data: arrayBuffer } = await axios<ArrayBuffer>(req.url, {
-          responseType: 'arraybuffer'
-        })
-        callback(undefined, {
-          data: Buffer.from(arrayBuffer)
-        })
-      } catch (error) {
-        if (error instanceof Error) {
-          callback(error)
-        } else {
-          callback(new Error('Unknown error'))
+  ) {
+    this.mapPool = createPool(
+      {
+        create: async () => {
+          const map = new Map({ request: requestTile })
+          map.load(this.mapStyle)
+          return map
+        },
+        destroy: async map => {
+          map.release()
         }
-      }
-    })().catch(error => {
-      callback(error)
-    })
+      },
+      { max: 32 }
+    )
   }
 
   private async renderMap(options: RenderOptions): Promise<Uint8Array> {
-    const map = new Map({
-      request: this.requestTile.bind(this)
-    })
-    map.load(this.mapStyle)
-
-    return await new Promise<Uint8Array>((resolve, reject) => {
+    const map = await this.mapPool.acquire()
+    // eslint-disable-next-line @typescript-eslint/return-await
+    return new Promise<Uint8Array>((resolve, reject) => {
       map.render(options, (error, buffer) => {
-        map.release()
+        void this.mapPool.release(map)
         if (error != null) {
           reject(error)
         } else {
